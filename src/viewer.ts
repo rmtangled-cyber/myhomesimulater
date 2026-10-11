@@ -3,6 +3,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { pointInPolygon } from './geometry';
 import { buildPlan, type BuiltPlan } from './builder';
 import type { Plan } from './types';
 
@@ -49,6 +55,12 @@ export class Viewer {
   /** ウォークスルー中の階と目の高さ（m） */
   private walkFloor = 0;
   private eyeY = EYE_HEIGHT;
+  /** 照明器具を点けるか（夕方・夜は自動で点ける） */
+  private lightsOn = false;
+  /** ウォークスルーで影の濃淡（アンビエントオクルージョン）を付けるか */
+  private highQuality = true;
+  private composer: EffectComposer;
+  private gtao: GTAOPass;
 
   constructor(
     private container: HTMLElement,
@@ -71,6 +83,19 @@ export class Viewer {
     this.orbit = new OrbitControls(this.camera, this.renderer.domElement);
     this.orbit.enableDamping = true;
     this.orbit.maxPolarAngle = Math.PI / 2 - 0.05;
+
+    // 周りの景色の映り込み・環境光（室内向けの柔らかい環境）
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    // ウォークスルー用の高画質描画（壁際や家具の下の陰影）
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(new RenderPass(this.scene, this.camera));
+    this.gtao = new GTAOPass(this.scene, this.camera, 1, 1);
+    this.gtao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 2, thickness: 1, scale: 1.2 });
+    this.gtao.blendIntensity = 1;
+    this.composer.addPass(this.gtao);
+    this.composer.addPass(new OutputPass());
 
     this.world.scale.setScalar(MM);
     this.scene.add(this.world);
@@ -114,7 +139,7 @@ export class Viewer {
     // 照明の位置計算などで使うので、追加した直後にワールド座標を確定させる
     this.world.updateMatrixWorld(true);
     this.applyVisibility();
-    this.rebuildRoomLights();
+    this.rebuildRoomLights(plan);
     this.fitSun();
     if (first) this.frameAll();
     this.select(this.selectedId);
@@ -122,13 +147,17 @@ export class Viewer {
   }
 
   /** 部屋ごとの照明。小さな部屋や吹き抜けには付けない（照明が多いと重くなる） */
-  private rebuildRoomLights() {
+  private rebuildRoomLights(plan: Plan) {
     this.roomLights.clear();
     this.built!.floors.forEach((floor, index) => {
+      // 照明器具を置いた部屋は、その器具だけで照らす
+      const fixtures = plan.floors[index].furniture.filter((f) => this.built!.furniture.get(f.id)?.getObjectByProperty('isLight', true));
       for (const mesh of floor.floorMeshes) {
         const box = new THREE.Box3().setFromObject(mesh);
         const size = box.getSize(new THREE.Vector3());
-        if (size.x * size.z < 2 || !(mesh.material as THREE.Material).visible) continue;
+        if (size.x * size.z < 2 || !mesh.visible) continue;
+        const room = plan.floors[index].rooms.find((r) => r.id === mesh.userData.roomId);
+        if (room && fixtures.some((f) => pointInPolygon([f.x, f.y], room.polygon))) continue;
         const c = box.getCenter(new THREE.Vector3());
         const light = new THREE.PointLight('#ffd6a0', 30, 6, 2);
         light.position.set(c.x, floor.group.position.y * MM + mesh.userData.lightHeight * MM, c.z);
@@ -139,6 +168,7 @@ export class Viewer {
     this.applyTime();
     this.applyVisibility();
   }
+
 
   private fitSun() {
     const b = this.worldBounds();
@@ -222,6 +252,15 @@ export class Viewer {
     this.applyVisibility();
   }
 
+  setLightsOn(on: boolean) {
+    this.lightsOn = on;
+    this.applyTime();
+  }
+
+  setHighQuality(on: boolean) {
+    this.highQuality = on;
+  }
+
   setLabels(on: boolean) {
     this.showLabels = on;
     this.applyVisibility();
@@ -256,6 +295,9 @@ export class Viewer {
     const cut = !walk && !exterior && this.cutaway;
     const elevation = floors[top]?.group.position.y ?? 0;
     this.clipPlane.constant = cut ? elevation * MM + 1.2 : 1000;
+    this.built.root.traverse((o) => {
+      if (o.userData.hideWhenCut) o.visible = !cut;
+    });
     for (const l of this.roomLights.children) {
       const i = l.userData.floorIndex as number;
       l.visible = walk ? i === this.walkFloor : i <= top;
@@ -275,9 +317,17 @@ export class Viewer {
     this.hemi.color.set(t === 'night' ? '#2b3550' : t === 'evening' ? '#f0c3a0' : '#dfe9f5');
     // 下向きの面（天井）は床や壁からの照り返しで明るく見えるので、地面側の色も明るめにする
     this.hemi.groundColor.set(t === 'night' ? '#3a3328' : '#cfc6b6');
-    this.hemi.intensity = t === 'night' ? 0.3 : t === 'evening' ? 1.0 : 1.2;
-    this.roomLights.visible = t !== 'day';
-    for (const l of this.roomLights.children as THREE.PointLight[]) l.intensity = t === 'night' ? 30 : 8;
+    this.hemi.intensity = t === 'night' ? 0.15 : t === 'evening' ? 0.7 : 0.8;
+    this.scene.environmentIntensity = t === 'night' ? 0.04 : t === 'evening' ? 0.3 : 0.45;
+    const lit = this.lightsOn || t !== 'day';
+    this.roomLights.visible = lit;
+    for (const l of this.roomLights.children as THREE.PointLight[]) l.intensity = t === 'night' ? 30 : 10;
+    // 照明器具の光源と、光る部分
+    this.built?.root.traverse((o) => {
+      if (o.userData.fixture) o.visible = lit;
+      const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+      if (m?.userData?.glow !== undefined) m.emissiveIntensity = lit ? m.userData.glow : 0;
+    });
     this.scene.background = new THREE.Color(t === 'night' ? '#121826' : t === 'evening' ? '#e9b48f' : '#cfe0ee');
     this.renderer.toneMappingExposure = t === 'night' ? 1.1 : 1;
     this.updateSunPosition();
@@ -469,7 +519,9 @@ export class Viewer {
     } else {
       this.orbit.update();
     }
-    this.renderer.render(this.scene, this.camera);
+    // 壁を切る断面表示と相性が悪いので、陰影の後処理はウォークスルーのときだけ
+    if (this.mode === 'walk' && this.highQuality) this.composer.render();
+    else this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
   }
 
@@ -477,6 +529,8 @@ export class Viewer {
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
     this.renderer.setSize(w, h);
+    this.composer.setPixelRatio(this.renderer.getPixelRatio());
+    this.composer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
     this.camera.aspect = w / Math.max(h, 1);
     this.camera.updateProjectionMatrix();
@@ -499,5 +553,8 @@ function disposeTree(root: THREE.Object3D) {
       const m = o.material as THREE.Material;
       if (!m.userData.shared) m.dispose();
     }
+    // 鏡は映り込み用の描画先を持っている
+    const r = o as THREE.Object3D & { isReflector?: boolean; dispose?: () => void };
+    if (r.isReflector) r.dispose?.();
   });
 }

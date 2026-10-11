@@ -45,13 +45,31 @@
 
 ### 素材ID（よく使うもの）
 
-- 床: `floor-oak` `floor-walnut` `floor-white-ash` `floor-gray-oak` `floor-cherry` `floor-tile-white` `floor-tile-stone` `floor-cushion-white` `floor-concrete` `floor-tatami`
-- 壁・天井: `cross-white` `cross-offwhite` `cross-greige` `cross-light-gray` `cross-charcoal` `cross-navy` `cross-sage` `cross-terracotta` `cross-dusty-pink` `cross-concrete` `cross-wood-oak` `cross-wood-walnut` `wall-tile-white`
+- 床: `floor-oak` `floor-walnut` `floor-white-ash` `floor-gray-oak` `floor-cherry` `floor-tile-white` `floor-tile-stone` `floor-tile-charcoal` `floor-cushion-white` `floor-concrete` `floor-tatami`
+- 壁・天井: `cross-white` `cross-offwhite` `cross-greige` `cross-light-gray` `cross-charcoal` `cross-navy` `cross-sage` `cross-terracotta` `cross-dusty-pink` `cross-plaster-white` `cross-stone-lightgray` `cross-stone-charcoal` `cross-concrete` `cross-wood-oak` `cross-wood-walnut` `wall-tile-white`
 - 外壁: `exterior-siding-white` `exterior-siding-black` `exterior-plaster-beige` `cross-concrete`
 
 ### 家具の種類
 
-`sofa` `dining-table` `low-table` `chair` `bed` `tv-board` `storage` `kitchen` `island-kitchen` `desk` `rug` `plant` `stairs` `car` `box`
+`sofa` `dining-table` `low-table` `chair` `bed` `tv-board` `storage` `kitchen` `island-kitchen` `desk` `rug` `plant` `stairs`（踏板のみ） `stairs-box`（箱型） `car` `rod-screen`（ロッド手すり・格子） `art` `mirror` `box`
+
+照明器具（夕方・夜、または「昼も照明をつける」で点灯。器具を置いた部屋は自動の照明が消え、器具の光だけになる）:
+`bracket-light` `wall-light`（上下配光） `downlight`（z を天井高に） `line-light`（間接照明） `pendant-light`
+
+壁付けの物（ブラケット・アート・ミラーなど）は背面を壁に付ける。壁の内側の面は壁芯から 60mm 内側なので、中心は「壁芯 ± (60 + d/2)」に置く。
+
+### 画像から作る素材
+
+`plans/*.json` の `materials` に登録すると、画像を素材として使える（画像は `public/textures/` に置く）。
+画面の「＋ 画像から素材を追加」からも登録できる。
+
+```json
+"materials": [
+  { "id": "img-SP2540", "name": "SP2540", "categories": ["wall"], "image": "textures/SP2540.jpg", "tile": [300, 300] }
+]
+```
+
+`tile` は画像1枚が表す実寸（mm）。見本写真は鏡写しで繰り返して継ぎ目を目立たなくしている。
 
 ## ユーザーと一緒に編集するときの約束
 
@@ -61,6 +79,7 @@
 - 大きな変更（間取りの変更など）を試すときは、元の案を残して `plans/` に別のファイル（例: `my-house-b.json`）を作る
 - `plans/my-house.json` はユーザーの実際の家（木造3階建て）。施工会社の図面から書き起こしたもので、寸法は図面の通り芯に合わせてある。図面から読み取れなかった所（開口部の正確な位置など）は推定なので、ユーザーに確認してから直す
 - 図面に書かれている施主名・住所などの個人情報はリポジトリに書かない
+- 1階の玄関まわりは、ユーザーのイメージ（石目調の壁、ロッド越しのストリップ階段、ブラケットライト＋アート、ミラー引き戸）に合わせてある。実際の品番は SP2540（白い壁）・SP2563・HF3122（暗い壁）で、今は近い色の標準素材で代用している
 - 家具を置くときは、壁・ドアの前・他の家具と重ならないよう、部屋の外形と開口部の位置から計算する。壁の内側の面は壁芯から `wallThickness / 2`（60mm）内側
 - 画面の色は実物と違う。最終決定は実物のサンプルで確認するよう、必要に応じて伝える
 

@@ -16,6 +16,8 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   time: 'day',
   cutaway: true,
   labels: true,
+  lightsOn: false,
+  highQuality: true,
   status: 'saved',
   warnings: [],
 };
@@ -74,6 +76,15 @@ const panel = new Panel(document.getElementById('panel')!, {
     viewer.setLabels(on);
     ui.labels = on;
   },
+  setLightsOn: (on) => {
+    viewer.setLightsOn(on);
+    ui.lightsOn = on;
+  },
+  setHighQuality: (on) => {
+    viewer.setHighQuality(on);
+    ui.highQuality = on;
+  },
+  addImageMaterial,
   setFloorView,
   switchPlan: (name) => openPlan(name),
   duplicatePlan: async () => {
@@ -123,6 +134,43 @@ const panel = new Panel(document.getElementById('panel')!, {
   redo: () => store.redo(),
 });
 
+/** 画像ファイルを public/textures/ に保存し、素材として登録する */
+async function addImageMaterial(file: File) {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+  if (!['jpg', 'jpeg', 'png', 'webp'].includes(ext)) {
+    alert('JPEG・PNG・WebP の画像を選んでください');
+    return;
+  }
+  const name = prompt('素材の名前（品番など）', file.name.replace(/\.[^.]+$/, ''))?.trim();
+  if (!name) return;
+  const size = prompt('画像1枚が実物の何 mm 分か（例: 300。横と縦が違うときは 600x300）', '300')?.trim();
+  if (!size) return;
+  const [tw, th] = size.split(/[x×*,\s]+/).map(Number);
+  if (!(tw > 0)) {
+    alert('大きさは数字で入れてください（例: 300）');
+    return;
+  }
+  const isFloor = confirm('床材として使いますか？\n\nOK → 床\nキャンセル → 壁・天井');
+  const slug = name.replace(/[^\p{L}\p{N}_-]+/gu, '-');
+  const fileName = `${slug}.${ext === 'jpeg' ? 'jpg' : ext}`;
+  const res = await fetch(`/api/textures/${encodeURIComponent(fileName)}`, { method: 'PUT', body: file });
+  if (!res.ok) {
+    alert('画像を保存できませんでした');
+    return;
+  }
+  const id = `img-${slug}`;
+  store.edit((p) => {
+    p.materials = [
+      ...(p.materials ?? []).filter((m) => m.id !== id),
+      // 同じ名前で差し替えたときに古い画像が表示されないよう、版を付ける
+      { id, name, categories: [isFloor ? 'floor' : 'wall'], image: `textures/${fileName}?v=${Date.now()}`, tile: [tw, th > 0 ? th : tw] },
+    ];
+  });
+  ui.status = 'saved';
+  ui.statusMessage = `素材「${name}」を追加しました。${isFloor ? '床' : '壁・天井'}の選択欄から選べます`;
+  render();
+}
+
 function removeFurniture(id: string) {
   store.edit((p) => {
     for (const f of p.floors) f.furniture = f.furniture.filter((x) => x.id !== id);
@@ -154,6 +202,7 @@ function render() {
 }
 
 store.subscribe((plan, cause) => {
+  if (cause === 'load') ui.statusMessage = undefined;
   if (cause === 'load' && ui.floor >= plan.floors.length) ui.floor = 0;
   if (typeof ui.floorView === 'number' && ui.floorView >= plan.floors.length) ui.floorView = 0;
   ui.warnings = viewer.setPlan(plan);

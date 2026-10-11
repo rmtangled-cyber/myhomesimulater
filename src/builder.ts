@@ -17,7 +17,7 @@ import {
   type WallSegment,
 } from './geometry';
 import { buildFurniture, getFurnitureType } from './furniture';
-import { getMaterial, getMaterialDef } from './materials';
+import { getMaterial, getMaterialDef, setCustomMaterials } from './materials';
 import type { Floor, Plan, Point, Room } from './types';
 
 export interface BuiltFloor {
@@ -124,6 +124,7 @@ const roofMat = new THREE.MeshStandardMaterial({ color: '#5d5f62', roughness: 0.
 slabMat.userData.shared = roofMat.userData.shared = true;
 
 export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
+  setCustomMaterials(plan.materials);
   const root = new THREE.Group();
   const warnings: string[] = [];
   const furniture = new Map<string, THREE.Group>();
@@ -232,7 +233,8 @@ function buildFloor(
     floorMesh.position.y = level;
     floorMesh.receiveShadow = true;
     floorMesh.userData = { roomId: room.id, floorIndex: index, lightHeight: top - 150 };
-    if (room.void) floorMesh.material = invisibleMat;
+    // 見えない床（クリック用）。visible=false でもマウスの当たり判定には使える
+    if (room.void) floorMesh.visible = false;
     group.add(floorMesh);
     floorMeshes.push(floorMesh);
 
@@ -311,9 +313,6 @@ function buildFloor(
 
   return { group, floorMeshes, ceilings, caps, labels };
 }
-
-const invisibleMat = new THREE.MeshBasicMaterial({ visible: false });
-invisibleMat.userData.shared = true;
 
 function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number) {
   const du = r.u1 - r.u0;

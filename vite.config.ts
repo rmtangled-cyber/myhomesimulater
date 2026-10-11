@@ -3,6 +3,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const PLANS_DIR = path.resolve(import.meta.dirname, 'plans');
+const TEXTURES_DIR = path.resolve(import.meta.dirname, 'public', 'textures');
+const TEXTURE_RE = /^[\p{L}\p{N}_.-]+\.(jpe?g|png|webp)$/iu;
 const NAME_RE = /^[\p{L}\p{N}_-]+$/u;
 
 /**
@@ -18,6 +20,21 @@ function planApi(): Plugin {
         if (path.dirname(file) === PLANS_DIR && file.endsWith('.json')) {
           server.ws.send({ type: 'custom', event: 'plan-changed', data: { name: path.basename(file, '.json') } });
         }
+      });
+
+      // 素材の画像を public/textures/ に保存する
+      server.middlewares.use('/api/textures', async (req, res) => {
+        const name = decodeURIComponent((req.url ?? '/').replace(/^\//, '').split('?')[0]);
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        if (req.method !== 'PUT' || !TEXTURE_RE.test(name) || name.startsWith('.')) {
+          res.statusCode = 400;
+          return res.end(JSON.stringify({ error: 'invalid request' }));
+        }
+        const chunks: Buffer[] = [];
+        for await (const c of req) chunks.push(c as Buffer);
+        await fs.mkdir(TEXTURES_DIR, { recursive: true });
+        await fs.writeFile(path.join(TEXTURES_DIR, name), Buffer.concat(chunks));
+        res.end(JSON.stringify({ path: `textures/${name}` }));
       });
 
       server.middlewares.use('/api/plans', async (req, res) => {

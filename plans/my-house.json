@@ -133,8 +133,8 @@
               3640
             ]
           ],
-          "floor": "floor-oak",
-          "wall": "cross-white",
+          "floor": "floor-gray-oak",
+          "wall": "cross-stone-charcoal",
           "ceiling": ""
         },
         {
@@ -174,9 +174,12 @@
               3640
             ]
           ],
-          "floor": "floor-oak",
-          "wall": "cross-white",
-          "ceiling": "cross-white"
+          "floor": "floor-gray-oak",
+          "wall": "cross-plaster-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "west": "cross-stone-charcoal"
+          }
         },
         {
           "id": "1f-shoes",
@@ -199,8 +202,8 @@
               6825
             ]
           ],
-          "floor": "floor-tile-stone",
-          "wall": "cross-white",
+          "floor": "floor-tile-charcoal",
+          "wall": "cross-plaster-white",
           "ceiling": "cross-white",
           "level": -150,
           "ceilingHeight": 2550
@@ -219,33 +222,6 @@
             ],
             [
               4550,
-              5687.5
-            ],
-            [
-              1820,
-              5687.5
-            ]
-          ],
-          "floor": "floor-tile-stone",
-          "wall": "cross-white",
-          "ceiling": "cross-white",
-          "level": -150,
-          "ceilingHeight": 2550
-        },
-        {
-          "id": "1f-porch",
-          "name": "ポーチ",
-          "polygon": [
-            [
-              1820,
-              5687.5
-            ],
-            [
-              4550,
-              5687.5
-            ],
-            [
-              4550,
               6825
             ],
             [
@@ -253,8 +229,8 @@
               6825
             ]
           ],
-          "floor": "floor-tile-stone",
-          "wall": "exterior-siding-white",
+          "floor": "floor-tile-charcoal",
+          "wall": "cross-plaster-white",
           "ceiling": "cross-white",
           "level": -150,
           "ceilingHeight": 2550
@@ -435,28 +411,6 @@
           "sill": -150
         },
         {
-          "id": "1f-entrance-door",
-          "type": "door",
-          "at": [
-            3500,
-            5687.5
-          ],
-          "width": 900,
-          "height": 2100,
-          "sill": -150
-        },
-        {
-          "id": "1f-porch-front",
-          "type": "opening",
-          "at": [
-            3185,
-            6825
-          ],
-          "width": 2730,
-          "height": 2400,
-          "sill": -150
-        },
-        {
           "id": "1f-garage-shutter",
           "type": "opening",
           "at": [
@@ -466,6 +420,17 @@
           "width": 3400,
           "height": 2400,
           "sill": -560
+        },
+        {
+          "id": "1f-main-door",
+          "type": "door",
+          "at": [
+            3300,
+            6825
+          ],
+          "width": 1200,
+          "height": 2100,
+          "sill": -150
         }
       ],
       "furniture": [
@@ -541,6 +506,109 @@
           "h": 1800,
           "rotation": 270,
           "color": "#d9cdb8",
+          "z": -150
+        },
+        {
+          "id": "rods-1",
+          "type": "rod-screen",
+          "name": "ロッド手すり（階段）",
+          "x": 2730,
+          "y": 3610,
+          "w": 1800,
+          "d": 25,
+          "h": 2400,
+          "rotation": 0,
+          "color": "#1c1c1d"
+        },
+        {
+          "id": "art-1",
+          "type": "art",
+          "name": "アート",
+          "x": 75,
+          "y": 3980,
+          "w": 500,
+          "d": 30,
+          "h": 650,
+          "rotation": 270,
+          "color": "#111111",
+          "z": 850
+        },
+        {
+          "id": "bracket-1",
+          "type": "bracket-light",
+          "name": "ブラケットライト",
+          "x": 210,
+          "y": 3980,
+          "w": 200,
+          "d": 300,
+          "h": 300,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 1550
+        },
+        {
+          "id": "wall-light-1",
+          "type": "wall-light",
+          "name": "ウォールライト（階段）",
+          "x": 1900,
+          "y": 2840,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1750
+        },
+        {
+          "id": "wall-light-2",
+          "type": "wall-light",
+          "name": "ウォールライト（階段）",
+          "x": 3000,
+          "y": 2840,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1750
+        },
+        {
+          "id": "downlight-1",
+          "type": "downlight",
+          "name": "ダウンライト（ホール）",
+          "x": 2275,
+          "y": 4150,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400
+        },
+        {
+          "id": "downlight-2",
+          "type": "downlight",
+          "name": "ダウンライト（玄関）",
+          "x": 3185,
+          "y": 5600,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400
+        },
+        {
+          "id": "mirror-1",
+          "type": "mirror",
+          "name": "ミラー引き戸（シューズクローク）",
+          "x": 1890,
+          "y": 5232.5,
+          "w": 900,
+          "d": 20,
+          "h": 2550,
+          "rotation": 270,
+          "color": "#c8ccd0",
           "z": -150
         }
       ]

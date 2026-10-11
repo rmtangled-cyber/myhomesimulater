@@ -21,6 +21,8 @@ export interface PanelState {
   time: TimeOfDay;
   cutaway: boolean;
   labels: boolean;
+  lightsOn: boolean;
+  highQuality: boolean;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -31,6 +33,9 @@ export interface PanelActions {
   setTime(time: TimeOfDay): void;
   setCutaway(on: boolean): void;
   setLabels(on: boolean): void;
+  setLightsOn(on: boolean): void;
+  setHighQuality(on: boolean): void;
+  addImageMaterial(file: File): void;
   setFloorView(view: number | 'all'): void;
   switchPlan(name: string): void;
   duplicatePlan(): void;
@@ -127,6 +132,10 @@ export class Panel {
           <label><input type="checkbox" data-change="labels" ${s.labels ? 'checked' : ''}> 部屋名</label>
         </div>
         <div class="row">
+          <label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>
+          <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
+        </div>
+        <div class="row">
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
           <button data-action="redo" title="Ctrl+Shift+Z">↷ やり直す</button>
           <button data-action="screenshot">📷 画像を保存</button>
@@ -163,6 +172,7 @@ export class Panel {
           <button data-action="dup-furn">複製</button>
           <button data-action="remove-furn" class="danger">削除</button>
         </div>
+        ${getFurnitureType(f.type).hint ? `<p class="hint">${esc(getFurnitureType(f.type).hint!)}</p>` : ''}
         <p class="hint">ドラッグで移動、R で90°回転、Delete で削除。単位は mm。</p>
       </section>`;
   }
@@ -177,7 +187,11 @@ export class Panel {
         <h3>天井</h3>${materialSelect('wall', r.ceiling, 'data-room="ceiling"', true)}
         <h3>アクセントクロス</h3>
         ${SIDES.map(([side, label]) => `<div class="accent"><span>${label}の壁</span>${materialSelect('wall', r.accent?.[side] ?? '', `data-accent="${side}"`, true)}</div>`).join('')}
-        <div class="row"><button data-action="walk-into" data-value="${esc(r.id)}">この部屋に入る</button></div>
+        <div class="row">
+          <button data-action="walk-into" data-value="${esc(r.id)}">この部屋に入る</button>
+          <button data-action="add-image" title="メーカーの見本画像などを素材として登録します">＋ 画像から素材を追加</button>
+          <input type="file" id="image-file" accept="image/jpeg,image/png,image/webp" hidden>
+        </div>
       </section>`;
   }
 
@@ -247,6 +261,12 @@ export class Panel {
       case 'select-room': return a.select({ kind: 'room', id: v });
       case 'select-furn': return a.select({ kind: 'furniture', id: v });
       case 'walk-into': return a.walkInto(v);
+      case 'add-image': {
+        const input = this.el.querySelector<HTMLInputElement>('#image-file')!;
+        input.onchange = () => input.files?.[0] && a.addImageMaterial(input.files[0]);
+        input.click();
+        return;
+      }
       case 'add-furn': return a.addFurniture((this.el.querySelector('#add-type') as HTMLSelectElement).value);
       case 'rotate':
         if (sel?.kind === 'furniture') a.updateFurniture(sel.id, (f) => (f.rotation = (f.rotation + Number(v)) % 360));
@@ -268,6 +288,8 @@ export class Panel {
     if (d.change === 'plan') return a.switchPlan(t.value);
     if (d.change === 'cutaway') return a.setCutaway((t as HTMLInputElement).checked);
     if (d.change === 'labels') return a.setLabels((t as HTMLInputElement).checked);
+    if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
+    if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
     if (sel?.kind === 'furniture' && d.furn) {
       const field = d.furn as keyof Furniture;
       const value = t.type === 'number' ? Number(t.value) : t.value;

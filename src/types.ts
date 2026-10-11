@@ -74,6 +74,25 @@ export interface Floor {
   furniture: Furniture[];
 }
 
+export type MaterialCategory = 'floor' | 'wall' | 'exterior';
+
+/** 画像から作る素材（メーカーの見本画像など）。画像は public/textures/ に置く */
+export interface CustomMaterial {
+  /** 素材ID（room.floor などで指定する） */
+  id: string;
+  /** パネルに出す名前（品番など） */
+  name: string;
+  categories: MaterialCategory[];
+  /** public/ からの相対パス（例: "textures/SP2540.jpg"） */
+  image: string;
+  /** 画像1枚が表す実寸 [横, 縦] mm */
+  tile: [number, number];
+  /** 表面の粗さ 0（つやあり）〜1（つやなし）。省略時 0.9 */
+  roughness?: number;
+  /** 凹凸の強さ。省略時 1.5、0 で平ら */
+  bump?: number;
+}
+
 export interface Plan {
   name: string;
   /** グリッドの間隔（尺モジュールなら 910） */
@@ -84,5 +103,7 @@ export interface Plan {
   exterior: string;
   /** 地面（GL）の高さ。1階 FL からの差で、ふつうは負の値 */
   groundLevel?: number;
+  /** 画像から作った素材 */
+  materials?: CustomMaterial[];
   floors: Floor[];
 }
