@@ -43,6 +43,12 @@ export class Viewer {
   private yaw = 0;
   private pitch = 0;
   private timer = new THREE.Timer();
+  private ground: THREE.Mesh;
+  /** 俯瞰で表示する一番上の階（'all' なら外観として全部の階を見せる） */
+  private floorView: number | 'all' = 'all';
+  /** ウォークスルー中の階と目の高さ（m） */
+  private walkFloor = 0;
+  private eyeY = EYE_HEIGHT;
 
   constructor(
     private container: HTMLElement,
@@ -69,14 +75,14 @@ export class Viewer {
     this.world.scale.setScalar(MM);
     this.scene.add(this.world);
 
-    const ground = new THREE.Mesh(
+    this.ground = new THREE.Mesh(
       new THREE.PlaneGeometry(400, 400),
       new THREE.MeshStandardMaterial({ color: '#a9b59a', roughness: 1 }),
     );
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.005;
-    ground.receiveShadow = true;
-    this.scene.add(ground);
+    this.ground.rotation.x = -Math.PI / 2;
+    this.ground.position.y = -0.005;
+    this.ground.receiveShadow = true;
+    this.scene.add(this.ground);
 
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(4096, 4096);
@@ -103,26 +109,35 @@ export class Viewer {
     }
     this.built = buildPlan(plan, [this.clipPlane]);
     this.world.add(this.built.root);
+    this.ground.position.y = (plan.groundLevel ?? 0) * MM - 0.005;
+    if (typeof this.floorView === 'number') this.floorView = Math.min(this.floorView, plan.floors.length - 1);
     // 照明の位置計算などで使うので、追加した直後にワールド座標を確定させる
     this.world.updateMatrixWorld(true);
     this.applyVisibility();
-    this.rebuildRoomLights(plan);
+    this.rebuildRoomLights();
     this.fitSun();
     if (first) this.frameAll();
     this.select(this.selectedId);
     return this.built.warnings;
   }
 
-  private rebuildRoomLights(plan: Plan) {
+  /** 部屋ごとの照明。小さな部屋や吹き抜けには付けない（照明が多いと重くなる） */
+  private rebuildRoomLights() {
     this.roomLights.clear();
-    for (const floor of this.built!.floors) {
-      const box = new THREE.Box3().setFromObject(floor);
-      const c = box.getCenter(new THREE.Vector3());
-      const light = new THREE.PointLight('#ffd6a0', 30, 8, 2);
-      light.position.set(c.x, plan.ceilingHeight * MM - 0.15, c.z);
-      this.roomLights.add(light);
-    }
+    this.built!.floors.forEach((floor, index) => {
+      for (const mesh of floor.floorMeshes) {
+        const box = new THREE.Box3().setFromObject(mesh);
+        const size = box.getSize(new THREE.Vector3());
+        if (size.x * size.z < 2 || !(mesh.material as THREE.Material).visible) continue;
+        const c = box.getCenter(new THREE.Vector3());
+        const light = new THREE.PointLight('#ffd6a0', 30, 6, 2);
+        light.position.set(c.x, floor.group.position.y * MM + mesh.userData.lightHeight * MM, c.z);
+        light.userData.floorIndex = index;
+        this.roomLights.add(light);
+      }
+    });
     this.applyTime();
+    this.applyVisibility();
   }
 
   private fitSun() {
@@ -158,19 +173,28 @@ export class Viewer {
     const b = this.worldBounds();
     const c = b.getCenter(new THREE.Vector3());
     const size = b.getSize(new THREE.Vector3()).length();
-    this.orbit.target.copy(c).setY(0);
-    this.camera.position.copy(c).add(new THREE.Vector3(size * 0.35, size * 0.9, size * 0.75));
+    this.orbit.target.copy(c).setY(this.focusHeight());
+    this.camera.position.copy(this.orbit.target).add(new THREE.Vector3(size * 0.4, size * 0.85, size * 0.85));
     this.orbit.update();
+  }
+
+  /** 俯瞰で注目する高さ（m）。階を選んでいればその階の床、外観なら建物の中ほど */
+  private focusHeight(): number {
+    const floors = this.built?.floors ?? [];
+    if (this.floorView === 'all') return this.worldBounds().getCenter(new THREE.Vector3()).y * 0.6;
+    return (floors[this.floorView]?.group.position.y ?? 0) * MM;
   }
 
   // ---------- 表示設定 ----------
 
+  /** startAt の y は目の高さ（m） */
   setMode(mode: ViewMode, startAt?: THREE.Vector3, yaw = 0) {
     this.mode = mode;
     this.orbit.enabled = mode === 'orbit';
     if (mode === 'walk') {
-      const p = startAt ?? this.worldBounds().getCenter(new THREE.Vector3());
-      this.camera.position.set(p.x, EYE_HEIGHT, p.z);
+      const p = startAt ?? this.worldBounds().getCenter(new THREE.Vector3()).setY(EYE_HEIGHT);
+      this.eyeY = p.y;
+      this.camera.position.copy(p);
       this.yaw = yaw; // 0 = 北（−Z）を向く、π = 南を向く
       this.pitch = 0;
       this.camera.fov = 70;
@@ -203,13 +227,44 @@ export class Viewer {
     this.applyVisibility();
   }
 
+  /** 俯瞰で見る階。その階より上は隠し、その階の壁を低く切って中を見せる */
+  setFloorView(view: number | 'all') {
+    // 視点の角度と距離はそのままで、見る高さだけ選んだ階に合わせる
+    const before = this.focusHeight();
+    this.floorView = view;
+    const dy = this.focusHeight() - before;
+    this.orbit.target.y += dy;
+    this.camera.position.y += dy;
+    this.applyVisibility();
+    this.select(this.selectedId);
+  }
+
   private applyVisibility() {
+    if (!this.built) return;
     const walk = this.mode === 'walk';
-    const clip = this.cutaway && !walk;
+    const floors = this.built.floors;
+    const exterior = !walk && this.floorView === 'all';
+    const top = walk || this.floorView === 'all' ? floors.length - 1 : this.floorView;
+    floors.forEach((f, i) => {
+      const isTop = i === top;
+      f.group.visible = i <= top;
+      for (const c of f.ceilings) c.visible = walk;
+      for (const c of f.caps) c.visible = walk || exterior || !isTop;
+      for (const l of f.labels) l.visible = this.showLabels && !walk && !exterior && isTop;
+    });
     // 壁の材質は clipPlane を共有しているので、高さを変えるだけで断面表示を切り替えられる
-    this.clipPlane.constant = clip ? 1.2 : 1000;
-    for (const c of this.built?.ceilings ?? []) c.visible = walk;
-    for (const l of this.built?.labels ?? []) l.visible = this.showLabels && !walk;
+    const cut = !walk && !exterior && this.cutaway;
+    const elevation = floors[top]?.group.position.y ?? 0;
+    this.clipPlane.constant = cut ? elevation * MM + 1.2 : 1000;
+    for (const l of this.roomLights.children) {
+      const i = l.userData.floorIndex as number;
+      l.visible = walk ? i === this.walkFloor : i <= top;
+    }
+  }
+
+  /** 見えている階の中のオブジェクトだけを返す */
+  private visibleFloors() {
+    return (this.built?.floors ?? []).filter((f) => f.group.visible);
   }
 
   private applyTime() {
@@ -243,8 +298,10 @@ export class Viewer {
 
   /** 部屋に入ってウォークスルーにする。家具と重ならない立ち位置を選ぶ */
   walkInto(roomId: string) {
-    const floor = this.built?.floors.find((f) => f.userData.roomId === roomId);
+    const floor = this.built?.floors.flatMap((f) => f.floorMeshes).find((f) => f.userData.roomId === roomId);
     if (!floor) return;
+    this.walkFloor = floor.userData.floorIndex;
+    const eye = floor.getWorldPosition(new THREE.Vector3()).y + EYE_HEIGHT;
     const box = new THREE.Box3().setFromObject(floor);
     const size = box.getSize(new THREE.Vector3());
     const obstacles = [...this.built!.furniture.values()].map((g) => new THREE.Box3().setFromObject(g).expandByScalar(0.25));
@@ -252,17 +309,19 @@ export class Viewer {
     const candidates: [number, number, number][] = [
       [0.5, 0.2, Math.PI], [0.5, 0.8, 0], [0.3, 0.2, Math.PI], [0.7, 0.2, Math.PI],
       [0.3, 0.8, 0], [0.7, 0.8, 0], [0.5, 0.5, Math.PI], [0.2, 0.5, Math.PI], [0.8, 0.5, Math.PI],
+      // 大きな家具（車など）でふさがっているときは壁際に立つ
+      [0.5, 0.06, Math.PI], [0.5, 0.94, 0], [0.1, 0.5, Math.PI], [0.9, 0.5, Math.PI],
     ];
     for (const [fx, fz, yaw] of candidates) {
-      const p = new THREE.Vector3(box.min.x + size.x * fx, 0.5, box.min.z + size.z * fz);
+      const p = new THREE.Vector3(box.min.x + size.x * fx, box.min.y + 0.5, box.min.z + size.z * fz);
       // L字の部屋などで外に出ないよう、真下に床があるか確かめる
-      this.raycaster.set(new THREE.Vector3(p.x, 10, p.z), new THREE.Vector3(0, -1, 0));
+      this.raycaster.set(new THREE.Vector3(p.x, p.y + 1, p.z), new THREE.Vector3(0, -1, 0));
       if (!this.raycaster.intersectObject(floor, false).length) continue;
       if (obstacles.some((o) => o.containsPoint(p))) continue;
-      this.setMode('walk', p, yaw);
+      this.setMode('walk', p.setY(eye), yaw);
       return;
     }
-    this.setMode('walk', box.getCenter(new THREE.Vector3()), Math.PI);
+    this.setMode('walk', box.getCenter(new THREE.Vector3()).setY(eye), Math.PI);
   }
 
   // ---------- マウス・キー操作 ----------
@@ -275,7 +334,8 @@ export class Viewer {
   private hitFurniture(ndc: THREE.Vector2): { id: string; point: THREE.Vector3 } | null {
     if (!this.built) return null;
     this.raycaster.setFromCamera(ndc, this.camera);
-    const hits = this.raycaster.intersectObjects([...this.built.furniture.values()], true);
+    const visible = [...this.built.furniture.values()].filter((g) => g.parent?.visible);
+    const hits = this.raycaster.intersectObjects(visible, true);
     for (const h of hits) {
       let o: THREE.Object3D | null = h.object;
       while (o && !o.userData.furnitureId) o = o.parent;
@@ -284,16 +344,26 @@ export class Viewer {
     return null;
   }
 
-  private groundPoint(ndc: THREE.Vector2): THREE.Vector3 | null {
+  /** 高さ y（m）の水平面とマウスの交点 */
+  private groundPoint(ndc: THREE.Vector2, y: number): THREE.Vector3 | null {
     this.raycaster.setFromCamera(ndc, this.camera);
     const p = new THREE.Vector3();
-    return this.raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p);
+    return this.raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), -y), p);
+  }
+
+  /** クリックした所の部屋。屋根や上の階の床下に当たったら null */
+  private hitRoom(ndc: THREE.Vector2): THREE.Mesh | null {
+    this.raycaster.setFromCamera(ndc, this.camera);
+    const floors = this.visibleFloors();
+    const targets = floors.flatMap((f) => [...f.floorMeshes, ...f.caps.filter((c) => c.visible)]);
+    const hit = this.raycaster.intersectObjects(targets, false)[0];
+    return hit && hit.object.userData.roomId ? (hit.object as THREE.Mesh) : null;
   }
 
   private setupPointer() {
     const el = this.renderer.domElement;
     let down: { x: number; y: number } | null = null;
-    let drag: { id: string; group: THREE.Group; offset: THREE.Vector3; moved: boolean } | null = null;
+    let drag: { id: string; group: THREE.Group; offset: THREE.Vector3; baseY: number; moved: boolean } | null = null;
     let look: { x: number; y: number } | null = null;
 
     el.addEventListener('pointerdown', (e) => {
@@ -308,9 +378,9 @@ export class Viewer {
       const hit = this.hitFurniture(ndc);
       if (hit) {
         const group = this.built!.furniture.get(hit.id)!;
-        const gp = this.groundPoint(ndc);
         const pos = group.getWorldPosition(new THREE.Vector3());
-        drag = { id: hit.id, group, offset: gp ? pos.sub(gp) : new THREE.Vector3(), moved: false };
+        const gp = this.groundPoint(ndc, pos.y);
+        drag = { id: hit.id, group, offset: gp ? pos.clone().sub(gp) : new THREE.Vector3(), baseY: pos.y, moved: false };
         this.orbit.enabled = false;
         el.setPointerCapture(e.pointerId);
         this.events.onSelectFurniture(hit.id);
@@ -328,13 +398,14 @@ export class Viewer {
         el.style.cursor = this.mode === 'orbit' && this.hitFurniture(this.pointer(e)) ? 'grab' : '';
         return;
       }
-      const gp = this.groundPoint(this.pointer(e));
+      const gp = this.groundPoint(this.pointer(e), drag.baseY);
       if (!gp) return;
       const p = gp.add(drag.offset);
       // 10mm 単位にそろえる
       const x = Math.round(p.x / MM / 10) * 10;
       const z = Math.round(p.z / MM / 10) * 10;
-      drag.group.position.set(x, 0, z);
+      drag.group.position.x = x;
+      drag.group.position.z = z;
       drag.moved = true;
       el.style.cursor = 'grabbing';
       this.select(drag.id);
@@ -351,19 +422,17 @@ export class Viewer {
         return;
       }
       if (clicked && this.mode === 'orbit' && this.built && e.button === 0) {
-        this.raycaster.setFromCamera(this.pointer(e), this.camera);
-        const hit = this.raycaster.intersectObjects(this.built.floors, false)[0];
+        const room = this.hitRoom(this.pointer(e));
         this.events.onSelectFurniture(null);
-        if (hit) this.events.onSelectRoom(hit.object.userData.roomId);
+        if (room) this.events.onSelectRoom(room.userData.roomId);
       }
       down = null;
     });
 
     el.addEventListener('dblclick', (e) => {
       if (this.mode !== 'orbit' || !this.built) return;
-      this.raycaster.setFromCamera(this.pointer(e), this.camera);
-      const hit = this.raycaster.intersectObjects(this.built.floors, false)[0];
-      if (hit) this.walkInto(hit.object.userData.roomId);
+      const room = this.hitRoom(this.pointer(e));
+      if (room) this.walkInto(room.userData.roomId);
     });
   }
 
@@ -395,7 +464,7 @@ export class Viewer {
       if (this.keys.has('ArrowLeft')) this.yaw += 1.5 * dt;
       if (this.keys.has('ArrowRight')) this.yaw -= 1.5 * dt;
       if (move.lengthSq() > 0) this.camera.position.addScaledVector(move.normalize(), speed);
-      this.camera.position.y = EYE_HEIGHT;
+      this.camera.position.y = this.eyeY;
       this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
     } else {
       this.orbit.update();

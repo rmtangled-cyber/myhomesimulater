@@ -1,721 +1,730 @@
 {
   "name": "A案（平屋 2LDK＋書斎）",
   "grid": 910,
-  "ceilingHeight": 2400,
   "wallThickness": 120,
   "exterior": "exterior-siding-white",
-  "rooms": [
+  "groundLevel": -450,
+  "floors": [
     {
-      "id": "ldk",
-      "name": "LDK",
-      "polygon": [
-        [
-          0,
-          3640
-        ],
-        [
-          3640,
-          3640
-        ],
-        [
-          3640,
-          2730
-        ],
-        [
-          6370,
-          2730
-        ],
-        [
-          6370,
-          8190
-        ],
-        [
-          0,
-          8190
-        ]
+      "id": "1f",
+      "name": "1階",
+      "elevation": 0,
+      "height": 2700,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "ldk",
+          "name": "LDK",
+          "polygon": [
+            [
+              0,
+              3640
+            ],
+            [
+              3640,
+              3640
+            ],
+            [
+              3640,
+              2730
+            ],
+            [
+              6370,
+              2730
+            ],
+            [
+              6370,
+              8190
+            ],
+            [
+              0,
+              8190
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "west": "cross-greige"
+          }
+        },
+        {
+          "id": "master",
+          "name": "主寝室",
+          "polygon": [
+            [
+              6370,
+              4550
+            ],
+            [
+              10010,
+              4550
+            ],
+            [
+              10010,
+              8190
+            ],
+            [
+              6370,
+              8190
+            ]
+          ],
+          "floor": "floor-walnut",
+          "wall": "cross-offwhite",
+          "ceiling": "cross-white",
+          "accent": {
+            "north": "cross-navy"
+          }
+        },
+        {
+          "id": "wic",
+          "name": "WIC",
+          "polygon": [
+            [
+              6370,
+              2730
+            ],
+            [
+              8190,
+              2730
+            ],
+            [
+              8190,
+              4550
+            ],
+            [
+              6370,
+              4550
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "study",
+          "name": "書斎",
+          "polygon": [
+            [
+              8190,
+              2730
+            ],
+            [
+              10010,
+              2730
+            ],
+            [
+              10010,
+              4550
+            ],
+            [
+              8190,
+              4550
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "east": "cross-charcoal"
+          }
+        },
+        {
+          "id": "kids",
+          "name": "洋室",
+          "polygon": [
+            [
+              0,
+              0
+            ],
+            [
+              3640,
+              0
+            ],
+            [
+              3640,
+              3640
+            ],
+            [
+              0,
+              3640
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "east": "cross-sage"
+          }
+        },
+        {
+          "id": "entrance",
+          "name": "玄関",
+          "polygon": [
+            [
+              3640,
+              0
+            ],
+            [
+              5460,
+              0
+            ],
+            [
+              5460,
+              1820
+            ],
+            [
+              3640,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "toilet",
+          "name": "トイレ",
+          "polygon": [
+            [
+              5460,
+              0
+            ],
+            [
+              6370,
+              0
+            ],
+            [
+              6370,
+              1820
+            ],
+            [
+              5460,
+              1820
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "north": "cross-charcoal"
+          }
+        },
+        {
+          "id": "washroom",
+          "name": "洗面脱衣",
+          "polygon": [
+            [
+              6370,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              1820
+            ],
+            [
+              6370,
+              1820
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "bath",
+          "name": "浴室",
+          "polygon": [
+            [
+              8190,
+              0
+            ],
+            [
+              10010,
+              0
+            ],
+            [
+              10010,
+              1820
+            ],
+            [
+              8190,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "wall-tile-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "hall",
+          "name": "廊下",
+          "polygon": [
+            [
+              3640,
+              1820
+            ],
+            [
+              10010,
+              1820
+            ],
+            [
+              10010,
+              2730
+            ],
+            [
+              3640,
+              2730
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        }
       ],
-      "floor": "floor-oak",
-      "wall": "cross-white",
-      "ceiling": "cross-white",
-      "accent": {
-        "west": "cross-greige"
-      }
-    },
-    {
-      "id": "master",
-      "name": "主寝室",
-      "polygon": [
-        [
-          6370,
-          4550
-        ],
-        [
-          10010,
-          4550
-        ],
-        [
-          10010,
-          8190
-        ],
-        [
-          6370,
-          8190
-        ]
+      "openings": [
+        {
+          "id": "entrance-door",
+          "type": "door",
+          "at": [
+            4550,
+            0
+          ],
+          "width": 900,
+          "height": 2100,
+          "sill": 0
+        },
+        {
+          "id": "entrance-hall",
+          "type": "opening",
+          "at": [
+            4550,
+            1820
+          ],
+          "width": 1600,
+          "height": 2100,
+          "sill": 0
+        },
+        {
+          "id": "toilet-door",
+          "type": "door",
+          "at": [
+            5915,
+            1820
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "washroom-door",
+          "type": "door",
+          "at": [
+            7280,
+            1820
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "bath-door",
+          "type": "door",
+          "at": [
+            8190,
+            910
+          ],
+          "width": 750,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "kids-door",
+          "type": "door",
+          "at": [
+            3640,
+            2275
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "ldk-door",
+          "type": "door",
+          "at": [
+            5005,
+            2730
+          ],
+          "width": 900,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "wic-door",
+          "type": "door",
+          "at": [
+            7280,
+            2730
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "study-door",
+          "type": "door",
+          "at": [
+            9100,
+            2730
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "master-door",
+          "type": "door",
+          "at": [
+            7280,
+            4550
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "ldk-south-1",
+          "type": "window",
+          "at": [
+            1820,
+            8190
+          ],
+          "width": 2600,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "ldk-south-2",
+          "type": "window",
+          "at": [
+            4550,
+            8190
+          ],
+          "width": 1650,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "ldk-west",
+          "type": "window",
+          "at": [
+            0,
+            5915
+          ],
+          "width": 1650,
+          "height": 1100,
+          "sill": 900
+        },
+        {
+          "id": "master-south",
+          "type": "window",
+          "at": [
+            8190,
+            8190
+          ],
+          "width": 1650,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "master-east",
+          "type": "window",
+          "at": [
+            10010,
+            6370
+          ],
+          "width": 1200,
+          "height": 1100,
+          "sill": 900
+        },
+        {
+          "id": "kids-north",
+          "type": "window",
+          "at": [
+            1820,
+            0
+          ],
+          "width": 1650,
+          "height": 1100,
+          "sill": 900
+        },
+        {
+          "id": "kids-west",
+          "type": "window",
+          "at": [
+            0,
+            1820
+          ],
+          "width": 1200,
+          "height": 1100,
+          "sill": 900
+        },
+        {
+          "id": "study-east",
+          "type": "window",
+          "at": [
+            10010,
+            3640
+          ],
+          "width": 900,
+          "height": 1100,
+          "sill": 900
+        },
+        {
+          "id": "bath-east",
+          "type": "window",
+          "at": [
+            10010,
+            910
+          ],
+          "width": 750,
+          "height": 700,
+          "sill": 1100
+        },
+        {
+          "id": "washroom-north",
+          "type": "window",
+          "at": [
+            7280,
+            0
+          ],
+          "width": 600,
+          "height": 500,
+          "sill": 1300
+        },
+        {
+          "id": "toilet-north",
+          "type": "window",
+          "at": [
+            5915,
+            0
+          ],
+          "width": 400,
+          "height": 500,
+          "sill": 1400
+        }
       ],
-      "floor": "floor-walnut",
-      "wall": "cross-offwhite",
-      "ceiling": "cross-white",
-      "accent": {
-        "north": "cross-navy"
-      }
-    },
-    {
-      "id": "wic",
-      "name": "WIC",
-      "polygon": [
-        [
-          6370,
-          2730
-        ],
-        [
-          8190,
-          2730
-        ],
-        [
-          8190,
-          4550
-        ],
-        [
-          6370,
-          4550
-        ]
-      ],
-      "floor": "floor-oak",
-      "wall": "cross-white",
-      "ceiling": "cross-white"
-    },
-    {
-      "id": "study",
-      "name": "書斎",
-      "polygon": [
-        [
-          8190,
-          2730
-        ],
-        [
-          10010,
-          2730
-        ],
-        [
-          10010,
-          4550
-        ],
-        [
-          8190,
-          4550
-        ]
-      ],
-      "floor": "floor-oak",
-      "wall": "cross-white",
-      "ceiling": "cross-white",
-      "accent": {
-        "east": "cross-charcoal"
-      }
-    },
-    {
-      "id": "kids",
-      "name": "洋室",
-      "polygon": [
-        [
-          0,
-          0
-        ],
-        [
-          3640,
-          0
-        ],
-        [
-          3640,
-          3640
-        ],
-        [
-          0,
-          3640
-        ]
-      ],
-      "floor": "floor-oak",
-      "wall": "cross-white",
-      "ceiling": "cross-white",
-      "accent": {
-        "east": "cross-sage"
-      }
-    },
-    {
-      "id": "entrance",
-      "name": "玄関",
-      "polygon": [
-        [
-          3640,
-          0
-        ],
-        [
-          5460,
-          0
-        ],
-        [
-          5460,
-          1820
-        ],
-        [
-          3640,
-          1820
-        ]
-      ],
-      "floor": "floor-tile-stone",
-      "wall": "cross-white",
-      "ceiling": "cross-white"
-    },
-    {
-      "id": "toilet",
-      "name": "トイレ",
-      "polygon": [
-        [
-          5460,
-          0
-        ],
-        [
-          6370,
-          0
-        ],
-        [
-          6370,
-          1820
-        ],
-        [
-          5460,
-          1820
-        ]
-      ],
-      "floor": "floor-cushion-white",
-      "wall": "cross-white",
-      "ceiling": "cross-white",
-      "accent": {
-        "north": "cross-charcoal"
-      }
-    },
-    {
-      "id": "washroom",
-      "name": "洗面脱衣",
-      "polygon": [
-        [
-          6370,
-          0
-        ],
-        [
-          8190,
-          0
-        ],
-        [
-          8190,
-          1820
-        ],
-        [
-          6370,
-          1820
-        ]
-      ],
-      "floor": "floor-cushion-white",
-      "wall": "cross-white",
-      "ceiling": "cross-white"
-    },
-    {
-      "id": "bath",
-      "name": "浴室",
-      "polygon": [
-        [
-          8190,
-          0
-        ],
-        [
-          10010,
-          0
-        ],
-        [
-          10010,
-          1820
-        ],
-        [
-          8190,
-          1820
-        ]
-      ],
-      "floor": "floor-tile-white",
-      "wall": "wall-tile-white",
-      "ceiling": "cross-white"
-    },
-    {
-      "id": "hall",
-      "name": "廊下",
-      "polygon": [
-        [
-          3640,
-          1820
-        ],
-        [
-          10010,
-          1820
-        ],
-        [
-          10010,
-          2730
-        ],
-        [
-          3640,
-          2730
-        ]
-      ],
-      "floor": "floor-oak",
-      "wall": "cross-white",
-      "ceiling": "cross-white"
-    }
-  ],
-  "openings": [
-    {
-      "id": "entrance-door",
-      "type": "door",
-      "at": [
-        4550,
-        0
-      ],
-      "width": 900,
-      "height": 2100,
-      "sill": 0
-    },
-    {
-      "id": "entrance-hall",
-      "type": "opening",
-      "at": [
-        4550,
-        1820
-      ],
-      "width": 1600,
-      "height": 2100,
-      "sill": 0
-    },
-    {
-      "id": "toilet-door",
-      "type": "door",
-      "at": [
-        5915,
-        1820
-      ],
-      "width": 700,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "washroom-door",
-      "type": "door",
-      "at": [
-        7280,
-        1820
-      ],
-      "width": 780,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "bath-door",
-      "type": "door",
-      "at": [
-        8190,
-        910
-      ],
-      "width": 750,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "kids-door",
-      "type": "door",
-      "at": [
-        3640,
-        2275
-      ],
-      "width": 780,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "ldk-door",
-      "type": "door",
-      "at": [
-        5005,
-        2730
-      ],
-      "width": 900,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "wic-door",
-      "type": "door",
-      "at": [
-        7280,
-        2730
-      ],
-      "width": 780,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "study-door",
-      "type": "door",
-      "at": [
-        9100,
-        2730
-      ],
-      "width": 780,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "master-door",
-      "type": "door",
-      "at": [
-        7280,
-        4550
-      ],
-      "width": 780,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "ldk-south-1",
-      "type": "window",
-      "at": [
-        1820,
-        8190
-      ],
-      "width": 2600,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "ldk-south-2",
-      "type": "window",
-      "at": [
-        4550,
-        8190
-      ],
-      "width": 1650,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "ldk-west",
-      "type": "window",
-      "at": [
-        0,
-        5915
-      ],
-      "width": 1650,
-      "height": 1100,
-      "sill": 900
-    },
-    {
-      "id": "master-south",
-      "type": "window",
-      "at": [
-        8190,
-        8190
-      ],
-      "width": 1650,
-      "height": 2000,
-      "sill": 0
-    },
-    {
-      "id": "master-east",
-      "type": "window",
-      "at": [
-        10010,
-        6370
-      ],
-      "width": 1200,
-      "height": 1100,
-      "sill": 900
-    },
-    {
-      "id": "kids-north",
-      "type": "window",
-      "at": [
-        1820,
-        0
-      ],
-      "width": 1650,
-      "height": 1100,
-      "sill": 900
-    },
-    {
-      "id": "kids-west",
-      "type": "window",
-      "at": [
-        0,
-        1820
-      ],
-      "width": 1200,
-      "height": 1100,
-      "sill": 900
-    },
-    {
-      "id": "study-east",
-      "type": "window",
-      "at": [
-        10010,
-        3640
-      ],
-      "width": 900,
-      "height": 1100,
-      "sill": 900
-    },
-    {
-      "id": "bath-east",
-      "type": "window",
-      "at": [
-        10010,
-        910
-      ],
-      "width": 750,
-      "height": 700,
-      "sill": 1100
-    },
-    {
-      "id": "washroom-north",
-      "type": "window",
-      "at": [
-        7280,
-        0
-      ],
-      "width": 600,
-      "height": 500,
-      "sill": 1300
-    },
-    {
-      "id": "toilet-north",
-      "type": "window",
-      "at": [
-        5915,
-        0
-      ],
-      "width": 400,
-      "height": 500,
-      "sill": 1400
-    }
-  ],
-  "furniture": [
-    {
-      "id": "kitchen-1",
-      "type": "kitchen",
-      "name": "キッチン",
-      "x": 5985,
-      "y": 4100,
-      "w": 2550,
-      "d": 650,
-      "h": 850,
-      "rotation": 90,
-      "color": "#f0eeea"
-    },
-    {
-      "id": "storage-1",
-      "type": "storage",
-      "name": "食器棚",
-      "x": 4200,
-      "y": 3015,
-      "w": 1000,
-      "d": 450,
-      "h": 1800,
-      "rotation": 0,
-      "color": "#d9cdb8"
-    },
-    {
-      "id": "dining-table-1",
-      "type": "dining-table",
-      "name": "ダイニングテーブル",
-      "x": 4000,
-      "y": 4900,
-      "w": 1600,
-      "d": 850,
-      "h": 720,
-      "rotation": 0,
-      "color": "#a77d52"
-    },
-    {
-      "id": "chair-1",
-      "type": "chair",
-      "name": "チェア",
-      "x": 3600,
-      "y": 4250,
-      "w": 450,
-      "d": 500,
-      "h": 800,
-      "rotation": 0,
-      "color": "#a77d52"
-    },
-    {
-      "id": "chair-2",
-      "type": "chair",
-      "name": "チェア",
-      "x": 4400,
-      "y": 4250,
-      "w": 450,
-      "d": 500,
-      "h": 800,
-      "rotation": 0,
-      "color": "#a77d52"
-    },
-    {
-      "id": "chair-3",
-      "type": "chair",
-      "name": "チェア",
-      "x": 3600,
-      "y": 5550,
-      "w": 450,
-      "d": 500,
-      "h": 800,
-      "rotation": 180,
-      "color": "#a77d52"
-    },
-    {
-      "id": "chair-4",
-      "type": "chair",
-      "name": "チェア",
-      "x": 4400,
-      "y": 5550,
-      "w": 450,
-      "d": 500,
-      "h": 800,
-      "rotation": 180,
-      "color": "#a77d52"
-    },
-    {
-      "id": "rug-1",
-      "type": "rug",
-      "name": "ラグ",
-      "x": 1650,
-      "y": 6300,
-      "w": 2000,
-      "d": 1400,
-      "h": 10,
-      "rotation": 90,
-      "color": "#c8bba6"
-    },
-    {
-      "id": "sofa-1",
-      "type": "sofa",
-      "name": "ソファ",
-      "x": 2700,
-      "y": 6300,
-      "w": 2000,
-      "d": 850,
-      "h": 800,
-      "rotation": 90,
-      "color": "#8c8478"
-    },
-    {
-      "id": "low-table-1",
-      "type": "low-table",
-      "name": "ローテーブル",
-      "x": 1550,
-      "y": 6300,
-      "w": 1000,
-      "d": 500,
-      "h": 380,
-      "rotation": 90,
-      "color": "#a77d52"
-    },
-    {
-      "id": "tv-board-1",
-      "type": "tv-board",
-      "name": "テレビボード",
-      "x": 260,
-      "y": 6300,
-      "w": 1800,
-      "d": 400,
-      "h": 400,
-      "rotation": 270,
-      "color": "#5e4030"
-    },
-    {
-      "id": "plant-1",
-      "type": "plant",
-      "name": "観葉植物",
-      "x": 450,
-      "y": 7750,
-      "w": 450,
-      "d": 450,
-      "h": 1400,
-      "rotation": 0,
-      "color": "#4f6b3a"
-    },
-    {
-      "id": "bed-1",
-      "type": "bed",
-      "name": "ベッド（ダブル）",
-      "x": 8700,
-      "y": 5620,
-      "w": 1400,
-      "d": 2000,
-      "h": 450,
-      "rotation": 0,
-      "color": "#e8e4dc"
-    },
-    {
-      "id": "desk-1",
-      "type": "desk",
-      "name": "デスク",
-      "x": 9650,
-      "y": 4100,
-      "w": 1200,
-      "d": 600,
-      "h": 720,
-      "rotation": 90,
-      "color": "#c9a26f"
-    },
-    {
-      "id": "chair-5",
-      "type": "chair",
-      "name": "デスクチェア",
-      "x": 9100,
-      "y": 4100,
-      "w": 450,
-      "d": 500,
-      "h": 800,
-      "rotation": 270,
-      "color": "#3a3b3d"
-    },
-    {
-      "id": "bed-2",
-      "type": "bed",
-      "name": "ベッド（シングル）",
-      "x": 620,
-      "y": 1100,
-      "w": 1000,
-      "d": 2000,
-      "h": 450,
-      "rotation": 0,
-      "color": "#e8e4dc"
-    },
-    {
-      "id": "storage-2",
-      "type": "storage",
-      "name": "ワードローブ",
-      "x": 2800,
-      "y": 3280,
-      "w": 1200,
-      "d": 600,
-      "h": 1800,
-      "rotation": 180,
-      "color": "#d9cdb8"
+      "furniture": [
+        {
+          "id": "kitchen-1",
+          "type": "kitchen",
+          "name": "キッチン",
+          "x": 5985,
+          "y": 4100,
+          "w": 2550,
+          "d": 650,
+          "h": 850,
+          "rotation": 90,
+          "color": "#f0eeea"
+        },
+        {
+          "id": "storage-1",
+          "type": "storage",
+          "name": "食器棚",
+          "x": 4200,
+          "y": 3015,
+          "w": 1000,
+          "d": 450,
+          "h": 1800,
+          "rotation": 0,
+          "color": "#d9cdb8"
+        },
+        {
+          "id": "dining-table-1",
+          "type": "dining-table",
+          "name": "ダイニングテーブル",
+          "x": 4000,
+          "y": 4900,
+          "w": 1600,
+          "d": 850,
+          "h": 720,
+          "rotation": 0,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-1",
+          "type": "chair",
+          "name": "チェア",
+          "x": 3600,
+          "y": 4250,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 0,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-2",
+          "type": "chair",
+          "name": "チェア",
+          "x": 4400,
+          "y": 4250,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 0,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-3",
+          "type": "chair",
+          "name": "チェア",
+          "x": 3600,
+          "y": 5550,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 180,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-4",
+          "type": "chair",
+          "name": "チェア",
+          "x": 4400,
+          "y": 5550,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 180,
+          "color": "#a77d52"
+        },
+        {
+          "id": "rug-1",
+          "type": "rug",
+          "name": "ラグ",
+          "x": 1650,
+          "y": 6300,
+          "w": 2000,
+          "d": 1400,
+          "h": 10,
+          "rotation": 90,
+          "color": "#c8bba6"
+        },
+        {
+          "id": "sofa-1",
+          "type": "sofa",
+          "name": "ソファ",
+          "x": 2700,
+          "y": 6300,
+          "w": 2000,
+          "d": 850,
+          "h": 800,
+          "rotation": 90,
+          "color": "#8c8478"
+        },
+        {
+          "id": "low-table-1",
+          "type": "low-table",
+          "name": "ローテーブル",
+          "x": 1550,
+          "y": 6300,
+          "w": 1000,
+          "d": 500,
+          "h": 380,
+          "rotation": 90,
+          "color": "#a77d52"
+        },
+        {
+          "id": "tv-board-1",
+          "type": "tv-board",
+          "name": "テレビボード",
+          "x": 260,
+          "y": 6300,
+          "w": 1800,
+          "d": 400,
+          "h": 400,
+          "rotation": 270,
+          "color": "#5e4030"
+        },
+        {
+          "id": "plant-1",
+          "type": "plant",
+          "name": "観葉植物",
+          "x": 450,
+          "y": 7750,
+          "w": 450,
+          "d": 450,
+          "h": 1400,
+          "rotation": 0,
+          "color": "#4f6b3a"
+        },
+        {
+          "id": "bed-1",
+          "type": "bed",
+          "name": "ベッド（ダブル）",
+          "x": 8700,
+          "y": 5620,
+          "w": 1400,
+          "d": 2000,
+          "h": 450,
+          "rotation": 0,
+          "color": "#e8e4dc"
+        },
+        {
+          "id": "desk-1",
+          "type": "desk",
+          "name": "デスク",
+          "x": 9650,
+          "y": 4100,
+          "w": 1200,
+          "d": 600,
+          "h": 720,
+          "rotation": 90,
+          "color": "#c9a26f"
+        },
+        {
+          "id": "chair-5",
+          "type": "chair",
+          "name": "デスクチェア",
+          "x": 9100,
+          "y": 4100,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 270,
+          "color": "#3a3b3d"
+        },
+        {
+          "id": "bed-2",
+          "type": "bed",
+          "name": "ベッド（シングル）",
+          "x": 620,
+          "y": 1100,
+          "w": 1000,
+          "d": 2000,
+          "h": 450,
+          "rotation": 0,
+          "color": "#e8e4dc"
+        },
+        {
+          "id": "storage-2",
+          "type": "storage",
+          "name": "ワードローブ",
+          "x": 2800,
+          "y": 3280,
+          "w": 1200,
+          "d": 600,
+          "h": 1800,
+          "rotation": 180,
+          "color": "#d9cdb8"
+        }
+      ]
     }
   ]
 }

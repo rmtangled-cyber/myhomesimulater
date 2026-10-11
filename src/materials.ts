@@ -204,6 +204,7 @@ export const MATERIALS: MaterialDef[] = [
   { id: 'floor-tile-white', name: 'タイル（ホワイト 300角）', categories: ['floor'], tile: [1200, 1200], roughness: 0.3, draw: tiles('#e9e6e0', '#c9c4bb', 4, 4, 0.03) },
   { id: 'floor-tile-stone', name: 'タイル（石目グレー 600角）', categories: ['floor'], tile: [1200, 1200], roughness: 0.4, draw: tiles('#8f8b85', '#6e6a65', 2, 2, 0.08) },
   { id: 'floor-cushion-white', name: 'クッションフロア（白）', categories: ['floor'], tile: [900, 900], roughness: 0.6, draw: plainCross('#ecebe6', 0.04) },
+  { id: 'floor-concrete', name: 'コンクリート（土間・車庫）', categories: ['floor'], tile: [1800, 900], roughness: 0.9, draw: concrete('#a8a6a1') },
   { id: 'floor-tatami', name: '畳', categories: ['floor'], tile: [910, 1820], roughness: 0.8, draw: tatami() },
 
   // ---- 壁・天井クロス ----

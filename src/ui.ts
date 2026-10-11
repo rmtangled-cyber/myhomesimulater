@@ -13,6 +13,10 @@ export interface PanelState {
   planName: string;
   plans: string[];
   selection: Selection;
+  /** 部屋・家具の一覧を出し、家具を追加する階 */
+  floor: number;
+  /** 俯瞰で表示している階 */
+  floorView: number | 'all';
   mode: ViewMode;
   time: TimeOfDay;
   cutaway: boolean;
@@ -27,6 +31,7 @@ export interface PanelActions {
   setTime(time: TimeOfDay): void;
   setCutaway(on: boolean): void;
   setLabels(on: boolean): void;
+  setFloorView(view: number | 'all'): void;
   switchPlan(name: string): void;
   duplicatePlan(): void;
   select(sel: Selection): void;
@@ -106,9 +111,15 @@ export class Panel {
     const s = this.state;
     const seg = (group: string, items: [string, string][], current: string) =>
       `<div class="seg">${items.map(([v, l]) => `<button data-action="${group}" data-value="${v}" class="${v === current ? 'on' : ''}">${l}</button>`).join('')}</div>`;
+    const floors = s.plan.floors;
+    const floorSeg =
+      floors.length > 1
+        ? seg('floor-view', [...floors.map((f, i): [string, string] => [String(i), f.name]), ['all', '外観']], s.mode === 'walk' ? '' : String(s.floorView))
+        : '';
     return `
       <section>
         <h2>表示</h2>
+        ${floorSeg}
         ${seg('mode', [['orbit', '俯瞰'], ['walk', 'ウォークスルー']], s.mode)}
         ${seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
         <div class="row">
@@ -127,16 +138,16 @@ export class Panel {
     const sel = this.state.selection;
     if (!sel) return `<section class="selected empty"><h2>選択中</h2><p class="hint">家具や床をクリックすると、ここで編集できます。</p></section>`;
     if (sel.kind === 'furniture') {
-      const f = this.state.plan.furniture.find((x) => x.id === sel.id);
+      const f = this.state.plan.floors.flatMap((fl) => fl.furniture).find((x) => x.id === sel.id);
       return f ? this.furnitureEditor(f) : '';
     }
-    const r = this.state.plan.rooms.find((x) => x.id === sel.id);
+    const r = this.state.plan.floors.flatMap((fl) => fl.rooms).find((x) => x.id === sel.id);
     return r ? this.roomEditor(r) : '';
   }
 
   private furnitureEditor(f: Furniture): string {
     const num = (field: keyof Furniture, label: string, step = 10) =>
-      `<label class="num">${label}<input type="number" step="${step}" data-furn="${field}" value="${f[field]}"></label>`;
+      `<label class="num">${label}<input type="number" step="${step}" data-furn="${field}" value="${f[field] ?? 0}"></label>`;
     return `
       <section class="selected">
         <h2>選択中の家具 <small>${esc(getFurnitureType(f.type).label)}</small></h2>
@@ -144,6 +155,7 @@ export class Panel {
         <div class="grid3">
           ${num('x', 'X（東へ）')}${num('y', 'Y（南へ）')}${num('rotation', '回転°', 15)}
           ${num('w', '幅')}${num('d', '奥行')}${num('h', '高さ')}
+          ${num('z', '床からの高さ')}
         </div>
         <div class="row">
           <label class="color">色 <input type="color" data-furn="color" value="${esc(f.color)}"></label>
@@ -162,24 +174,32 @@ export class Panel {
         <label class="wide">名前<input type="text" data-room="name" value="${esc(r.name)}"></label>
         <h3>床</h3>${materialSelect('floor', r.floor, 'data-room="floor"')}
         <h3>壁</h3>${materialSelect('wall', r.wall, 'data-room="wall"')}
-        <h3>天井</h3>${materialSelect('wall', r.ceiling, 'data-room="ceiling"')}
+        <h3>天井</h3>${materialSelect('wall', r.ceiling, 'data-room="ceiling"', true)}
         <h3>アクセントクロス</h3>
         ${SIDES.map(([side, label]) => `<div class="accent"><span>${label}の壁</span>${materialSelect('wall', r.accent?.[side] ?? '', `data-accent="${side}"`, true)}</div>`).join('')}
         <div class="row"><button data-action="walk-into" data-value="${esc(r.id)}">この部屋に入る</button></div>
       </section>`;
   }
 
+  private get floor() {
+    return this.state.plan.floors[this.state.floor];
+  }
+
+  private floorTitle(title: string): string {
+    return this.state.plan.floors.length > 1 ? `${title} <small>${esc(this.floor.name)}</small>` : title;
+  }
+
   private roomsSection(): string {
     const sel = this.state.selection;
-    const items = this.state.plan.rooms
+    const items = this.floor.rooms
       .map((r) => `<li><button data-action="select-room" data-value="${esc(r.id)}" class="${sel?.kind === 'room' && sel.id === r.id ? 'on' : ''}">${esc(r.name)}</button></li>`)
       .join('');
-    return `<section><h2>部屋</h2><ul class="chips">${items}</ul></section>`;
+    return `<section><h2>${this.floorTitle('部屋')}</h2><ul class="chips">${items}</ul></section>`;
   }
 
   private addSection(): string {
     const opts = FURNITURE_TYPES.map((t) => `<option value="${t.type}">${esc(t.label)}</option>`).join('');
-    const list = this.state.plan.furniture
+    const list = this.floor.furniture
       .map((f) => {
         const on = this.state.selection?.kind === 'furniture' && this.state.selection.id === f.id;
         return `<li><button data-action="select-furn" data-value="${esc(f.id)}" class="${on ? 'on' : ''}"><i style="background:${esc(f.color)}"></i>${esc(f.name)}</button></li>`;
@@ -187,7 +207,7 @@ export class Panel {
       .join('');
     return `
       <section>
-        <h2>家具</h2>
+        <h2>${this.floorTitle('家具')}</h2>
         <div class="row"><select id="add-type">${opts}</select><button data-action="add-furn">＋ 追加</button></div>
         <ul class="chips">${list}</ul>
       </section>`;
@@ -219,6 +239,7 @@ export class Panel {
     switch (btn.dataset.action) {
       case 'mode': return a.setMode(v as ViewMode);
       case 'time': return a.setTime(v as TimeOfDay);
+      case 'floor-view': return a.setFloorView(v === 'all' ? 'all' : Number(v));
       case 'undo': return a.undo();
       case 'redo': return a.redo();
       case 'screenshot': return a.screenshot();

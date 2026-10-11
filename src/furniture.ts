@@ -137,6 +137,38 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'stairs',
+    label: '階段',
+    // 幅 w、奥行き d（踏面の並ぶ方向）、高さ h（上の階までの高さ）。正面（+z）が上り口
+    defaults: { w: 800, d: 3640, h: 2990, color: '#c9a26f' },
+    build: ({ w, d, h }, mat) => {
+      const steps = Math.max(2, Math.round(h / 200));
+      const rise = h / steps;
+      const tread = d / steps;
+      return Array.from({ length: steps }, (_, i) => box(w, rise * (i + 1), tread, 0, 0, d / 2 - tread * (i + 0.5), mat));
+    },
+  },
+  {
+    type: 'car',
+    label: '車',
+    defaults: { w: 1800, d: 4700, h: 1500, color: '#e9e9ea' },
+    build: ({ w, d, h }, mat, sub) => {
+      const r = 330;
+      const body = box(w, h * 0.42, d, 0, r * 0.6, 0, mat);
+      const cabin = box(w * 0.86, h - h * 0.42 - r * 0.6, d * 0.48, 0, r * 0.6 + h * 0.42, -d * 0.04, sub);
+      const wheels = [-1, 1].flatMap((sx) =>
+        [-1, 1].map((sz) => {
+          const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 220, 20), sub);
+          m.rotation.z = Math.PI / 2;
+          m.position.set(sx * (w / 2 - 120), r, sz * (d / 2 - 750));
+          m.castShadow = true;
+          return m;
+        }),
+      );
+      return [body, cabin, ...wheels];
+    },
+  },
+  {
     type: 'box',
     label: 'その他（箱）',
     defaults: { w: 600, d: 600, h: 600, color: '#b5b0a8' },
@@ -157,7 +189,7 @@ export function buildFurniture(f: Furniture): THREE.Group {
   const sub = new THREE.MeshStandardMaterial({ color: subColor, roughness: 0.6 });
   const g = new THREE.Group();
   for (const o of getFurnitureType(f.type).build(f, mat, sub)) g.add(o);
-  g.position.set(f.x, 0, f.y);
+  g.position.set(f.x, f.z ?? 0, f.y);
   // 平面図で時計回り = 上から見て時計回り = three.js の y 軸まわりで負の回転
   g.rotation.y = -THREE.MathUtils.degToRad(f.rotation);
   g.userData.furnitureId = f.id;

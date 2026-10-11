@@ -1,0 +1,1485 @@
+{
+  "name": "我が家（木造3階建て）",
+  "grid": 910,
+  "wallThickness": 120,
+  "exterior": "exterior-siding-white",
+  "groundLevel": -560,
+  "floors": [
+    {
+      "id": "1f",
+      "name": "1階",
+      "elevation": 0,
+      "height": 2990,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "1f-bath",
+          "name": "浴室",
+          "polygon": [
+            [
+              0,
+              0
+            ],
+            [
+              1820,
+              0
+            ],
+            [
+              1820,
+              2275
+            ],
+            [
+              0,
+              2275
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "wall-tile-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-ps",
+          "name": "PS",
+          "polygon": [
+            [
+              0,
+              2275
+            ],
+            [
+              1820,
+              2275
+            ],
+            [
+              1820,
+              2730
+            ],
+            [
+              0,
+              2730
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-washroom",
+          "name": "洗面脱衣室",
+          "polygon": [
+            [
+              1820,
+              0
+            ],
+            [
+              3640,
+              0
+            ],
+            [
+              3640,
+              2730
+            ],
+            [
+              1820,
+              2730
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-powder",
+          "name": "洗面室",
+          "polygon": [
+            [
+              0,
+              2730
+            ],
+            [
+              910,
+              2730
+            ],
+            [
+              910,
+              3640
+            ],
+            [
+              0,
+              3640
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-stairs",
+          "name": "階段",
+          "polygon": [
+            [
+              910,
+              2730
+            ],
+            [
+              3640,
+              2730
+            ],
+            [
+              3640,
+              3640
+            ],
+            [
+              910,
+              3640
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": ""
+        },
+        {
+          "id": "1f-hall",
+          "name": "ホール",
+          "polygon": [
+            [
+              3640,
+              0
+            ],
+            [
+              4550,
+              0
+            ],
+            [
+              4550,
+              4777.5
+            ],
+            [
+              1820,
+              4777.5
+            ],
+            [
+              1820,
+              4322.5
+            ],
+            [
+              0,
+              4322.5
+            ],
+            [
+              0,
+              3640
+            ],
+            [
+              3640,
+              3640
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-shoes",
+          "name": "シューズクローク",
+          "polygon": [
+            [
+              0,
+              4322.5
+            ],
+            [
+              1820,
+              4322.5
+            ],
+            [
+              1820,
+              6825
+            ],
+            [
+              0,
+              6825
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "1f-genkan",
+          "name": "玄関",
+          "polygon": [
+            [
+              1820,
+              4777.5
+            ],
+            [
+              4550,
+              4777.5
+            ],
+            [
+              4550,
+              5687.5
+            ],
+            [
+              1820,
+              5687.5
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "1f-porch",
+          "name": "ポーチ",
+          "polygon": [
+            [
+              1820,
+              5687.5
+            ],
+            [
+              4550,
+              5687.5
+            ],
+            [
+              4550,
+              6825
+            ],
+            [
+              1820,
+              6825
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "exterior-siding-white",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "1f-wic",
+          "name": "ウォークインクローゼット",
+          "polygon": [
+            [
+              4550,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              1365
+            ],
+            [
+              4550,
+              1365
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-garage",
+          "name": "車庫",
+          "polygon": [
+            [
+              4550,
+              1365
+            ],
+            [
+              8190,
+              1365
+            ],
+            [
+              8190,
+              7280
+            ],
+            [
+              4550,
+              7280
+            ]
+          ],
+          "floor": "floor-concrete",
+          "wall": "cross-light-gray",
+          "ceiling": "cross-white",
+          "level": -560,
+          "ceilingHeight": 2960
+        }
+      ],
+      "openings": [
+        {
+          "id": "1f-bath-door",
+          "type": "door",
+          "at": [
+            1820,
+            1760
+          ],
+          "width": 750,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-washroom-door",
+          "type": "door",
+          "at": [
+            3640,
+            1300
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-washroom-window",
+          "type": "window",
+          "at": [
+            2730,
+            0
+          ],
+          "width": 1600,
+          "height": 300,
+          "sill": 2100
+        },
+        {
+          "id": "1f-hall-window",
+          "type": "window",
+          "at": [
+            4095,
+            0
+          ],
+          "width": 690,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-powder-opening",
+          "type": "opening",
+          "at": [
+            455,
+            3640
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-stairs-hall",
+          "type": "opening",
+          "at": [
+            2275,
+            3640
+          ],
+          "width": 2730,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "1f-stairs-hall-east",
+          "type": "opening",
+          "at": [
+            3640,
+            3185
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "1f-wic-door",
+          "type": "opening",
+          "at": [
+            4550,
+            900
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-hall-shoes",
+          "type": "opening",
+          "at": [
+            1365,
+            4322.5
+          ],
+          "width": 800,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "1f-hall-genkan",
+          "type": "opening",
+          "at": [
+            3185,
+            4777.5
+          ],
+          "width": 2730,
+          "height": 2550,
+          "sill": -150
+        },
+        {
+          "id": "1f-shoes-genkan",
+          "type": "opening",
+          "at": [
+            1820,
+            5232.5
+          ],
+          "width": 910,
+          "height": 2150,
+          "sill": -150
+        },
+        {
+          "id": "1f-entrance-door",
+          "type": "door",
+          "at": [
+            3500,
+            5687.5
+          ],
+          "width": 900,
+          "height": 2100,
+          "sill": -150
+        },
+        {
+          "id": "1f-porch-front",
+          "type": "opening",
+          "at": [
+            3185,
+            6825
+          ],
+          "width": 2730,
+          "height": 2400,
+          "sill": -150
+        },
+        {
+          "id": "1f-garage-shutter",
+          "type": "opening",
+          "at": [
+            6370,
+            7280
+          ],
+          "width": 3400,
+          "height": 2400,
+          "sill": -560
+        }
+      ],
+      "furniture": [
+        {
+          "id": "stairs-1",
+          "type": "stairs",
+          "name": "階段（1階→2階）",
+          "x": 2275,
+          "y": 3185,
+          "w": 850,
+          "d": 2730,
+          "h": 2990,
+          "rotation": 90,
+          "color": "#c9a26f"
+        },
+        {
+          "id": "car-1",
+          "type": "car",
+          "name": "車",
+          "x": 6370,
+          "y": 4300,
+          "w": 1800,
+          "d": 4700,
+          "h": 1500,
+          "rotation": 0,
+          "color": "#e9e9ea",
+          "z": -560
+        },
+        {
+          "id": "vanity-1",
+          "type": "storage",
+          "name": "洗面化粧台",
+          "x": 3150,
+          "y": 335,
+          "w": 900,
+          "d": 550,
+          "h": 850,
+          "rotation": 0,
+          "color": "#f0eeea"
+        },
+        {
+          "id": "washer-1",
+          "type": "box",
+          "name": "洗濯機",
+          "x": 3180,
+          "y": 2100,
+          "w": 640,
+          "d": 640,
+          "h": 1000,
+          "rotation": 270,
+          "color": "#f4f4f4"
+        },
+        {
+          "id": "vanity-2",
+          "type": "storage",
+          "name": "洗面化粧台 W750",
+          "x": 455,
+          "y": 3040,
+          "w": 750,
+          "d": 500,
+          "h": 850,
+          "rotation": 0,
+          "color": "#f0eeea"
+        },
+        {
+          "id": "shoe-shelf-1",
+          "type": "storage",
+          "name": "可動棚（シューズクローク）",
+          "x": 210,
+          "y": 5500,
+          "w": 1800,
+          "d": 300,
+          "h": 1800,
+          "rotation": 270,
+          "color": "#d9cdb8",
+          "z": -150
+        }
+      ]
+    },
+    {
+      "id": "2f",
+      "name": "2階",
+      "elevation": 2990,
+      "height": 3020,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "2f-bedroom",
+          "name": "寝室",
+          "polygon": [
+            [
+              0,
+              0
+            ],
+            [
+              3640,
+              0
+            ],
+            [
+              3640,
+              2502.5
+            ],
+            [
+              0,
+              2502.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "2f-wic",
+          "name": "WIC",
+          "polygon": [
+            [
+              3640,
+              0
+            ],
+            [
+              5232.5,
+              0
+            ],
+            [
+              5232.5,
+              1592.5
+            ],
+            [
+              3640,
+              1592.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "2f-storage-n",
+          "name": "納戸",
+          "polygon": [
+            [
+              5232.5,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              1592.5
+            ],
+            [
+              5232.5,
+              1592.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "2f-toilet",
+          "name": "トイレ",
+          "polygon": [
+            [
+              0,
+              2502.5
+            ],
+            [
+              910,
+              2502.5
+            ],
+            [
+              910,
+              4322.5
+            ],
+            [
+              0,
+              4322.5
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "2f-stairs-a",
+          "name": "階段",
+          "polygon": [
+            [
+              910,
+              2502.5
+            ],
+            [
+              1820,
+              2502.5
+            ],
+            [
+              1820,
+              3412.5
+            ],
+            [
+              910,
+              3412.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "void": true
+        },
+        {
+          "id": "2f-stairs-b",
+          "name": "階段",
+          "polygon": [
+            [
+              1820,
+              2502.5
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              4550,
+              3412.5
+            ],
+            [
+              1820,
+              3412.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "",
+          "void": true
+        },
+        {
+          "id": "2f-storage-sw",
+          "name": "納戸",
+          "polygon": [
+            [
+              0,
+              4322.5
+            ],
+            [
+              1820,
+              4322.5
+            ],
+            [
+              1820,
+              6825
+            ],
+            [
+              0,
+              6825
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "2f-ldk",
+          "name": "LDK",
+          "polygon": [
+            [
+              3640,
+              1592.5
+            ],
+            [
+              8190,
+              1592.5
+            ],
+            [
+              8190,
+              7280
+            ],
+            [
+              1820,
+              7280
+            ],
+            [
+              1820,
+              4322.5
+            ],
+            [
+              910,
+              4322.5
+            ],
+            [
+              910,
+              3412.5
+            ],
+            [
+              4550,
+              3412.5
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              3640,
+              2502.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        }
+      ],
+      "openings": [
+        {
+          "id": "2f-bedroom-door",
+          "type": "door",
+          "at": [
+            3640,
+            2047.5
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "2f-bedroom-wic",
+          "type": "opening",
+          "at": [
+            3640,
+            1000
+          ],
+          "width": 650,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "2f-storage-n-opening",
+          "type": "opening",
+          "at": [
+            7050,
+            1592.5
+          ],
+          "width": 1240,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "2f-toilet-door",
+          "type": "door",
+          "at": [
+            910,
+            3870
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "2f-storage-sw-door",
+          "type": "door",
+          "at": [
+            1365,
+            4322.5
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "2f-stairs-split",
+          "type": "opening",
+          "at": [
+            1820,
+            2957.5
+          ],
+          "width": 910,
+          "height": 3020,
+          "sill": 0
+        },
+        {
+          "id": "2f-stairs-ldk",
+          "type": "opening",
+          "at": [
+            2730,
+            3412.5
+          ],
+          "width": 3640,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "2f-stairs-landing",
+          "type": "opening",
+          "at": [
+            4550,
+            2957.5
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "2f-stairs-top",
+          "type": "opening",
+          "at": [
+            4095,
+            2502.5
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "2f-bedroom-window",
+          "type": "window",
+          "at": [
+            1790,
+            0
+          ],
+          "width": 1650,
+          "height": 500,
+          "sill": 1500
+        },
+        {
+          "id": "2f-ldk-east-1",
+          "type": "window",
+          "at": [
+            8190,
+            2020
+          ],
+          "width": 600,
+          "height": 2000,
+          "sill": 200
+        },
+        {
+          "id": "2f-ldk-east-2",
+          "type": "window",
+          "at": [
+            8190,
+            6800
+          ],
+          "width": 600,
+          "height": 2000,
+          "sill": 200
+        },
+        {
+          "id": "2f-ldk-south",
+          "type": "window",
+          "at": [
+            7700,
+            7280
+          ],
+          "width": 830,
+          "height": 2000,
+          "sill": 200
+        },
+        {
+          "id": "2f-ldk-west",
+          "type": "window",
+          "at": [
+            1820,
+            7052.5
+          ],
+          "width": 260,
+          "height": 2000,
+          "sill": 200
+        }
+      ],
+      "furniture": [
+        {
+          "id": "stairs-2",
+          "type": "stairs",
+          "name": "階段（2階→3階）",
+          "x": 2730,
+          "y": 2957.5,
+          "w": 850,
+          "d": 3640,
+          "h": 3020,
+          "rotation": 90,
+          "color": "#c9a26f"
+        },
+        {
+          "id": "island-kitchen-1",
+          "type": "island-kitchen",
+          "name": "キッチン（シンク側）",
+          "x": 6170,
+          "y": 3490,
+          "w": 1830,
+          "d": 940,
+          "h": 850,
+          "rotation": 90,
+          "color": "#f0eeea"
+        },
+        {
+          "id": "kitchen-1",
+          "type": "kitchen",
+          "name": "キッチン（コンロ側）",
+          "x": 7805,
+          "y": 3490,
+          "w": 1830,
+          "d": 650,
+          "h": 850,
+          "rotation": 90,
+          "color": "#f0eeea"
+        },
+        {
+          "id": "dining-table-1",
+          "type": "dining-table",
+          "name": "ダイニングテーブル",
+          "x": 6135,
+          "y": 5100,
+          "w": 1400,
+          "d": 850,
+          "h": 720,
+          "rotation": 90,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-1",
+          "type": "chair",
+          "name": "チェア",
+          "x": 5450,
+          "y": 4750,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 270,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-2",
+          "type": "chair",
+          "name": "チェア",
+          "x": 5450,
+          "y": 5400,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 270,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-3",
+          "type": "chair",
+          "name": "チェア",
+          "x": 6820,
+          "y": 4750,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 90,
+          "color": "#a77d52"
+        },
+        {
+          "id": "chair-4",
+          "type": "chair",
+          "name": "チェア",
+          "x": 6820,
+          "y": 5400,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 90,
+          "color": "#a77d52"
+        },
+        {
+          "id": "sofa-1",
+          "type": "sofa",
+          "name": "ソファ",
+          "x": 4540,
+          "y": 5480,
+          "w": 2080,
+          "d": 800,
+          "h": 800,
+          "rotation": 90,
+          "color": "#8c8478"
+        },
+        {
+          "id": "ottoman-1",
+          "type": "box",
+          "name": "オットマン",
+          "x": 3760,
+          "y": 6140,
+          "w": 760,
+          "d": 760,
+          "h": 400,
+          "rotation": 0,
+          "color": "#8c8478"
+        },
+        {
+          "id": "tv-board-1",
+          "type": "tv-board",
+          "name": "テレビボード",
+          "x": 2090,
+          "y": 5470,
+          "w": 1500,
+          "d": 400,
+          "h": 400,
+          "rotation": 270,
+          "color": "#5e4030"
+        },
+        {
+          "id": "bed-1",
+          "type": "bed",
+          "name": "ベッド",
+          "x": 1145,
+          "y": 1275,
+          "w": 1800,
+          "d": 2000,
+          "h": 450,
+          "rotation": 270,
+          "color": "#e8e4dc"
+        }
+      ]
+    },
+    {
+      "id": "3f",
+      "name": "3階",
+      "elevation": 6010,
+      "height": 2730,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "3f-toilet",
+          "name": "トイレ",
+          "polygon": [
+            [
+              1820,
+              1592.5
+            ],
+            [
+              3640,
+              1592.5
+            ],
+            [
+              3640,
+              2502.5
+            ],
+            [
+              1820,
+              2502.5
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "3f-stairs",
+          "name": "階段",
+          "polygon": [
+            [
+              1820,
+              2502.5
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              4550,
+              3412.5
+            ],
+            [
+              1820,
+              3412.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "void": true,
+          "ceilingHeight": 2500
+        },
+        {
+          "id": "3f-hall",
+          "name": "ホール",
+          "polygon": [
+            [
+              3640,
+              1592.5
+            ],
+            [
+              5460,
+              1592.5
+            ],
+            [
+              5460,
+              4550
+            ],
+            [
+              4550,
+              4550
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              3640,
+              2502.5
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "3f-room1",
+          "name": "洋室1",
+          "polygon": [
+            [
+              1820,
+              3412.5
+            ],
+            [
+              4550,
+              3412.5
+            ],
+            [
+              4550,
+              7280
+            ],
+            [
+              1820,
+              7280
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "3f-room2",
+          "name": "洋室2",
+          "polygon": [
+            [
+              5460,
+              1592.5
+            ],
+            [
+              8190,
+              1592.5
+            ],
+            [
+              8190,
+              4550
+            ],
+            [
+              5460,
+              4550
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "3f-room3",
+          "name": "洋室3",
+          "polygon": [
+            [
+              4550,
+              4550
+            ],
+            [
+              8190,
+              4550
+            ],
+            [
+              8190,
+              7280
+            ],
+            [
+              5460,
+              7280
+            ],
+            [
+              5460,
+              5460
+            ],
+            [
+              4550,
+              5460
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "3f-closet",
+          "name": "クローゼット",
+          "polygon": [
+            [
+              4550,
+              5460
+            ],
+            [
+              5460,
+              5460
+            ],
+            [
+              5460,
+              7280
+            ],
+            [
+              4550,
+              7280
+            ]
+          ],
+          "floor": "floor-oak",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        }
+      ],
+      "openings": [
+        {
+          "id": "3f-toilet-door",
+          "type": "door",
+          "at": [
+            3640,
+            2047.5
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "3f-stairs-hall",
+          "type": "opening",
+          "at": [
+            4550,
+            2957.5
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "3f-room1-door",
+          "type": "door",
+          "at": [
+            4550,
+            3850
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "3f-room2-door",
+          "type": "door",
+          "at": [
+            5460,
+            2100
+          ],
+          "width": 700,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "3f-room3-door",
+          "type": "door",
+          "at": [
+            5005,
+            4550
+          ],
+          "width": 780,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "3f-closet-doors",
+          "type": "opening",
+          "at": [
+            5460,
+            6370
+          ],
+          "width": 1600,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "3f-north-window",
+          "type": "window",
+          "at": [
+            4320,
+            1592.5
+          ],
+          "width": 1600,
+          "height": 300,
+          "sill": 1700
+        },
+        {
+          "id": "3f-room1-west-1",
+          "type": "window",
+          "at": [
+            1820,
+            4810
+          ],
+          "width": 1190,
+          "height": 300,
+          "sill": 1700
+        },
+        {
+          "id": "3f-room1-west-2",
+          "type": "window",
+          "at": [
+            1820,
+            6170
+          ],
+          "width": 1190,
+          "height": 300,
+          "sill": 1700
+        },
+        {
+          "id": "3f-room3-east",
+          "type": "window",
+          "at": [
+            8190,
+            5950
+          ],
+          "width": 1650,
+          "height": 300,
+          "sill": 1700
+        },
+        {
+          "id": "3f-room3-south",
+          "type": "window",
+          "at": [
+            7700,
+            7280
+          ],
+          "width": 830,
+          "height": 2000,
+          "sill": 0
+        }
+      ],
+      "furniture": [
+        {
+          "id": "desk-1",
+          "type": "desk",
+          "name": "デスク",
+          "x": 2560,
+          "y": 6930,
+          "w": 1270,
+          "d": 600,
+          "h": 720,
+          "rotation": 180,
+          "color": "#c9a26f"
+        },
+        {
+          "id": "chair-5",
+          "type": "chair",
+          "name": "デスクチェア",
+          "x": 2560,
+          "y": 6400,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 0,
+          "color": "#3a3b3d"
+        },
+        {
+          "id": "piano-1",
+          "type": "storage",
+          "name": "ピアノ",
+          "x": 5790,
+          "y": 3800,
+          "w": 1400,
+          "d": 520,
+          "h": 1100,
+          "rotation": 270,
+          "color": "#2b2b2b"
+        },
+        {
+          "id": "bed-2",
+          "type": "bed",
+          "name": "ベッド",
+          "x": 7110,
+          "y": 5170,
+          "w": 1000,
+          "d": 2000,
+          "h": 450,
+          "rotation": 90,
+          "color": "#e8e4dc"
+        },
+        {
+          "id": "desk-2",
+          "type": "desk",
+          "name": "デスク",
+          "x": 7790,
+          "y": 6420,
+          "w": 730,
+          "d": 590,
+          "h": 720,
+          "rotation": 90,
+          "color": "#c9a26f"
+        },
+        {
+          "id": "chair-6",
+          "type": "chair",
+          "name": "デスクチェア",
+          "x": 7300,
+          "y": 6420,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 270,
+          "color": "#3a3b3d"
+        }
+      ]
+    }
+  ]
+}

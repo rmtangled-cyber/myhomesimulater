@@ -18,15 +18,22 @@ import {
 } from './geometry';
 import { buildFurniture, getFurnitureType } from './furniture';
 import { getMaterial, getMaterialDef } from './materials';
-import type { Plan, Point, Room } from './types';
+import type { Floor, Plan, Point, Room } from './types';
+
+export interface BuiltFloor {
+  group: THREE.Group;
+  /** 部屋の床（クリックで部屋を選ぶのに使う） */
+  floorMeshes: THREE.Mesh[];
+  ceilings: THREE.Mesh[];
+  /** 階の上にかぶせる屋根・上階の床下 */
+  caps: THREE.Mesh[];
+  labels: CSS2DObject[];
+}
 
 export interface BuiltPlan {
   root: THREE.Group;
-  /** 部屋の床（クリックで部屋を選ぶのに使う） */
-  floors: THREE.Mesh[];
-  ceilings: THREE.Mesh[];
+  floors: BuiltFloor[];
   furniture: Map<string, THREE.Group>;
-  labels: CSS2DObject[];
   warnings: string[];
   bounds: THREE.Box3;
 }
@@ -89,39 +96,90 @@ interface Rect {
   v1: number;
 }
 
-/** 長さ len・高さ height の面から開口部をくり抜き、残りを長方形の集まりで返す。 */
-function rectsWithHoles(len: number, height: number, spans: OpeningSpan[]): Rect[] {
+/**
+ * 長さ len、高さ v0〜v1 の面から開口部をくり抜き、残りを長方形の集まりで返す。
+ * 開口部の高さ（sill など）は v と同じ基準（階の FL）で測る。
+ */
+function rectsWithHoles(len: number, v0: number, v1: number, spans: OpeningSpan[]): Rect[] {
   const rects: Rect[] = [];
   let u = 0;
   for (const s of spans) {
-    if (s.u0 > u) rects.push({ u0: u, u1: s.u0, v0: 0, v1: height });
-    const top = Math.min(height, s.opening.sill + s.opening.height);
-    if (s.opening.sill > 0) rects.push({ u0: s.u0, u1: s.u1, v0: 0, v1: s.opening.sill });
-    if (top < height) rects.push({ u0: s.u0, u1: s.u1, v0: top, v1: height });
+    if (s.u0 > u) rects.push({ u0: u, u1: s.u0, v0, v1 });
+    const bottom = Math.max(v0, s.opening.sill);
+    const top = Math.min(v1, s.opening.sill + s.opening.height);
+    if (bottom >= top) {
+      rects.push({ u0: s.u0, u1: s.u1, v0, v1 }); // この面の高さの範囲に開口部がかからない
+    } else {
+      if (bottom > v0) rects.push({ u0: s.u0, u1: s.u1, v0, v1: bottom });
+      if (top < v1) rects.push({ u0: s.u0, u1: s.u1, v0: top, v1 });
+    }
     u = Math.max(u, s.u1);
   }
-  if (u < len) rects.push({ u0: u, u1: len, v0: 0, v1: height });
+  if (u < len) rects.push({ u0: u, u1: len, v0, v1 });
   return rects.filter((r) => r.u1 - r.u0 > 0.5 && r.v1 - r.v0 > 0.5);
 }
+
+const slabMat = new THREE.MeshStandardMaterial({ color: '#b9b6b0', roughness: 0.9 });
+const roofMat = new THREE.MeshStandardMaterial({ color: '#5d5f62', roughness: 0.8 });
+slabMat.userData.shared = roofMat.userData.shared = true;
 
 export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
   const root = new THREE.Group();
   const warnings: string[] = [];
-  const t = plan.wallThickness;
-  const H = plan.ceilingHeight;
+  const furniture = new Map<string, THREE.Group>();
+  const bounds = new THREE.Box3();
 
-  const checkMaterial = (id: string, where: string) => {
-    if (!getMaterialDef(id)) warnings.push(`${where}: 素材ID「${id}」が見つかりません（マゼンタで表示）`);
+  if (!getMaterialDef(plan.exterior)) warnings.push(`外壁: 素材ID「${plan.exterior}」が見つかりません（マゼンタで表示）`);
+
+  const ids = new Set<string>();
+  const floors = plan.floors.map((floor, index) => {
+    for (const x of [...floor.rooms, ...floor.furniture]) {
+      if (ids.has(x.id)) warnings.push(`ID「${x.id}」が重複しています（部屋・家具の ID は全部の階で別にする）`);
+      ids.add(x.id);
+    }
+    const built = buildFloor(plan, floor, index, clip, warnings, furniture);
+    built.group.position.y = floor.elevation;
+    root.add(built.group);
+    for (const r of floor.rooms) {
+      for (const [x, y] of r.polygon) {
+        bounds.expandByPoint(new THREE.Vector3(x, floor.elevation, y));
+        bounds.expandByPoint(new THREE.Vector3(x, floor.elevation + floor.height, y));
+      }
+    }
+    return built;
+  });
+  if (bounds.isEmpty()) bounds.set(new THREE.Vector3(), new THREE.Vector3(10000, 2400, 10000));
+  return { root, floors, furniture, warnings, bounds };
+}
+
+function buildFloor(
+  plan: Plan,
+  floor: Floor,
+  index: number,
+  clip: THREE.Plane[],
+  warnings: string[],
+  furnitureOut: Map<string, THREE.Group>,
+): BuiltFloor {
+  const group = new THREE.Group();
+  group.userData.floorIndex = index;
+  const t = plan.wallThickness;
+  const where = (s: string) => (plan.floors.length > 1 ? `${floor.name} ${s}` : s);
+  const checkMaterial = (id: string, label: string) => {
+    if (id && !getMaterialDef(id)) warnings.push(`${where(label)}: 素材ID「${id}」が見つかりません（マゼンタで表示）`);
   };
 
   // 部屋の外形は面積が正の向きにそろえる（内側の向きを決めるため）
-  const rooms: Room[] = plan.rooms.map((r) => ({
+  const rooms: Room[] = floor.rooms.map((r) => ({
     ...r,
     polygon: signedArea(r.polygon) > 0 ? r.polygon : [...r.polygon].reverse(),
   }));
 
+  // 壁は階の FL から上の階の FL まで。1階だけは地面（と一番低い床）から立ち上げる
+  const lowest = Math.min(0, ...rooms.map((r) => r.level ?? 0));
+  const wallBottom = index === 0 ? Math.min(lowest, plan.groundLevel ?? 0) : 0;
+  const wallTop = floor.height;
+
   // ---- 構造壁（外壁の素材で作り、室内側は仕上げ面で覆う） ----
-  checkMaterial(plan.exterior, '外壁');
   const walls = deriveWalls(rooms);
   const wallBuilder = new MeshBuilder();
   for (const w of walls) {
@@ -132,29 +190,30 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
     const len = len0 + t;
     const f = new Frame(start, dir);
     const end: Point = [start[0] + dir[0] * len, start[1] + dir[1] * len];
-    const spans = openingsOnSegment(plan.openings, start, end, t / 2 + 1);
-    for (const r of rectsWithHoles(len, H, spans)) addWallBox(wallBuilder, f, r, t, H);
+    const spans = openingsOnSegment(floor.openings, start, end, t / 2 + 1);
+    for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) addWallBox(wallBuilder, f, r, t, wallBottom, wallTop);
   }
   if (!wallBuilder.empty) {
     const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(plan.exterior, { clip }));
     mesh.castShadow = true;
     mesh.receiveShadow = true;
-    root.add(mesh);
+    group.add(mesh);
   }
 
   // ---- 開口部の枠とガラス ----
-  for (const o of plan.openings) {
+  for (const o of floor.openings) {
     const wall = findWall(walls, o.at, t);
     if (!wall) {
-      warnings.push(`開口部「${o.id}」: 位置 (${o.at.join(', ')}) が壁の上にありません`);
+      warnings.push(`${where(`開口部「${o.id}」`)}: 位置 (${o.at.join(', ')}) が壁の上にありません`);
       continue;
     }
-    root.add(buildOpening(o, wall, t, clip));
+    group.add(buildOpening(o, wall, t, clip));
   }
 
   // ---- 部屋ごとの床・壁クロス・天井 ----
-  const floors: THREE.Mesh[] = [];
+  const floorMeshes: THREE.Mesh[] = [];
   const ceilings: THREE.Mesh[] = [];
+  const caps: THREE.Mesh[] = [];
   const labels: CSS2DObject[] = [];
   for (const room of rooms) {
     checkMaterial(room.floor, `${room.name}の床`);
@@ -162,23 +221,50 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
     checkMaterial(room.ceiling, `${room.name}の天井`);
     for (const [side, id] of Object.entries(room.accent ?? {})) checkMaterial(id, `${room.name}のアクセント(${side})`);
 
+    const level = room.level ?? 0;
+    const top = level + (room.ceilingHeight ?? floor.ceilingHeight);
     const inner = insetPolygon(room.polygon, t / 2);
 
+    // 床。吹き抜けでも、クリックで選べるよう見えない床を置く
     const floorShape = new THREE.Shape(inner.map(([x, y]) => new THREE.Vector2(x, -y)));
-    const floor = new THREE.Mesh(new THREE.ShapeGeometry(floorShape), getMaterial(room.floor));
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    floor.userData.roomId = room.id;
-    root.add(floor);
-    floors.push(floor);
+    const floorMesh: THREE.Mesh = new THREE.Mesh(new THREE.ShapeGeometry(floorShape), getMaterial(room.floor));
+    floorMesh.rotation.x = -Math.PI / 2;
+    floorMesh.position.y = level;
+    floorMesh.receiveShadow = true;
+    floorMesh.userData = { roomId: room.id, floorIndex: index, lightHeight: top - 150 };
+    if (room.void) floorMesh.material = invisibleMat;
+    group.add(floorMesh);
+    floorMeshes.push(floorMesh);
 
-    const ceilShape = new THREE.Shape(inner.map(([x, y]) => new THREE.Vector2(x, y)));
-    const ceiling = new THREE.Mesh(new THREE.ShapeGeometry(ceilShape), getMaterial(room.ceiling));
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.y = H;
-    ceiling.receiveShadow = true;
-    root.add(ceiling);
-    ceilings.push(ceiling);
+    // 床が周りより高い部屋は、段差の側面を埋める（車庫から見たホールの床など）
+    if (!room.void && level > wallBottom && index === 0) {
+      const outer = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, -y)));
+      const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(outer, { depth: level - wallBottom, bevelEnabled: false }), slabMat);
+      slab.rotation.x = -Math.PI / 2;
+      slab.position.y = wallBottom - 1;
+      slab.receiveShadow = true;
+      group.add(slab);
+    }
+
+    if (room.ceiling) {
+      const ceilShape = new THREE.Shape(inner.map(([x, y]) => new THREE.Vector2(x, y)));
+      const ceiling = new THREE.Mesh(new THREE.ShapeGeometry(ceilShape), getMaterial(room.ceiling));
+      ceiling.rotation.x = Math.PI / 2;
+      ceiling.position.y = top;
+      ceiling.receiveShadow = true;
+      group.add(ceiling);
+      ceilings.push(ceiling);
+
+      // 階の上面（屋根、または上の階の床下）。上が吹き抜けの部屋には付けない
+      const capShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, -y)));
+      const cap = new THREE.Mesh(new THREE.ShapeGeometry(capShape), roofMat);
+      cap.rotation.x = -Math.PI / 2;
+      cap.position.y = wallTop - 30;
+      cap.receiveShadow = true;
+      cap.castShadow = true;
+      group.add(cap);
+      caps.push(cap);
+    }
 
     // 壁クロス。方角ごとに素材が違うことがあるので素材別にまとめる
     const finish = insetPolygon(room.polygon, t / 2 + 1);
@@ -192,15 +278,15 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
       const mb = bySide.get(matId) ?? new MeshBuilder();
       bySide.set(matId, mb);
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
-      const spans = openingsOnSegment(plan.openings, a, b, t / 2 + 5);
-      for (const r of rectsWithHoles(len, H, spans)) {
+      const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5);
+      for (const r of rectsWithHoles(len, level, top, spans)) {
         mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
       }
     }
     for (const [matId, mb] of bySide) {
       const mesh = new THREE.Mesh(mb.geometry(), getMaterial(matId, { clip }));
       mesh.receiveShadow = true;
-      root.add(mesh);
+      group.add(mesh);
     }
 
     const [cx, cy] = centroid(inner);
@@ -209,28 +295,27 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
     el.className = 'room-label';
     el.innerHTML = `<b>${escapeHtml(room.name)}</b><span>${(areaM2 / 1.62).toFixed(1)}帖</span>`;
     const label = new CSS2DObject(el);
-    label.position.set(cx, 50, cy);
-    root.add(label);
+    label.position.set(cx, level + 50, cy);
+    group.add(label);
     labels.push(label);
   }
 
   // ---- 家具 ----
-  const furniture = new Map<string, THREE.Group>();
-  for (const f of plan.furniture) {
-    if (getFurnitureType(f.type).type !== f.type) warnings.push(`家具「${f.name}」: 種類「${f.type}」が見つかりません（箱で表示）`);
+  for (const f of floor.furniture) {
+    if (getFurnitureType(f.type).type !== f.type) warnings.push(`${where(`家具「${f.name}」`)}: 種類「${f.type}」が見つかりません（箱で表示）`);
     const g = buildFurniture(f);
-    root.add(g);
-    furniture.set(f.id, g);
+    g.userData.floorIndex = index;
+    group.add(g);
+    furnitureOut.set(f.id, g);
   }
 
-  const bounds = new THREE.Box3();
-  for (const r of rooms) for (const [x, y] of r.polygon) bounds.expandByPoint(new THREE.Vector3(x, 0, y));
-  bounds.expandByPoint(new THREE.Vector3(bounds.min.x, H, bounds.min.z));
-
-  return { root, floors, ceilings, furniture, labels, warnings, bounds };
+  return { group, floorMeshes, ceilings, caps, labels };
 }
 
-function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, H: number) {
+const invisibleMat = new THREE.MeshBasicMaterial({ visible: false });
+invisibleMat.userData.shared = true;
+
+function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -241,9 +326,9 @@ function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, H: number) {
   // 両側の面
   mb.quad(f.at(r.u0, r.v0, t / 2), along, up, [r.u0, r.v0], [du, dv]);
   mb.quad(f.at(r.u1, r.v0, -t / 2), back, up, [-r.u1, r.v0], [du, dv]);
-  // 上面・下面（床と天井の位置にある面は見えないので省く）
-  if (r.v1 < H) mb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
-  if (r.v0 > 0) mb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
+  // 上面・下面（壁の上端・下端の面は見えないので省く）
+  if (r.v1 < top) mb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
+  if (r.v0 > bottom) mb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
   // 端面（開口部の側面になる）
   mb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
   mb.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
@@ -269,7 +354,7 @@ const glassMat = new THREE.MeshPhysicalMaterial({
   side: THREE.DoubleSide,
 });
 
-function buildOpening(o: Plan['openings'][number], wall: WallSegment, t: number, clip: THREE.Plane[]): THREE.Group {
+function buildOpening(o: Floor['openings'][number], wall: WallSegment, t: number, clip: THREE.Plane[]): THREE.Group {
   const g = new THREE.Group();
   const dx = wall.to[0] - wall.from[0];
   const dy = wall.to[1] - wall.from[1];
