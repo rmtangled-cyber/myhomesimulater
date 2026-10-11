@@ -327,6 +327,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   floor('floor-tile-white', 'タイル（ホワイト 300角）', tiles('#e9e6e0', '#c9c4bb', 4, 4, [1200, 1200], { mottle: 0.04 }), [1200, 1200], 0.3, 2),
   floor('floor-tile-stone', 'タイル（石目グレー 600角）', tiles('#8f8b85', '#6e6a65', 2, 2, [1200, 1200]), [1200, 1200], 0.45, 2),
   floor('floor-tile-charcoal', 'タイル（石目チャコール 600角）', tiles('#55534f', '#3f3d3a', 2, 2, [1200, 1200], { mottle: 0.16 }), [1200, 1200], 0.45, 2),
+  floor('floor-tile-concrete-300', 'タイル（コンクリート調 300角）', tiles('#aeaca7', '#959390', 4, 4, [1200, 1200], { mottle: 0.16, variation: 0.08 }), [1200, 1200], 0.6, 2),
+  floor('floor-tile-mortar', 'タイル（ラフモルタル柄 600角）', tiles('#8d8b87', '#7a7874', 2, 2, [1200, 1200], { mottle: 0.24, variation: 0.05 }), [1200, 1200], 0.7, 2.2),
   floor('floor-cushion-white', 'クッションフロア（白）', plaster('#ecebe6', 900, { mottle: 0.02, grain: 0.03 }), [900, 900], 0.5, 0.6),
   floor('floor-concrete', 'コンクリート（土間・車庫）', stone('#a8a6a1', 1800, { contrast: 0.12, pores: 6 }), [1800, 1800], 0.85, 1.5),
   floor('floor-tatami', '畳', tatami([910, 1820]), [910, 1820], 0.8, 2),

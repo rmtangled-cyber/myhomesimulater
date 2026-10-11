@@ -227,14 +227,30 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: 'ロッド手すり・格子',
     hint: '幅に沿って細い棒が並ぶ。奥行きは棒の太さ',
     defaults: { w: 2700, d: 25, h: 2400, color: '#1c1c1d' },
-    build: ({ w, d, h }, mat) => {
-      const n = Math.max(2, Math.round(w / 300) + 1);
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(2, count ?? Math.round(w / 300) + 1);
       return Array.from({ length: n }, (_, i) => {
         const m = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, h, 12), mat);
         m.position.set(-w / 2 + (w * i) / (n - 1), h / 2, 0);
         m.castShadow = true;
         return m;
       });
+    },
+  },
+  {
+    type: 'open-shelf',
+    label: '可動棚（オープン棚）',
+    hint: '背面を壁に付ける。「棚板の枚数」で段数を決める。一番上の棚板が高さ h',
+    defaults: { w: 1200, d: 450, h: 1800, color: '#4a4b4d' },
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(1, count ?? Math.round(h / 300));
+      const boards = Array.from({ length: n }, (_, i) => box(w, 21, d, 0, (h * (i + 1)) / n - 21, 0, mat));
+      // 前側の黒い支柱と、壁側の棚柱
+      const poles = [-1, 1].flatMap((sx) => [
+        box(20, h, 20, sx * (w / 2 - 15), 0, d / 2 - 15, black),
+        box(15, h, 15, sx * (w / 2 - 15), 0, -d / 2 + 10, black),
+      ]);
+      return [...boards, ...poles];
     },
   },
   {

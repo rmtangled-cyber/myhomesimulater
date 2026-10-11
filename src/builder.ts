@@ -183,6 +183,7 @@ function buildFloor(
   // ---- 構造壁（外壁の素材で作り、室内側は仕上げ面で覆う） ----
   const walls = deriveWalls(rooms);
   const wallBuilder = new MeshBuilder();
+  const jambBuilder = new MeshBuilder();
   for (const w of walls) {
     const len0 = dist(w.from, w.to);
     const dir: Point = [(w.to[0] - w.from[0]) / len0, (w.to[1] - w.from[1]) / len0];
@@ -192,9 +193,12 @@ function buildFloor(
     const f = new Frame(start, dir);
     const end: Point = [start[0] + dir[0] * len, start[1] + dir[1] * len];
     const spans = openingsOnSegment(floor.openings, start, end, t / 2 + 1);
-    for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) addWallBox(wallBuilder, f, r, t, wallBottom, wallTop);
+    for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) addWallBox(wallBuilder, jambBuilder, f, r, t, wallBottom, wallTop);
   }
   if (!wallBuilder.empty) {
+    const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-white', { clip }));
+    jambs.castShadow = jambs.receiveShadow = true;
+    group.add(jambs);
     const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(plan.exterior, { clip }));
     mesh.castShadow = true;
     mesh.receiveShadow = true;
@@ -314,7 +318,8 @@ function buildFloor(
   return { group, floorMeshes, ceilings, caps, labels };
 }
 
-function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number) {
+/** 壁の箱。両側の面は mb（外壁の素材）、開口部の枠まわりの面は jamb（室内の白い仕上げ）に入れる */
+function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -326,11 +331,11 @@ function addWallBox(mb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: numbe
   mb.quad(f.at(r.u0, r.v0, t / 2), along, up, [r.u0, r.v0], [du, dv]);
   mb.quad(f.at(r.u1, r.v0, -t / 2), back, up, [-r.u1, r.v0], [du, dv]);
   // 上面・下面（壁の上端・下端の面は見えないので省く）
-  if (r.v1 < top) mb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
-  if (r.v0 > bottom) mb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
+  if (r.v1 < top) jamb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
+  if (r.v0 > bottom) jamb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
   // 端面（開口部の側面になる）
-  mb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
-  mb.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
+  jamb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
+  jamb.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
 }
 
 function findWall(walls: WallSegment[], p: Point, t: number): WallSegment | undefined {

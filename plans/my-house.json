@@ -202,8 +202,8 @@
               6825
             ]
           ],
-          "floor": "floor-tile-charcoal",
-          "wall": "cross-plaster-white",
+          "floor": "floor-tile-concrete-300",
+          "wall": "cross-stone-lightgray",
           "ceiling": "cross-white",
           "level": -150,
           "ceilingHeight": 2550
@@ -229,7 +229,7 @@
               6825
             ]
           ],
-          "floor": "floor-tile-charcoal",
+          "floor": "floor-tile-mortar",
           "wall": "cross-plaster-white",
           "ceiling": "cross-white",
           "level": -150,
@@ -496,19 +496,6 @@
           "color": "#f0eeea"
         },
         {
-          "id": "shoe-shelf-1",
-          "type": "storage",
-          "name": "可動棚（シューズクローク）",
-          "x": 210,
-          "y": 5500,
-          "w": 1800,
-          "d": 300,
-          "h": 1800,
-          "rotation": 270,
-          "color": "#d9cdb8",
-          "z": -150
-        },
-        {
           "id": "rods-1",
           "type": "rod-screen",
           "name": "ロッド手すり（階段）",
@@ -610,6 +597,86 @@
           "rotation": 270,
           "color": "#c8ccd0",
           "z": -150
+        },
+        {
+          "id": "shoe-shelf-back",
+          "type": "open-shelf",
+          "name": "可動棚 D450（奥）",
+          "x": 1060,
+          "y": 6540,
+          "w": 1400,
+          "d": 450,
+          "h": 1800,
+          "rotation": 180,
+          "color": "#4a4b4d",
+          "z": -150,
+          "count": 5
+        },
+        {
+          "id": "shoe-shelf-side",
+          "type": "open-shelf",
+          "name": "可動棚 D300（横）",
+          "x": 210,
+          "y": 5573,
+          "w": 2380,
+          "d": 300,
+          "h": 1500,
+          "rotation": 270,
+          "color": "#4a4b4d",
+          "z": -150,
+          "count": 8
+        },
+        {
+          "id": "shoe-pipe",
+          "type": "box",
+          "name": "ハンガーパイプ",
+          "x": 300,
+          "y": 5573,
+          "w": 2380,
+          "d": 30,
+          "h": 30,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 1750
+        },
+        {
+          "id": "shoe-upper",
+          "type": "storage",
+          "name": "吊戸棚",
+          "x": 210,
+          "y": 5573,
+          "w": 2380,
+          "d": 300,
+          "h": 300,
+          "rotation": 270,
+          "color": "#4a4b4d",
+          "z": 1950
+        },
+        {
+          "id": "shoe-sensor-1",
+          "type": "downlight",
+          "name": "センサーライト",
+          "x": 1000,
+          "y": 5400,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400
+        },
+        {
+          "id": "shoe-sensor-2",
+          "type": "downlight",
+          "name": "センサーライト（吊戸棚下）",
+          "x": 330,
+          "y": 5900,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 1950
         }
       ]
     },
