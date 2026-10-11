@@ -1,0 +1,331 @@
+:root {
+  --bg: #f6f5f2;
+  --panel: #ffffff;
+  --text: #2a2a28;
+  --muted: #7a7872;
+  --line: #e4e2dc;
+  --accent: #d0661d;
+  --accent-soft: #fbeadd;
+  font-family: system-ui, -apple-system, 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic UI', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+#viewport {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+#viewport canvas {
+  display: block;
+  touch-action: none;
+}
+
+.label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.room-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.82);
+  font-size: 12px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.room-label span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+#panel {
+  width: 340px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+}
+
+#panel header,
+#panel section {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+#panel h1 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+#panel h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+#panel h2 small {
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+#panel h3 {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #c9c6be;
+  background: #faf9f6;
+}
+
+button.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+button.danger {
+  color: #b3261e;
+}
+
+select,
+input[type='text'],
+input[type='number'] {
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  min-width: 0;
+}
+
+.seg {
+  display: flex;
+  margin-bottom: 6px;
+}
+
+.seg button {
+  flex: 1;
+  border-radius: 0;
+  margin-left: -1px;
+}
+
+.seg button:first-child {
+  border-radius: 6px 0 0 6px;
+  margin-left: 0;
+}
+
+.seg button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.seg button.on {
+  position: relative;
+}
+
+.status {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status.error {
+  color: #b3261e;
+}
+
+.status.reloaded {
+  color: #1f6f43;
+}
+
+.selected {
+  background: #fffaf5;
+}
+
+.selected.empty {
+  background: none;
+}
+
+.hint {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+label.wide {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+label.wide input {
+  flex: 1;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+label.num {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+label.num input {
+  width: 100%;
+  color: var(--text);
+}
+
+label.color {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+input[type='color'] {
+  width: 32px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.mat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mat-row select {
+  flex: 1;
+}
+
+.swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.swatch.none {
+  display: inline-block;
+  background: repeating-linear-gradient(45deg, #fff, #fff 4px, #f0eee9 4px, #f0eee9 8px);
+}
+
+.accent {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.accent span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+ul.chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+ul.chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+ul.chips i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+
+.warnings {
+  background: #fff6e5;
+}
+
+.warnings ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.help dl {
+  margin: 0;
+  font-size: 12px;
+}
+
+.help dt {
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.help dd {
+  margin: 2px 0 0;
+  color: var(--muted);
+}
