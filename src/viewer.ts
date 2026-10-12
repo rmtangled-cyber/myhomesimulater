@@ -35,7 +35,8 @@ export interface ViewerEvents {
 }
 
 const MM = 0.001;
-const EYE_HEIGHT = 1.5;
+/** 身長から目の高さ（m）を出す。目は頭のてっぺんより 11cm ほど下 */
+export const eyeHeightFor = (statureCm: number) => Math.max(0.5, (statureCm - 11) / 100);
 
 export class Viewer {
   readonly renderer: THREE.WebGLRenderer;
@@ -65,7 +66,9 @@ export class Viewer {
   private floorView: number | 'all' = 'all';
   /** ウォークスルー中の階と目の高さ（m） */
   private walkFloor = 0;
-  private eyeY = EYE_HEIGHT;
+  /** 床からの目の高さ（m）。身長で変える */
+  private eyeHeight = eyeHeightFor(160);
+  private eyeY = this.eyeHeight;
   /** 照明器具を点けるか（夕方・夜は自動で点ける） */
   private lightsOn = false;
   /** ウォークスルーで影の濃淡（アンビエントオクルージョン）を付けるか */
@@ -237,7 +240,7 @@ export class Viewer {
     this.mode = mode;
     this.orbit.enabled = mode === 'orbit';
     if (mode === 'walk') {
-      const p = startAt ?? this.worldBounds().getCenter(new THREE.Vector3()).setY(EYE_HEIGHT);
+      const p = startAt ?? this.worldBounds().getCenter(new THREE.Vector3()).setY(this.eyeHeight);
       this.eyeY = p.y;
       this.camera.position.copy(p);
       this.yaw = yaw; // 0 = 北（−Z）を向く、π = 南を向く
@@ -276,6 +279,13 @@ export class Viewer {
 
   setHighQuality(on: boolean) {
     this.highQuality = on;
+  }
+
+  /** 身長（cm）から目の高さを変える。ウォークスルー中なら今の床からの高さをそのまま変える */
+  setStature(cm: number) {
+    const floorY = this.eyeY - this.eyeHeight;
+    this.eyeHeight = eyeHeightFor(cm);
+    this.eyeY = floorY + this.eyeHeight;
   }
 
   setInvertLook(on: boolean) {
@@ -372,7 +382,7 @@ export class Viewer {
     const floor = this.built?.floors.flatMap((f) => f.floorMeshes).find((f) => f.userData.roomId === roomId);
     if (!floor) return;
     this.walkFloor = floor.userData.floorIndex;
-    const eye = floor.getWorldPosition(new THREE.Vector3()).y + EYE_HEIGHT;
+    const eye = floor.getWorldPosition(new THREE.Vector3()).y + this.eyeHeight;
     const box = new THREE.Box3().setFromObject(floor);
     const size = box.getSize(new THREE.Vector3());
     const obstacles = [...this.built!.furniture.values()].map((g) => new THREE.Box3().setFromObject(g).expandByScalar(0.25));

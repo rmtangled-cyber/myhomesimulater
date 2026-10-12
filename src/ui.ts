@@ -26,6 +26,8 @@ export interface PanelState {
   highQuality: boolean;
   /** ウォークスルーで見回すドラッグの向きを逆にする */
   invertLook: boolean;
+  /** ウォークスルーの目の高さを決める身長（cm） */
+  stature: number;
   /** ウォークスルーで立っている部屋 */
   walkRoomId: string | null;
   status: SaveStatus;
@@ -41,6 +43,7 @@ export interface PanelActions {
   setLightsOn(on: boolean): void;
   setHighQuality(on: boolean): void;
   setInvertLook(on: boolean): void;
+  setStature(cm: number): void;
   addImageMaterial(file: File): void;
   setFloorView(view: number | 'all'): void;
   switchPlan(name: string): void;
@@ -176,6 +179,10 @@ export class Panel {
         </div>
         <div class="row">
           <label title="ウォークスルーでドラッグしたときに見回す向きを逆にします"><input type="checkbox" data-change="invert" ${s.invertLook ? 'checked' : ''}> 見回す向きを逆にする</label>
+        </div>
+        <div class="row">
+          <label class="num stature" title="ウォークスルーの目の高さを、この身長の人に合わせます">身長 <input type="number" min="80" max="220" step="1" data-change="stature" value="${s.stature}"> cm</label>
+          <span class="hint">目の高さ ${s.stature - 11}cm</span>
         </div>
         <div class="row">
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
@@ -356,6 +363,11 @@ export class Panel {
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
+    if (d.change === 'stature') {
+      const cm = Math.round(Number(t.value));
+      if (cm >= 80 && cm <= 220) a.setStature(cm);
+      return;
+    }
     if (sel?.kind === 'furniture' && d.furn) {
       const field = d.furn as keyof Furniture;
       const value = t.type === 'number' ? Number(t.value) : t.value;

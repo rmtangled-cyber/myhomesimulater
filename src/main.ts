@@ -17,6 +17,15 @@ function loadFlag(key: string): boolean {
   }
 }
 
+function loadNumber(key: string, fallback: number): number {
+  try {
+    const v = Number(localStorage.getItem(key));
+    return v > 0 ? v : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function saveFlag(key: string, on: boolean) {
   try {
     localStorage.setItem(key, on ? '1' : '0');
@@ -36,6 +45,7 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   lightsOn: false,
   highQuality: true,
   invertLook: loadFlag('invertLook'),
+  stature: loadNumber('stature', 160),
   walkRoomId: null,
   status: 'saved',
   warnings: [],
@@ -128,6 +138,16 @@ const panel = new Panel(document.getElementById('panel')!, {
     viewer.setInvertLook(on);
     ui.invertLook = on;
     saveFlag('invertLook', on);
+  },
+  setStature: (cm) => {
+    viewer.setStature(cm);
+    ui.stature = cm;
+    try {
+      localStorage.setItem('stature', String(cm));
+    } catch {
+      // 保存できなくても今の画面では効く
+    }
+    render();
   },
   addImageMaterial,
   setFloorView,
@@ -247,6 +267,7 @@ function render() {
 }
 
 viewer.setInvertLook(ui.invertLook);
+viewer.setStature(ui.stature);
 
 store.subscribe((plan, cause) => {
   if (cause === 'load') ui.statusMessage = undefined;

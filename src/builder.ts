@@ -245,7 +245,8 @@ function buildFloor(
     const inner = insetPolygon(room.polygon, t / 2);
 
     // 床。吹き抜けでも、クリックで選べるよう見えない床を置く
-    const floorShape = new THREE.Shape(inner.map(([x, y]) => new THREE.Vector2(x, -y)));
+    // 床は壁芯まで張る。壁のない所（開口部）で隣の部屋の床と隙間なくつながる
+    const floorShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, -y)));
     const floorMesh: THREE.Mesh = new THREE.Mesh(new THREE.ShapeGeometry(floorShape), getMaterial(room.floor));
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.y = level;
@@ -361,7 +362,8 @@ function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: nu
   mb.quad(f.at(r.u0, r.v0, t / 2), along, up, [r.u0, r.v0], [du, dv]);
   mb.quad(f.at(r.u1, r.v0, -t / 2), back, up, [-r.u1, r.v0], [du, dv]);
   // 上面・下面（壁の上端・下端の面は見えないので省く）
-  if (r.v1 < top) jamb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
+  // 床の高さ以下で終わる部分（掃き出しの開口部の下）は床でふさがるので上面を描かない
+  if (r.v1 < top && r.v1 > 0) jamb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
   if (r.v0 > bottom) jamb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
   // 端面（開口部の側面になる）
   jamb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);

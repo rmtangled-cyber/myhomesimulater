@@ -395,3 +395,16 @@ ul.chips i {
   display: block;
   color: var(--muted);
 }
+
+/* 身長の入力欄（表示の欄の中で 1 行に収める） */
+label.num.stature {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+label.num.stature input {
+  width: 64px;
+}
