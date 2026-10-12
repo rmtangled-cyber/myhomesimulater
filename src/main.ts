@@ -39,11 +39,10 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   floor: 0,
   floorView: 'all',
   mode: 'orbit',
-  // 最初に開いたときは、照明をつけた夕方の見え方にする
-  time: 'evening',
+  time: 'day',
   cutaway: true,
   labels: true,
-  lightsOn: true,
+  lightsOn: false,
   highQuality: true,
   invertLook: loadFlag('invertLook'),
   stature: loadNumber('stature', 160),
@@ -90,11 +89,6 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
   onWalkInfo,
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
   onSelectRoom: (id) => select({ kind: 'room', id }),
-  onMoveFurniture: (id, x, y) =>
-    store.edit((p) => {
-      const f = findFurniture(p, id)?.item;
-      if (f) Object.assign(f, { x, y });
-    }),
 });
 
 function setFloorView(view: number | 'all') {

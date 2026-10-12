@@ -28,8 +28,6 @@ export interface ViewerEvents {
   /** 家具をクリックした（null は何もない所） */
   onSelectFurniture: (id: string | null) => void;
   onSelectRoom: (id: string) => void;
-  /** 家具をドラッグし終えた（位置は mm） */
-  onMoveFurniture: (id: string, x: number, y: number) => void;
   /** ウォークスルーで立っている部屋・見ている物が変わった（俯瞰に戻ると null） */
   onWalkInfo: (info: WalkInfo | null) => void;
 }
@@ -76,6 +74,8 @@ export class Viewer {
   /** ウォークスルーで見回すドラッグの向きを逆にする */
   private invertLook = false;
   private walkInfoKey = '';
+  /** 足元の高さを調べる相手（見えている床と階段） */
+  private walkTargets: THREE.Object3D[] = [];
   private walkInfoTimer = 0;
   private composer: EffectComposer;
   private gtao: GTAOPass;
@@ -152,6 +152,7 @@ export class Viewer {
     }
     this.built = buildPlan(plan, [this.clipPlane]);
     this.world.add(this.built.root);
+    this.walkTargets = [...this.built.floors.flatMap((f) => f.floorMeshes.filter((m) => m.visible)), ...[...this.built.furniture.values()].filter((g) => g.userData.walkable)];
     this.ground.position.y = (plan.groundLevel ?? 0) * MM - 0.005;
     if (typeof this.floorView === 'number') this.floorView = Math.min(this.floorView, plan.floors.length - 1);
     // 照明の位置計算などで使うので、追加した直後にワールド座標を確定させる
@@ -425,13 +426,6 @@ export class Viewer {
     return null;
   }
 
-  /** 高さ y（m）の水平面とマウスの交点 */
-  private groundPoint(ndc: THREE.Vector2, y: number): THREE.Vector3 | null {
-    this.raycaster.setFromCamera(ndc, this.camera);
-    const p = new THREE.Vector3();
-    return this.raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), -y), p);
-  }
-
   /** クリックした所の部屋。屋根や上の階の床下に当たったら null */
   private hitRoom(ndc: THREE.Vector2): THREE.Mesh | null {
     this.raycaster.setFromCamera(ndc, this.camera);
@@ -444,71 +438,39 @@ export class Viewer {
   private setupPointer() {
     const el = this.renderer.domElement;
     let down: { x: number; y: number } | null = null;
-    let drag: { id: string; group: THREE.Group; offset: THREE.Vector3; baseY: number; moved: boolean } | null = null;
     let look: { x: number; y: number } | null = null;
 
+    // 俯瞰は見るだけ（家具はドラッグで動かさない）。クリックした家具・部屋を選んでパネルに出す
     el.addEventListener('pointerdown', (e) => {
       down = { x: e.clientX, y: e.clientY };
       if (this.mode === 'walk') {
         look = { x: e.clientX, y: e.clientY };
         el.setPointerCapture(e.pointerId);
-        return;
-      }
-      if (e.button !== 0) return;
-      const ndc = this.pointer(e);
-      const hit = this.hitFurniture(ndc);
-      if (hit) {
-        const group = this.built!.furniture.get(hit.id)!;
-        const pos = group.getWorldPosition(new THREE.Vector3());
-        const gp = this.groundPoint(ndc, pos.y);
-        drag = { id: hit.id, group, offset: gp ? pos.clone().sub(gp) : new THREE.Vector3(), baseY: pos.y, moved: false };
-        this.orbit.enabled = false;
-        el.setPointerCapture(e.pointerId);
-        this.events.onSelectFurniture(hit.id);
       }
     });
 
     el.addEventListener('pointermove', (e) => {
-      if (look) {
-        const k = this.invertLook ? -0.004 : 0.004;
-        this.yaw -= (e.clientX - look.x) * k;
-        this.pitch = THREE.MathUtils.clamp(this.pitch - (e.clientY - look.y) * k, -1.3, 1.3);
-        look = { x: e.clientX, y: e.clientY };
-        return;
-      }
-      if (!drag) {
-        el.style.cursor = this.mode === 'orbit' && this.hitFurniture(this.pointer(e)) ? 'grab' : '';
-        return;
-      }
-      const gp = this.groundPoint(this.pointer(e), drag.baseY);
-      if (!gp) return;
-      const p = gp.add(drag.offset);
-      // 10mm 単位にそろえる
-      const x = Math.round(p.x / MM / 10) * 10;
-      const z = Math.round(p.z / MM / 10) * 10;
-      drag.group.position.x = x;
-      drag.group.position.z = z;
-      drag.moved = true;
-      el.style.cursor = 'grabbing';
-      this.select(drag.id);
+      if (!look) return;
+      const k = this.invertLook ? -0.004 : 0.004;
+      this.yaw -= (e.clientX - look.x) * k;
+      this.pitch = THREE.MathUtils.clamp(this.pitch - (e.clientY - look.y) * k, -1.3, 1.3);
+      look = { x: e.clientX, y: e.clientY };
     });
 
     el.addEventListener('pointerup', (e) => {
       const clicked = down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 4;
       look = null;
-      if (drag) {
-        if (drag.moved) this.events.onMoveFurniture(drag.id, drag.group.position.x, drag.group.position.z);
-        drag = null;
-        this.orbit.enabled = this.mode === 'orbit';
-        el.style.cursor = '';
+      down = null;
+      if (!clicked || this.mode !== 'orbit' || !this.built || e.button !== 0) return;
+      const ndc = this.pointer(e);
+      const hit = this.hitFurniture(ndc);
+      if (hit) {
+        this.events.onSelectFurniture(hit.id);
         return;
       }
-      if (clicked && this.mode === 'orbit' && this.built && e.button === 0) {
-        const room = this.hitRoom(this.pointer(e));
-        this.events.onSelectFurniture(null);
-        if (room) this.events.onSelectRoom(room.userData.roomId);
-      }
-      down = null;
+      const room = this.hitRoom(ndc);
+      this.events.onSelectFurniture(null);
+      if (room) this.events.onSelectRoom(room.userData.roomId);
     });
 
     el.addEventListener('dblclick', (e) => {
@@ -545,7 +507,10 @@ export class Viewer {
       if (this.keys.has('KeyA')) move.sub(right);
       if (this.keys.has('ArrowLeft')) this.yaw += 1.5 * dt;
       if (this.keys.has('ArrowRight')) this.yaw -= 1.5 * dt;
-      if (move.lengthSq() > 0) this.camera.position.addScaledVector(move.normalize(), speed);
+      if (move.lengthSq() > 0) {
+        this.camera.position.addScaledVector(move.normalize(), speed);
+        this.followGround(dt);
+      }
       this.camera.position.y = this.eyeY;
       this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
       // 立っている部屋と見ている物は 0.2 秒ごとに調べる（毎フレームだと重い）
@@ -561,6 +526,29 @@ export class Viewer {
     if (this.mode === 'walk' && this.highQuality) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
+  }
+
+  /** 足元の床や階段の段の高さに合わせて目の高さを変える（45cm までの段なら上り下りできる） */
+  private followGround(dt: number) {
+    const feet = this.eyeY - this.eyeHeight;
+    const p = this.camera.position;
+    this.raycaster.set(new THREE.Vector3(p.x, feet + 0.45, p.z), new THREE.Vector3(0, -1, 0));
+    this.raycaster.far = 3;
+    const hit = this.raycaster.intersectObjects(this.walkTargets, true)[0];
+    this.raycaster.far = Infinity;
+    if (!hit) return;
+    const target = hit.point.y + this.eyeHeight;
+    this.eyeY += (target - this.eyeY) * Math.min(1, dt * 12);
+    // 立っている階が変わったら、その階の照明に切り替える
+    const floors = this.built?.floors ?? [];
+    let index = 0;
+    floors.forEach((f, i) => {
+      if (hit.point.y >= f.group.position.y * MM - 0.3) index = i;
+    });
+    if (index !== this.walkFloor) {
+      this.walkFloor = index;
+      this.applyVisibility();
+    }
   }
 
   private updateWalkInfo() {

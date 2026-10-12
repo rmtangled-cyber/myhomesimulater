@@ -218,12 +218,13 @@ export class Panel {
         </div>
         <div class="row">
           <label class="color">色 <input type="color" data-furn="color" value="${esc(f.color)}"></label>
+          <label title="引き戸・開き戸の取手を反対側にするなど"><input type="checkbox" data-furn-flip ${f.flip ? 'checked' : ''}> 左右反転</label>
           <button data-action="rotate" data-value="90">↻ 90°</button>
           <button data-action="dup-furn">複製</button>
           <button data-action="remove-furn" class="danger">削除</button>
         </div>
         ${getFurnitureType(f.type).hint ? `<p class="hint">${esc(getFurnitureType(f.type).hint!)}</p>` : ''}
-        <p class="hint">ドラッグで移動、R で90°回転、Delete で削除。単位は mm。</p>
+        <p class="hint">位置や大きさは上の数字で変えられます（R で 90° 回転、Delete で削除）。単位は mm。</p>
       </section>`;
   }
 
@@ -366,6 +367,11 @@ export class Panel {
     if (d.change === 'stature') {
       const cm = Math.round(Number(t.value));
       if (cm >= 80 && cm <= 220) a.setStature(cm);
+      return;
+    }
+    if (sel?.kind === 'furniture' && 'furnFlip' in d) {
+      const on = (t as HTMLInputElement).checked;
+      a.updateFurniture(sel.id, (f) => (on ? (f.flip = true) : delete f.flip));
       return;
     }
     if (sel?.kind === 'furniture' && d.furn) {

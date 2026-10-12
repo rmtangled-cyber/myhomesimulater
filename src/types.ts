@@ -38,6 +38,8 @@ export interface Opening {
   height: number;
   /** この階の FL から開口部下端までの高さ（ドア・掃き出し窓は 0） */
   sill: number;
+  /** 窓の種類。fix は開かない窓（障子なし）。省略時は横長なら横すべり出し、それ以外は引き違い／縦長 */
+  style?: 'fix' | 'slide';
 }
 
 export interface Furniture {
@@ -60,6 +62,8 @@ export interface Furniture {
   color: string;
   /** 面材の素材ID（大理石調のカウンターなど）。指定すると color の代わりにこの素材を貼る */
   material?: string;
+  /** 左右を反転する（引き戸・開き戸の取手を反対側にするなど） */
+  flip?: boolean;
   /** 数の指定がある家具で使う（可動棚の棚板の枚数、ロッドの本数など） */
   count?: number;
 }

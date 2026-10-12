@@ -487,14 +487,147 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '吊り引き戸（上吊り）',
     hint: '開口部の横の壁に沿って置く。上のレールから吊るので床にレールはなく、下は少し空く。h は天井（レール）までの高さ',
     defaults: { w: 800, d: 36, h: 2400, color: '#efeeea' },
-    build: (f, mat) => hungDoor(f, mat, false),
+    build: (f, mat) => hungDoor(f, mat, 'none'),
   },
   {
     type: 'mirror-sliding-door',
-    label: '吊り引き戸（上吊り・ミラー付）',
-    hint: '正面がミラー面。開口部の横の壁に沿って置く。上のレールから吊るので床にレールはなく、下は少し空く',
+    label: '吊り引き戸（上吊り・全面ミラー）',
+    hint: '正面が全面ミラー（フルハイトドア fit など）。開口部の横の壁に沿って置く。上のレールから吊るので床にレールはなく、下は少し空く。取手の側は「左右反転」で変える',
+    defaults: { w: 800, d: 36, h: 2400, color: '#2a2a2b' },
+    build: (f, mat) => hungDoor(f, mat, 'full'),
+  },
+  {
+    type: 'mirror-sheet-door',
+    label: '吊り引き戸（上吊り・ミラーシート貼り）',
+    hint: '普通のハイドアの正面に、全身鏡くらいのミラーシートを貼った戸。取手の側は「左右反転」で変える',
     defaults: { w: 800, d: 36, h: 2400, color: '#efeeea' },
-    build: (f, mat) => hungDoor(f, mat, true),
+    build: (f, mat) => hungDoor(f, mat, 'sheet'),
+  },
+  {
+    type: 'swing-door',
+    label: '開き戸（扉）',
+    hint: '開口部（ドア）の中心に置く（閉めた状態）。取手の側は「左右反転」で変える',
+    defaults: { w: 720, d: 36, h: 2000, color: '#efeeea' },
+    build: ({ w, d, h, flip }, mat) => {
+      const s = flip ? -1 : 1;
+      const out: THREE.Object3D[] = [box(w, h - 10, d, 0, 0, 0, mat)];
+      // レバーハンドル（両面）
+      for (const z of [1, -1]) out.push(box(16, 16, 40, s * (w / 2 - 70), 950, z * (d / 2 + 20), black), box(130, 14, 14, s * (w / 2 - 120), 950, z * (d / 2 + 38), black));
+      return out;
+    },
+  },
+  {
+    type: 'floor-hatch',
+    label: '床下点検口（枠なし・フチネ）',
+    hint: '床に置く（z は床の高さ）。蓋に「面材」で床と同じ素材を貼ると、周りの 3mm の目地だけが見える（城東テクノ フチネ SPF-FN6060 など）',
+    defaults: { w: 600, d: 600, h: 2, color: '#8e8b87' },
+    build: ({ w, d, h }, mat) => {
+      const joint = new THREE.MeshStandardMaterial({ color: '#2b2b2c', roughness: 0.6 });
+      const j = 3;
+      return [
+        box(w - 2 * j, h, d - 2 * j, 0, 0, 0, mat),
+        box(w, 1, j, 0, 0, -d / 2 + j / 2, joint),
+        box(w, 1, j, 0, 0, d / 2 - j / 2, joint),
+        box(j, 1, d - 2 * j, -w / 2 + j / 2, 0, 0, joint),
+        box(j, 1, d - 2 * j, w / 2 - j / 2, 0, 0, joint),
+      ];
+    },
+  },
+  {
+    type: 'floor-hatch-framed',
+    label: '床下点検口（アルミ枠）',
+    hint: '床に置く（z は床の高さ）。アルミの枠の中に床と同じ素材の蓋（「面材」で指定）',
+    defaults: { w: 600, d: 600, h: 2, color: '#8e8b87' },
+    build: ({ w, d, h }, mat) => {
+      const frame = new THREE.MeshStandardMaterial({ color: '#a9abad', roughness: 0.35, metalness: 0.8 });
+      const k = 15;
+      return [
+        box(w - 2 * k, h, d - 2 * k, 0, 0, 0, mat),
+        box(w, h + 1, k, 0, 0, -d / 2 + k / 2, frame),
+        box(w, h + 1, k, 0, 0, d / 2 - k / 2, frame),
+        box(k, h + 1, d - 2 * k, -w / 2 + k / 2, 0, 0, frame),
+        box(k, h + 1, d - 2 * k, w / 2 - k / 2, 0, 0, frame),
+      ];
+    },
+  },
+  {
+    type: 'roll-screen',
+    label: 'ロールスクリーン',
+    hint: '窓の上の壁（または天井）に付ける。z は生地の下端、h は生地の下端から上のケースの上までの長さ',
+    defaults: { w: 1700, d: 60, h: 600, color: '#4a4b4d' },
+    build: ({ w, d, h }, mat) => {
+      const caseMat = new THREE.MeshStandardMaterial({ color: '#2e2f31', roughness: 0.5 });
+      const cloth = new THREE.MeshStandardMaterial({ color: mat.color, roughness: 0.95, side: THREE.DoubleSide });
+      return [
+        box(w, 70, d, 0, h - 70, 0, caseMat),
+        box(w - 30, h - 70, 2, 0, 0, d / 2 - 10, cloth),
+        box(w - 30, 18, 12, 0, -9, d / 2 - 10, caseMat), // ウエイトバー
+      ];
+    },
+  },
+  {
+    type: 'fridge',
+    label: '冷蔵庫（5ドア）',
+    hint: '背面を壁に付ける。上が観音開き、その下に引出し 3 段（東芝 ベジータ GR-V450GT は 幅600・奥行649・高さ1850）',
+    defaults: { w: 600, d: 649, h: 1850, color: '#d9d4cb' },
+    build: ({ w, d, h }, mat) => {
+      const gap = new THREE.MeshStandardMaterial({ color: '#3a3a3a', roughness: 0.8 });
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      const front = d / 2 + 0.5;
+      // 扉の継ぎ目（上から 観音開き 〜1000、製氷・切替室、野菜室、冷凍室）
+      for (const y of [h - 1000, h - 1230, h - 1530]) out.push(box(w, 4, 2, 0, y, front, gap));
+      out.push(box(4, 1000, 2, 0, h - 1000, front, gap));
+      out.push(box(4, 230, 2, -w / 6, h - 1230, front, gap));
+      return out;
+    },
+  },
+  {
+    type: 'trash-niche-storage',
+    label: '壁面収納（ゴミ箱直結の穴付き）',
+    hint: '背面を壁に付ける。上は扉付きの収納、洗面カウンターの高さ（850）に穴の開いた棚、その下はゴミ箱を出し入れできるニッチ',
+    defaults: { w: 550, d: 250, h: 2300, color: '#f2f2f0' },
+    build: ({ w, d, h }, mat) => {
+      const counter = 850;
+      const inner = new THREE.MeshStandardMaterial({ color: '#e6e6e3', roughness: 0.8 });
+      const steel = new THREE.MeshStandardMaterial({ color: '#c9ccd0', roughness: 0.25, metalness: 0.9 });
+      const out: THREE.Object3D[] = [
+        box(20, h, d, -w / 2 + 10, 0, 0, mat),
+        box(20, h, d, w / 2 - 10, 0, 0, mat),
+        box(w, 20, d, 0, h - 20, 0, mat),
+        box(w - 40, h, 10, 0, 0, -d / 2 + 5, inner), // 奥の面
+        box(w - 40, 20, d, 0, 1080, 0, mat), // 扉の下の棚
+        box(w - 40, h - 20 - 1100, 20, 0, 1100, d / 2 - 10, mat), // 上の扉
+        box(w - 40, 20, d, 0, counter - 20, 0, mat), // 穴の開いた棚（カウンターの高さ）
+      ];
+      out.push(box(2, h - 1120, 2, 0, 1100, d / 2 + 1, black)); // 扉の継ぎ目
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(110, 10, 8, 40), steel);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(0, counter + 2, 0);
+      const hole = new THREE.Mesh(new THREE.CylinderGeometry(105, 105, 22, 32), new THREE.MeshStandardMaterial({ color: '#1a1a1a' }));
+      hole.position.set(0, counter - 10, 0);
+      const bin = new THREE.Mesh(new THREE.CylinderGeometry(130, 120, 520, 32), new THREE.MeshStandardMaterial({ color: '#3c3d3f', roughness: 0.5 }));
+      bin.position.set(0, 260, 0);
+      return [...out, ring, hole, bin];
+    },
+  },
+  {
+    type: 'shelf-unit',
+    label: '造作棚（オープン）',
+    hint: '背面を壁に付ける。側板と天板・地板の箱に、「棚板の枚数」だけ棚板が入る',
+    defaults: { w: 900, d: 450, h: 1800, color: '#dcdad6' },
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(1, count ?? 4);
+      const out: THREE.Object3D[] = [box(20, h, d, -w / 2 + 10, 0, 0, mat), box(20, h, d, w / 2 - 10, 0, 0, mat), box(w, 20, d, 0, h - 20, 0, mat), box(w, 60, d, 0, 0, 0, mat), box(w - 40, h, 8, 0, 0, -d / 2 + 4, mat)];
+      for (let i = 1; i <= n; i++) out.push(box(w - 40, 20, d - 10, 0, 60 + ((h - 80) * i) / (n + 1), 5, mat));
+      // 一番下に洗濯かご
+      const basket = new THREE.MeshStandardMaterial({ color: '#b9bcbf', roughness: 0.4, metalness: 0.6, wireframe: true });
+      for (const x of [-w / 4, w / 4]) {
+        const b = new THREE.Mesh(new THREE.CylinderGeometry(w / 6, w / 7, 300, 16, 4, true), basket);
+        b.position.set(x, 60 + 150, 0);
+        out.push(b);
+      }
+      return out;
+    },
   },
   {
     type: 'iron-bar',
@@ -870,6 +1003,8 @@ export function buildFurniture(f: Furniture): THREE.Group {
   // 平面図で時計回り = 上から見て時計回り = three.js の y 軸まわりで負の回転
   g.rotation.y = -THREE.MathUtils.degToRad(f.rotation);
   g.userData.furnitureId = f.id;
+  // ウォークスルーで上り下りできる物（階段）
+  g.userData.walkable = ['stairs', 'stairs-box', 'winder-stairs'].includes(f.type);
   return g;
 }
 
@@ -877,28 +1012,34 @@ export function buildFurniture(f: Furniture): THREE.Group {
  * 上吊りの引き戸。天井に埋め込んだレールから吊るので枠も床のレールもなく、戸の下は 12mm ほど空く。
  * 床には戸の振れ止め（ガイド）だけが付く。mirror なら正面（+z）がミラー面になる。
  */
-function hungDoor({ w, d, h }: Furniture, mat: THREE.MeshStandardMaterial, mirror: boolean): THREE.Object3D[] {
+function hungDoor({ w, d, h, flip }: Furniture, mat: THREE.MeshStandardMaterial, mirror: 'none' | 'full' | 'sheet'): THREE.Object3D[] {
   const gap = 12;
   const panelH = h - gap - 6;
+  // 取手は戸の先（戸袋と反対側）。flip で反対側にする
+  const s = flip ? -1 : 1;
   const out: THREE.Object3D[] = [box(w, panelH, d, 0, gap, 0, mat)];
   // 天井のレール（戸が動く範囲。戸の幅の 2 倍）
   out.push(box(w * 2, 6, 40, 0, h - 6, 0, black));
-  // 床のガイド（戸の端）
-  out.push(box(30, gap, d + 20, -w / 2 + 40, 0, 0, black));
-  // 引手（両面に細い縦の引手）
-  for (const s of [1, -1]) out.push(box(20, 500, 8, w / 2 - 60, 850, s * (d / 2 + 4), black));
-  if (mirror) {
-    const glass = new Reflector(new THREE.PlaneGeometry(w - 30, panelH - 30), {
-      textureWidth: 512,
-      textureHeight: Math.round((512 * panelH) / w),
-      color: 0xb8bcc0,
-      clipBias: 0.003,
-    });
-    glass.position.set(0, gap + panelH / 2, d / 2 + 1);
-    glass.userData.hideWhenCut = true;
-    out.push(glass);
+  // 床のガイド（戸の後ろの端）
+  out.push(box(30, gap, d + 20, -s * (w / 2 - 40), 0, 0, black));
+  if (mirror === 'full') {
+    // フルハイトドア fit のような全面ミラー。細い枠と、細い縦の取手
+    out.push(...reflector(w - 30, panelH - 30, 0, gap + panelH / 2, d / 2 + 1));
+    for (const z of [1, -1]) out.push(box(14, 1000, 14, s * (w / 2 - 45), 600, z * (d / 2 + 9), black));
+  } else {
+    for (const z of [1, -1]) out.push(box(20, 500, 8, s * (w / 2 - 60), 850, z * (d / 2 + 4), black));
+    // 貼り付けのミラーシート（全身鏡くらい）
+    if (mirror === 'sheet') out.push(...reflector(Math.min(450, w - 120), 1600, -s * 40, 350 + 800, d / 2 + 1));
   }
   return out;
+}
+
+/** 周りが映り込む鏡（解像度は控えめ）。断面表示で切れないので、俯瞰で壁を低く切るときは隠す */
+function reflector(w: number, h: number, x: number, y: number, z: number): THREE.Object3D[] {
+  const m = new Reflector(new THREE.PlaneGeometry(w, h), { textureWidth: 512, textureHeight: Math.round((512 * h) / w), color: 0xb8bcc0, clipBias: 0.003 });
+  m.position.set(x, y, z);
+  m.userData.hideWhenCut = true;
+  return [m];
 }
 
 /** 箱の UV（面ごとに 0〜1）を mm に直す。素材のテクスチャは mm 単位の UV で実寸になる */
