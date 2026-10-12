@@ -39,10 +39,11 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   floor: 0,
   floorView: 'all',
   mode: 'orbit',
-  time: 'day',
+  // 最初に開いたときは、照明をつけた夕方の見え方にする
+  time: 'evening',
   cutaway: true,
   labels: true,
-  lightsOn: false,
+  lightsOn: true,
   highQuality: true,
   invertLook: loadFlag('invertLook'),
   stature: loadNumber('stature', 160),
@@ -268,6 +269,8 @@ function render() {
 
 viewer.setInvertLook(ui.invertLook);
 viewer.setStature(ui.stature);
+viewer.setTime(ui.time);
+viewer.setLightsOn(ui.lightsOn);
 
 store.subscribe((plan, cause) => {
   if (cause === 'load') ui.statusMessage = undefined;

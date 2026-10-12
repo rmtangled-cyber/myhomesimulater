@@ -114,8 +114,11 @@
             ]
           ],
           "floor": "floor-lassissa-mortar",
-          "wall": "cross-sp2563",
-          "ceiling": "cross-sp2540"
+          "wall": "cross-sp2540",
+          "ceiling": "cross-sp2540",
+          "accent": {
+            "east": "cross-hf3122"
+          }
         },
         {
           "id": "1f-stairs",
@@ -126,11 +129,11 @@
               2502.5
             ],
             [
-              3640,
+              4550,
               2502.5
             ],
             [
-              3640,
+              4550,
               3412.5
             ],
             [
@@ -147,12 +150,12 @@
           "name": "ホール",
           "polygon": [
             [
-              3640,
-              0
+              1820,
+              3412.5
             ],
             [
               4550,
-              0
+              3412.5
             ],
             [
               4550,
@@ -161,14 +164,6 @@
             [
               1820,
               4777.5
-            ],
-            [
-              1820,
-              3412.5
-            ],
-            [
-              3640,
-              3412.5
             ]
           ],
           "floor": "floor-lassissa-mortar",
@@ -177,6 +172,31 @@
           "accent": {
             "west": "cross-hf3122"
           }
+        },
+        {
+          "id": "1f-hall-north",
+          "name": "ホール（北）",
+          "polygon": [
+            [
+              3640,
+              0
+            ],
+            [
+              4550,
+              0
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              3640,
+              2502.5
+            ]
+          ],
+          "floor": "floor-lassissa-mortar",
+          "wall": "cross-sp2540",
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "1f-hall-west",
@@ -204,8 +224,8 @@
           "ceiling": "cross-sp2540"
         },
         {
-          "id": "1f-shoes",
-          "name": "シューズクローク",
+          "id": "1f-shoes-entry",
+          "name": "シューズクローク（床）",
           "polygon": [
             [
               0,
@@ -214,6 +234,31 @@
             [
               1820,
               4322.5
+            ],
+            [
+              1820,
+              4777.5
+            ],
+            [
+              0,
+              4777.5
+            ]
+          ],
+          "floor": "floor-lassissa-mortar",
+          "wall": "cross-sp2563",
+          "ceiling": "cross-sp2540"
+        },
+        {
+          "id": "1f-shoes",
+          "name": "シューズクローク",
+          "polygon": [
+            [
+              0,
+              4777.5
+            ],
+            [
+              1820,
+              4777.5
             ],
             [
               1820,
@@ -269,6 +314,33 @@
               5687.5
             ],
             [
+              4250,
+              5687.5
+            ],
+            [
+              4250,
+              6825
+            ],
+            [
+              1820,
+              6825
+            ]
+          ],
+          "floor": "floor-ipf300-con2",
+          "wall": "exterior-lightgray",
+          "ceiling": "cross-light-gray",
+          "level": -180,
+          "ceilingHeight": 2620
+        },
+        {
+          "id": "1f-porch-step",
+          "name": "ポーチの段",
+          "polygon": [
+            [
+              4250,
+              5687.5
+            ],
+            [
               4550,
               5687.5
             ],
@@ -277,7 +349,7 @@
               6825
             ],
             [
-              1820,
+              4250,
               6825
             ]
           ],
@@ -330,11 +402,11 @@
             ],
             [
               8190,
-              7280
+              6825
             ],
             [
               4550,
-              7280
+              6825
             ]
           ],
           "floor": "floor-concrete",
@@ -347,7 +419,7 @@
       "openings": [
         {
           "id": "1f-bath-door",
-          "type": "door",
+          "type": "opening",
           "at": [
             1820,
             1760
@@ -404,21 +476,10 @@
           "id": "1f-stairs-hall",
           "type": "opening",
           "at": [
-            2275,
+            2730,
             3412.5
           ],
-          "width": 2730,
-          "height": 2400,
-          "sill": 0
-        },
-        {
-          "id": "1f-stairs-hall-east",
-          "type": "opening",
-          "at": [
-            3640,
-            2957.5
-          ],
-          "width": 910,
+          "width": 3640,
           "height": 2400,
           "sill": 0
         },
@@ -471,7 +532,7 @@
           "type": "opening",
           "at": [
             6370,
-            7280
+            6825
           ],
           "width": 3520,
           "height": 2960,
@@ -481,7 +542,7 @@
           "id": "1f-main-door",
           "type": "opening",
           "at": [
-            3555,
+            3373,
             5687.5
           ],
           "width": 1235,
@@ -520,21 +581,42 @@
           "width": 1030,
           "height": 2990,
           "sill": 0
+        },
+        {
+          "id": "1f-stairs-hall-north",
+          "type": "opening",
+          "at": [
+            4095,
+            2502.5
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "1f-porch-step-open",
+          "type": "opening",
+          "at": [
+            4250,
+            6256.25
+          ],
+          "width": 1257.5,
+          "height": 3000,
+          "sill": -560
+        },
+        {
+          "id": "1f-shoes-step",
+          "type": "opening",
+          "at": [
+            910,
+            4777.5
+          ],
+          "width": 1940,
+          "height": 2550,
+          "sill": -150
         }
       ],
       "furniture": [
-        {
-          "id": "stairs-1",
-          "type": "stairs",
-          "name": "階段（1階→2階）",
-          "x": 2275,
-          "y": 2957.5,
-          "w": 850,
-          "d": 2730,
-          "h": 2990,
-          "rotation": 90,
-          "color": "#3a3b3d"
-        },
         {
           "id": "car-1",
           "type": "car",
@@ -590,19 +672,6 @@
           "id": "wall-light-1",
           "type": "wall-light",
           "name": "ブラケットライト（KOIZUMI arkia AB54807・階段）",
-          "x": 1820,
-          "y": 2577.5,
-          "w": 120,
-          "d": 30,
-          "h": 120,
-          "rotation": 0,
-          "color": "#1a1a1a",
-          "z": 2837
-        },
-        {
-          "id": "wall-light-2",
-          "type": "wall-light",
-          "name": "ブラケットライト（KOIZUMI arkia AB54807・階段）",
           "x": 2730,
           "y": 2577.5,
           "w": 120,
@@ -610,7 +679,20 @@
           "h": 120,
           "rotation": 0,
           "color": "#1a1a1a",
-          "z": 3833
+          "z": 3235
+        },
+        {
+          "id": "wall-light-2",
+          "type": "wall-light",
+          "name": "ブラケットライト（KOIZUMI arkia AB54807・階段）",
+          "x": 3640,
+          "y": 2577.5,
+          "w": 120,
+          "d": 30,
+          "h": 120,
+          "rotation": 0,
+          "color": "#1a1a1a",
+          "z": 4033
         },
         {
           "id": "downlight-1",
@@ -653,38 +735,38 @@
         },
         {
           "id": "shoe-shelf-back",
-          "type": "open-shelf",
-          "name": "可動棚 D450（奥）",
+          "type": "resin-shelf",
+          "name": "樹脂棚板 D450（奥）",
           "x": 835,
           "y": 6540,
           "w": 950,
           "d": 450,
           "h": 2000,
           "rotation": 180,
-          "color": "#4a4b4d",
+          "color": "#3d3e40",
           "z": -150,
           "count": 5
         },
         {
           "id": "shoe-shelf-side",
-          "type": "open-shelf",
-          "name": "可動棚 D300（横）",
+          "type": "resin-shelf",
+          "name": "樹脂棚板 D300（横）",
           "x": 210,
-          "y": 5573,
-          "w": 2380,
+          "y": 5801,
+          "w": 1928,
           "d": 300,
           "h": 1500,
           "rotation": 270,
-          "color": "#4a4b4d",
+          "color": "#3d3e40",
           "z": -150,
           "count": 8
         },
         {
           "id": "shoe-pipe",
           "type": "box",
-          "name": "ハンガーパイプ",
+          "name": "コート掛け（ハンガーパイプ）",
           "x": 300,
-          "y": 4983,
+          "y": 5437,
           "w": 1200,
           "d": 30,
           "h": 30,
@@ -694,16 +776,16 @@
         },
         {
           "id": "shoe-upper",
-          "type": "storage",
-          "name": "吊戸棚",
+          "type": "box",
+          "name": "枕棚",
           "x": 210,
-          "y": 4983,
+          "y": 5437,
           "w": 1200,
           "d": 300,
-          "h": 300,
+          "h": 20,
           "rotation": 270,
-          "color": "#4a4b4d",
-          "z": 2100
+          "color": "#3d3e40",
+          "z": 2080
         },
         {
           "id": "shoe-sensor-1",
@@ -723,13 +805,13 @@
           "type": "downlight",
           "name": "センサーライト（吊戸棚下）",
           "x": 330,
-          "y": 4983,
+          "y": 5437,
           "w": 100,
           "d": 100,
           "h": 20,
           "rotation": 0,
           "color": "#f4f4f4",
-          "z": 2100
+          "z": 2080
         },
         {
           "id": "wash-counter",
@@ -842,7 +924,7 @@
           "id": "wash-storage",
           "type": "storage",
           "name": "収納（洗濯かご入り）",
-          "x": 3030,
+          "x": 2430,
           "y": 2217.5,
           "w": 1100,
           "d": 450,
@@ -854,7 +936,7 @@
           "id": "washer-1",
           "type": "washer",
           "name": "洗濯機（ドラム式）",
-          "x": 2180,
+          "x": 3280,
           "y": 2117.5,
           "w": 600,
           "d": 650,
@@ -867,7 +949,7 @@
           "id": "washer-base",
           "type": "box",
           "name": "キャスター付台",
-          "x": 2180,
+          "x": 3280,
           "y": 2117.5,
           "w": 620,
           "d": 640,
@@ -878,16 +960,16 @@
         {
           "id": "powder-counter",
           "type": "box",
-          "name": "カウンター（コンクリート調）",
+          "name": "洗面トップ（AICA JI-10346K）",
           "x": 455,
           "y": 2812.5,
           "w": 790,
           "d": 500,
           "h": 150,
           "rotation": 0,
-          "color": "#b4b1ac",
+          "color": "#8f8a85",
           "z": 700,
-          "material": "concrete-counter"
+          "material": "aica-ji10346k"
         },
         {
           "id": "powder-basin",
@@ -918,15 +1000,16 @@
         {
           "id": "powder-shelf",
           "type": "box",
-          "name": "下の棚板",
+          "name": "下の棚（AICA TJ-10237K）",
           "x": 455,
           "y": 2787.5,
           "w": 790,
           "d": 450,
           "h": 30,
           "rotation": 0,
-          "color": "#2e3033",
-          "z": 380
+          "color": "#2f3032",
+          "z": 380,
+          "material": "aica-tj10237k"
         },
         {
           "id": "powder-mirror",
@@ -957,7 +1040,7 @@
           "id": "entry-door-1",
           "type": "entry-door",
           "name": "玄関ドア（ヴェナート D30 C10 親子・カームブラック）",
-          "x": 3555,
+          "x": 3373,
           "y": 5687.5,
           "w": 1235,
           "d": 60,
@@ -998,25 +1081,25 @@
           "type": "line-light",
           "name": "間接照明（上がり框の下）",
           "x": 3185,
-          "y": 4800,
+          "y": 4815,
           "w": 2600,
           "d": 30,
           "h": 15,
           "rotation": 0,
           "color": "#f4f4f4",
-          "z": -20
+          "z": -55
         },
         {
           "id": "shoe-shelf-east",
-          "type": "open-shelf",
-          "name": "可動棚 D450（玄関側）",
+          "type": "resin-shelf",
+          "name": "樹脂棚板 D450（玄関側）",
           "x": 1535,
           "y": 6232,
           "w": 1065,
           "d": 450,
           "h": 1990,
           "rotation": 90,
-          "color": "#4a4b4d",
+          "color": "#3d3e40",
           "z": -150,
           "count": 3
         },
@@ -1128,7 +1211,7 @@
           "type": "line-light",
           "name": "間接照明（車庫）",
           "x": 6370,
-          "y": 7030,
+          "y": 1650,
           "w": 3400,
           "d": 60,
           "h": 15,
@@ -1140,14 +1223,14 @@
           "id": "garage-camera",
           "type": "camera",
           "name": "防犯カメラ（車庫）",
-          "x": 8010,
-          "y": 7150,
-          "w": 90,
-          "d": 250,
-          "h": 90,
+          "x": 7980,
+          "y": 1575,
+          "w": 80,
+          "d": 300,
+          "h": 120,
           "rotation": 0,
           "color": "#f2f2f2",
-          "z": 2220
+          "z": 2200
         },
         {
           "id": "post-1",
@@ -1218,7 +1301,7 @@
           "type": "downlight",
           "name": "ダウンライト（ポーチ）",
           "x": 2700,
-          "y": 6256,
+          "y": 6545,
           "w": 100,
           "d": 100,
           "h": 20,
@@ -1231,7 +1314,7 @@
           "type": "downlight",
           "name": "ダウンライト（ポーチ）",
           "x": 3900,
-          "y": 6256,
+          "y": 6545,
           "w": 100,
           "d": 100,
           "h": 20,
@@ -1243,14 +1326,14 @@
           "id": "porch-camera",
           "type": "camera",
           "name": "防犯カメラ（ポーチ）",
-          "x": 4380,
-          "y": 6640,
-          "w": 90,
-          "d": 250,
-          "h": 90,
-          "rotation": 90,
+          "x": 2030,
+          "y": 5897.5,
+          "w": 80,
+          "d": 300,
+          "h": 120,
+          "rotation": 270,
           "color": "#f2f2f2",
-          "z": 2250
+          "z": 2200
         },
         {
           "id": "umbrella-hanger",
@@ -1308,12 +1391,12 @@
           "id": "wash-iron-bar",
           "type": "iron-bar",
           "name": "タオル干し アイアンバー（L字）",
-          "x": 2180,
+          "x": 3280,
           "y": 2242.5,
           "w": 600,
           "d": 16,
           "h": 450,
-          "rotation": 0,
+          "rotation": 180,
           "color": "#1c1c1d",
           "z": 1950
         },
@@ -1412,14 +1495,79 @@
           "id": "crosswalk-1",
           "type": "crosswalk",
           "name": "横断歩道",
-          "x": -9000,
-          "y": 12572,
+          "x": 3600,
+          "y": 12747,
           "w": 4000,
           "d": 6380,
           "h": 3,
           "rotation": 0.8,
           "color": "#e9e9e4",
           "z": -560
+        },
+        {
+          "id": "stairs-1",
+          "type": "stairs",
+          "name": "階段（1階→2階・4段目から）",
+          "x": 3185,
+          "y": 2957.5,
+          "w": 850,
+          "d": 2730,
+          "h": 2392,
+          "rotation": 90,
+          "color": "#3a3b3d",
+          "z": 598
+        },
+        {
+          "id": "stairs-1-winder",
+          "type": "winder-stairs",
+          "name": "階段 1〜3段目（回り階段）",
+          "x": 1395,
+          "y": 2957.5,
+          "w": 850,
+          "d": 850,
+          "h": 598,
+          "rotation": 0,
+          "color": "#3a3b3d",
+          "count": 3
+        },
+        {
+          "id": "hall-west-cove",
+          "type": "line-light",
+          "name": "間接照明（廊下の突き当たりの壁の上）",
+          "x": 110,
+          "y": 3867.5,
+          "w": 790,
+          "d": 40,
+          "h": 15,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 2380
+        },
+        {
+          "id": "bath-door",
+          "type": "framed-glass-door",
+          "name": "浴室ドア（黒枠・くもりガラス 開き戸）",
+          "x": 1820,
+          "y": 1760,
+          "w": 750,
+          "d": 40,
+          "h": 2000,
+          "rotation": 90,
+          "color": "#1c1c1d"
+        },
+        {
+          "id": "genkan-float-step",
+          "type": "box",
+          "name": "上がり框（フロート）",
+          "x": 3185,
+          "y": 4827.5,
+          "w": 2610,
+          "d": 100,
+          "h": 40,
+          "rotation": 0,
+          "color": "#8e8b87",
+          "z": -40,
+          "material": "floor-lassissa-mortar"
         }
       ]
     },
@@ -1528,8 +1676,11 @@
             ]
           ],
           "floor": "floor-lassissa-lightgray",
-          "wall": "cross-white",
-          "ceiling": "cross-sp2540"
+          "wall": "cross-sp2540",
+          "ceiling": "cross-sp2540",
+          "accent": {
+            "north": "cross-th34606"
+          }
         },
         {
           "id": "2f-stairs-a",
@@ -1553,7 +1704,7 @@
             ]
           ],
           "floor": "floor-lassissa-lightgray",
-          "wall": "cross-white",
+          "wall": "cross-hf3122",
           "ceiling": "cross-sp2540",
           "void": true
         },
@@ -1579,7 +1730,7 @@
             ]
           ],
           "floor": "floor-lassissa-lightgray",
-          "wall": "cross-white",
+          "wall": "cross-hf3122",
           "ceiling": "",
           "void": true
         },
@@ -1816,6 +1967,112 @@
       ],
       "furniture": [
         {
+          "id": "kitchen-back",
+          "type": "kitchen-cabinet",
+          "name": "キッチン背面（トクラス コラージア・コンロ側）",
+          "x": 7805,
+          "y": 4393,
+          "w": 3636,
+          "d": 650,
+          "h": 880,
+          "rotation": 90,
+          "color": "#4c4b4a",
+          "material": "toclas-z-greystone"
+        },
+        {
+          "id": "kitchen-back-top",
+          "type": "box",
+          "name": "天板（テノール アイアンブラック）",
+          "x": 7805,
+          "y": 4393,
+          "w": 3636,
+          "d": 650,
+          "h": 20,
+          "rotation": 90,
+          "color": "#2e2f31",
+          "z": 880,
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-hob",
+          "type": "cooktop",
+          "name": "ガスコンロ（ハーマン W600 ガラストップ 3口）",
+          "x": 7785,
+          "y": 3043,
+          "w": 600,
+          "d": 500,
+          "h": 10,
+          "rotation": 90,
+          "color": "#141516",
+          "z": 900
+        },
+        {
+          "id": "kitchen-hood",
+          "type": "range-hood",
+          "name": "レンジフード（デザインフード FED テクスチャーブラック）",
+          "x": 7830,
+          "y": 3043,
+          "w": 900,
+          "d": 600,
+          "h": 700,
+          "rotation": 90,
+          "color": "#1d1d1e",
+          "z": 1685
+        },
+        {
+          "id": "kitchen-island",
+          "type": "kitchen-cabinet",
+          "name": "キッチン アイランド（トクラス コラージア・シンク側）",
+          "x": 6314,
+          "y": 3490,
+          "w": 1842,
+          "d": 652,
+          "h": 880,
+          "rotation": 270,
+          "color": "#4c4b4a",
+          "material": "toclas-z-greystone"
+        },
+        {
+          "id": "kitchen-island-top",
+          "type": "box",
+          "name": "天板（テノール アイアンブラック）",
+          "x": 6196,
+          "y": 3490,
+          "w": 1842,
+          "d": 888,
+          "h": 20,
+          "rotation": 270,
+          "color": "#2e2f31",
+          "z": 880,
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-sink",
+          "type": "basin",
+          "name": "H2シンク（グレー）",
+          "x": 6354,
+          "y": 3187,
+          "w": 760,
+          "d": 470,
+          "h": 10,
+          "rotation": 270,
+          "color": "#9aa0a3",
+          "z": 900
+        },
+        {
+          "id": "kitchen-faucet",
+          "type": "faucet",
+          "name": "水栓（KOHLER Simplice ブラック）",
+          "x": 6144,
+          "y": 3187,
+          "w": 40,
+          "d": 230,
+          "h": 420,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 900
+        },
+        {
           "id": "stairs-2",
           "type": "stairs",
           "name": "階段（2階→3階）",
@@ -1828,35 +2085,11 @@
           "color": "#c9a26f"
         },
         {
-          "id": "island-kitchen-1",
-          "type": "island-kitchen",
-          "name": "キッチン（シンク側）",
-          "x": 6170,
-          "y": 3490,
-          "w": 1830,
-          "d": 940,
-          "h": 850,
-          "rotation": 90,
-          "color": "#f0eeea"
-        },
-        {
-          "id": "kitchen-1",
-          "type": "kitchen",
-          "name": "キッチン（コンロ側）",
-          "x": 7805,
-          "y": 3490,
-          "w": 1830,
-          "d": 650,
-          "h": 850,
-          "rotation": 90,
-          "color": "#f0eeea"
-        },
-        {
           "id": "dining-table-1",
           "type": "dining-table",
           "name": "ダイニングテーブル",
           "x": 6135,
-          "y": 5100,
+          "y": 5300,
           "w": 1400,
           "d": 850,
           "h": 720,
@@ -1868,7 +2101,7 @@
           "type": "chair",
           "name": "チェア",
           "x": 5450,
-          "y": 4750,
+          "y": 4950,
           "w": 450,
           "d": 500,
           "h": 800,
@@ -1880,7 +2113,7 @@
           "type": "chair",
           "name": "チェア",
           "x": 5450,
-          "y": 5400,
+          "y": 5600,
           "w": 450,
           "d": 500,
           "h": 800,
@@ -1892,7 +2125,7 @@
           "type": "chair",
           "name": "チェア",
           "x": 6820,
-          "y": 4750,
+          "y": 4950,
           "w": 450,
           "d": 500,
           "h": 800,
@@ -1904,7 +2137,7 @@
           "type": "chair",
           "name": "チェア",
           "x": 6820,
-          "y": 5400,
+          "y": 5600,
           "w": 450,
           "d": 500,
           "h": 800,
@@ -1958,6 +2191,57 @@
           "h": 450,
           "rotation": 270,
           "color": "#e8e4dc"
+        },
+        {
+          "id": "toilet2-storage",
+          "type": "box",
+          "name": "トイレ収納（前面 TH34606）",
+          "x": 380,
+          "y": 2662.5,
+          "w": 640,
+          "d": 200,
+          "h": 2400,
+          "rotation": 0,
+          "color": "#45454a",
+          "material": "cross-th34606"
+        },
+        {
+          "id": "toilet2-cove",
+          "type": "line-light",
+          "name": "間接照明（収納の横のすき間）",
+          "x": 775,
+          "y": 2600,
+          "w": 150,
+          "d": 60,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2390
+        },
+        {
+          "id": "toilet2",
+          "type": "toilet",
+          "name": "トイレ（TOTO ネオレスト NJ1）",
+          "x": 455,
+          "y": 3112.5,
+          "w": 400,
+          "d": 700,
+          "h": 470,
+          "rotation": 0,
+          "color": "#f7f7f5"
+        },
+        {
+          "id": "toilet2-remote",
+          "type": "stick-remote",
+          "name": "スティックリモコン",
+          "x": 71,
+          "y": 3350,
+          "w": 34,
+          "d": 22,
+          "h": 190,
+          "rotation": 270,
+          "color": "#f2f2f0",
+          "z": 800
         }
       ]
     },
@@ -2016,7 +2300,7 @@
             ]
           ],
           "floor": "floor-lassissa-sandblack",
-          "wall": "cross-white",
+          "wall": "cross-hf3122",
           "ceiling": "cross-sp2540",
           "void": true,
           "ceilingHeight": 2500
@@ -2056,7 +2340,7 @@
         },
         {
           "id": "3f-room1",
-          "name": "洋室1",
+          "name": "書斎（南西）",
           "polygon": [
             [
               1820,
@@ -2081,7 +2365,7 @@
         },
         {
           "id": "3f-room2",
-          "name": "洋室2",
+          "name": "書斎（北東）",
           "polygon": [
             [
               5460,
@@ -2101,8 +2385,8 @@
             ]
           ],
           "floor": "floor-lassissa-sandblack",
-          "wall": "cross-white",
-          "ceiling": "cross-sp2540"
+          "wall": "cross-th34672",
+          "ceiling": "cross-th34672"
         },
         {
           "id": "3f-room3",
@@ -2202,7 +2486,7 @@
           "type": "door",
           "at": [
             5460,
-            2100
+            3850
           ],
           "width": 700,
           "height": 2400,
@@ -2315,12 +2599,12 @@
           "id": "piano-1",
           "type": "storage",
           "name": "ピアノ",
-          "x": 5790,
-          "y": 3800,
+          "x": 6300,
+          "y": 1912.5,
           "w": 1400,
           "d": 520,
           "h": 1100,
-          "rotation": 270,
+          "rotation": 0,
           "color": "#2b2b2b"
         },
         {
@@ -2358,6 +2642,31 @@
           "h": 800,
           "rotation": 270,
           "color": "#3a3b3d"
+        },
+        {
+          "id": "toilet3",
+          "type": "toilet",
+          "name": "トイレ（TOTO ネオレスト NJ2）",
+          "x": 2230,
+          "y": 2047.5,
+          "w": 400,
+          "d": 700,
+          "h": 470,
+          "rotation": 270,
+          "color": "#f7f7f5"
+        },
+        {
+          "id": "toilet3-remote",
+          "type": "stick-remote",
+          "name": "スティックリモコン",
+          "x": 2500,
+          "y": 1663.5,
+          "w": 34,
+          "d": 22,
+          "h": 190,
+          "rotation": 0,
+          "color": "#f2f2f0",
+          "z": 800
         }
       ]
     }

@@ -303,7 +303,7 @@ function tiles(
 
 /**
  * 素材柄のフロア材（ラシッサ Dフロア耐水UDわん など）。幅 boardW・長さ boardL の板を、列ごとに継ぎ目をずらして張る。
- * 板の継ぎ目は V 溝で、溝の肩に化粧シートの断面がうっすら明るく見える。
+ * 板の継ぎ目は床面より下がった V 溝。
  */
 function boards(base: string, boardW: number, boardL: number, rows: number, opts: { mottle?: number; variation?: number } = {}) {
   const c = rgb(base);
@@ -316,8 +316,8 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
     const pxPerMm = w / tileMm[0];
     const rowH = h / rows;
     const groove = Math.max(1.5, pxPerMm * 2.5);
-    // 列ごとの継ぎ目の位置と、板ごとの色の違い
-    const rowInfo = Array.from({ length: rows }, (_, r) => ({ joint: r === 0 ? 0 : Math.floor(rand() * w), tones: [1 + (rand() - 0.5) * (opts.variation ?? 0.06), 1 + (rand() - 0.5) * (opts.variation ?? 0.06)] }));
+    // 継ぎ目は 1 列ごとに板の半分ずらす（れんが張り）。板ごとに色を少し変える
+    const rowInfo = Array.from({ length: rows }, (_, r) => ({ joint: r % 2 === 0 ? 0 : Math.floor(w / 2), tones: [1 + (rand() - 0.5) * (opts.variation ?? 0.06), 1 + (rand() - 0.5) * (opts.variation ?? 0.06)] }));
     for (let y = 0; y < h; y++) {
       const r = Math.min(rows - 1, Math.floor(y / rowH));
       const ly = y - r * rowH;
@@ -329,10 +329,54 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
         let k = info.tones[lx < w / 2 ? 0 : 1] * (1 + (m[i] - 0.5) * (opts.mottle ?? 0.18) * 2 + (f[i] - 0.5) * 0.05);
         height[i] = 0.8 + (f[i] - 0.5) * 0.05;
         if (edge < groove) {
+          // 床面より下がった V 溝。底ほど暗い
           const t = edge / groove;
-          // 溝の底は暗く、肩は少し明るい
-          k *= t < 0.5 ? 0.55 + t * 0.6 : 1.04 - (t - 0.5) * 0.08;
-          height[i] = 0.2 + 0.6 * t;
+          k *= 0.5 + 0.5 * t;
+          height[i] = 0.8 * t;
+        }
+        put(color.data, i, c, k);
+      }
+    }
+    return { color, height };
+  };
+}
+
+/** コンクリート打ち放し調。型枠の継ぎ目と P コンの穴 */
+function concretePanels(base: string, tileMm: [number, number], panel: [number, number]) {
+  const c = rgb(base);
+  return (w: number, h: number, rand: Rand): Generated => {
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 300), cellsY: cellsFor(tileMm[1], 300), octaves: 6, persistence: 0.6 });
+    const f = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 4), cellsY: cellsFor(tileMm[1], 4), octaves: 2 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    const px = w / tileMm[0];
+    const pw = panel[0] * px;
+    const ph = panel[1] * px;
+    const tone = Array.from({ length: 16 }, () => 1 + (rand() - 0.5) * 0.08);
+    const holeR = 12 * px;
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const cx = Math.floor(x / pw);
+        const cy = Math.floor(y / ph);
+        let k = tone[(cx * 3 + cy * 5) % 16] * (1 + (m[i] - 0.5) * 0.3 + (f[i] - 0.5) * 0.08);
+        height[i] = 0.7 + (f[i] - 0.5) * 0.1;
+        // 型枠の継ぎ目
+        const ex = Math.min(x % pw, pw - (x % pw));
+        const ey = Math.min(y % ph, ph - (y % ph));
+        if (Math.min(ex, ey) < 1.2) {
+          k *= 0.82;
+          height[i] = 0.5;
+        }
+        // P コンの穴（パネルごとに左右 2 つ）
+        const lx = x % pw;
+        const ly = y % ph;
+        for (const hx of [pw * 0.25, pw * 0.75]) {
+          const d = Math.hypot(lx - hx, ly - ph / 2);
+          if (d < holeR) {
+            k *= 0.55 + 0.3 * (d / holeR);
+            height[i] = 0.2;
+          } else if (d < holeR * 1.6) k *= 1.04;
         }
         put(color.data, i, c, k);
       }
@@ -471,6 +515,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cfcecb', 920, { contrast: 0.03, pores: 6, tint: '#c8c8c4' }), [920, 640], 0.8, 1),
   wall('cross-th34190', 'TH34190 木目調（神代杉）', woodPaper('#7a706a', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
+  wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ダークグレー）', stone('#45454a', 920, { contrast: 0.06, pores: 6, tint: '#3d3d42' }), [920, 641], 0.5, 0.8),
+  wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a8a099', [930, 1250], [465, 625]), [930, 1250], 0.85, 1.2),
   wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
   wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),
 
@@ -479,6 +525,11 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'aica-tj10235k', name: 'AICA TJ-10235K セルサス アールグレイマーブル（グレー）', categories: [], tile: [1200, 1200], roughness: 0.75, bump: 0, draw: marble('#68696b', '#9c9d9f', 1200, { veins: 2, strength: 0.5 }) },
   { id: 'aica-tj10240k', name: 'AICA TJ-10240K セルサス（ダークグレー）', categories: [], tile: [600, 600], roughness: 0.8, bump: 0.4, draw: stone('#3f3f40', 600, { contrast: 0.05, pores: 10, tint: '#3a3a3c' }) },
   { id: 'aica-fj901zd', name: 'AICA FJ-901ZD セラール グラニット パラディソ／ダーク', categories: [], tile: [600, 600], roughness: 0.55, bump: 0.4, draw: stone('#565350', 600, { contrast: 0.12, pores: 40, tint: '#4b4846' }) },
+  { id: 'aica-ji10346k', name: 'AICA JI-10346K アイカラビアン（コンクリート柄）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.3, draw: stone('#8f8a85', 1200, { contrast: 0.07, pores: 5, tint: '#88837e' }) },
+  { id: 'aica-tj10237k', name: 'AICA TJ-10237K セルサス メタルオキシサビ（ダーク）', categories: [], tile: [600, 600], roughness: 0.8, bump: 0.3, draw: stone('#2f3032', 600, { contrast: 0.09, pores: 12, tint: '#33302d' }) },
+  // トクラス コラージア（見積もりで選んだ色）
+  { id: 'toclas-z-greystone', name: 'トクラス コラージア 扉 Zシリーズ グレーストーン', categories: [], tile: [900, 900], roughness: 0.7, bump: 0.4, draw: stone('#4c4b4a', 900, { contrast: 0.08, pores: 14, tint: '#454443' }) },
+  { id: 'toclas-tenor-ironblack', name: 'トクラス テノール（人造大理石）アイアンブラック', categories: [], tile: [900, 900], roughness: 0.45, bump: 0.2, draw: stone('#2e2f31', 900, { contrast: 0.05, pores: 30, tint: '#2a2b2d' }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----

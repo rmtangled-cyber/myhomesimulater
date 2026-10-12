@@ -10,6 +10,7 @@ import {
   dist,
   edgeSide,
   insetPolygon,
+  pointInPolygon,
   openingsOnSegment,
   projectOnLine,
   signedArea,
@@ -202,11 +203,17 @@ function buildFloor(
     const len = len0 + t;
     const f = new Frame(start, dir);
     const end: Point = [start[0] + dir[0] * len, start[1] + dir[1] * len];
-    const spans = openingsOnSegment(floor.openings, start, end, t / 2 + 1);
-    for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) addWallBox(wallBuilder, jambBuilder, f, r, t, wallBottom, wallTop);
+    // 開口部が壁の端まで達しているときは、角を埋めるために延ばした分も一緒に抜く（柱のような切れ端を残さない）
+    const spans = openingsOnSegment(floor.openings, start, end, t / 2 + 1).map((s) => ({
+      ...s,
+      u0: s.u0 <= t / 2 + 2 ? 0 : s.u0,
+      u1: s.u1 >= len - t / 2 - 2 ? len : s.u1,
+    }));
+    for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) addWallBox(wallBuilder, jambBuilder, f, r, t, wallBottom, wallTop, r.u0 > 0.5, r.u1 < len - 0.5, floor.ceilingHeight);
   }
   if (!wallBuilder.empty) {
-    const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-white', { clip }));
+    // 開口部の側面（壁の厚み）はクロスで巻き込むので、家の標準の壁クロスで描く
+    const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-sp2540', { clip }));
     jambs.userData.info = { kind: 'jamb' } satisfies SurfaceInfo;
     jambs.castShadow = jambs.receiveShadow = true;
     group.add(jambs);
@@ -270,17 +277,69 @@ function buildFloor(
     }
 
     // 2階より上の床の裏（下の階がない所では軒天として外から見える）。下の階の天井より上なので室内からは見えない
+    // 床の厚み（300）ぶんの側面も付けて、張り出した所の先端（鼻先）をふさぐ。
+    // 外に面する側面は軒天と同じ黒、階段の吹き抜けなど家の中に面する側面は壁クロスにする
     if (!room.void && index > 0) {
-      const underShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, y)));
+      const slabT = 300;
+      // 壁の厚みの半分だけ外へ広げて、上の階の外壁の下端もふさぐ
+      const outline = insetPolygon(room.polygon, -t / 2);
+      const underShape = new THREE.Shape(outline.map(([x, y]) => new THREE.Vector2(x, y)));
       const under = new THREE.Mesh(new THREE.ShapeGeometry(underShape), getMaterial('cross-black'));
       under.rotation.x = Math.PI / 2;
-      under.position.y = -40;
+      under.position.y = -slabT;
       under.receiveShadow = true;
       group.add(under);
+      const outside = new MeshBuilder();
+      const inside = new MeshBuilder();
+      const n = room.polygon.length;
+      for (let i = 0; i < n; i++) {
+        const a = outline[i];
+        const b = outline[(i + 1) % n];
+        const len = dist(a, b);
+        if (len < 1) continue;
+        // 辺の外側の点が、この階の別の部屋の中にあるか（あれば家の中に面している）
+        let nx = -(b[1] - a[1]) / len;
+        let ny = (b[0] - a[0]) / len;
+        const mid: Point = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        if (pointInPolygon([mid[0] + nx * 10, mid[1] + ny * 10], outline)) [nx, ny] = [-nx, -ny];
+        const probe: Point = [mid[0] + nx * 10, mid[1] + ny * 10];
+        const inner = floor.rooms.some((r) => r.id !== room.id && pointInPolygon(probe, r.polygon));
+        // 面の向き（D × Y）が外を向くように始点を選ぶ
+        const fwd = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
+        const f = fwd.N.x * nx + fwd.N.z * ny > 0 ? fwd : new Frame(b, [a[0] - b[0], a[1] - b[1]]);
+        if (inner) {
+          inside.quad(f.at(0, -slabT, 0), f.D.clone().multiplyScalar(len), Y.clone().multiplyScalar(slabT), [0, 0], [len, slabT]);
+          continue;
+        }
+        // 下の階の部屋の真上（下に外壁がある所）は、その外壁が鼻先を隠すので描かない（面が重なってちらつく）。
+        // 辺の途中で変わることがあるので 50mm ごとに調べる
+        const below = plan.floors[index - 1]?.rooms ?? [];
+        const steps = Math.max(1, Math.ceil(len / 50));
+        let runStart = -1;
+        for (let k = 0; k <= steps; k++) {
+          const u = ((k + 0.5) / steps) * len;
+          const p: Point = [f.origin[0] + f.D.x * u - nx * (t / 2 + 10), f.origin[1] + f.D.z * u - ny * (t / 2 + 10)];
+          const open = k < steps && !below.some((r) => pointInPolygon(p, r.polygon));
+          if (open && runStart < 0) runStart = k;
+          if (!open && runStart >= 0) {
+            const u0 = (runStart / steps) * len;
+            const u1 = (k / steps) * len;
+            outside.quad(f.at(u0, -slabT, 0), f.D.clone().multiplyScalar(u1 - u0), Y.clone().multiplyScalar(slabT), [u0, 0], [u1 - u0, slabT]);
+            runStart = -1;
+          }
+        }
+      }
+      for (const [mb, id] of [[outside, 'cross-black'], [inside, 'cross-sp2540']] as const) {
+        if (mb.empty) continue;
+        const sides = new THREE.Mesh(mb.geometry(), getMaterial(id));
+        sides.receiveShadow = true;
+        group.add(sides);
+      }
     }
 
     if (room.ceiling) {
-      const ceilShape = new THREE.Shape(inner.map(([x, y]) => new THREE.Vector2(x, y)));
+      // 天井も壁芯まで張る。壁のない所（開口部）で隣の部屋の天井と隙間なくつながる
+      const ceilShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, y)));
       const ceiling = new THREE.Mesh(new THREE.ShapeGeometry(ceilShape), getMaterial(room.ceiling));
       ceiling.rotation.x = Math.PI / 2;
       ceiling.position.y = top;
@@ -314,8 +373,8 @@ function buildFloor(
       const len0 = dist(finish[i], finish[(i + 1) % finish.length]);
       if (len0 < 1) continue;
       const dir: Point = [(finish[(i + 1) % finish.length][0] - finish[i][0]) / len0, (finish[(i + 1) % finish.length][1] - finish[i][1]) / len0];
-      const e0 = convex(i) ? t / 2 : 0;
-      const e1 = convex((i + 1) % n) ? t / 2 : 0;
+      const e0 = convex(i) ? t / 2 + 1 : 0;
+      const e1 = convex((i + 1) % n) ? t / 2 + 1 : 0;
       const a: Point = [finish[i][0] - dir[0] * e0, finish[i][1] - dir[1] * e0];
       const b: Point = [finish[(i + 1) % finish.length][0] + dir[0] * e1, finish[(i + 1) % finish.length][1] + dir[1] * e1];
       const len = len0 + e0 + e1;
@@ -362,7 +421,8 @@ function buildFloor(
 }
 
 /** 壁の箱。両側の面は mb（外壁の素材）、開口部の枠まわりの面は jamb（室内の白い仕上げ）に入れる */
-function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number) {
+/** startFace / endFace: 開口部に面する端だけ端面を描く（壁どうしの角の端面は隣の壁と重なってちらつくので描かない） */
+function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number, startFace: boolean, endFace: boolean, ceiling: number) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -376,10 +436,11 @@ function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: nu
   // 上面・下面（壁の上端・下端の面は見えないので省く）
   // 床の高さ以下で終わる部分（掃き出しの開口部の下）は床でふさがるので上面を描かない
   if (r.v1 < top && r.v1 > 0) jamb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
-  if (r.v0 > bottom) jamb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
+  // 天井の高さまである開口部の上の壁の下面は、両側の天井でふさがるので描かない
+  if (r.v0 > bottom && r.v0 < ceiling - 1) jamb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
   // 端面（開口部の側面になる）
-  jamb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
-  jamb.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
+  if (startFace) jamb.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
+  if (endFace) jamb.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
 }
 
 function findWall(walls: WallSegment[], p: Point, t: number): WallSegment | undefined {

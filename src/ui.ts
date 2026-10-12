@@ -214,7 +214,7 @@ export class Panel {
           ${num('x', 'X（東へ）')}${num('y', 'Y（南へ）')}${num('rotation', '回転°', 15)}
           ${num('w', '幅')}${num('d', '奥行')}${num('h', '高さ')}
           ${num('z', '床からの高さ')}
-          ${['open-shelf', 'rod-screen'].includes(f.type) ? num('count', f.type === 'open-shelf' ? '棚板の枚数' : '本数', 1) : ''}
+          ${['open-shelf', 'wall-shelf', 'resin-shelf', 'rod-screen', 'winder-stairs'].includes(f.type) ? num('count', f.type === 'rod-screen' ? '本数' : f.type === 'winder-stairs' ? '段数' : '棚板の枚数', 1) : ''}
         </div>
         <div class="row">
           <label class="color">色 <input type="color" data-furn="color" value="${esc(f.color)}"></label>
