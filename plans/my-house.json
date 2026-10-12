@@ -2882,7 +2882,7 @@
             5460,
             3850
           ],
-          "width": 700,
+          "width": 780,
           "height": 2400,
           "sill": 0
         },
@@ -3085,6 +3085,42 @@
           "rotation": 90,
           "color": "#efeeea",
           "flip": true
+        },
+        {
+          "id": "3f-room1-door-leaf",
+          "type": "swing-door",
+          "name": "書斎（南西）の開き戸（北の吊元・室内へ開く）",
+          "x": 4550,
+          "y": 3850,
+          "w": 720,
+          "d": 36,
+          "h": 2380,
+          "rotation": 90,
+          "color": "#efeeea"
+        },
+        {
+          "id": "3f-room2-door-leaf",
+          "type": "swing-door",
+          "name": "書斎（北東）の開き戸（北の吊元・室内へ開く）",
+          "x": 5460,
+          "y": 3850,
+          "w": 720,
+          "d": 36,
+          "h": 2380,
+          "rotation": 90,
+          "color": "#efeeea"
+        },
+        {
+          "id": "3f-room3-door-leaf",
+          "type": "swing-door",
+          "name": "子供部屋の開き戸（西の吊元・室内へ開く）",
+          "x": 5005,
+          "y": 4550,
+          "w": 720,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#efeeea"
         }
       ]
     }

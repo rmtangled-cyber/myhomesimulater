@@ -341,8 +341,8 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
   };
 }
 
-/** コンクリート打ち放し調。型枠の継ぎ目と P コンの穴 */
-function concretePanels(base: string, tileMm: [number, number], panel: [number, number]) {
+/** コンクリート打ち放し調。型枠の継ぎ目と P コンの穴（holes: false で穴なし） */
+function concretePanels(base: string, tileMm: [number, number], panel: [number, number], opts: { holes?: boolean; toneVar?: number } = {}) {
   const c = rgb(base);
   return (w: number, h: number, rand: Rand): Generated => {
     const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 300), cellsY: cellsFor(tileMm[1], 300), octaves: 6, persistence: 0.6 });
@@ -352,7 +352,7 @@ function concretePanels(base: string, tileMm: [number, number], panel: [number, 
     const px = w / tileMm[0];
     const pw = panel[0] * px;
     const ph = panel[1] * px;
-    const tone = Array.from({ length: 16 }, () => 1 + (rand() - 0.5) * 0.08);
+    const tone = Array.from({ length: 16 }, () => 1 + (rand() - 0.5) * (opts.toneVar ?? 0.08));
     const holeR = 12 * px;
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
@@ -371,7 +371,7 @@ function concretePanels(base: string, tileMm: [number, number], panel: [number, 
         // P コンの穴（パネルごとに左右 2 つ）
         const lx = x % pw;
         const ly = y % ph;
-        for (const hx of [pw * 0.25, pw * 0.75]) {
+        for (const hx of opts.holes === false ? [] : [pw * 0.25, pw * 0.75]) {
           const d = Math.hypot(lx - hx, ly - ph / 2);
           if (d < holeR) {
             k *= 0.55 + 0.3 * (d / holeR);
@@ -466,6 +466,9 @@ const floor = (id: string, name: string, draw: MaterialDef['draw'], tile: [numbe
 
 const FLOOR_TILE: [number, number] = [1820, 900];
 
+/** ウォークスルーで試せる候補のクロス（これまでに出てきた品番） */
+export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
+
 export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 床 ----
   floor('floor-oak', 'オーク（ナチュラル）', flooring(['#c79f6c', '#bd935f', '#d0ab79', '#b88c5a'], 150, FLOOR_TILE), FLOOR_TILE, 0.5, 1.5),
@@ -517,6 +520,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
   wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ダークグレー）', stone('#45454a', 920, { contrast: 0.06, pores: 6, tint: '#3d3d42' }), [920, 641], 0.5, 0.8),
   wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a8a099', [930, 1250], [465, 625]), [930, 1250], 0.85, 1.2),
+  // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）
+  wall('cross-fe76650', 'FE76650 コンクリート調（30cm 角の型枠跡・ダークグレー）', concretePanels('#6b6b69', [900, 900], [300, 300], { holes: false, toneVar: 0.14 }), [900, 900], 0.85, 1.2),
   wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
   wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),
 

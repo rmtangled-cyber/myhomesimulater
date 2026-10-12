@@ -2,7 +2,7 @@
 
 import { FURNITURE_TYPES, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
-import { getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
+import { CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
 import type { Furniture, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
@@ -295,9 +295,27 @@ export class Panel {
         <h2>今いる場所 <small>${esc(floor.name)}</small></h2>
         <h3>${esc(r.name)}</h3>
         <dl class="finish">${row('床', r.floor)}${row('壁', r.wall)}${accents}${row('天井', r.ceiling)}</dl>
+        ${this.tryFinishes(r)}
         ${items ? `<h3>家具・設備</h3><ul class="walk-items">${items}</ul>` : ''}
         <p class="hint">画面の中央に見えている物の名前と品番は、画面の下に出ます。</p>
       </section>`;
+  }
+
+  /** ウォークスルーで、候補のクロスに張り替えて見比べる */
+  private tryFinishes(r: Room): string {
+    const pick = (target: string, label: string, current: string) => {
+      const options = CANDIDATE_WALLPAPERS.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
+      const swatch = current && CANDIDATE_WALLPAPERS.includes(current) ? `<img class="swatch" src="${swatchUrl(current)}" alt="">` : `<span class="swatch none"></span>`;
+      return `<div class="accent"><span>${label}</span><div class="mat-row">${swatch}<select data-walk-finish="${target}"><option value="">（選ぶ）</option>${options}</select></div></div>`;
+    };
+    const walls = r.accent && Object.keys(r.accent).length ? '' : r.wall;
+    const both = walls && walls === r.ceiling ? walls : '';
+    return `
+      <h3>クロスを試す</h3>
+      ${pick('both', '壁4面と天井', both)}
+      ${pick('wall', '壁4面', walls)}
+      ${r.ceiling ? pick('ceiling', '天井', r.ceiling) : ''}
+      <p class="hint">選ぶとこの部屋がすぐ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
   }
 
   private warningsSection(): string {
@@ -367,6 +385,20 @@ export class Panel {
     if (d.change === 'stature') {
       const cm = Math.round(Number(t.value));
       if (cm >= 80 && cm <= 220) a.setStature(cm);
+      return;
+    }
+    if (d.walkFinish && t.value && this.state.walkRoomId) {
+      const target = d.walkFinish;
+      const id = t.value;
+      // キー操作で歩けるよう、選んだらフォーカスを外す
+      t.blur();
+      a.updateRoom(this.state.walkRoomId, (r) => {
+        if (target !== 'ceiling') {
+          r.wall = id;
+          delete r.accent;
+        }
+        if (target !== 'wall' && r.ceiling) r.ceiling = id;
+      });
       return;
     }
     if (sel?.kind === 'furniture' && 'furnFlip' in d) {
