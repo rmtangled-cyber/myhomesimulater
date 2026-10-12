@@ -130,7 +130,9 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
   const furniture = new Map<string, THREE.Group>();
   const bounds = new THREE.Box3();
 
-  if (!getMaterialDef(plan.exterior)) warnings.push(`外壁: 素材ID「${plan.exterior}」が見つかりません（マゼンタで表示）`);
+  for (const id of new Set([plan.exterior, ...plan.floors.map((f) => f.exterior ?? plan.exterior)])) {
+    if (!getMaterialDef(id)) warnings.push(`外壁: 素材ID「${id}」が見つかりません（マゼンタで表示）`);
+  }
 
   const ids = new Set<string>();
   const floors = plan.floors.map((floor, index) => {
@@ -199,7 +201,7 @@ function buildFloor(
     const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-white', { clip }));
     jambs.castShadow = jambs.receiveShadow = true;
     group.add(jambs);
-    const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(plan.exterior, { clip }));
+    const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(floor.exterior ?? plan.exterior, { clip }));
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);

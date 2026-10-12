@@ -23,6 +23,7 @@
   - 「北・東・南・西」は図面の上・右・下・左のこと（実際の方位とずれていてもよい）
 - `floors[]` が階。`elevation` は 1階 FL からの床の高さ、`height` は階高（上の階の FL まで）、`ceilingHeight` は標準の天井高
 - `groundLevel` は地面（GL）の高さを 1階 FL からの差で書く（基礎が 560 なら `-560`）
+- 外壁は `exterior`（全体）。階ごとに違うときは `floors[].exterior` で上書きする
 - グリッドは 910mm（尺モジュール）。部屋の頂点はなるべく 910 の倍数（455 の倍数）にそろえる
 - **壁は書かない**。各階の `rooms[].polygon`（壁芯で囲んだ外形）の辺から自動で作られる。隣り合う部屋は辺を共有させる
 - 部屋どうしの間に壁を作りたくない場合は、そこに `type: "opening"` の開口部を置く（`height` を階高にすると梁も消える）
@@ -49,10 +50,10 @@
 
 - 床: `floor-oak` `floor-walnut` `floor-white-ash` `floor-gray-oak` `floor-cherry` `floor-tile-white` `floor-tile-stone` `floor-tile-charcoal` `floor-tile-concrete-300` `floor-tile-mortar` `floor-cushion-white` `floor-concrete` `floor-tatami`
 - 壁・天井: `cross-white` `cross-offwhite` `cross-greige` `cross-light-gray` `cross-charcoal` `cross-navy` `cross-sage` `cross-terracotta` `cross-dusty-pink` `cross-plaster-white` `cross-stone-lightgray` `cross-stone-charcoal` `cross-concrete` `cross-wood-oak` `cross-wood-walnut` `wall-tile-white`
-- 外壁: `exterior-lightgray` `exterior-siding-white` `exterior-siding-black` `exterior-plaster-beige` `cross-concrete`
+- 外壁: `exterior-ekg103fk`（ニチハ エピMGライトグレーV） `exterior-charmrock`（ニチハ モエンエクセラード60 シャルムロック プレミアム） `exterior-lightgray` `exterior-siding-white` `exterior-siding-black` `exterior-plaster-beige` `cross-concrete`
 - 実際に使う品番（色は見本チップより施工例の写真に寄せて作ったもの）
   - 壁（サンゲツ）: `cross-sp2540`（石目調ライトグレー） `cross-sp2563`（コンクリート柄・淡色） `cross-sp2562`（織物調ダークブラウン） `cross-hf3122`（モルタル調グレー・ハードウォール） `cross-th34102`（石目調ライトグレー） `cross-th34190`（木目調・神代杉）
-  - 床（LIXIL）: `floor-ipf300-con2`（コンテⅡ 300角） `floor-lassissa-mortar`（ラシッサDフロア耐水 ラフモルタル柄） `floor-lassissa-lightgray`（同 ライトグレイ柄）
+  - 床（LIXIL）: `floor-ipf300-con2`（コンテⅡ 300角） `floor-lassissa-mortar`（ラシッサDフロア耐水 ラフモルタル柄） `floor-lassissa-lightgray`（同 ライトグレイ柄） `floor-lassissa-sandblack`（同 サンドブラック柄）
   - その他: `panel-bath-woodgray`（ユニットバスの壁） `cross-black`（黒い天井・軒天）
   - 家具の面材（`material` 用）: `aica-tj10235k` `aica-tj10240k` `aica-fj901zd`（AICA 大理石調） `concrete-counter`
 
@@ -92,14 +93,17 @@
 - 図面に書かれている施主名・住所などの個人情報はリポジトリに書かない
 - 1階はユーザーのイメージ図（スクリーンショット）に合わせてある。品番の対応:
   - 玄関・ホールの壁 SP2540、階段とアートの壁 HF3122、シューズクローク・洗面室の壁 SP2563
-  - 玄関土間とシューズクロークの床 LIXIL コンテⅡ IPF-300/CON-2、ホール・階段・洗面まわりの床 ラシッサDフロア耐水 ラフモルタル柄（ライトグレイ柄と比較検討中）
+  - 玄関土間とシューズクロークの床 LIXIL コンテⅡ IPF-300/CON-2。そのほかの床はラシッサDフロア耐水で、1階 ラフモルタル柄・2階 ライトグレイ柄・3階 サンドブラック柄
+  - 外壁: 1階 ニチハ EKG103FK エピMGライトグレーV、2・3階 ニチハ モエンエクセラード60 シャルムロック プレミアム
   - 洗面脱衣室: 両側の壁 TH34190、正面の壁と天井 TH34102、カウンター AICA TJ-10235K、腰壁 FJ-901ZD、下の棚 TJ-10240K、置き型ボウル・黒い壁付け水栓・ピタミラー（下に間接照明）
-  - 1階 WIC: 壁 SP2562（西の壁だけ SP2540）、D270 の可動棚、枕棚＋テープライト、ハンガーパイプ上下（1980・900）
+  - 1階 WIC: 壁 SP2562（西の壁だけ SP2540）、ドアの内側に鏡シート、D270 の可動棚、枕棚＋テープライト、ハンガーパイプ上下（1980・900）
   - 浴室: TOTO サザナ HT シリーズ S タイプ 1620
-  - 玄関ドア YKK AP ヴェナート D30 C10 親子ドア（カームブラック）、上がり框の下とフロートベンチの下に間接照明
+  - 玄関まわりの配置は図面で確認済み: 玄関の土間は奥行き 910（y 4777.5〜5687.5）。その南の壁に親子扉（YKK AP ヴェナート D30 C10 カームブラック）があり、扉の外は車庫から 190 上がって入る幅約 1000 のポーチ（`1f-porch`、FL −370）。ポーチの南の外壁にくもり窓
+  - シューズクロークと玄関の間はミラー付の引き戸（幅 620 の開口。戸はシューズクローク側で北へ引く。玄関の西の壁は内側 790 しかないため）。上がり框の下とフロートベンチの下に間接照明
   - 外まわり: 宅配ボックス NastaBox+POST、インターホン Nasta KS-ND02A、表札灯 KOIZUMI AU54604、車庫の間接照明と防犯カメラ、家の前の電柱
 - シューズクローク: ホール側から見て、奥（南）に D450、玄関側（東）に D450 の3段、西の壁に D300（1500 まで）。ハンガーパイプと吊戸棚は西の壁の北半分
 - 表札の名前など個人情報は 3D にも書かない
+- 家の中のドアはすべてハイドア（高さ 2400 = 天井まで）。新しく室内ドアを足すときも `height: 2400` にする（浴室のドアはユニットバスの製品なので除く）
 - 家具を置くときは、壁・ドアの前・他の家具と重ならないよう、部屋の外形と開口部の位置から計算する。壁の内側の面は壁芯から `wallThickness / 2`（60mm）内側
 - 画面の色は実物と違う。最終決定は実物のサンプルで確認するよう、必要に応じて伝える
 

@@ -73,6 +73,8 @@ export interface Floor {
   height: number;
   /** 標準の天井高 */
   ceilingHeight: number;
+  /** この階の外壁の素材ID（省略時は plan.exterior） */
+  exterior?: string;
   rooms: Room[];
   openings: Opening[];
   furniture: Furniture[];

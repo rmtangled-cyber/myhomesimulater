@@ -2,7 +2,7 @@
   "name": "我が家（木造3階建て）",
   "grid": 910,
   "wallThickness": 120,
-  "exterior": "exterior-lightgray",
+  "exterior": "exterior-ekg103fk",
   "groundLevel": -560,
   "floors": [
     {
@@ -226,6 +226,33 @@
             ],
             [
               4550,
+              5687.5
+            ],
+            [
+              1820,
+              5687.5
+            ]
+          ],
+          "floor": "floor-ipf300-con2",
+          "wall": "cross-sp2540",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "1f-porch",
+          "name": "ポーチ",
+          "polygon": [
+            [
+              1820,
+              5687.5
+            ],
+            [
+              4550,
+              5687.5
+            ],
+            [
+              4550,
               6825
             ],
             [
@@ -234,10 +261,10 @@
             ]
           ],
           "floor": "floor-ipf300-con2",
-          "wall": "cross-sp2540",
-          "ceiling": "cross-white",
-          "level": -150,
-          "ceilingHeight": 2550
+          "wall": "exterior-lightgray",
+          "ceiling": "cross-light-gray",
+          "level": -370,
+          "ceilingHeight": 2810
         },
         {
           "id": "1f-wic",
@@ -315,7 +342,7 @@
             1300
           ],
           "width": 780,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -348,7 +375,7 @@
             3640
           ],
           "width": 700,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -375,13 +402,13 @@
         },
         {
           "id": "1f-wic-door",
-          "type": "opening",
+          "type": "door",
           "at": [
             4550,
             900
           ],
           "width": 700,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -392,7 +419,7 @@
             4322.5
           ],
           "width": 800,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -411,10 +438,10 @@
           "type": "opening",
           "at": [
             1820,
-            5232.5
+            5317.5
           ],
-          "width": 910,
-          "height": 2150,
+          "width": 620,
+          "height": 2400,
           "sill": -150
         },
         {
@@ -432,12 +459,34 @@
           "id": "1f-main-door",
           "type": "opening",
           "at": [
-            3300,
+            3555,
+            5687.5
+          ],
+          "width": 1235,
+          "height": 2330,
+          "sill": -150
+        },
+        {
+          "id": "1f-porch-garage",
+          "type": "opening",
+          "at": [
+            4550,
+            6256.25
+          ],
+          "width": 1017,
+          "height": 3000,
+          "sill": -560
+        },
+        {
+          "id": "1f-porch-window",
+          "type": "window",
+          "at": [
+            3050,
             6825
           ],
-          "width": 1200,
-          "height": 2100,
-          "sill": -150
+          "width": 300,
+          "height": 600,
+          "sill": 600
         }
       ],
       "furniture": [
@@ -548,7 +597,7 @@
           "type": "downlight",
           "name": "ダウンライト（玄関）",
           "x": 3185,
-          "y": 5600,
+          "y": 5232.5,
           "w": 100,
           "d": 100,
           "h": 20,
@@ -559,12 +608,12 @@
         {
           "id": "mirror-1",
           "type": "mirror",
-          "name": "ミラー引き戸（シューズクローク）",
-          "x": 1890,
-          "y": 5232.5,
-          "w": 900,
+          "name": "ミラー付引き戸（シューズクローク側を北へ引く）",
+          "x": 1740,
+          "y": 5317.5,
+          "w": 680,
           "d": 20,
-          "h": 2550,
+          "h": 2400,
           "rotation": 270,
           "color": "#c8ccd0",
           "z": -150
@@ -875,11 +924,11 @@
           "id": "entry-door-1",
           "type": "entry-door",
           "name": "玄関ドア（ヴェナート D30 C10 親子・カームブラック）",
-          "x": 3300,
-          "y": 6825,
-          "w": 1200,
+          "x": 3555,
+          "y": 5687.5,
+          "w": 1235,
           "d": 60,
-          "h": 2100,
+          "h": 2330,
           "rotation": 0,
           "color": "#2a2c2e",
           "z": -150,
@@ -890,8 +939,8 @@
           "type": "box",
           "name": "フロートベンチ",
           "x": 4265,
-          "y": 5437,
-          "w": 1200,
+          "y": 5232.5,
+          "w": 790,
           "d": 450,
           "h": 150,
           "rotation": 90,
@@ -903,8 +952,8 @@
           "type": "line-light",
           "name": "間接照明（ベンチ下）",
           "x": 4265,
-          "y": 5437,
-          "w": 1150,
+          "y": 5232.5,
+          "w": 740,
           "d": 40,
           "h": 15,
           "rotation": 90,
@@ -1072,9 +1121,9 @@
           "type": "post-box",
           "name": "宅配ボックス（NastaBox+POST）",
           "x": 2150,
-          "y": 6890,
+          "y": 6825,
           "w": 360,
-          "d": 60,
+          "d": 170,
           "h": 600,
           "rotation": 0,
           "color": "#1e1f20",
@@ -1118,6 +1167,96 @@
           "rotation": 0,
           "color": "#a9a8a3",
           "z": -560
+        },
+        {
+          "id": "wic-door-mirror",
+          "type": "mirror",
+          "name": "WICのドア（鏡シート貼り）",
+          "x": 4625,
+          "y": 900,
+          "w": 700,
+          "d": 30,
+          "h": 2400,
+          "rotation": 270,
+          "color": "#e8e6e2"
+        },
+        {
+          "id": "porch-downlight-1",
+          "type": "downlight",
+          "name": "ダウンライト（ポーチ）",
+          "x": 2700,
+          "y": 6256,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2440
+        },
+        {
+          "id": "porch-downlight-2",
+          "type": "downlight",
+          "name": "ダウンライト（ポーチ）",
+          "x": 3900,
+          "y": 6256,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2440
+        },
+        {
+          "id": "porch-camera",
+          "type": "camera",
+          "name": "防犯カメラ（ポーチ）",
+          "x": 4380,
+          "y": 6640,
+          "w": 90,
+          "d": 250,
+          "h": 90,
+          "rotation": 90,
+          "color": "#f2f2f2",
+          "z": 2250
+        },
+        {
+          "id": "umbrella-hanger",
+          "type": "box",
+          "name": "傘掛け（森田アルミ ViK ブラック）",
+          "x": 4625,
+          "y": 5200,
+          "w": 400,
+          "d": 30,
+          "h": 20,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 440
+        },
+        {
+          "id": "ac-outdoor-1",
+          "type": "box",
+          "name": "エアコン室外機",
+          "x": 8400,
+          "y": 6050,
+          "w": 800,
+          "d": 300,
+          "h": 630,
+          "rotation": 270,
+          "color": "#e8e8e6",
+          "z": -560
+        },
+        {
+          "id": "outdoor-tap",
+          "type": "faucet",
+          "name": "外水栓",
+          "x": 8400,
+          "y": 6750,
+          "w": 60,
+          "d": 150,
+          "h": 800,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": -560
         }
       ]
     },
@@ -1127,6 +1266,7 @@
       "elevation": 2990,
       "height": 3020,
       "ceilingHeight": 2400,
+      "exterior": "exterior-charmrock",
       "rooms": [
         {
           "id": "2f-bedroom",
@@ -1149,7 +1289,7 @@
               2502.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1174,7 +1314,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1199,7 +1339,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1224,7 +1364,7 @@
               4322.5
             ]
           ],
-          "floor": "floor-cushion-white",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1249,7 +1389,7 @@
               3412.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white",
           "void": true
@@ -1275,7 +1415,7 @@
               3412.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "",
           "void": true
@@ -1301,7 +1441,7 @@
               6825
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1350,7 +1490,7 @@
               2502.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-white"
         }
@@ -1364,7 +1504,7 @@
             2047.5
           ],
           "width": 780,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1375,7 +1515,7 @@
             1000
           ],
           "width": 650,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1386,7 +1526,7 @@
             1592.5
           ],
           "width": 1240,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1397,7 +1537,7 @@
             3870
           ],
           "width": 700,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1408,7 +1548,7 @@
             4322.5
           ],
           "width": 780,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1664,6 +1804,7 @@
       "elevation": 6010,
       "height": 2730,
       "ceilingHeight": 2400,
+      "exterior": "exterior-charmrock",
       "rooms": [
         {
           "id": "3f-toilet",
@@ -1686,7 +1827,7 @@
               2502.5
             ]
           ],
-          "floor": "floor-cushion-white",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1711,7 +1852,7 @@
               3412.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white",
           "void": true,
@@ -1746,7 +1887,7 @@
               2502.5
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1771,7 +1912,7 @@
               7280
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1796,7 +1937,7 @@
               4550
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1829,7 +1970,7 @@
               5460
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         },
@@ -1854,7 +1995,7 @@
               7280
             ]
           ],
-          "floor": "floor-oak",
+          "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
           "ceiling": "cross-white"
         }
@@ -1868,7 +2009,7 @@
             2047.5
           ],
           "width": 700,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1890,7 +2031,7 @@
             3850
           ],
           "width": 780,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1901,7 +2042,7 @@
             2100
           ],
           "width": 700,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1912,7 +2053,7 @@
             4550
           ],
           "width": 780,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {
@@ -1923,7 +2064,7 @@
             6370
           ],
           "width": 1600,
-          "height": 2000,
+          "height": 2400,
           "sill": 0
         },
         {

@@ -316,11 +316,14 @@ function tatami(tileMm: [number, number]) {
   };
 }
 
-function siding(base: string, boardMm: number, tileMm: [number, number]) {
+/** サイディング。rough を付けると石を割ったようなざらざらした表情（ロック調）になる */
+function siding(base: string, boardMm: number, tileMm: [number, number], opts: { rough?: number } = {}) {
   const c = rgb(base);
+  const rough = opts.rough ?? 0;
   return (w: number, h: number, rand: Rand): Generated => {
     const m = fbm(w, h, rand, { cellsX: 4, octaves: 5 });
     const f = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 5), cellsY: cellsFor(tileMm[1], 5), octaves: 2 });
+    const r = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 60), cellsY: cellsFor(tileMm[1], 25), octaves: 4, persistence: 0.6 });
     const color = new ImageData(w, h);
     const height = new Float32Array(w * h);
     const rowH = h / Math.round(tileMm[1] / boardMm);
@@ -329,8 +332,8 @@ function siding(base: string, boardMm: number, tileMm: [number, number]) {
       const ly = y % rowH;
       for (let x = 0; x < w; x++) {
         const i = y * w + x;
-        let k = 1 + (m[i] - 0.5) * 0.06 + (f[i] - 0.5) * 0.05;
-        height[i] = 0.8 + f[i] * 0.2;
+        let k = 1 + (m[i] - 0.5) * 0.06 + (f[i] - 0.5) * 0.05 + (r[i] - 0.5) * rough;
+        height[i] = 0.8 + f[i] * 0.2 * (1 - rough) + (r[i] - 0.5) * rough;
         if (ly < groove) {
           k *= 0.6 + 0.4 * (ly / groove);
           height[i] = (ly / groove) * 0.6;
@@ -384,6 +387,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // 実際に使う品番。色は見本チップより施工例の写真に寄せている
   floor('floor-ipf300-con2', 'LIXIL コンテⅡ IPF-300/CON-2（300角）', tiles('#7e7c79', '#6a6865', 4, 4, [1200, 1200], { mottle: 0.15, variation: 0.07 }), [1200, 1200], 0.6, 2),
   floor('floor-lassissa-mortar', 'LIXIL ラシッサDフロア耐水 ラフモルタル柄', tiles('#8e8b87', '#76736f', 2, 1, [910, 1820], { mottle: 0.22, variation: 0.06, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
+  floor('floor-lassissa-sandblack', 'LIXIL ラシッサDフロア耐水 サンドブラック柄', tiles('#5b5957', '#4c4a48', 2, 1, [910, 1820], { mottle: 0.16, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
   floor('floor-lassissa-lightgray', 'LIXIL ラシッサDフロア耐水 ライトグレイ柄', tiles('#b8b6b1', '#a3a19c', 2, 1, [910, 1820], { mottle: 0.14, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
 
   // ---- 壁・天井クロス ----
@@ -422,6 +426,9 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 外壁 ----
   { id: 'exterior-siding-white', name: 'サイディング（白）', categories: ['exterior'], tile: [1820, 910], roughness: 0.8, bump: 2, draw: siding('#ecebe6', 455, [1820, 910]) },
   { id: 'exterior-siding-black', name: 'サイディング（ブラック）', categories: ['exterior'], tile: [1820, 910], roughness: 0.8, bump: 2, draw: siding('#2f3032', 455, [1820, 910]) },
+  // ニチハ。色は施工写真に合わせた
+  { id: 'exterior-charmrock', name: 'ニチハ モエンエクセラード60 シャルムロック プレミアム', categories: ['exterior'], tile: [1820, 910], roughness: 0.85, bump: 3, draw: siding('#58595d', 455, [1820, 910], { rough: 0.3 }) },
+  { id: 'exterior-ekg103fk', name: 'ニチハ EKG103FK エピMGライトグレーV', categories: ['exterior'], tile: [1820, 910], roughness: 0.85, bump: 2, draw: tiles('#b9bbbb', '#a4a6a6', 2, 2, [1820, 910], { mottle: 0.1, variation: 0.08, groutMm: 6 }) },
   { id: 'exterior-lightgray', name: '外壁（ライトグレー）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.85, bump: 1, draw: stone('#b6b9b9', 1200, { contrast: 0.04, pores: 3 }) },
   { id: 'exterior-plaster-beige', name: '塗り壁（ベージュ）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 2.5, draw: stone('#ddd2bd', 1200, { contrast: 0.06, pores: 4 }) },
 ];
