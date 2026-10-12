@@ -3,11 +3,9 @@
 // 照明器具は光源も持つ。光源には userData.fixture、光る部分の材質には userData.glow を付ける。
 
 import * as THREE from 'three';
-import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
+import { getMaterial, getMaterialDef } from './materials';
 import type { Furniture } from './types';
-
-RectAreaLightUniformsLib.init();
 
 const WARM = '#ffcf94';
 
@@ -33,9 +31,9 @@ function glow(color = WARM, intensity = 2): THREE.MeshStandardMaterial {
 const black = new THREE.MeshStandardMaterial({ color: '#1c1c1d', roughness: 0.45, metalness: 0.6 });
 black.userData.shared = true;
 
-/** 下向き（dir）のスポットライト。intensity はカンデラ、angle は度 */
-function spot(x: number, y: number, z: number, dir: [number, number, number], intensity: number, angle: number, shadow: boolean): THREE.Object3D[] {
-  const l = new THREE.SpotLight(WARM, intensity, 8, THREE.MathUtils.degToRad(angle / 2), 0.6, 2);
+/** 下向き（dir）のスポットライト。intensity はカンデラ、angle は度、distance は光が届く距離（m） */
+function spot(x: number, y: number, z: number, dir: [number, number, number], intensity: number, angle: number, shadow: boolean, distance = 8): THREE.Object3D[] {
+  const l = new THREE.SpotLight(WARM, intensity, distance, THREE.MathUtils.degToRad(angle / 2), 0.6, 2);
   l.position.set(x, y, z);
   l.target.position.set(x + dir[0] * 1000, y + dir[1] * 1000, z + dir[2] * 1000);
   l.castShadow = shadow;
@@ -297,12 +295,10 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '幅の長さで光る。天井や壁際に置き、「床からの高さ」で取付高さを決める',
     defaults: { w: 1800, d: 60, h: 40, color: '#f4f4f4' },
     build: ({ w, d, h }) => [box(w, h, d, 0, 0, 0, glow(WARM, 2.5))],
-    lights: ({ w, d }) => {
-      const l = new THREE.RectAreaLight(WARM, 6, w, Math.max(d, 60));
-      l.position.set(0, -5, 0);
-      l.lookAt(0, -1000, 0);
-      l.userData.fixture = true;
-      return [l];
+    // 面光源（RectAreaLight）は影がなく壁を通り抜けて遠くまで照らすので、届く距離の短いスポットを並べる
+    lights: ({ w }) => {
+      const n = Math.max(1, Math.round(w / 700));
+      return Array.from({ length: n }, (_, i) => spot(-w / 2 + (w * (i + 0.5)) / n, -10, 0, [0, -1, 0], 12, 140, false, 1.8)).flat();
     },
   },
   {
@@ -361,6 +357,164 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'round-mirror',
+    label: '丸ミラー',
+    hint: '壁掛け。w が直径。「床からの高さ」で下端の高さを決める',
+    defaults: { w: 500, d: 20, h: 500, color: '#2a2a2a' },
+    build: ({ w, d }, mat) => {
+      const back = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, d, 48), mat);
+      back.rotation.x = Math.PI / 2;
+      back.position.set(0, w / 2, 0);
+      const mirror = new Reflector(new THREE.CircleGeometry(w / 2 - 6, 48), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
+      mirror.position.set(0, w / 2, d / 2 + 1);
+      mirror.userData.hideWhenCut = true;
+      return [back, mirror];
+    },
+  },
+  {
+    type: 'basin',
+    label: '洗面ボウル',
+    hint: 'カウンターの上に置く（「床からの高さ」をカウンター天板の高さに）。h が 30 以下ならアンダーボウル',
+    defaults: { w: 450, d: 350, h: 130, color: '#f6f6f4' },
+    build: ({ w, d, h }, mat) => {
+      if (h <= 30) {
+        // 天板に埋め込んだボウル。口の部分だけ見せる
+        const rim = box(w, 2, d, 0, 0, 0, mat);
+        const hole = box(w - 40, 2, d - 40, 0, 1, 0, new THREE.MeshStandardMaterial({ color: '#d9dad8', roughness: 0.3 }));
+        return [rim, hole];
+      }
+      // 置き型。下がすぼまった四角い器
+      const bowl = new THREE.Mesh(new THREE.CylinderGeometry(Math.SQRT1_2, Math.SQRT1_2 * 0.6, 1, 4, 1), mat);
+      bowl.rotation.y = Math.PI / 4;
+      bowl.scale.set(w, h, d);
+      bowl.position.y = h / 2;
+      bowl.castShadow = true;
+      const inner = box(w - 50, 2, d - 50, 0, h - 30, 0, new THREE.MeshStandardMaterial({ color: '#e4e5e3', roughness: 0.3 }));
+      return [bowl, inner];
+    },
+  },
+  {
+    type: 'faucet',
+    label: '水栓',
+    hint: 'h が立ち上がりの高さ、d が吐水口の長さ。壁付けなら背面を壁に付けて h を小さく',
+    defaults: { w: 30, d: 180, h: 250, color: '#1c1c1d' },
+    build: ({ w, d, h }) => {
+      const post = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h, 16), black);
+      post.position.set(0, h / 2, -d / 2 + w / 2);
+      const spout = box(w * 0.8, w * 0.8, d, 0, h - w * 0.8, 0, black);
+      return [post, spout];
+    },
+  },
+  {
+    type: 'bathtub',
+    label: '浴槽',
+    defaults: { w: 1600, d: 750, h: 550, color: '#f4f4f2' },
+    build: ({ w, d, h }, mat) => {
+      const body = box(w, h, d, 0, 0, 0, mat);
+      // 楕円形の湯舟の口
+      const water = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 4, 48), new THREE.MeshStandardMaterial({ color: '#cfdde0', roughness: 0.15 }));
+      water.scale.set(w - 180, 1, d - 160);
+      water.position.y = h + 1;
+      return [body, water];
+    },
+  },
+  {
+    type: 'washer',
+    label: '洗濯機（ドラム式）',
+    hint: '正面にドアが付く。キャスター付台に載せるなら「床からの高さ」を 100 くらいに',
+    defaults: { w: 640, d: 650, h: 1050, color: '#f2f2f0' },
+    build: ({ w, d, h }, mat) => {
+      const body = box(w, h, d, 0, 0, 0, mat);
+      const door = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.3, w * 0.3, 30, 40), new THREE.MeshStandardMaterial({ color: '#2b2d30', roughness: 0.2 }));
+      door.rotation.x = Math.PI / 2;
+      door.position.set(0, h * 0.58, d / 2 + 10);
+      return [body, door];
+    },
+  },
+  {
+    type: 'entry-door',
+    label: '玄関ドア（親子ドア）',
+    hint: '開口部の中心に置く。正面が外側。「本数」を 1 にすると片開き',
+    defaults: { w: 1235, d: 60, h: 2330, color: '#2a2c2e' },
+    build: ({ w, d, h, count }, mat) => {
+      const fr = 40;
+      const inner = w - fr * 2;
+      const mainW = count === 1 ? inner : Math.round(inner * 0.68);
+      const out: THREE.Object3D[] = [
+        box(fr, h, d + 20, -w / 2 + fr / 2, 0, 0, mat),
+        box(fr, h, d + 20, w / 2 - fr / 2, 0, 0, mat),
+        box(w, fr, d + 20, 0, h - fr, 0, mat),
+        box(mainW - 4, h - fr, d, -w / 2 + fr + mainW / 2, 0, 0, mat),
+      ];
+      if (count !== 1) out.push(box(inner - mainW - 4, h - fr, d, w / 2 - fr - (inner - mainW) / 2, 0, 0, mat));
+      // 縦長のバーハンドル（外側・内側）
+      const hx = -w / 2 + fr + mainW - 90;
+      for (const s of [1, -1]) out.push(box(24, 1000, 24, hx, 550, s * (d / 2 + 40), black));
+      return out;
+    },
+  },
+  {
+    type: 'post-box',
+    label: '宅配ボックス・ポスト（埋込）',
+    hint: '外壁に埋め込む。正面を外に向け、「床からの高さ」で下端の高さを決める',
+    defaults: { w: 360, d: 60, h: 600, color: '#1e1f20' },
+    build: ({ w, d, h }, mat) => [
+      box(w, h, d, 0, 0, 0, mat),
+      box(w - 80, 12, 8, 0, h - 120, d / 2 + 2, black), // 投函口
+      box(w - 40, 2, 4, 0, h * 0.42, d / 2 + 1, black), // 扉の境目
+    ],
+  },
+  {
+    type: 'intercom',
+    label: 'インターホン（玄関子機）',
+    defaults: { w: 100, d: 30, h: 160, color: '#1e1f20' },
+    build: ({ w, d, h }, mat) => {
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.12, w * 0.12, 4, 20), new THREE.MeshStandardMaterial({ color: '#050505', roughness: 0.1 }));
+      lens.rotation.x = Math.PI / 2;
+      lens.position.set(0, h * 0.75, d / 2 + 2);
+      const button = new THREE.Mesh(new THREE.TorusGeometry(w * 0.2, 3, 8, 32), glow('#f4f4f4', 0.6));
+      button.position.set(0, h * 0.32, d / 2 + 2);
+      return [box(w, h, d, 0, 0, 0, mat), lens, button];
+    },
+  },
+  {
+    type: 'down-bracket',
+    label: 'ポーチライト（下向き・表札灯）',
+    hint: '壁付け。背面を壁に付け、「床からの高さ」で取付高さを決める',
+    defaults: { w: 100, d: 100, h: 100, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.8, 4, d * 0.8, 0, -4, 0, glow())],
+    lights: () => spot(0, -10, 10, [0, -1, 0.1], 30, 70, true),
+  },
+  {
+    type: 'camera',
+    label: '防犯カメラ',
+    defaults: { w: 90, d: 250, h: 90, color: '#f2f2f2' },
+    build: ({ w, d, h }, mat) => {
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, d * 0.75, 20), mat);
+      body.rotation.x = Math.PI / 2 - 0.35;
+      body.position.set(0, h / 2, d * 0.1);
+      body.castShadow = true;
+      return [box(60, 30, d * 0.4, 0, h, -d / 2 + d * 0.2, mat), body];
+    },
+  },
+  {
+    type: 'utility-pole',
+    label: '電柱（街路灯付き）',
+    hint: '「床からの高さ」を地面（GL）に。街路灯の腕は正面の向きに出る',
+    defaults: { w: 350, d: 350, h: 11000, color: '#a9a8a3' },
+    build: ({ w, h }, mat) => {
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.36, w / 2, h, 24), mat);
+      pole.position.y = h / 2;
+      pole.castShadow = pole.receiveShadow = true;
+      const arm = box(1600, 90, 90, 0, h - 1200, 0, black); // 腕金
+      const lampArm = box(50, 50, 900, 0, h - 3600, 450, mat);
+      const lamp = box(180, 70, 360, 0, h - 3670, 900, mat);
+      const lens = box(150, 4, 320, 0, h - 3674, 900, glow('#fff1d6', 3));
+      return [pole, arm, lampArm, lamp, lens];
+    },
+    lights: ({ h }) => spot(0, h - 3690, 900, [0, -1, 0.05], 50, 100, true),
+  },
+  {
     type: 'box',
     label: 'その他（箱）',
     defaults: { w: 600, d: 600, h: 600, color: '#b5b0a8' },
@@ -383,11 +537,36 @@ export function buildFurniture(f: Furniture): THREE.Group {
   const t = getFurnitureType(f.type);
   for (const o of t.build(f, mat, sub)) g.add(o);
   for (const o of t.lights?.(f) ?? []) g.add(o);
+  // 面材の指定があれば、色の代わりに素材のテクスチャを実寸で貼る
+  if (f.material && getMaterialDef(f.material)) {
+    const surface = getMaterial(f.material);
+    g.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.material === mat) {
+        if (o.geometry instanceof THREE.BoxGeometry) boxUVsInMm(o.geometry);
+        o.material = surface;
+      }
+    });
+  }
   g.position.set(f.x, f.z ?? 0, f.y);
   // 平面図で時計回り = 上から見て時計回り = three.js の y 軸まわりで負の回転
   g.rotation.y = -THREE.MathUtils.degToRad(f.rotation);
   g.userData.furnitureId = f.id;
   return g;
+}
+
+/** 箱の UV（面ごとに 0〜1）を mm に直す。素材のテクスチャは mm 単位の UV で実寸になる */
+function boxUVsInMm(geo: THREE.BoxGeometry) {
+  const { width: w, height: h, depth: d } = geo.parameters;
+  // BoxGeometry の面の順番: +x, −x, +y, −y, +z, −z（各 4 頂点）
+  const sizes: [number, number][] = [[d, h], [d, h], [w, d], [w, d], [w, h], [w, h]];
+  const uv = geo.getAttribute('uv') as THREE.BufferAttribute;
+  sizes.forEach(([su, sv], face) => {
+    for (let k = 0; k < 4; k++) {
+      const i = face * 4 + k;
+      uv.setXY(i, uv.getX(i) * su, uv.getY(i) * sv);
+    }
+  });
+  uv.needsUpdate = true;
 }
 
 /** 抽象画っぽい模様（家具の ID ごとに決まった絵になる） */

@@ -58,6 +58,8 @@ export interface Furniture {
   /** 平面図で時計回りの角度（度）。0 のとき正面が南（下）を向く */
   rotation: number;
   color: string;
+  /** 面材の素材ID（大理石調のカウンターなど）。指定すると color の代わりにこの素材を貼る */
+  material?: string;
   /** 数の指定がある家具で使う（可動棚の棚板の枚数、ロッドの本数など） */
   count?: number;
 }

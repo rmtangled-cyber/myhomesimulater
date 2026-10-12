@@ -148,6 +148,48 @@ function stone(base: string, tileMm: number, opts: { contrast?: number; pores?: 
   };
 }
 
+/** 木目調の壁紙・パネル（継ぎ目なし）。縦に流れる細い木目 */
+function woodPaper(base: string, tileMm: [number, number], opts: { contrast?: number } = {}) {
+  const c = rgb(base);
+  const contrast = opts.contrast ?? 0.1;
+  return (w: number, h: number, rand: Rand): Generated => {
+    // 横方向に細かく、縦方向にはほとんど変わらないノイズ = 縦の木目
+    const streak = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 2.5), cellsY: 3, octaves: 3, persistence: 0.6 });
+    const band = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 45), cellsY: 2, octaves: 3 });
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 300), octaves: 3 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    for (let i = 0; i < w * h; i++) {
+      put(color.data, i, c, 1 + (streak[i] - 0.5) * contrast * 2 + (band[i] - 0.5) * contrast + (m[i] - 0.5) * 0.05);
+      height[i] = streak[i];
+    }
+    return { color, height };
+  };
+}
+
+/** 大理石調（メラミン化粧板など）。ゆらいだ筋模様 */
+function marble(base: string, vein: string, tileMm: number, opts: { veins?: number; strength?: number } = {}) {
+  const c = rgb(base);
+  const vc = rgb(vein);
+  const veins = opts.veins ?? 2;
+  const strength = opts.strength ?? 0.75;
+  return (w: number, h: number, rand: Rand): Generated => {
+    const warp = fbm(w, h, rand, { cellsX: cellsFor(tileMm, 300), octaves: 6, persistence: 0.55 });
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm, 150), octaves: 4 });
+    const color = new ImageData(w, h);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        // 周期が整数なので継ぎ目なく繰り返せる
+        const t = (x / w) * veins + (y / h) + warp[i] * 4;
+        const v = Math.pow(1 - Math.abs(Math.sin(t * Math.PI)), 14);
+        put(color.data, i, mix(c, vc, v * strength), 1 + (m[i] - 0.5) * 0.14);
+      }
+    }
+    return { color };
+  };
+}
+
 // ---------------------------------------------------------------- 床
 
 /** フローリング。板ごとの色ムラ、ノイズで揺らした木目、継ぎ目の溝 */
@@ -207,7 +249,14 @@ function flooring(colors: string[], plankWidthMm: number, tileMm: [number, numbe
 }
 
 /** タイル。1枚ごとの色ムラ、石のようなムラ、目地の溝 */
-function tiles(base: string, grout: string, countX: number, countY: number, tileMm: [number, number], opts: { variation?: number; mottle?: number } = {}) {
+function tiles(
+  base: string,
+  grout: string,
+  countX: number,
+  countY: number,
+  tileMm: [number, number],
+  opts: { variation?: number; mottle?: number; groutMm?: number } = {},
+) {
   const c = rgb(base);
   const g = rgb(grout);
   return (w: number, h: number, rand: Rand): Generated => {
@@ -217,7 +266,7 @@ function tiles(base: string, grout: string, countX: number, countY: number, tile
     const height = new Float32Array(w * h);
     const tw = w / countX;
     const th = h / countY;
-    const groutPx = Math.max(1.5, (w / tileMm[0]) * 3);
+    const groutPx = Math.max(1.5, (w / tileMm[0]) * (opts.groutMm ?? 3));
     const tone = Array.from({ length: countX * countY }, () => 1 + (rand() - 0.5) * (opts.variation ?? 0.06));
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
@@ -332,6 +381,10 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   floor('floor-cushion-white', 'クッションフロア（白）', plaster('#ecebe6', 900, { mottle: 0.02, grain: 0.03 }), [900, 900], 0.5, 0.6),
   floor('floor-concrete', 'コンクリート（土間・車庫）', stone('#a8a6a1', 1800, { contrast: 0.12, pores: 6 }), [1800, 1800], 0.85, 1.5),
   floor('floor-tatami', '畳', tatami([910, 1820]), [910, 1820], 0.8, 2),
+  // 実際に使う品番。色は見本チップより施工例の写真に寄せている
+  floor('floor-ipf300-con2', 'LIXIL コンテⅡ IPF-300/CON-2（300角）', tiles('#7e7c79', '#6a6865', 4, 4, [1200, 1200], { mottle: 0.15, variation: 0.07 }), [1200, 1200], 0.6, 2),
+  floor('floor-lassissa-mortar', 'LIXIL ラシッサDフロア耐水 ラフモルタル柄', tiles('#8e8b87', '#76736f', 2, 1, [910, 1820], { mottle: 0.22, variation: 0.06, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
+  floor('floor-lassissa-lightgray', 'LIXIL ラシッサDフロア耐水 ライトグレイ柄', tiles('#b8b6b1', '#a3a19c', 2, 1, [910, 1820], { mottle: 0.14, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
 
   // ---- 壁・天井クロス ----
   wall('cross-white', '白（スタンダード）', plaster('#f4f3ef', 900), [900, 900], 0.9, 0.25),
@@ -350,10 +403,26 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-wood-oak', '木目調（オーク板張り）', flooring(['#c79f6c', '#bd935f', '#d0ab79'], 100, [900, 900]), [900, 900], 0.55, 1.5),
   wall('cross-wood-walnut', '木目調（ウォールナット板張り）', flooring(['#5e4030', '#6b4a36', '#533829'], 100, [900, 900]), [900, 900], 0.55, 1.5),
   wall('wall-tile-white', 'タイル（白 100角・水回り）', tiles('#f2f1ec', '#d5d2ca', 6, 6, [600, 600], { mottle: 0.03, variation: 0.03 }), [600, 600], 0.25, 2),
+  wall('cross-black', 'ブラック（天井・軒天）', plaster('#2b2b2c', 900, { mottle: 0.05 }), [900, 900], 0.85, 0.3),
+  // ---- 実際に使う品番（サンゲツ）。色は見本チップと施工例の写真の中間に合わせている ----
+  wall('cross-sp2540', 'SP2540 石目調ライトグレー', stone('#cbc8c2', 900, { contrast: 0.05, pores: 14, tint: '#c3c0ba' }), [900, 900], 0.92, 1.1),
+  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色）', stone('#c0b9b0', 920, { contrast: 0.08, pores: 9, tint: '#b6aea4' }), [920, 640], 0.9, 1.2),
+  wall('cross-sp2562', 'SP2562 織物調ダークブラウン（パール）', woven('#5c5653', 450), [450, 450], 0.7, 0.9),
+  wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#87878a', 920, { contrast: 0.1, pores: 4, tint: '#7d7e81' }), [920, 640], 0.85, 1.3),
+  wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cfcecb', 920, { contrast: 0.03, pores: 6, tint: '#c8c8c4' }), [920, 640], 0.8, 1),
+  wall('cross-th34190', 'TH34190 木目調（神代杉）', woodPaper('#7a706a', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
+  wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),
+
+  // ---- 家具・造作の面材（家具の material で指定） ----
+  { id: 'aica-tj10235k', name: 'AICA TJ-10235K（グレー大理石）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#a7a4a0', '#dedbd7', 1200, { strength: 0.6 }) },
+  { id: 'aica-tj10240k', name: 'AICA TJ-10240K（ダーク大理石）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#6a6866', '#a9a6a2', 1200, { strength: 0.5 }) },
+  { id: 'aica-fj901zd', name: 'AICA FJ-901ZD（グレー大理石）', categories: [], tile: [1200, 1200], roughness: 0.3, bump: 0, draw: marble('#9a9794', '#d9d6d2', 1200, { veins: 3, strength: 0.6 }) },
+  { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----
   { id: 'exterior-siding-white', name: 'サイディング（白）', categories: ['exterior'], tile: [1820, 910], roughness: 0.8, bump: 2, draw: siding('#ecebe6', 455, [1820, 910]) },
   { id: 'exterior-siding-black', name: 'サイディング（ブラック）', categories: ['exterior'], tile: [1820, 910], roughness: 0.8, bump: 2, draw: siding('#2f3032', 455, [1820, 910]) },
+  { id: 'exterior-lightgray', name: '外壁（ライトグレー）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.85, bump: 1, draw: stone('#b6b9b9', 1200, { contrast: 0.04, pores: 3 }) },
   { id: 'exterior-plaster-beige', name: '塗り壁（ベージュ）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 2.5, draw: stone('#ddd2bd', 1200, { contrast: 0.06, pores: 4 }) },
 ];
 
