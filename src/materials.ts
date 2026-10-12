@@ -301,6 +301,46 @@ function tiles(
   };
 }
 
+/**
+ * 素材柄のフロア材（ラシッサ Dフロア耐水UDわん など）。幅 boardW・長さ boardL の板を、列ごとに継ぎ目をずらして張る。
+ * 板の継ぎ目は V 溝で、溝の肩に化粧シートの断面がうっすら明るく見える。
+ */
+function boards(base: string, boardW: number, boardL: number, rows: number, opts: { mottle?: number; variation?: number } = {}) {
+  const c = rgb(base);
+  const tileMm: [number, number] = [boardL, boardW * rows];
+  return (w: number, h: number, rand: Rand): Generated => {
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 250), cellsY: cellsFor(tileMm[1], 250), octaves: 5, persistence: 0.55 });
+    const f = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 2.5), cellsY: cellsFor(tileMm[1], 2.5), octaves: 2 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    const pxPerMm = w / tileMm[0];
+    const rowH = h / rows;
+    const groove = Math.max(1.5, pxPerMm * 2.5);
+    // 列ごとの継ぎ目の位置と、板ごとの色の違い
+    const rowInfo = Array.from({ length: rows }, (_, r) => ({ joint: r === 0 ? 0 : Math.floor(rand() * w), tones: [1 + (rand() - 0.5) * (opts.variation ?? 0.06), 1 + (rand() - 0.5) * (opts.variation ?? 0.06)] }));
+    for (let y = 0; y < h; y++) {
+      const r = Math.min(rows - 1, Math.floor(y / rowH));
+      const ly = y - r * rowH;
+      const info = rowInfo[r];
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const lx = (x - info.joint + w) % w;
+        const edge = Math.min(ly, rowH - ly, lx, w - lx);
+        let k = info.tones[lx < w / 2 ? 0 : 1] * (1 + (m[i] - 0.5) * (opts.mottle ?? 0.18) * 2 + (f[i] - 0.5) * 0.05);
+        height[i] = 0.8 + (f[i] - 0.5) * 0.05;
+        if (edge < groove) {
+          const t = edge / groove;
+          // 溝の底は暗く、肩は少し明るい
+          k *= t < 0.5 ? 0.55 + t * 0.6 : 1.04 - (t - 0.5) * 0.08;
+          height[i] = 0.2 + 0.6 * t;
+        }
+        put(color.data, i, c, k);
+      }
+    }
+    return { color, height };
+  };
+}
+
 function tatami(tileMm: [number, number]) {
   const c = rgb('#c9c48a');
   const border = rgb('#2f3a2c');
@@ -400,9 +440,10 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // 実際に使う品番。色は見本チップより施工例の写真に寄せている
   floor('floor-sazana-raggray', 'TOTO サザナ ほっカラリ床 ライトグレー（ラグ調）', tiles('#bab9b5', '#a6a5a1', 40, 40, [800, 800], { mottle: 0.1, variation: 0.08, groutMm: 2 }), [800, 800], 0.7, 1.5),
   floor('floor-ipf300-con2', 'LIXIL コンテⅡ IPF-300/CON-2（300角）', tiles('#7e7c79', '#6a6865', 4, 4, [1200, 1200], { mottle: 0.15, variation: 0.07 }), [1200, 1200], 0.6, 2),
-  floor('floor-lassissa-mortar', 'LIXIL ラシッサDフロア耐水 ラフモルタル柄', tiles('#8e8b87', '#76736f', 2, 1, [910, 1820], { mottle: 0.22, variation: 0.06, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
-  floor('floor-lassissa-sandblack', 'LIXIL ラシッサDフロア耐水 サンドブラック柄', tiles('#5b5957', '#4c4a48', 2, 1, [910, 1820], { mottle: 0.16, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
-  floor('floor-lassissa-lightgray', 'LIXIL ラシッサDフロア耐水 ライトグレイ柄', tiles('#b8b6b1', '#a3a19c', 2, 1, [910, 1820], { mottle: 0.14, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
+  // LIXIL ラシッサ Dフロア耐水UDわん（素材タイプ）。板は 幅303 × 長さ1818、継ぎ目は V 溝
+  floor('floor-lassissa-mortar', 'LIXIL ラシッサ Dフロア耐水UDわん ラフモルタル調', boards('#8e8b87', 303, 1818, 4, { mottle: 0.2 }), [1818, 1212], 0.55, 1.2),
+  floor('floor-lassissa-sandblack', 'LIXIL ラシッサ Dフロア耐水UDわん サンドブラック調', boards('#5b5957', 303, 1818, 4, { mottle: 0.15 }), [1818, 1212], 0.55, 1.2),
+  floor('floor-lassissa-lightgray', 'LIXIL ラシッサ Dフロア耐水UDわん ライトクレイ調', boards('#b8b6b1', 303, 1818, 4, { mottle: 0.12 }), [1818, 1212], 0.55, 1.2),
 
   // ---- 壁・天井クロス ----
   wall('cross-white', '白（スタンダード）', plaster('#f4f3ef', 900), [900, 900], 0.9, 0.25),

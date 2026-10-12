@@ -320,7 +320,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '壁付け。背面を壁に付け、「床からの高さ」で取付高さを決める',
     defaults: { w: 100, d: 100, h: 100, color: '#1c1c1d' },
     build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.8, 4, d * 0.8, 0, h, 0, glow()), box(w * 0.8, 4, d * 0.8, 0, -4, 0, glow())],
-    lights: ({ h }) => [...spot(0, h + 10, 20, [0, 1, 0.12], 30, 40, false), ...spot(0, -10, 20, [0, -1, 0.12], 30, 40, false)],
+    // 上下に約 90° の光（コイズミ arkia AB54807 などの壁面を照らすブラケット）
+    lights: ({ h }) => [...spot(0, h + 10, 20, [0, 1, 0.12], 40, 90, false), ...spot(0, -10, 20, [0, -1, 0.12], 40, 90, false)],
   },
   {
     type: 'downlight',
@@ -558,6 +559,44 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       return [pole, arm, lampArm, lamp, lens];
     },
     lights: ({ h }) => spot(0, h - 3690, 900, [0, -1, 0.05], 50, 100, true),
+  },
+  {
+    type: 'road',
+    label: '道路（車道）',
+    hint: '幅 w が道路の長さ、奥行き d が車道の幅。端に白線、真ん中に破線を引く。「床からの高さ」を地面（GL）に',
+    defaults: { w: 40000, d: 6000, h: 20, color: '#3c3d3f' },
+    build: ({ w, d, h }, mat) => {
+      const white = new THREE.MeshStandardMaterial({ color: '#e9e9e4', roughness: 0.8 });
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      for (const s of [-1, 1]) out.push(box(w, 3, 150, 0, h, s * (d / 2 - 300), white));
+      // 中央の破線（5m 引いて 5m 空ける）
+      for (let x = -w / 2 + 2500; x < w / 2; x += 10000) out.push(box(5000, 3, 150, x, h, 0, white));
+      for (const o of out) o.castShadow = false;
+      return out;
+    },
+  },
+  {
+    type: 'sidewalk',
+    label: '歩道（縁石付き）',
+    hint: '幅 w が長さ、奥行き d が歩道の幅、h が車道からの高さ。正面（南）側に縁石が付く',
+    defaults: { w: 40000, d: 2000, h: 150, color: '#b4b2ad' },
+    build: ({ w, d, h }, mat) => {
+      const curb = new THREE.MeshStandardMaterial({ color: '#cfcdc8', roughness: 0.85 });
+      const tactile = new THREE.MeshStandardMaterial({ color: '#d9b43a', roughness: 0.8 });
+      return [box(w, h, d - 150, 0, 0, -75, mat), box(w, h + 10, 150, 0, 0, d / 2 - 75, curb), box(w, 4, 300, 0, h, d / 2 - 600, tactile)];
+    },
+  },
+  {
+    type: 'crosswalk',
+    label: '横断歩道',
+    hint: '幅 w が横断歩道の幅（道路に沿った長さ）、奥行き d が車道の幅',
+    defaults: { w: 4000, d: 6000, h: 3, color: '#e9e9e4' },
+    build: ({ w, d, h }, mat) => {
+      const out: THREE.Object3D[] = [];
+      for (let z = -d / 2 + 450; z < d / 2 - 300; z += 900) out.push(box(w, h, 450, 0, 20, z, mat));
+      for (const o of out) o.castShadow = false;
+      return out;
+    },
   },
   {
     type: 'box',

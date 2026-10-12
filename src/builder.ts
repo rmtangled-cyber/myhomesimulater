@@ -242,6 +242,8 @@ function buildFloor(
 
     const level = room.level ?? 0;
     const top = level + (room.ceilingHeight ?? floor.ceilingHeight);
+    // 天井のない部屋（階段の吹き抜けなど）は、壁の仕上げを上の階の床まで張る
+    const finishTop = room.ceiling ? top : wallTop;
     const inner = insetPolygon(room.polygon, t / 2);
 
     // 床。吹き抜けでも、クリックで選べるよう見えない床を置く
@@ -265,6 +267,16 @@ function buildFloor(
       slab.position.y = wallBottom - 1;
       slab.receiveShadow = true;
       group.add(slab);
+    }
+
+    // 2階より上の床の裏（下の階がない所では軒天として外から見える）。下の階の天井より上なので室内からは見えない
+    if (!room.void && index > 0) {
+      const underShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, y)));
+      const under = new THREE.Mesh(new THREE.ShapeGeometry(underShape), getMaterial('cross-black'));
+      under.rotation.x = Math.PI / 2;
+      under.position.y = -40;
+      under.receiveShadow = true;
+      group.add(under);
     }
 
     if (room.ceiling) {
@@ -314,7 +326,7 @@ function buildFloor(
       const mb = entry.mb;
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
       const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5);
-      for (const r of rectsWithHoles(len, level, top, spans)) {
+      for (const r of rectsWithHoles(len, level, finishTop, spans)) {
         mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
       }
     }
