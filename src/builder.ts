@@ -290,11 +290,22 @@ function buildFloor(
     // 壁クロス。方角ごとに素材が違うことがあるので、方角ごとにまとめる（見ている面の情報にも使う）
     const finish = insetPolygon(room.polygon, t / 2 + 1);
     const bySide = new Map<string, { mb: MeshBuilder; side: Side; matId: string }>();
+    const n = room.polygon.length;
+    // 出隅でない角（部屋の内側から見て 90° の角）では、仕上げを壁の中心線まで延ばす。
+    // 隣の部屋と壁なしでつながっている所で、仕上げの切れ目から構造壁が見えないようにするため
+    const convex = (k: number) => {
+      const [p0, p1, p2] = [room.polygon[(k + n - 1) % n], room.polygon[k], room.polygon[(k + 1) % n]];
+      return (p1[0] - p0[0]) * (p2[1] - p1[1]) - (p1[1] - p0[1]) * (p2[0] - p1[0]) > 0;
+    };
     for (let i = 0; i < finish.length; i++) {
-      const a = finish[i];
-      const b = finish[(i + 1) % finish.length];
-      const len = dist(a, b);
-      if (len < 1) continue;
+      const len0 = dist(finish[i], finish[(i + 1) % finish.length]);
+      if (len0 < 1) continue;
+      const dir: Point = [(finish[(i + 1) % finish.length][0] - finish[i][0]) / len0, (finish[(i + 1) % finish.length][1] - finish[i][1]) / len0];
+      const e0 = convex(i) ? t / 2 : 0;
+      const e1 = convex((i + 1) % n) ? t / 2 : 0;
+      const a: Point = [finish[i][0] - dir[0] * e0, finish[i][1] - dir[1] * e0];
+      const b: Point = [finish[(i + 1) % finish.length][0] + dir[0] * e1, finish[(i + 1) % finish.length][1] + dir[1] * e1];
+      const len = len0 + e0 + e1;
       const side = edgeSide(room.polygon, i);
       const matId = room.accent?.[side] ?? room.wall;
       const entry = bySide.get(side) ?? { mb: new MeshBuilder(), side, matId };

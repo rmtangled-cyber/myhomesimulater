@@ -61,7 +61,7 @@
           ],
           "floor": "floor-cushion-white",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "1f-washroom",
@@ -86,7 +86,7 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-th34102",
-          "ceiling": "cross-th34102",
+          "ceiling": "cross-sp2540",
           "accent": {
             "west": "cross-th34190",
             "east": "cross-th34190"
@@ -115,7 +115,7 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2563",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "1f-stairs",
@@ -173,7 +173,10 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540",
+          "accent": {
+            "west": "cross-hf3122"
+          }
         },
         {
           "id": "1f-hall-west",
@@ -198,10 +201,7 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-white",
-          "accent": {
-            "west": "cross-hf3122"
-          }
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "1f-shoes",
@@ -226,7 +226,7 @@
           ],
           "floor": "floor-ipf300-con2",
           "wall": "cross-sp2563",
-          "ceiling": "cross-white",
+          "ceiling": "cross-sp2540",
           "level": -150,
           "ceilingHeight": 2550
         },
@@ -253,9 +253,12 @@
           ],
           "floor": "floor-ipf300-con2",
           "wall": "cross-sp2540",
-          "ceiling": "cross-white",
+          "ceiling": "cross-sp2540",
           "level": -150,
-          "ceilingHeight": 2550
+          "ceilingHeight": 2550,
+          "accent": {
+            "west": "cross-hf3122"
+          }
         },
         {
           "id": "1f-porch",
@@ -307,7 +310,7 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2562",
-          "ceiling": "cross-white",
+          "ceiling": "cross-sp2540",
           "accent": {
             "west": "cross-sp2540",
             "south": "cross-sp2540"
@@ -448,7 +451,7 @@
             3185,
             4777.5
           ],
-          "width": 2730,
+          "width": 2850,
           "height": 2550,
           "sill": -150
         },
@@ -460,7 +463,7 @@
             5317.5
           ],
           "width": 620,
-          "height": 2400,
+          "height": 2550,
           "sill": -150
         },
         {
@@ -561,8 +564,8 @@
           "id": "art-1",
           "type": "art",
           "name": "アート",
-          "x": 75,
-          "y": 3980,
+          "x": 1895,
+          "y": 4695,
           "w": 450,
           "d": 30,
           "h": 600,
@@ -574,8 +577,8 @@
           "id": "bracket-1",
           "type": "bracket-light",
           "name": "ブラケットライト",
-          "x": 210,
-          "y": 3980,
+          "x": 2030,
+          "y": 4695,
           "w": 200,
           "d": 300,
           "h": 300,
@@ -646,7 +649,7 @@
           "h": 2400,
           "rotation": 270,
           "color": "#efeeea",
-          "z": -150
+          "z": 0
         },
         {
           "id": "shoe-shelf-back",
@@ -1399,7 +1402,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "2f-wic",
@@ -1424,7 +1427,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "2f-storage-n",
@@ -1449,7 +1452,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "2f-toilet",
@@ -1474,7 +1477,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "2f-stairs-a",
@@ -1499,7 +1502,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white",
+          "ceiling": "cross-sp2540",
           "void": true
         },
         {
@@ -1551,7 +1554,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "2f-ldk",
@@ -1600,7 +1603,7 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         }
       ],
       "openings": [
@@ -1937,7 +1940,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "3f-stairs",
@@ -1962,7 +1965,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white",
+          "ceiling": "cross-sp2540",
           "void": true,
           "ceilingHeight": 2500
         },
@@ -1997,7 +2000,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "3f-room1",
@@ -2022,7 +2025,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "3f-room2",
@@ -2047,7 +2050,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "3f-room3",
@@ -2080,7 +2083,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         },
         {
           "id": "3f-closet",
@@ -2105,7 +2108,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-white",
-          "ceiling": "cross-white"
+          "ceiling": "cross-sp2540"
         }
       ],
       "openings": [
