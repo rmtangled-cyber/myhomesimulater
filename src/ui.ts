@@ -1,10 +1,11 @@
 // 右側の操作パネル。状態から HTML を作り直し、操作は data-action で受け取る。
 
 import { FURNITURE_TYPES, getFurnitureType } from './furniture';
-import { materialsFor, swatchUrl, type MaterialCategory } from './materials';
+import { pointInPolygon } from './geometry';
+import { getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
 import type { Furniture, Plan, Room, Side } from './types';
-import type { TimeOfDay, ViewMode } from './viewer';
+import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
 
 export type Selection = { kind: 'furniture'; id: string } | { kind: 'room'; id: string } | null;
 
@@ -23,6 +24,10 @@ export interface PanelState {
   labels: boolean;
   lightsOn: boolean;
   highQuality: boolean;
+  /** ウォークスルーで見回すドラッグの向きを逆にする */
+  invertLook: boolean;
+  /** ウォークスルーで立っている部屋 */
+  walkRoomId: string | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -35,6 +40,7 @@ export interface PanelActions {
   setLabels(on: boolean): void;
   setLightsOn(on: boolean): void;
   setHighQuality(on: boolean): void;
+  setInvertLook(on: boolean): void;
   addImageMaterial(file: File): void;
   setFloorView(view: number | 'all'): void;
   switchPlan(name: string): void;
@@ -68,6 +74,37 @@ const STATUS_TEXT: Record<SaveStatus, string> = {
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
+/** 素材IDをパネルに出す名前（品番など）にする */
+export const materialLabel = (id: string) => getMaterialDef(id)?.name ?? id;
+
+const SIDE_NAME: Record<Side, string> = { north: '北', east: '東', south: '南', west: '西' };
+const OPENING_NAME = { window: '窓', door: 'ドア枠', opening: '開口' } as const;
+
+/** ウォークスルーで画面の中央に見えている物の説明 */
+export function describeTarget(plan: Plan, t: WalkTarget): string {
+  const room = (id: string) => plan.floors.flatMap((f) => f.rooms).find((r) => r.id === id)?.name ?? '';
+  switch (t.kind) {
+    case 'wall':
+      return `壁（${room(t.roomId)}・${SIDE_NAME[t.side]}）　${materialLabel(t.materialId)}`;
+    case 'floor':
+      return `床（${room(t.roomId)}）　${materialLabel(t.materialId)}`;
+    case 'ceiling':
+      return `天井（${room(t.roomId)}）　${materialLabel(t.materialId)}`;
+    case 'exterior':
+      return `外壁　${materialLabel(t.materialId)}`;
+    case 'jamb':
+      return '開口部まわりの壁';
+    case 'opening': {
+      const o = plan.floors.flatMap((f) => f.openings).find((x) => x.id === t.openingId);
+      return o ? `${OPENING_NAME[o.type]}（幅 ${o.width} × 高さ ${o.height}）` : '';
+    }
+    case 'furniture': {
+      const f = plan.floors.flatMap((fl) => fl.furniture).find((x) => x.id === t.furnitureId);
+      return f ? `${f.name}${f.material ? `　${materialLabel(f.material)}` : ''}` : '';
+    }
+  }
+}
+
 function materialSelect(category: MaterialCategory, value: string, attrs: string, allowNone = false): string {
   const list = materialsFor(category);
   const known = list.some((m) => m.id === value);
@@ -94,7 +131,9 @@ export class Panel {
   render(state: PanelState) {
     this.state = state;
     const scroll = this.el.scrollTop;
-    this.el.innerHTML = [this.header(), this.viewSection(), this.selectionSection(), this.roomsSection(), this.addSection(), this.warningsSection(), this.helpSection()].join('');
+    // ウォークスルー中は、立っている部屋の情報だけを出す
+    const lists = state.mode === 'walk' ? [this.walkSection()] : [this.roomsSection(), this.addSection()];
+    this.el.innerHTML = [this.header(), this.viewSection(), this.selectionSection(), ...lists, this.warningsSection(), this.helpSection()].join('');
     this.el.scrollTop = scroll;
   }
 
@@ -134,6 +173,9 @@ export class Panel {
         <div class="row">
           <label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
+        </div>
+        <div class="row">
+          <label title="ウォークスルーでドラッグしたときに見回す向きを逆にします"><input type="checkbox" data-change="invert" ${s.invertLook ? 'checked' : ''}> 見回す向きを逆にする</label>
         </div>
         <div class="row">
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
@@ -228,6 +270,28 @@ export class Panel {
       </section>`;
   }
 
+  private walkSection(): string {
+    const s = this.state;
+    const found = s.walkRoomId ? s.plan.floors.map((f) => ({ f, r: f.rooms.find((r) => r.id === s.walkRoomId) })).find((x) => x.r) : undefined;
+    if (!found?.r) return `<section><h2>今いる場所</h2><p class="hint">部屋の外にいます。</p></section>`;
+    const { f: floor, r } = found;
+    const row = (label: string, id: string) => `<dt>${label}</dt><dd>${id ? esc(materialLabel(id)) : 'なし'}</dd>`;
+    const accents = SIDES.filter(([side]) => r.accent?.[side]).map(([side, label]) => row(`${label}の壁`, r.accent![side]!)).join('');
+    // 中心がこの部屋の中にある家具・設備
+    const items = floor.furniture
+      .filter((x) => pointInPolygon([x.x, x.y], r.polygon))
+      .map((x) => `<li>${esc(x.name)}${x.material ? `<small>${esc(materialLabel(x.material))}</small>` : ''}</li>`)
+      .join('');
+    return `
+      <section class="walk-room">
+        <h2>今いる場所 <small>${esc(floor.name)}</small></h2>
+        <h3>${esc(r.name)}</h3>
+        <dl class="finish">${row('床', r.floor)}${row('壁', r.wall)}${accents}${row('天井', r.ceiling)}</dl>
+        ${items ? `<h3>家具・設備</h3><ul class="walk-items">${items}</ul>` : ''}
+        <p class="hint">画面の中央に見えている物の名前と品番は、画面の下に出ます。</p>
+      </section>`;
+  }
+
   private warningsSection(): string {
     const w = this.state.warnings;
     if (!w.length) return '';
@@ -240,7 +304,7 @@ export class Panel {
         <h2>操作</h2>
         <dl>
           <dt>俯瞰</dt><dd>左ドラッグ: 回転 / 右ドラッグ: 平行移動 / ホイール: ズーム / 床をダブルクリック: その部屋に入る</dd>
-          <dt>ウォークスルー</dt><dd>W A S D・矢印キー: 移動（Shift で速く） / ドラッグ: 見回す</dd>
+          <dt>ウォークスルー</dt><dd>W A S D・矢印キー: 移動（Shift で速く） / ドラッグ: 見回す（向きは「見回す向きを逆にする」で変えられます） / Esc: 俯瞰に戻る</dd>
         </dl>
       </section>`;
   }
@@ -291,6 +355,7 @@ export class Panel {
     if (d.change === 'labels') return a.setLabels((t as HTMLInputElement).checked);
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
+    if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
     if (sel?.kind === 'furniture' && d.furn) {
       const field = d.furn as keyof Furniture;
       const value = t.type === 'number' ? Number(t.value) : t.value;

@@ -329,3 +329,69 @@ ul.chips i {
   margin: 2px 0 0;
   color: var(--muted);
 }
+
+/* ウォークスルー中の照準と、見ている物の名前 */
+.walk-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.walk-hud[hidden],
+.walk-hud [hidden] {
+  display: none;
+}
+
+.walk-hud .crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)) center / 2px 14px no-repeat,
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)) center / 14px 2px no-repeat;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.8));
+}
+
+.walk-hud .walk-target {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(20, 20, 20, 0.72);
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.walk-room .finish {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 10px;
+  margin: 0 0 8px;
+}
+
+.walk-room .finish dt {
+  color: var(--muted);
+}
+
+.walk-room .finish dd {
+  margin: 0;
+}
+
+.walk-items {
+  margin: 0 0 8px;
+  padding-left: 18px;
+}
+
+.walk-items small {
+  display: block;
+  color: var(--muted);
+}

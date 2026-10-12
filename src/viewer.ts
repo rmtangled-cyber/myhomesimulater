@@ -9,11 +9,20 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { pointInPolygon } from './geometry';
-import { buildPlan, type BuiltPlan } from './builder';
+import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
 import type { Plan } from './types';
 
 export type ViewMode = 'orbit' | 'walk';
 export type TimeOfDay = 'day' | 'evening' | 'night';
+
+/** ウォークスルーで画面の中央に見えている物 */
+export type WalkTarget = SurfaceInfo | { kind: 'furniture'; furnitureId: string };
+
+export interface WalkInfo {
+  /** 今立っている部屋 */
+  roomId: string | null;
+  target: WalkTarget | null;
+}
 
 export interface ViewerEvents {
   /** 家具をクリックした（null は何もない所） */
@@ -21,6 +30,8 @@ export interface ViewerEvents {
   onSelectRoom: (id: string) => void;
   /** 家具をドラッグし終えた（位置は mm） */
   onMoveFurniture: (id: string, x: number, y: number) => void;
+  /** ウォークスルーで立っている部屋・見ている物が変わった（俯瞰に戻ると null） */
+  onWalkInfo: (info: WalkInfo | null) => void;
 }
 
 const MM = 0.001;
@@ -59,6 +70,10 @@ export class Viewer {
   private lightsOn = false;
   /** ウォークスルーで影の濃淡（アンビエントオクルージョン）を付けるか */
   private highQuality = true;
+  /** ウォークスルーで見回すドラッグの向きを逆にする */
+  private invertLook = false;
+  private walkInfoKey = '';
+  private walkInfoTimer = 0;
   private composer: EffectComposer;
   private gtao: GTAOPass;
 
@@ -232,6 +247,8 @@ export class Viewer {
     } else {
       this.camera.fov = 50;
       this.frameAll();
+      this.walkInfoKey = '';
+      this.events.onWalkInfo(null);
       this.select(this.selectedId);
     }
     this.camera.updateProjectionMatrix();
@@ -259,6 +276,10 @@ export class Viewer {
 
   setHighQuality(on: boolean) {
     this.highQuality = on;
+  }
+
+  setInvertLook(on: boolean) {
+    this.invertLook = on;
   }
 
   setLabels(on: boolean) {
@@ -439,8 +460,9 @@ export class Viewer {
 
     el.addEventListener('pointermove', (e) => {
       if (look) {
-        this.yaw -= (e.clientX - look.x) * 0.004;
-        this.pitch = THREE.MathUtils.clamp(this.pitch - (e.clientY - look.y) * 0.004, -1.3, 1.3);
+        const k = this.invertLook ? -0.004 : 0.004;
+        this.yaw -= (e.clientX - look.x) * k;
+        this.pitch = THREE.MathUtils.clamp(this.pitch - (e.clientY - look.y) * k, -1.3, 1.3);
         look = { x: e.clientX, y: e.clientY };
         return;
       }
@@ -516,6 +538,12 @@ export class Viewer {
       if (move.lengthSq() > 0) this.camera.position.addScaledVector(move.normalize(), speed);
       this.camera.position.y = this.eyeY;
       this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
+      // 立っている部屋と見ている物は 0.2 秒ごとに調べる（毎フレームだと重い）
+      this.walkInfoTimer -= dt;
+      if (this.walkInfoTimer <= 0) {
+        this.walkInfoTimer = 0.2;
+        this.updateWalkInfo();
+      }
     } else {
       this.orbit.update();
     }
@@ -523,6 +551,31 @@ export class Viewer {
     if (this.mode === 'walk' && this.highQuality) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
     this.labelRenderer.render(this.scene, this.camera);
+  }
+
+  private updateWalkInfo() {
+    if (!this.built) return;
+    // 足元の床
+    const floors = this.built.floors[this.walkFloor]?.floorMeshes ?? [];
+    this.raycaster.set(this.camera.position, new THREE.Vector3(0, -1, 0));
+    const under = this.raycaster.intersectObjects(floors, false)[0];
+    const roomId = (under?.object.userData.roomId as string | undefined) ?? null;
+    // 画面の中央に見えている物（見えていない物・照明の光源は飛ばす）。向きを変えた直後なので行列を更新してから調べる
+    this.camera.updateMatrixWorld();
+    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
+    let target: WalkTarget | null = null;
+    for (const h of this.raycaster.intersectObject(this.built.root, true)) {
+      if (!isShown(h.object)) continue;
+      let o: THREE.Object3D | null = h.object;
+      while (o && !o.userData.info && !o.userData.furnitureId) o = o.parent;
+      if (!o) continue;
+      target = o.userData.furnitureId ? { kind: 'furniture', furnitureId: o.userData.furnitureId } : (o.userData.info as SurfaceInfo);
+      break;
+    }
+    const key = JSON.stringify([roomId, target]);
+    if (key === this.walkInfoKey) return;
+    this.walkInfoKey = key;
+    this.events.onWalkInfo({ roomId, target });
   }
 
   private resize() {
@@ -543,6 +596,12 @@ export class Viewer {
     a.download = filename;
     a.click();
   }
+}
+
+/** 親も含めて表示されているか */
+function isShown(o: THREE.Object3D): boolean {
+  for (let p: THREE.Object3D | null = o; p; p = p.parent) if (!p.visible) return false;
+  return true;
 }
 
 function disposeTree(root: THREE.Object3D) {

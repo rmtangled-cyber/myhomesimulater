@@ -3,10 +3,27 @@ import { getFurnitureType } from './furniture';
 import { centroid } from './geometry';
 import { PlanStore, type SaveStatus } from './store';
 import type { Furniture, Plan, Room } from './types';
-import { Panel, type PanelState, type Selection } from './ui';
-import { Viewer } from './viewer';
+import { describeTarget, Panel, type PanelState, type Selection } from './ui';
+import { Viewer, type WalkInfo } from './viewer';
 
 const store = new PlanStore();
+
+/** 見る人ごとの設定（保存できない環境では既定値） */
+function loadFlag(key: string): boolean {
+  try {
+    return localStorage.getItem(key) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function saveFlag(key: string, on: boolean) {
+  try {
+    localStorage.setItem(key, on ? '1' : '0');
+  } catch {
+    // 保存できなくても今の画面では効く
+  }
+}
 const ui: Omit<PanelState, 'plan' | 'planName'> = {
   plans: [],
   selection: null,
@@ -18,6 +35,8 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   labels: true,
   lightsOn: false,
   highQuality: true,
+  invertLook: loadFlag('invertLook'),
+  walkRoomId: null,
   status: 'saved',
   warnings: [],
 };
@@ -36,7 +55,28 @@ function findFurniture(plan: Plan, id: string): { item: Furniture; floor: number
   }
 }
 
+// ウォークスルー中に画面の中央に出す照準と、見ている物の名前
+const hud = document.createElement('div');
+hud.className = 'walk-hud';
+hud.hidden = true;
+hud.innerHTML = '<div class="crosshair"></div><div class="walk-target"></div>';
+document.getElementById('viewport')!.append(hud);
+
+function onWalkInfo(info: WalkInfo | null) {
+  hud.hidden = !info;
+  const text = info?.target && store.plan ? describeTarget(store.plan, info.target) : '';
+  const label = hud.querySelector<HTMLElement>('.walk-target')!;
+  label.textContent = text;
+  label.hidden = !text;
+  const roomId = info?.roomId ?? null;
+  if (roomId !== ui.walkRoomId) {
+    ui.walkRoomId = roomId;
+    render();
+  }
+}
+
 const viewer = new Viewer(document.getElementById('viewport')!, {
+  onWalkInfo,
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
   onSelectRoom: (id) => select({ kind: 'room', id }),
   onMoveFurniture: (id, x, y) =>
@@ -83,6 +123,11 @@ const panel = new Panel(document.getElementById('panel')!, {
   setHighQuality: (on) => {
     viewer.setHighQuality(on);
     ui.highQuality = on;
+  },
+  setInvertLook: (on) => {
+    viewer.setInvertLook(on);
+    ui.invertLook = on;
+    saveFlag('invertLook', on);
   },
   addImageMaterial,
   setFloorView,
@@ -200,6 +245,8 @@ function render() {
   if (!store.plan) return;
   panel.render({ ...ui, plan: store.plan, planName: store.name });
 }
+
+viewer.setInvertLook(ui.invertLook);
 
 store.subscribe((plan, cause) => {
   if (cause === 'load') ui.statusMessage = undefined;

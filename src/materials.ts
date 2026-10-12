@@ -149,7 +149,7 @@ function stone(base: string, tileMm: number, opts: { contrast?: number; pores?: 
 }
 
 /** 木目調の壁紙・パネル（継ぎ目なし）。縦に流れる細い木目 */
-function woodPaper(base: string, tileMm: [number, number], opts: { contrast?: number } = {}) {
+function woodPaper(base: string, tileMm: [number, number], opts: { contrast?: number; seam?: boolean } = {}) {
   const c = rgb(base);
   const contrast = opts.contrast ?? 0.1;
   return (w: number, h: number, rand: Rand): Generated => {
@@ -162,6 +162,19 @@ function woodPaper(base: string, tileMm: [number, number], opts: { contrast?: nu
     for (let i = 0; i < w * h; i++) {
       put(color.data, i, c, 1 + (streak[i] - 0.5) * contrast * 2 + (band[i] - 0.5) * contrast + (m[i] - 0.5) * 0.05);
       height[i] = streak[i];
+    }
+    // パネルの継ぎ目（テクスチャの左端に縦の細い溝）
+    if (opts.seam) {
+      const sw = Math.max(1, Math.round(w / tileMm[0]));
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < sw; x++) {
+          const i = y * w + x;
+          color.data[i * 4] *= 0.7;
+          color.data[i * 4 + 1] *= 0.7;
+          color.data[i * 4 + 2] *= 0.7;
+          height[i] = 0;
+        }
+      }
     }
     return { color, height };
   };
@@ -385,6 +398,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   floor('floor-concrete', 'コンクリート（土間・車庫）', stone('#a8a6a1', 1800, { contrast: 0.12, pores: 6 }), [1800, 1800], 0.85, 1.5),
   floor('floor-tatami', '畳', tatami([910, 1820]), [910, 1820], 0.8, 2),
   // 実際に使う品番。色は見本チップより施工例の写真に寄せている
+  floor('floor-sazana-raggray', 'TOTO サザナ ほっカラリ床 ライトグレー（ラグ調）', tiles('#bab9b5', '#a6a5a1', 40, 40, [800, 800], { mottle: 0.1, variation: 0.08, groutMm: 2 }), [800, 800], 0.7, 1.5),
   floor('floor-ipf300-con2', 'LIXIL コンテⅡ IPF-300/CON-2（300角）', tiles('#7e7c79', '#6a6865', 4, 4, [1200, 1200], { mottle: 0.15, variation: 0.07 }), [1200, 1200], 0.6, 2),
   floor('floor-lassissa-mortar', 'LIXIL ラシッサDフロア耐水 ラフモルタル柄', tiles('#8e8b87', '#76736f', 2, 1, [910, 1820], { mottle: 0.22, variation: 0.06, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
   floor('floor-lassissa-sandblack', 'LIXIL ラシッサDフロア耐水 サンドブラック柄', tiles('#5b5957', '#4c4a48', 2, 1, [910, 1820], { mottle: 0.16, variation: 0.05, groutMm: 1.2 }), [910, 1820], 0.55, 1.2),
@@ -415,12 +429,15 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#87878a', 920, { contrast: 0.1, pores: 4, tint: '#7d7e81' }), [920, 640], 0.85, 1.3),
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cfcecb', 920, { contrast: 0.03, pores: 6, tint: '#c8c8c4' }), [920, 640], 0.8, 1),
   wall('cross-th34190', 'TH34190 木目調（神代杉）', woodPaper('#7a706a', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
+  // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
+  wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
   wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),
 
   // ---- 家具・造作の面材（家具の material で指定） ----
-  { id: 'aica-tj10235k', name: 'AICA TJ-10235K（グレー大理石）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#a7a4a0', '#dedbd7', 1200, { strength: 0.6 }) },
-  { id: 'aica-tj10240k', name: 'AICA TJ-10240K（ダーク大理石）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#6a6866', '#a9a6a2', 1200, { strength: 0.5 }) },
-  { id: 'aica-fj901zd', name: 'AICA FJ-901ZD（グレー大理石）', categories: [], tile: [1200, 1200], roughness: 0.3, bump: 0, draw: marble('#9a9794', '#d9d6d2', 1200, { veins: 3, strength: 0.6 }) },
+  // AICA。セルサス（指紋レスのマット）・セラール。色柄は商品画像と施工例に合わせた
+  { id: 'aica-tj10235k', name: 'AICA TJ-10235K セルサス アールグレイマーブル（グレー）', categories: [], tile: [1200, 1200], roughness: 0.75, bump: 0, draw: marble('#68696b', '#9c9d9f', 1200, { veins: 2, strength: 0.5 }) },
+  { id: 'aica-tj10240k', name: 'AICA TJ-10240K セルサス（ダークグレー）', categories: [], tile: [600, 600], roughness: 0.8, bump: 0.4, draw: stone('#3f3f40', 600, { contrast: 0.05, pores: 10, tint: '#3a3a3c' }) },
+  { id: 'aica-fj901zd', name: 'AICA FJ-901ZD セラール グラニット パラディソ／ダーク', categories: [], tile: [600, 600], roughness: 0.55, bump: 0.4, draw: stone('#565350', 600, { contrast: 0.12, pores: 40, tint: '#4b4846' }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----

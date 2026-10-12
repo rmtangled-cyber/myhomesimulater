@@ -252,6 +252,51 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'wall-shelf',
+    label: '可動棚（壁付けレール・支柱なし）',
+    hint: '背面を壁に付ける。壁の棚柱（レール）に棚受けで載せる棚で、前の支柱はない。「棚板の枚数」で段数を決める',
+    defaults: { w: 900, d: 300, h: 1800, color: '#4a4b4d' },
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(1, count ?? Math.round(h / 300));
+      const boards = Array.from({ length: n }, (_, i) => box(w, 20, d, 0, (h * (i + 1)) / n - 20, 0, mat));
+      // 壁の棚柱。幅が広いときは真ん中にも入れる
+      const rails = w > 1000 ? [-1, 0, 1] : [-1, 1];
+      const out = rails.map((s) => box(16, h + 60, 12, s * (w / 2 - 60), 0, -d / 2 + 6, black));
+      // 棚受け（棚板の下、壁から前へ）
+      for (let i = 0; i < n; i++) for (const s of rails) out.push(box(6, 30, d * 0.8, s * (w / 2 - 60), (h * (i + 1)) / n - 50, -d / 2 + d * 0.4, black));
+      return [...boards, ...out];
+    },
+  },
+  {
+    type: 'sliding-door',
+    label: '吊り引き戸（上吊り）',
+    hint: '開口部の横の壁に沿って置く。上のレールから吊るので床にレールはなく、下は少し空く。h は天井（レール）までの高さ',
+    defaults: { w: 800, d: 36, h: 2400, color: '#efeeea' },
+    build: (f, mat) => hungDoor(f, mat, false),
+  },
+  {
+    type: 'mirror-sliding-door',
+    label: '吊り引き戸（上吊り・ミラー付）',
+    hint: '正面がミラー面。開口部の横の壁に沿って置く。上のレールから吊るので床にレールはなく、下は少し空く',
+    defaults: { w: 800, d: 36, h: 2400, color: '#efeeea' },
+    build: (f, mat) => hungDoor(f, mat, true),
+  },
+  {
+    type: 'iron-bar',
+    label: 'アイアンバー（L字・タオル干し）',
+    hint: '横の棒の長さが w、天井までの吊り下げが h。左端は壁に付き、右端を天井から吊る',
+    defaults: { w: 600, d: 16, h: 450, color: '#1c1c1d' },
+    build: ({ w, d, h }) => {
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, w, 12), black);
+      bar.rotation.z = Math.PI / 2;
+      bar.position.y = 0;
+      const drop = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, h, 12), black);
+      drop.position.set(w / 2, h / 2, 0);
+      for (const m of [bar, drop]) m.castShadow = true;
+      return [bar, drop, box(10, 60, 60, -w / 2, -30, 0, black), box(60, 6, 60, w / 2, h - 6, 0, black)];
+    },
+  },
+  {
     type: 'bracket-light',
     label: 'ブラケットライト',
     hint: '壁付け。背面（奥）を壁に付け、「床からの高さ」で取付高さを決める',
@@ -552,6 +597,34 @@ export function buildFurniture(f: Furniture): THREE.Group {
   g.rotation.y = -THREE.MathUtils.degToRad(f.rotation);
   g.userData.furnitureId = f.id;
   return g;
+}
+
+/**
+ * 上吊りの引き戸。天井に埋め込んだレールから吊るので枠も床のレールもなく、戸の下は 12mm ほど空く。
+ * 床には戸の振れ止め（ガイド）だけが付く。mirror なら正面（+z）がミラー面になる。
+ */
+function hungDoor({ w, d, h }: Furniture, mat: THREE.MeshStandardMaterial, mirror: boolean): THREE.Object3D[] {
+  const gap = 12;
+  const panelH = h - gap - 6;
+  const out: THREE.Object3D[] = [box(w, panelH, d, 0, gap, 0, mat)];
+  // 天井のレール（戸が動く範囲。戸の幅の 2 倍）
+  out.push(box(w * 2, 6, 40, 0, h - 6, 0, black));
+  // 床のガイド（戸の端）
+  out.push(box(30, gap, d + 20, -w / 2 + 40, 0, 0, black));
+  // 引手（両面に細い縦の引手）
+  for (const s of [1, -1]) out.push(box(20, 500, 8, w / 2 - 60, 850, s * (d / 2 + 4), black));
+  if (mirror) {
+    const glass = new Reflector(new THREE.PlaneGeometry(w - 30, panelH - 30), {
+      textureWidth: 512,
+      textureHeight: Math.round((512 * panelH) / w),
+      color: 0xb8bcc0,
+      clipBias: 0.003,
+    });
+    glass.position.set(0, gap + panelH / 2, d / 2 + 1);
+    glass.userData.hideWhenCut = true;
+    out.push(glass);
+  }
+  return out;
 }
 
 /** 箱の UV（面ごとに 0〜1）を mm に直す。素材のテクスチャは mm 単位の UV で実寸になる */

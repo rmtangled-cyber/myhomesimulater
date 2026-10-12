@@ -33,9 +33,10 @@
               2275
             ]
           ],
-          "floor": "floor-tile-white",
-          "wall": "panel-bath-woodgray",
-          "ceiling": "cross-white"
+          "floor": "floor-sazana-raggray",
+          "wall": "panel-sazana-greyishwalnut",
+          "ceiling": "cross-white",
+          "ceilingHeight": 2150
         },
         {
           "id": "1f-ps",
@@ -163,19 +164,36 @@
             ],
             [
               1820,
-              4322.5
-            ],
-            [
-              0,
-              4322.5
-            ],
-            [
-              0,
               3640
             ],
             [
               3640,
               3640
+            ]
+          ],
+          "floor": "floor-lassissa-mortar",
+          "wall": "cross-sp2540",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "1f-hall-west",
+          "name": "ホール（アートの壁）",
+          "polygon": [
+            [
+              0,
+              3640
+            ],
+            [
+              1820,
+              3640
+            ],
+            [
+              1820,
+              4322.5
+            ],
+            [
+              0,
+              4322.5
             ]
           ],
           "floor": "floor-lassissa-mortar",
@@ -291,7 +309,8 @@
           "wall": "cross-sp2562",
           "ceiling": "cross-white",
           "accent": {
-            "west": "cross-sp2540"
+            "west": "cross-sp2540",
+            "south": "cross-sp2540"
           }
         },
         {
@@ -402,7 +421,7 @@
         },
         {
           "id": "1f-wic-door",
-          "type": "door",
+          "type": "opening",
           "at": [
             4550,
             900
@@ -487,6 +506,17 @@
           "width": 300,
           "height": 600,
           "sill": 600
+        },
+        {
+          "id": "1f-hall-west-open",
+          "type": "opening",
+          "at": [
+            1820,
+            3981.25
+          ],
+          "width": 802.5,
+          "height": 2990,
+          "sill": 0
         }
       ],
       "furniture": [
@@ -533,12 +563,12 @@
           "name": "アート",
           "x": 75,
           "y": 3980,
-          "w": 500,
+          "w": 450,
           "d": 30,
-          "h": 650,
+          "h": 600,
           "rotation": 270,
           "color": "#111111",
-          "z": 850
+          "z": 1030
         },
         {
           "id": "bracket-1",
@@ -551,7 +581,7 @@
           "h": 300,
           "rotation": 270,
           "color": "#1c1c1d",
-          "z": 1550
+          "z": 1850
         },
         {
           "id": "wall-light-1",
@@ -607,15 +637,15 @@
         },
         {
           "id": "mirror-1",
-          "type": "mirror",
-          "name": "ミラー付引き戸（シューズクローク側を北へ引く）",
+          "type": "mirror-sliding-door",
+          "name": "ミラー付吊り引き戸（シューズクローク）",
           "x": 1740,
           "y": 5317.5,
           "w": 680,
-          "d": 20,
+          "d": 36,
           "h": 2400,
           "rotation": 270,
-          "color": "#c8ccd0",
+          "color": "#efeeea",
           "z": -150
         },
         {
@@ -708,7 +738,7 @@
           "d": 550,
           "h": 60,
           "rotation": 0,
-          "color": "#8c8986",
+          "color": "#68696b",
           "z": 790,
           "material": "aica-tj10235k"
         },
@@ -722,7 +752,7 @@
           "d": 12,
           "h": 240,
           "rotation": 0,
-          "color": "#7f7c79",
+          "color": "#565350",
           "z": 850,
           "material": "aica-fj901zd"
         },
@@ -736,7 +766,7 @@
           "d": 400,
           "h": 30,
           "rotation": 0,
-          "color": "#5d5b59",
+          "color": "#3f3f40",
           "z": 500,
           "material": "aica-tj10240k"
         },
@@ -744,7 +774,7 @@
           "id": "wash-basin",
           "type": "basin",
           "name": "洗面ボウル（置き型）",
-          "x": 2730,
+          "x": 3150,
           "y": 360,
           "w": 450,
           "d": 350,
@@ -757,7 +787,7 @@
           "id": "wash-faucet",
           "type": "faucet",
           "name": "壁付け水栓（黒）",
-          "x": 2730,
+          "x": 3150,
           "y": 168,
           "w": 30,
           "d": 180,
@@ -911,14 +941,14 @@
         {
           "id": "bathtub-1",
           "type": "bathtub",
-          "name": "浴槽（サザナ HT 1620）",
+          "name": "浴槽（サザナ ワイド浴槽・ジュエリーホワイトN）",
           "x": 910,
           "y": 435,
           "w": 1600,
           "d": 750,
           "h": 550,
           "rotation": 0,
-          "color": "#f4f4f2"
+          "color": "#f3f3f1"
         },
         {
           "id": "entry-door-1",
@@ -989,8 +1019,8 @@
         },
         {
           "id": "wic-shelf",
-          "type": "open-shelf",
-          "name": "可動棚 D270",
+          "type": "wall-shelf",
+          "name": "可動棚 D270（壁付けレール）",
           "x": 4745,
           "y": 300,
           "w": 480,
@@ -1170,15 +1200,15 @@
         },
         {
           "id": "wic-door-mirror",
-          "type": "mirror",
-          "name": "WICのドア（鏡シート貼り）",
-          "x": 4625,
+          "type": "mirror-sliding-door",
+          "name": "WICの吊り引き戸（内側ミラー）",
+          "x": 4472,
           "y": 900,
-          "w": 700,
-          "d": 30,
+          "w": 760,
+          "d": 36,
           "h": 2400,
           "rotation": 270,
-          "color": "#e8e6e2"
+          "color": "#efeeea"
         },
         {
           "id": "porch-downlight-1",
@@ -1257,6 +1287,84 @@
           "rotation": 270,
           "color": "#1c1c1d",
           "z": -560
+        },
+        {
+          "id": "wic-tape-light-east",
+          "type": "line-light",
+          "name": "テープライト（東の枕棚の下）",
+          "x": 7800,
+          "y": 857,
+          "w": 895,
+          "d": 20,
+          "h": 10,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 2045
+        },
+        {
+          "id": "wash-iron-bar",
+          "type": "iron-bar",
+          "name": "タオル干し アイアンバー（L字）",
+          "x": 2180,
+          "y": 2470,
+          "w": 600,
+          "d": 16,
+          "h": 450,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1950
+        },
+        {
+          "id": "bath-faucet",
+          "type": "box",
+          "name": "スッキリ棚水栓（シルバー）",
+          "x": 125,
+          "y": 1500,
+          "w": 450,
+          "d": 130,
+          "h": 70,
+          "rotation": 270,
+          "color": "#d6d8da",
+          "z": 850
+        },
+        {
+          "id": "bath-slide-bar",
+          "type": "box",
+          "name": "スライドバー",
+          "x": 80,
+          "y": 1500,
+          "w": 25,
+          "d": 25,
+          "h": 900,
+          "rotation": 270,
+          "color": "#d6d8da",
+          "z": 1000
+        },
+        {
+          "id": "bath-shower",
+          "type": "box",
+          "name": "コンフォートウエーブシャワー",
+          "x": 110,
+          "y": 1500,
+          "w": 110,
+          "d": 60,
+          "h": 110,
+          "rotation": 270,
+          "color": "#e9eaeb",
+          "z": 1750
+        },
+        {
+          "id": "bath-light",
+          "type": "downlight",
+          "name": "ダウンライト（浴室）",
+          "x": 910,
+          "y": 1300,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2150
         }
       ]
     },

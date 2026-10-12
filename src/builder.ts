@@ -18,7 +18,15 @@ import {
 } from './geometry';
 import { buildFurniture, getFurnitureType } from './furniture';
 import { getMaterial, getMaterialDef, setCustomMaterials } from './materials';
-import type { Floor, Plan, Point, Room } from './types';
+import type { Floor, Plan, Point, Room, Side } from './types';
+
+/** ウォークスルーで「見ているもの」を出すため、面に付けておく情報 */
+export type SurfaceInfo =
+  | { kind: 'wall'; roomId: string; materialId: string; side: Side }
+  | { kind: 'floor' | 'ceiling'; roomId: string; materialId: string }
+  | { kind: 'exterior'; materialId: string }
+  | { kind: 'opening'; openingId: string }
+  | { kind: 'jamb' };
 
 export interface BuiltFloor {
   group: THREE.Group;
@@ -199,9 +207,11 @@ function buildFloor(
   }
   if (!wallBuilder.empty) {
     const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-white', { clip }));
+    jambs.userData.info = { kind: 'jamb' } satisfies SurfaceInfo;
     jambs.castShadow = jambs.receiveShadow = true;
     group.add(jambs);
     const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(floor.exterior ?? plan.exterior, { clip }));
+    mesh.userData.info = { kind: 'exterior', materialId: floor.exterior ?? plan.exterior } satisfies SurfaceInfo;
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     group.add(mesh);
@@ -214,7 +224,9 @@ function buildFloor(
       warnings.push(`${where(`開口部「${o.id}」`)}: 位置 (${o.at.join(', ')}) が壁の上にありません`);
       continue;
     }
-    group.add(buildOpening(o, wall, t, clip));
+    const og = buildOpening(o, wall, t, clip);
+    og.userData.info = { kind: 'opening', openingId: o.id } satisfies SurfaceInfo;
+    group.add(og);
   }
 
   // ---- 部屋ごとの床・壁クロス・天井 ----
@@ -238,7 +250,7 @@ function buildFloor(
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.y = level;
     floorMesh.receiveShadow = true;
-    floorMesh.userData = { roomId: room.id, floorIndex: index, lightHeight: top - 150 };
+    floorMesh.userData = { roomId: room.id, floorIndex: index, lightHeight: top - 150, info: { kind: 'floor', roomId: room.id, materialId: room.floor } satisfies SurfaceInfo };
     // 見えない床（クリック用）。visible=false でもマウスの当たり判定には使える
     if (room.void) floorMesh.visible = false;
     group.add(floorMesh);
@@ -260,6 +272,7 @@ function buildFloor(
       ceiling.rotation.x = Math.PI / 2;
       ceiling.position.y = top;
       ceiling.receiveShadow = true;
+      ceiling.userData.info = { kind: 'ceiling', roomId: room.id, materialId: room.ceiling } satisfies SurfaceInfo;
       group.add(ceiling);
       ceilings.push(ceiling);
 
@@ -274,26 +287,30 @@ function buildFloor(
       caps.push(cap);
     }
 
-    // 壁クロス。方角ごとに素材が違うことがあるので素材別にまとめる
+    // 壁クロス。方角ごとに素材が違うことがあるので、方角ごとにまとめる（見ている面の情報にも使う）
     const finish = insetPolygon(room.polygon, t / 2 + 1);
-    const bySide = new Map<string, MeshBuilder>();
+    const bySide = new Map<string, { mb: MeshBuilder; side: Side; matId: string }>();
     for (let i = 0; i < finish.length; i++) {
       const a = finish[i];
       const b = finish[(i + 1) % finish.length];
       const len = dist(a, b);
       if (len < 1) continue;
-      const matId = room.accent?.[edgeSide(room.polygon, i)] ?? room.wall;
-      const mb = bySide.get(matId) ?? new MeshBuilder();
-      bySide.set(matId, mb);
+      const side = edgeSide(room.polygon, i);
+      const matId = room.accent?.[side] ?? room.wall;
+      const entry = bySide.get(side) ?? { mb: new MeshBuilder(), side, matId };
+      bySide.set(side, entry);
+      const mb = entry.mb;
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
       const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5);
       for (const r of rectsWithHoles(len, level, top, spans)) {
         mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
       }
     }
-    for (const [matId, mb] of bySide) {
+    for (const { mb, side, matId } of bySide.values()) {
+      if (mb.empty) continue;
       const mesh = new THREE.Mesh(mb.geometry(), getMaterial(matId, { clip }));
       mesh.receiveShadow = true;
+      mesh.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side } satisfies SurfaceInfo;
       group.add(mesh);
     }
 
