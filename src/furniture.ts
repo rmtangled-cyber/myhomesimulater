@@ -5,10 +5,16 @@
 import * as THREE from 'three';
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
+
+// 線の光（テープライト・間接照明）に使う面光源の準備
+RectAreaLightUniformsLib.init();
 import { getMaterial, getMaterialDef } from './materials';
 import type { Furniture } from './types';
 
 const WARM = '#ffcf94';
+/** 面光源の幅・高さは m で指定する */
+const MM_LIGHT = 0.001;
 
 export interface FurnitureType {
   type: string;
@@ -777,7 +783,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       m.position.y = -4;
       return [m];
     },
-    lights: () => spot(0, -15, 0, [0, -1, 0], 80, 70, true),
+    // 影は付けない（影を付ける光源ごとに GPU のテクスチャの枠を使い、線の光の分と合わせると上限 16 を超えて壁が描けなくなる）
+    lights: () => spot(0, -15, 0, [0, -1, 0], 80, 70, false),
   },
   {
     type: 'line-light',
@@ -785,16 +792,23 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '幅の長さで光る。天井や壁際に置き、「床からの高さ」で取付高さを決める',
     defaults: { w: 1800, d: 60, h: 40, color: '#f4f4f4' },
     build: ({ w, d, h }) => [box(w, h, d, 0, 0, 0, glow(WARM, 2.5))],
-    // 面光源（RectAreaLight）は影がなく壁を通り抜けて遠くまで照らすので、届く距離の短いスポットを並べる
-    // 「左右反転」にすると上向き（下がり天井の上に置いて天井を照らす）
-    lights: ({ w, h, flip }) => {
-      // 縦に長いもの（縦ラインの間接照明）は、高さに沿って正面へ光る
-      if (h > w * 3) {
-        const m = Math.max(1, Math.round(h / 420));
-        return Array.from({ length: m }, (_, i) => spot(0, (h * (i + 0.5)) / m, 10, [0, 0, 1], 8, 150, false, 1.2)).flat();
+    // テープライトは線の光にする（細長い面光源）。光る向きは下。「左右反転」で上向き（下がり天井の上に置いて天井を照らす）。
+    // 縦に長いもの（縦ラインの間接照明）は正面へ光る
+    lights: ({ w, d, h, flip }) => {
+      const vertical = h > w * 3;
+      const len = (vertical ? h : w) * MM_LIGHT;
+      const thick = 0.05;
+      // 1m あたり 20cd くらい（以前の点の光と同じくらいの明るさ）になる輝度
+      const l = new THREE.RectAreaLight(WARM, 20 / thick, vertical ? thick : len, vertical ? len : thick);
+      if (vertical) {
+        l.position.set(0, h / 2, d / 2 + 5);
+        l.rotation.y = Math.PI;
+      } else {
+        l.position.set(0, flip ? h + 5 : -5, 0);
+        l.rotation.x = flip ? Math.PI / 2 : -Math.PI / 2;
       }
-      const n = Math.max(1, Math.round(w / 420));
-      return Array.from({ length: n }, (_, i) => spot(-w / 2 + (w * (i + 0.5)) / n, flip ? h + 10 : -10, 0, [0, flip ? 1 : -1, 0], 8, 150, false, 1.8)).flat();
+      l.userData.fixture = true;
+      return [l];
     },
   },
   {
@@ -1001,7 +1015,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '壁付け。背面を壁に付け、「床からの高さ」で取付高さを決める',
     defaults: { w: 100, d: 100, h: 100, color: '#1c1c1d' },
     build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.8, 4, d * 0.8, 0, -4, 0, glow())],
-    lights: () => spot(0, -10, 10, [0, -1, 0.1], 30, 70, true),
+    lights: () => spot(0, -10, 10, [0, -1, 0.1], 30, 70, false),
   },
   {
     type: 'camera',
@@ -1050,7 +1064,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const lens = box(150, 4, 320, 0, h - 3674, 900, glow('#fff1d6', 3));
       return [pole, arm, lampArm, lamp, lens];
     },
-    lights: ({ h }) => spot(0, h - 3690, 900, [0, -1, 0.05], 50, 100, true),
+    lights: ({ h }) => spot(0, h - 3690, 900, [0, -1, 0.05], 50, 100, false),
   },
   {
     type: 'road',
@@ -1315,6 +1329,121 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       pad.rotation.x = -0.1;
       out.push(pad);
       for (const m of out) m.castShadow = true;
+      return out;
+    },
+  },
+  {
+    type: 'bath-faucet',
+    label: '浴室の水栓（TOTO スッキリ棚水栓）',
+    hint: '背面を壁に付ける。横長のサーモスタット混合水栓（左が温度、右が切替のハンドル）の上に白い棚が載る形。w は棚の幅（W300 など）',
+    defaults: { w: 300, d: 130, h: 90, color: '#d6d8da' },
+    build: ({ w, d }, mat) => {
+      mat.metalness = 0.9;
+      mat.roughness = 0.18;
+      const white = new THREE.MeshStandardMaterial({ color: '#f4f4f2', roughness: 0.3 });
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(26, 26, w - 20, 24), mat);
+      bar.rotation.z = Math.PI / 2;
+      bar.position.set(0, 30, -d / 2 + 60);
+      const out: THREE.Object3D[] = [bar];
+      // 両端のハンドル（左: 温度の目盛り付きダイヤル、右: 切替）
+      for (const s of [-1, 1]) {
+        const dial = new THREE.Mesh(new THREE.CylinderGeometry(32, 32, 46, 28), mat);
+        dial.rotation.z = Math.PI / 2;
+        dial.position.set(s * (w / 2 + 12), 30, -d / 2 + 60);
+        out.push(dial, box(4, 10, 3, s * (w / 2 + 12), 52, -d / 2 + 92, s < 0 ? new THREE.MeshStandardMaterial({ color: '#c23b3b' }) : black));
+      }
+      // 吐水口（真ん中から下向き）と、上に載る白い棚（角の丸い板）
+      out.push(box(40, 26, 30, 0, 0, -d / 2 + 95, mat));
+      const shelf = new THREE.Mesh(new RoundedBoxGeometry(w + 60, 16, d, 3, 7), white);
+      shelf.position.set(0, 72, 0);
+      shelf.castShadow = true;
+      out.push(shelf);
+      return out;
+    },
+  },
+  {
+    type: 'slide-bar',
+    label: 'シャワーのスライドバー',
+    hint: '背面を壁に付ける。h がバーの長さ。シャワーを掛けるホルダーは上のほう',
+    defaults: { w: 40, d: 60, h: 900, color: '#d6d8da' },
+    build: ({ h, d }, mat) => {
+      mat.metalness = 0.9;
+      mat.roughness = 0.18;
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, h, 16), mat);
+      bar.position.set(0, h / 2, -d / 2 + 35);
+      return [bar, box(36, 40, 35, 0, 0, -d / 2 + 17, mat), box(36, 40, 35, 0, h - 40, -d / 2 + 17, mat), box(46, 60, 40, 0, h * 0.8, -d / 2 + 40, mat)];
+    },
+  },
+  {
+    type: 'hand-shower',
+    label: 'ハンドシャワー（TOTO コンフォートウエーブ）',
+    hint: 'スライドバーのホルダーに掛けた状態。z はヘッドの中心の高さ。白い本体に丸いヘッドとメッキの縁、下にホース',
+    defaults: { w: 110, d: 60, h: 260, color: '#f2f2f0' },
+    build: ({ w, h }, mat) => {
+      mat.roughness = 0.3;
+      const chrome = new THREE.MeshStandardMaterial({ color: '#d6d8da', roughness: 0.15, metalness: 0.9 });
+      // 少し前に傾けたヘッド（散水板は手前を向く）と、下へ伸びる持ち手
+      const head = new THREE.Group();
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, 26, 32), mat);
+      disc.rotation.x = Math.PI / 2;
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(w / 2, 4, 8, 32), chrome);
+      ring.position.z = 13;
+      const plate = new THREE.Mesh(new THREE.CircleGeometry(w / 2 - 8, 32), new THREE.MeshStandardMaterial({ color: '#c9ccd0', roughness: 0.35, metalness: 0.5 }));
+      plate.position.z = 13.5;
+      head.add(disc, ring, plate);
+      head.rotation.x = 0.25;
+      head.position.set(0, 0, 40);
+      const grip = new THREE.Mesh(new THREE.CylinderGeometry(15, 13, h - w / 2, 16), mat);
+      grip.position.set(0, -(h - w / 2) / 2 - w / 2 + 10, 30);
+      grip.rotation.x = 0.15;
+      // 持ち手の下からホースが棚の手前に垂れて、水栓の右端（切替ハンドルの横）につながる。
+      // 水栓の右端の位置は、浴室の配置（水栓 FL+850・シャワー FL+1720）に合わせた相対位置（mm）
+      const [hx, hy, hz] = [170, -840, 30];
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, -h + 20, 25),
+        new THREE.Vector3(0, -h - 200, 150),
+        new THREE.Vector3(hx * 0.4, hy - 20, 200),
+        new THREE.Vector3(hx + 30, hy - 40, 120),
+        new THREE.Vector3(hx, hy, hz),
+      ]);
+      const hose = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 7, 8), chrome);
+      for (const m of [disc, grip, hose]) m.castShadow = true;
+      return [head, grip, hose];
+    },
+  },
+  {
+    type: 'bed-wood',
+    label: 'ベッド（木の枠・キャビネットのヘッドボード付き）',
+    hint: '正面が足元。フランスベッド アニバーサリー70C（シングル 幅980・長さ2090・ヘッドボードの高さ850）のような、木の枠に黒い脚、頭側に棚と照明の付いたヘッドボード。床板の高さは 205（LG ロー）。h はマットレスの上面の高さ。木目は「面材」で指定',
+    defaults: { w: 980, d: 2090, h: 465, color: '#c9b08f' },
+    build: ({ w, d, h }, mat) => {
+      const hbD = 230;
+      // ヘッドボードの奥行きはカタログに載っていないので仮に 230
+      const hbH = 850;
+      const legH = 115;
+      const frameTop = 205;
+      const z0 = -d / 2 + hbD;
+      const len = d - hbD;
+      const white = new THREE.MeshStandardMaterial({ color: '#f3f2ee', roughness: 0.95 });
+      const dark = new THREE.MeshStandardMaterial({ color: '#2a2622', roughness: 0.8 });
+      const out: THREE.Object3D[] = [];
+      // 黒い脚と木の枠（床板の周りの框）
+      for (const x of [-w / 2 + 120, w / 2 - 120]) for (const z of [z0 + 150, d / 2 - 150]) {
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(22, 22, legH, 12), black);
+        leg.position.set(x, legH / 2, z);
+        out.push(leg);
+      }
+      out.push(box(w, frameTop - legH, len, 0, legH, z0 + len / 2, mat));
+      // マットレス（厚さ 200）
+      const mattress = new THREE.Mesh(new RoundedBoxGeometry(w - 10, h - frameTop, len - 10, 3, 35), white);
+      mattress.position.set(0, frameTop + (h - frameTop) / 2, z0 + len / 2);
+      mattress.castShadow = mattress.receiveShadow = true;
+      out.push(mattress);
+      // キャビネットのヘッドボード。上の段に棚（中に照明）
+      out.push(box(w, hbH - 200, hbD, 0, 0, -d / 2 + hbD / 2, mat), box(w, 40, hbD, 0, hbH - 40, -d / 2 + hbD / 2, mat));
+      out.push(box(20, 160, hbD, -w / 2 + 10, hbH - 200, -d / 2 + hbD / 2, mat), box(20, 160, hbD, w / 2 - 10, hbH - 200, -d / 2 + hbD / 2, mat));
+      out.push(box(w - 40, 160, hbD - 60, 0, hbH - 200, -d / 2 + (hbD - 60) / 2, dark));
+      out.push(box(w * 0.3, 6, 20, 0, hbH - 50, -d / 2 + hbD - 80, glow(WARM, 1.2)));
       return out;
     },
   },

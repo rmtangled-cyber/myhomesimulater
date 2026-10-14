@@ -539,6 +539,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'wood-darkbrown', name: '木目調（ダークブラウン・造作家具）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.5, draw: woodPaper('#4a3a30', [900, 900], { contrast: 0.14 }) },
   { id: 'wood-rosewood-dark', name: '木目調（ダークローズウッド・ピアノ）', categories: [], tile: [900, 900], roughness: 0.45, bump: 0.3, draw: woodPaper('#3b2620', [900, 900], { contrast: 0.12 }) },
   { id: 'marble-lightgray', name: '大理石調（ライトグレー・セラミック天板）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#c3c0bb', '#dedbd6', 1200, { veins: 3, strength: 0.35 }) },
+  { id: 'wood-oak-light', name: '木目調（ナチュラルオーク・今のベッド）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.4, draw: woodPaper('#c9b08f', [900, 900], { contrast: 0.12 }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----
