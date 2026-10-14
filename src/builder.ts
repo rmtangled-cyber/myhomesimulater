@@ -195,14 +195,15 @@ function buildFloor(
   const walls = deriveWalls(rooms);
   const wallBuilder = new MeshBuilder();
   const jambBuilder = new MeshBuilder();
-  // 壁の端に、ほかの壁（開口部で抜けていない所）がつながっているか
+  // 壁の端に、ほかの壁（開口部で抜けていない所）がつながっているか。
+  // つながる壁が端のすぐ横（壁の厚みの半分以内）で開口部になっているときは、延ばすと開口部の中に切れ端（柱のような物）が出るので、つながっていないことにする
   const joined = (p: Point, self: WallSegment) =>
     walls.some((w2) => {
       if (w2 === self) return false;
       const len2 = dist(w2.from, w2.to);
       const { u, off } = projectOnLine(p, w2.from, w2.to);
       if (off > 1 || u < -1 || u > len2 + 1) return false;
-      return !openingsOnSegment(floor.openings, w2.from, w2.to, t / 2 + 1).some((s) => u > s.u0 + 1 && u < s.u1 - 1);
+      return !openingsOnSegment(floor.openings, w2.from, w2.to, t / 2 + 1).some((s) => u > s.u0 - t / 2 - 1 && u < s.u1 + t / 2 + 1);
     });
   // 壁の切れ目（何もつながらない端）の端面は、両側の部屋の壁クロスで巻き込む（両側で違うときは標準の SP2540）
   const finishAt = (p: Point): string | undefined => {

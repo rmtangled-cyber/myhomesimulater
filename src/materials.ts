@@ -342,7 +342,7 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
 }
 
 /** コンクリート打ち放し調。型枠の継ぎ目と P コンの穴（holes: false で穴なし） */
-function concretePanels(base: string, tileMm: [number, number], panel: [number, number], opts: { holes?: boolean; toneVar?: number } = {}) {
+function concretePanels(base: string, tileMm: [number, number], panel: [number, number], opts: { holes?: boolean; toneVar?: number; seam?: number } = {}) {
   const c = rgb(base);
   return (w: number, h: number, rand: Rand): Generated => {
     const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 300), cellsY: cellsFor(tileMm[1], 300), octaves: 6, persistence: 0.6 });
@@ -365,7 +365,7 @@ function concretePanels(base: string, tileMm: [number, number], panel: [number, 
         const ex = Math.min(x % pw, pw - (x % pw));
         const ey = Math.min(y % ph, ph - (y % ph));
         if (Math.min(ex, ey) < 1.2) {
-          k *= 0.82;
+          k *= opts.seam ?? 0.82;
           height[i] = 0.5;
         }
         // P コンの穴（パネルごとに左右 2 つ）
@@ -467,7 +467,7 @@ const floor = (id: string, name: string, draw: MaterialDef['draw'], tile: [numbe
 const FLOOR_TILE: [number, number] = [1820, 900];
 
 /** ウォークスルーで試せる候補のクロス（これまでに出てきた品番） */
-export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
+export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2541', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
 
 export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 床 ----
@@ -487,10 +487,10 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // 実際に使う品番。色は見本チップより施工例の写真に寄せている
   floor('floor-sazana-raggray', 'TOTO サザナ ほっカラリ床 ライトグレー（ラグ調）', tiles('#bab9b5', '#a6a5a1', 40, 40, [800, 800], { mottle: 0.1, variation: 0.08, groutMm: 2 }), [800, 800], 0.7, 1.5),
   floor('floor-ipf300-con2', 'LIXIL コンテⅡ IPF-300/CON-2（300角）', tiles('#7e7c79', '#6a6865', 4, 4, [1200, 1200], { mottle: 0.15, variation: 0.07 }), [1200, 1200], 0.6, 2),
-  // LIXIL ラシッサ Dフロア耐水UDわん（素材タイプ）。板は 幅303 × 長さ1818、継ぎ目は V 溝
-  floor('floor-lassissa-mortar', 'LIXIL ラシッサ Dフロア耐水UDわん ラフモルタル調', boards('#8e8b87', 303, 1818, 4, { mottle: 0.2 }), [1818, 1212], 0.55, 1.2),
-  floor('floor-lassissa-sandblack', 'LIXIL ラシッサ Dフロア耐水UDわん サンドブラック調', boards('#5b5957', 303, 1818, 4, { mottle: 0.15 }), [1818, 1212], 0.55, 1.2),
-  floor('floor-lassissa-lightgray', 'LIXIL ラシッサ Dフロア耐水UDわん ライトクレイ調', boards('#b8b6b1', 303, 1818, 4, { mottle: 0.12 }), [1818, 1212], 0.55, 1.2),
+  // LIXIL ラシッサ Dフロア耐水UDわん（素材柄）。板は 幅455（幅広）× 長さ1818、継ぎ目は V 溝
+  floor('floor-lassissa-mortar', 'LIXIL ラシッサ Dフロア耐水UDわん ラフモルタル調', boards('#8e8b87', 455, 1818, 4, { mottle: 0.2 }), [1818, 1820], 0.55, 1.2),
+  floor('floor-lassissa-sandblack', 'LIXIL ラシッサ Dフロア耐水UDわん サンドブラック調', boards('#5b5957', 455, 1818, 4, { mottle: 0.15 }), [1818, 1820], 0.55, 1.2),
+  floor('floor-lassissa-lightgray', 'LIXIL ラシッサ Dフロア耐水UDわん ライトクレイ調', boards('#b8b6b1', 455, 1818, 4, { mottle: 0.12 }), [1818, 1820], 0.55, 1.2),
 
   // ---- 壁・天井クロス ----
   wall('cross-white', '白（スタンダード）', plaster('#f4f3ef', 900), [900, 900], 0.9, 0.25),
@@ -511,15 +511,16 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('wall-tile-white', 'タイル（白 100角・水回り）', tiles('#f2f1ec', '#d5d2ca', 6, 6, [600, 600], { mottle: 0.03, variation: 0.03 }), [600, 600], 0.25, 2),
   wall('cross-black', 'ブラック（天井・軒天）', plaster('#2b2b2c', 900, { mottle: 0.05 }), [900, 900], 0.85, 0.3),
   // ---- 実際に使う品番（サンゲツ）。色は見本チップと施工例の写真の中間に合わせている ----
-  wall('cross-sp2540', 'SP2540 石目調ライトグレー', stone('#cbc8c2', 900, { contrast: 0.05, pores: 14, tint: '#c3c0ba' }), [900, 900], 0.92, 1.1),
-  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色）', stone('#c0b9b0', 920, { contrast: 0.08, pores: 9, tint: '#b6aea4' }), [920, 640], 0.9, 1.2),
-  wall('cross-sp2562', 'SP2562 織物調ダークブラウン（パール）', woven('#5c5653', 450), [450, 450], 0.7, 0.9),
-  wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#87878a', 920, { contrast: 0.1, pores: 4, tint: '#7d7e81' }), [920, 640], 0.85, 1.3),
-  wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cfcecb', 920, { contrast: 0.03, pores: 6, tint: '#c8c8c4' }), [920, 640], 0.8, 1),
-  wall('cross-th34190', 'TH34190 木目調（神代杉）', woodPaper('#7a706a', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
+  wall('cross-sp2540', 'SP2540 石目調ライトグレー', stone('#d3d2ce', 900, { contrast: 0.05, pores: 14, tint: '#cbcac5' }), [900, 900], 0.92, 1.1),
+  wall('cross-sp2541', 'SP2541 石目調グレー', stone('#b1b0ac', 900, { contrast: 0.06, pores: 14, tint: '#a9a8a4' }), [900, 900], 0.92, 1.1),
+  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色・目地入り）', concretePanels('#c2bdb6', [920, 920], [460, 460], { holes: false, toneVar: 0.05, seam: 0.93 }), [920, 920], 0.9, 1.2),
+  wall('cross-sp2562', 'SP2562 織物調ダークグレージュ', woven('#5f5b58', 450), [450, 450], 0.7, 0.9),
+  wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#78787a', 920, { contrast: 0.14, pores: 4, tint: '#6e6f72' }), [920, 640], 0.85, 1.3),
+  wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cacccc', 920, { contrast: 0.03, pores: 6, tint: '#c4c6c6' }), [920, 640], 0.8, 1),
+  wall('cross-th34190', 'TH34190 木目調（神代杉・ダークブラウン）', woodPaper('#544c47', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
-  wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ダークグレー）', stone('#45454a', 920, { contrast: 0.06, pores: 6, tint: '#3d3d42' }), [920, 641], 0.5, 0.8),
-  wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a8a099', [930, 1250], [465, 625]), [930, 1250], 0.85, 1.2),
+  wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ネイビーグレー）', stone('#3a3e48', 920, { contrast: 0.12, pores: 6, tint: '#33373f' }), [920, 641], 0.5, 0.8),
+  wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a09e99', [930, 1250], [465, 625], { toneVar: 0.12 }), [930, 1250], 0.85, 1.2),
   // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）
   wall('cross-fe76650', 'FE76650 コンクリート調（30cm 角の型枠跡・ダークグレー）', concretePanels('#6b6b69', [900, 900], [300, 300], { holes: false, toneVar: 0.14 }), [900, 900], 0.85, 1.2),
   wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
@@ -533,8 +534,11 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'aica-ji10346k', name: 'AICA JI-10346K アイカラビアン（コンクリート柄）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.3, draw: stone('#8f8a85', 1200, { contrast: 0.07, pores: 5, tint: '#88837e' }) },
   { id: 'aica-tj10237k', name: 'AICA TJ-10237K セルサス メタルオキシサビ（ダーク）', categories: [], tile: [600, 600], roughness: 0.8, bump: 0.3, draw: stone('#2f3032', 600, { contrast: 0.09, pores: 12, tint: '#33302d' }) },
   // トクラス コラージア（見積もりで選んだ色）
-  { id: 'toclas-z-greystone', name: 'トクラス コラージア 扉 Zシリーズ グレーストーン', categories: [], tile: [900, 900], roughness: 0.7, bump: 0.4, draw: stone('#4c4b4a', 900, { contrast: 0.08, pores: 14, tint: '#454443' }) },
+  { id: 'toclas-z-greystone', name: 'トクラス コラージア 扉 Zシリーズ グレーストーン', categories: [], tile: [900, 900], roughness: 0.7, bump: 0.4, draw: stone('#5d5c5a', 900, { contrast: 0.08, pores: 14, tint: '#555452' }) },
   { id: 'toclas-tenor-ironblack', name: 'トクラス テノール（人造大理石）アイアンブラック', categories: [], tile: [900, 900], roughness: 0.45, bump: 0.2, draw: stone('#2e2f31', 900, { contrast: 0.05, pores: 30, tint: '#2a2b2d' }) },
+  { id: 'wood-darkbrown', name: '木目調（ダークブラウン・造作家具）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.5, draw: woodPaper('#4a3a30', [900, 900], { contrast: 0.14 }) },
+  { id: 'wood-rosewood-dark', name: '木目調（ダークローズウッド・ピアノ）', categories: [], tile: [900, 900], roughness: 0.45, bump: 0.3, draw: woodPaper('#3b2620', [900, 900], { contrast: 0.12 }) },
+  { id: 'marble-lightgray', name: '大理石調（ライトグレー・セラミック天板）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#c3c0bb', '#dedbd6', 1200, { veins: 3, strength: 0.35 }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----

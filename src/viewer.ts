@@ -30,6 +30,8 @@ export interface ViewerEvents {
   onSelectRoom: (id: string) => void;
   /** ウォークスルーで立っている部屋・見ている物が変わった（俯瞰に戻ると null） */
   onWalkInfo: (info: WalkInfo | null) => void;
+  /** ウォークスルーで壁・天井などをクリックした（クロスを試すため） */
+  onPickSurface: (target: WalkTarget | null) => void;
 }
 
 const MM = 0.001;
@@ -461,8 +463,12 @@ export class Viewer {
       const clicked = down && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 4;
       look = null;
       down = null;
-      if (!clicked || this.mode !== 'orbit' || !this.built || e.button !== 0) return;
+      if (!clicked || !this.built || e.button !== 0) return;
       const ndc = this.pointer(e);
+      if (this.mode === 'walk') {
+        this.events.onPickSurface(this.targetAt(ndc));
+        return;
+      }
       const hit = this.hitFurniture(ndc);
       if (hit) {
         this.events.onSelectFurniture(hit.id);
@@ -559,21 +565,27 @@ export class Viewer {
     const under = this.raycaster.intersectObjects(floors, false)[0];
     const roomId = (under?.object.userData.roomId as string | undefined) ?? null;
     // 画面の中央に見えている物（見えていない物・照明の光源は飛ばす）。向きを変えた直後なので行列を更新してから調べる
+    const target = this.targetAt(new THREE.Vector2(0, 0));
+    const key = JSON.stringify([roomId, target]);
+    if (key === this.walkInfoKey) return;
+    this.walkInfoKey = key;
+    this.events.onWalkInfo({ roomId, target });
+  }
+
+  /** 画面の点（NDC）に見えている物。見えていない物・照明の光源は飛ばす */
+  private targetAt(ndc: THREE.Vector2): WalkTarget | null {
+    if (!this.built) return null;
+    // 向きを変えた直後でもよいように、行列を更新してから調べる
     this.camera.updateMatrixWorld();
-    this.raycaster.setFromCamera(new THREE.Vector2(0, 0), this.camera);
-    let target: WalkTarget | null = null;
+    this.raycaster.setFromCamera(ndc, this.camera);
     for (const h of this.raycaster.intersectObject(this.built.root, true)) {
       if (!isShown(h.object)) continue;
       let o: THREE.Object3D | null = h.object;
       while (o && !o.userData.info && !o.userData.furnitureId) o = o.parent;
       if (!o) continue;
-      target = o.userData.furnitureId ? { kind: 'furniture', furnitureId: o.userData.furnitureId } : (o.userData.info as SurfaceInfo);
-      break;
+      return o.userData.furnitureId ? { kind: 'furniture', furnitureId: o.userData.furnitureId } : (o.userData.info as SurfaceInfo);
     }
-    const key = JSON.stringify([roomId, target]);
-    if (key === this.walkInfoKey) return;
-    this.walkInfoKey = key;
-    this.events.onWalkInfo({ roomId, target });
+    return null;
   }
 
   private resize() {

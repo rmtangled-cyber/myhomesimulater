@@ -30,6 +30,8 @@ export interface PanelState {
   stature: number;
   /** ウォークスルーで立っている部屋 */
   walkRoomId: string | null;
+  /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
+  picked: { roomId: string; kind: 'wall' | 'ceiling'; side?: Side } | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -56,6 +58,7 @@ export interface PanelActions {
   duplicateFurniture(id: string): void;
   removeFurniture(id: string): void;
   screenshot(): void;
+  exportPlan(): void;
   undo(): void;
   redo(): void;
 }
@@ -188,6 +191,7 @@ export class Panel {
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
           <button data-action="redo" title="Ctrl+Shift+Z">↷ やり直す</button>
           <button data-action="screenshot">📷 画像を保存</button>
+          <button data-action="export-plan" title="今の間取りの平面図（各階）を PNG で保存します">📐 図面出力</button>
         </div>
       </section>`;
   }
@@ -295,14 +299,17 @@ export class Panel {
         <h2>今いる場所 <small>${esc(floor.name)}</small></h2>
         <h3>${esc(r.name)}</h3>
         <dl class="finish">${row('床', r.floor)}${row('壁', r.wall)}${accents}${row('天井', r.ceiling)}</dl>
-        ${this.tryFinishes(r)}
+        ${this.tryFinishes()}
         ${items ? `<h3>家具・設備</h3><ul class="walk-items">${items}</ul>` : ''}
         <p class="hint">画面の中央に見えている物の名前と品番は、画面の下に出ます。</p>
       </section>`;
   }
 
-  /** ウォークスルーで、候補のクロスに張り替えて見比べる */
-  private tryFinishes(r: Room): string {
+  /** ウォークスルーでクリックした壁・天井を、候補のクロスに張り替えて見比べる */
+  private tryFinishes(): string {
+    const p = this.state.picked;
+    const r = p ? this.state.plan.floors.flatMap((f) => f.rooms).find((x) => x.id === p.roomId) : undefined;
+    if (!p || !r) return `<p class="hint">壁や天井をクリックすると、ここで候補のクロスに張り替えて見比べられます。</p>`;
     const pick = (target: string, label: string, current: string) => {
       const options = CANDIDATE_WALLPAPERS.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
       const swatch = current && CANDIDATE_WALLPAPERS.includes(current) ? `<img class="swatch" src="${swatchUrl(current)}" alt="">` : `<span class="swatch none"></span>`;
@@ -310,12 +317,15 @@ export class Panel {
     };
     const walls = r.accent && Object.keys(r.accent).length ? '' : r.wall;
     const both = walls && walls === r.ceiling ? walls : '';
+    const where = p.kind === 'ceiling' ? '天井' : `${SIDES.find(([s]) => s === p.side)?.[1] ?? ''}の壁`;
+    const rows =
+      p.kind === 'ceiling'
+        ? [pick('ceiling', 'この天井', r.ceiling), pick('both', '壁4面と天井', both)]
+        : [pick('side', `この壁（${where}）だけ`, r.accent?.[p.side!] ?? r.wall), pick('wall', '壁4面', walls), pick('both', '壁4面と天井', both)];
     return `
-      <h3>クロスを試す</h3>
-      ${pick('both', '壁4面と天井', both)}
-      ${pick('wall', '壁4面', walls)}
-      ${r.ceiling ? pick('ceiling', '天井', r.ceiling) : ''}
-      <p class="hint">選ぶとこの部屋がすぐ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
+      <h3>クロスを試す <small>${esc(r.name)}・${where}</small></h3>
+      ${rows.join('')}
+      <p class="hint">選ぶとすぐ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
   }
 
   private warningsSection(): string {
@@ -348,6 +358,7 @@ export class Panel {
       case 'undo': return a.undo();
       case 'redo': return a.redo();
       case 'screenshot': return a.screenshot();
+      case 'export-plan': return a.exportPlan();
       case 'duplicate-plan': return a.duplicatePlan();
       case 'select-room': return a.select({ kind: 'room', id: v });
       case 'select-furn': return a.select({ kind: 'furniture', id: v });
@@ -387,17 +398,27 @@ export class Panel {
       if (cm >= 80 && cm <= 220) a.setStature(cm);
       return;
     }
-    if (d.walkFinish && t.value && this.state.walkRoomId) {
+    const picked = this.state.picked;
+    if (d.walkFinish && t.value && picked) {
       const target = d.walkFinish;
       const id = t.value;
       // キー操作で歩けるよう、選んだらフォーカスを外す
       t.blur();
-      a.updateRoom(this.state.walkRoomId, (r) => {
-        if (target !== 'ceiling') {
+      a.updateRoom(picked.roomId, (r) => {
+        if (target === 'side' && picked.side) {
+          // 部屋の壁と同じなら、アクセントを消して部屋の壁にそろえる
+          const accent = { ...(r.accent ?? {}) };
+          if (id === r.wall) delete accent[picked.side];
+          else accent[picked.side] = id;
+          if (Object.keys(accent).length) r.accent = accent;
+          else delete r.accent;
+          return;
+        }
+        if (target === 'wall' || target === 'both') {
           r.wall = id;
           delete r.accent;
         }
-        if (target !== 'wall' && r.ceiling) r.ceiling = id;
+        if ((target === 'ceiling' || target === 'both') && r.ceiling) r.ceiling = id;
       });
       return;
     }

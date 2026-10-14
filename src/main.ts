@@ -4,6 +4,7 @@ import { centroid } from './geometry';
 import { PlanStore, type SaveStatus } from './store';
 import type { Furniture, Plan, Room } from './types';
 import { describeTarget, Panel, type PanelState, type Selection } from './ui';
+import { exportPlan } from './planExport';
 import { Viewer, type WalkInfo } from './viewer';
 
 const store = new PlanStore();
@@ -47,6 +48,7 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   invertLook: loadFlag('invertLook'),
   stature: loadNumber('stature', 160),
   walkRoomId: null,
+  picked: null,
   status: 'saved',
   warnings: [],
 };
@@ -87,6 +89,11 @@ function onWalkInfo(info: WalkInfo | null) {
 
 const viewer = new Viewer(document.getElementById('viewport')!, {
   onWalkInfo,
+  // ウォークスルーで壁・天井をクリックしたら、パネルに「クロスを試す」を出す
+  onPickSurface: (target) => {
+    ui.picked = target && (target.kind === 'wall' || target.kind === 'ceiling') ? { roomId: target.roomId, kind: target.kind, side: target.kind === 'wall' ? target.side : undefined } : null;
+    render();
+  },
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
   onSelectRoom: (id) => select({ kind: 'room', id }),
 });
@@ -189,6 +196,7 @@ const panel = new Panel(document.getElementById('panel')!, {
     select({ kind: 'furniture', id: f.id });
   },
   removeFurniture,
+  exportPlan: () => exportPlan(store.plan, `${store.name}-図面-${new Date().toISOString().slice(0, 10)}.png`),
   screenshot: () => viewer.screenshot(`${store.name}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`),
   undo: () => store.undo(),
   redo: () => store.redo(),

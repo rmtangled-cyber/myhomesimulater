@@ -66,6 +66,10 @@ export interface Furniture {
   flip?: boolean;
   /** 数の指定がある家具で使う（可動棚の棚板の枚数、ロッドの本数など） */
   count?: number;
+  /** キッチンの下台の扉・引出しの割り付け（左からの幅。負の数は 1 枚扉、60 未満はフィラー） */
+  modules?: number[];
+  /** L 字ソファのカウチの前への出幅（mm） */
+  chaise?: number;
 }
 
 export interface Floor {
