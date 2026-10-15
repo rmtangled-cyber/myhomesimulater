@@ -305,7 +305,7 @@ function tiles(
  * 素材柄のフロア材（ラシッサ Dフロア耐水UDわん など）。幅 boardW・長さ boardL の板を、列ごとに継ぎ目をずらして張る。
  * 板の継ぎ目は床面より下がった V 溝。
  */
-function boards(base: string, boardW: number, boardL: number, rows: number, opts: { mottle?: number; variation?: number } = {}) {
+function boards(base: string, boardW: number, boardL: number, rows: number, opts: { mottle?: number; variation?: number; vein?: string } = {}) {
   const c = rgb(base);
   const tileMm: [number, number] = [boardL, boardW * rows];
   return (w: number, h: number, rand: Rand): Generated => {
@@ -316,6 +316,9 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
     const pxPerMm = w / tileMm[0];
     const rowH = h / rows;
     const groove = Math.max(1.5, pxPerMm * 2.5);
+    // 大理石調: 板をまたいで流れる細い筋
+    const vc = opts.vein ? rgb(opts.vein) : null;
+    const warp = vc ? fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 400), cellsY: cellsFor(tileMm[1], 400), octaves: 6, persistence: 0.55 }) : null;
     // 継ぎ目は 1 列ごとに板の半分ずらす（れんが張り）。板ごとに色を少し変える
     const rowInfo = Array.from({ length: rows }, (_, r) => ({ joint: r % 2 === 0 ? 0 : Math.floor(w / 2), tones: [1 + (rand() - 0.5) * (opts.variation ?? 0.06), 1 + (rand() - 0.5) * (opts.variation ?? 0.06)] }));
     for (let y = 0; y < h; y++) {
@@ -334,7 +337,11 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
           k *= 0.5 + 0.5 * t;
           height[i] = 0.8 * t;
         }
-        put(color.data, i, c, k);
+        if (vc && warp) {
+          const t = (x / w) * 2 + y / h + warp[i] * 4;
+          const v = Math.pow(1 - Math.abs(Math.sin(t * Math.PI)), 16);
+          put(color.data, i, mix(c, vc, v * 0.6), k);
+        } else put(color.data, i, c, k);
       }
     }
     return { color, height };
@@ -467,7 +474,10 @@ const floor = (id: string, name: string, draw: MaterialDef['draw'], tile: [numbe
 const FLOOR_TILE: [number, number] = [1820, 900];
 
 /** ウォークスルーで試せる候補のクロス（これまでに出てきた品番） */
-export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2541', 'cross-th34283', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
+/** ウォークスルーで試せる候補の床（ラシッサ Dフロア耐水UDわん） */
+export const CANDIDATE_FLOORS = ['floor-lassissa-mortar', 'floor-lassissa-marblewhite', 'floor-lassissa-lightgray', 'floor-lassissa-sandblack', 'floor-lassissa-greigeelm'];
+
+export const CANDIDATE_WALLPAPERS = ['cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th32208', 'cross-th34282', 'cross-th34283', 'cross-fe76661', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
 
 export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 床 ----
@@ -490,6 +500,9 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // LIXIL ラシッサ Dフロア耐水UDわん（素材柄）。板は 幅455（幅広）× 長さ1818、継ぎ目は V 溝
   floor('floor-lassissa-mortar', 'LIXIL ラシッサ Dフロア耐水UDわん ラフモルタル調', boards('#8e8b87', 455, 1818, 4, { mottle: 0.2 }), [1818, 1820], 0.55, 1.2),
   floor('floor-lassissa-sandblack', 'LIXIL ラシッサ Dフロア耐水UDわん サンドブラック調', boards('#5b5957', 455, 1818, 4, { mottle: 0.15 }), [1818, 1820], 0.55, 1.2),
+  floor('floor-lassissa-marblewhite', 'LIXIL ラシッサ Dフロア耐水UDわん マーブルホワイト調', boards('#e6e5e2', 455, 1818, 4, { mottle: 0.06, variation: 0.03, vein: '#a9aaac' }), [1818, 1820], 0.35, 1.0),
+  // 木目柄（グレージュエルムF）。施工例では灰みのあるグレージュの板で、木目と節がはっきり出る
+  floor('floor-lassissa-greigeelm', 'LIXIL ラシッサ Dフロア耐水UDわん グレージュエルムF', flooring(['#aaa49b', '#9f998f', '#b4ada4', '#958f86'], 150, FLOOR_TILE, { grainContrast: 0.18 }), FLOOR_TILE, 0.55, 1.4),
   floor('floor-lassissa-lightgray', 'LIXIL ラシッサ Dフロア耐水UDわん ライトクレイ調', boards('#b8b6b1', 455, 1818, 4, { mottle: 0.12 }), [1818, 1820], 0.55, 1.2),
 
   // ---- 壁・天井クロス ----
@@ -512,6 +525,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-black', 'ブラック（天井・軒天）', plaster('#2b2b2c', 900, { mottle: 0.05 }), [900, 900], 0.85, 0.3),
   // ---- 実際に使う品番（サンゲツ）。色は見本チップと施工例の写真の中間に合わせている ----
   wall('cross-sp2540', 'SP2540 石目調ライトグレー', stone('#d3d2ce', 900, { contrast: 0.05, pores: 14, tint: '#cbcac5' }), [900, 900], 0.92, 1.1),
+  wall('cross-sp2539', 'SP2539 石目調ホワイト', stone('#dcdbd7', 900, { contrast: 0.04, pores: 14, tint: '#d4d3cf' }), [900, 900], 0.92, 1.1),
   wall('cross-sp2541', 'SP2541 石目調グレー', stone('#b1b0ac', 900, { contrast: 0.06, pores: 14, tint: '#a9a8a4' }), [900, 900], 0.92, 1.1),
   // SP2563 は目地のない、細かい粒が散ったコンクリート柄（リピート 32×46cm）
   wall('cross-sp2563', 'SP2563 コンクリート柄（淡色）', stone('#c3bdb4', 920, { contrast: 0.09, pores: 60, tint: '#b8b1a7' }), [920, 920], 0.9, 1.3),
@@ -521,7 +535,14 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34190', 'TH34190 木目調（神代杉・ダークブラウン）', woodPaper('#544c47', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
   // FAITH の織物調（施工例では落ち着いた中間のグレー）
+  wall('cross-th34282', 'TH34282 織物調ライトグレー', woven('#bdbdbb', 450), [450, 450], 0.85, 0.9),
   wall('cross-th34283', 'TH34283 織物調グレー', woven('#828387', 450), [450, 450], 0.85, 0.9),
+  // 塗り壁調（施工例ではムラのあるやわらかいグレー）
+  wall('cross-th34082', 'TH34082 塗り壁調ライトグレー', stone('#b9b8b4', 1200, { contrast: 0.1, pores: 3, tint: '#b1b0ac' }), [1200, 1200], 0.95, 1.2),
+  wall('cross-th34083', 'TH34083 塗り壁調グレー', stone('#8e8d8a', 1200, { contrast: 0.12, pores: 3, tint: '#868582' }), [1200, 1200], 0.95, 1.2),
+  wall('cross-th32208', 'TH32208 織物調グレージュ', woven('#c8c2b9', 450), [450, 450], 0.85, 0.9),
+  // FINE コンクリート・ストーン。施工例ではざらっとしたダークブラウングレーのアクセント
+  wall('cross-fe76661', 'FE76661 コンクリート・ストーン（ダーク）', stone('#4d4946', 900, { contrast: 0.14, pores: 20, tint: '#46423f' }), [900, 900], 0.9, 1.4),
   wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ネイビーグレー）', stone('#3a3e48', 920, { contrast: 0.12, pores: 6, tint: '#33373f' }), [920, 641], 0.5, 0.8),
   wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a09e99', [930, 1250], [465, 625], { toneVar: 0.12 }), [930, 1250], 0.85, 1.2),
   // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）

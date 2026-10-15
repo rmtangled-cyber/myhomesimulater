@@ -511,7 +511,15 @@ function buildFloor(
       const matId = room.edges?.[String(edge)] ?? room.accent?.[side] ?? room.wall;
       const mb = new MeshBuilder();
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
-      const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5);
+      // 開口部が辺の端の角（部屋の外形の頂点）まで達しているときは、角で延ばした分（出隅では壁の厚みの半分はみ出す分も）一緒に抜く（仕上げの切れ端が柱のように残らない）。
+      // 頂点の手前で終わる開口部は、その先に構造の壁の切れ端が残るので仕上げも残す（抜くと外壁の面が見える）
+      const v0 = e0 > 0 ? 0 : t / 2 + 1;
+      const v1 = e1 > 0 ? len : len - t / 2 - 1;
+      const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5).map((sp) => ({
+        ...sp,
+        u0: sp.u0 <= v0 + 3 ? 0 : sp.u0,
+        u1: sp.u1 >= v1 - 3 ? len : sp.u1,
+      }));
       // 部屋の内側の向き（巾木を出す側）
       const m = f.at(len / 2, 0, 30);
       const inward = pointInPolygon([m.x, m.z], room.polygon) ? 1 : -1;

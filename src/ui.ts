@@ -2,7 +2,7 @@
 
 import { FURNITURE_TYPES, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
-import { CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
+import { CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
 import type { Furniture, Opening, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
@@ -31,7 +31,7 @@ export interface PanelState {
   /** ウォークスルーで立っている部屋 */
   walkRoomId: string | null;
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
-  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | null;
+  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -309,23 +309,29 @@ export class Panel {
   /** ウォークスルーでクリックした面（壁 1 面・天井・開口部まわり）だけを、候補のクロスに張り替えて見比べる */
   private tryFinishes(): string {
     const p = this.state.picked;
-    if (!p) return `<p class="hint">壁・天井・開口部まわりの面をクリックすると、その面だけ候補のクロスに張り替えて見比べられます。</p>`;
+    if (!p) return `<p class="hint">壁・天井・開口部まわりの面・床をクリックすると、その面だけ候補のクロス（床は床材）に張り替えて見比べられます。</p>`;
     const rooms = this.state.plan.floors.flatMap((f) => f.rooms);
     let title = '';
     let current = '';
-    if (p.kind === 'jamb') {
+    if (p.kind === 'furniture') {
+      const f = this.state.plan.floors.flatMap((x) => x.furniture).find((x) => x.id === p.furnitureId);
+      if (!f) return '';
+      title = f.name ?? '壁';
+      current = f.material ?? '';
+    } else if (p.kind === 'jamb') {
       title = '開口部まわりの面';
       current = this.state.plan.floors.flatMap((f) => f.openings).find((o) => o.id === p.openingId)?.jamb ?? p.materialId;
     } else {
       const r = rooms.find((x) => x.id === p.roomId);
       if (!r) return '';
-      title = p.kind === 'ceiling' ? `${r.name}・天井` : `${r.name}・${SIDES.find(([s]) => s === p.side)?.[1] ?? ''}の壁`;
-      current = p.kind === 'ceiling' ? r.ceiling : (r.edges?.[String(p.edge)] ?? p.materialId);
+      title = p.kind === 'wall' ? `${r.name}・${SIDES.find(([s]) => s === p.side)?.[1] ?? ''}の壁` : p.kind === 'floor' ? `${r.name}・床` : `${r.name}・天井`;
+      current = p.kind === 'wall' ? (r.edges?.[String(p.edge)] ?? p.materialId) : p.kind === 'floor' ? r.floor : r.ceiling;
     }
-    const options = CANDIDATE_WALLPAPERS.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
-    const swatch = current && CANDIDATE_WALLPAPERS.includes(current) ? `<img class="swatch" src="${swatchUrl(current)}" alt="">` : `<span class="swatch none"></span>`;
+    const candidates = p.kind === 'floor' ? CANDIDATE_FLOORS : CANDIDATE_WALLPAPERS;
+    const options = candidates.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
+    const swatch = current && candidates.includes(current) ? `<img class="swatch" src="${swatchUrl(current)}" alt="">` : `<span class="swatch none"></span>`;
     return `
-      <h3>クロスを試す <small>${esc(title)}</small></h3>
+      <h3>${p.kind === 'floor' ? '床を試す' : 'クロスを試す'} <small>${esc(title)}</small></h3>
       <div class="mat-row">${swatch}<select data-walk-finish="1"><option value="">（選ぶ）</option>${options}</select></div>
       <p class="hint">クリックした面だけ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
   }
@@ -405,17 +411,22 @@ export class Panel {
       const id = t.value;
       // キー操作で歩けるよう、選んだらフォーカスを外す
       t.blur();
-      if (picked.kind === 'jamb') {
+      if (picked.kind === 'furniture') {
+        a.updateFurniture(picked.furnitureId, (f) => (f.material = id));
+      } else if (picked.kind === 'jamb') {
         a.updateOpening(picked.openingId, (o) => (o.jamb = id));
       } else if (picked.kind === 'ceiling') {
         a.updateRoom(picked.roomId, (r) => r.ceiling && (r.ceiling = id));
-      } else {
+      } else if (picked.kind === 'floor') {
+        a.updateRoom(picked.roomId, (r) => (r.floor = id));
+      } else if (picked.kind === 'wall') {
         // クリックした壁 1 面だけ（部屋の壁・アクセントと同じなら指定を消す）
+        const { side, edge } = picked;
         a.updateRoom(picked.roomId, (r) => {
           const edges = { ...(r.edges ?? {}) };
-          const base = r.accent?.[picked.side] ?? r.wall;
-          if (id === base) delete edges[String(picked.edge)];
-          else edges[String(picked.edge)] = id;
+          const base = r.accent?.[side] ?? r.wall;
+          if (id === base) delete edges[String(edge)];
+          else edges[String(edge)] = id;
           if (Object.keys(edges).length) r.edges = edges;
           else delete r.edges;
         });

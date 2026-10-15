@@ -424,7 +424,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const body = prism(plan(w, d), seat, 0, mat, 0);
       const pos = body.geometry.getAttribute('position') as THREE.BufferAttribute;
       for (let i = 0; i < pos.count; i++) {
-        const k = 0.8 + 0.2 * Math.min(1, pos.getY(i) / seat) ** 0.6;
+        // 回転の誤差で y がわずかに負になると、べき乗が NaN になる（クリックの判定がすべてこの形に当たる）ので 0 で止める
+        const k = 0.8 + 0.2 * Math.min(1, Math.max(0, pos.getY(i) / seat)) ** 0.6;
         pos.setXYZ(i, pos.getX(i) * k, pos.getY(i), pos.getZ(i) * (0.92 + 0.08 * (k - 0.8) / 0.2));
       }
       body.geometry.computeVertexNormals();

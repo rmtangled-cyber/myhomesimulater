@@ -146,9 +146,6 @@
           "ceiling": "cross-sp2540",
           "accent": {
             "east": "cross-hf3122"
-          },
-          "edges": {
-            "1": "cross-sp2540"
           }
         },
         {
@@ -547,7 +544,8 @@
           ],
           "width": 800,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2540"
         },
         {
           "id": "1f-hall-genkan",
@@ -1891,11 +1889,14 @@
               2502.5
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
           "accent": {
             "west": "cross-fe76650"
+          },
+          "edges": {
+            "3": "cross-fe76661"
           }
         },
         {
@@ -1919,7 +1920,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-white",
           "ceiling": "cross-sp2540"
         },
@@ -1944,7 +1945,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2563",
           "ceiling": "cross-sp2540"
         },
@@ -1969,11 +1970,14 @@
               4322.5
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
           "accent": {
             "north": "cross-th34606"
+          },
+          "edges": {
+            "0": "cross-sp2563"
           }
         },
         {
@@ -2049,7 +2053,7 @@
               6825
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-mortar",
           "wall": "cross-white",
           "ceiling": "cross-sp2540"
         },
@@ -2098,12 +2102,9 @@
               2502.5
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2540",
-          "edges": {
-            "1": "cross-hf3122"
-          }
+          "ceiling": "cross-sp2540"
         }
       ],
       "openings": [
@@ -2138,7 +2139,8 @@
           ],
           "width": 1240,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2540"
         },
         {
           "id": "2f-toilet-door",
@@ -2525,6 +2527,20 @@
           "rotation": 90,
           "color": "#3a3b3d",
           "z": 201
+        },
+        {
+          "id": "stairs-1-top",
+          "type": "box",
+          "name": "1階からの階段の一番上の段（2階の床と同じ高さ・吹き抜けの東の端）",
+          "x": 4436.25,
+          "y": 2957.5,
+          "w": 227.5,
+          "d": 910,
+          "h": 40,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": -40,
+          "material": "floor-lassissa-mortar"
         },
         {
           "id": "rods-2",

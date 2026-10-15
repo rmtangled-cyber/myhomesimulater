@@ -87,6 +87,12 @@ function onWalkInfo(info: WalkInfo | null) {
   }
 }
 
+/** クロスを貼った箱（ふかし壁・折り上げの立ち上がりなど）。壁と同じくクリックでクロスを張り替えられる */
+function isWallBox(id: string): boolean {
+  const f = findFurniture(store.plan, id)?.item;
+  return !!f && f.type === 'box' && !!f.material?.startsWith('cross-');
+}
+
 const viewer = new Viewer(document.getElementById('viewport')!, {
   onWalkInfo,
   // ウォークスルーで壁・天井をクリックしたら、パネルに「クロスを試す」を出す
@@ -94,11 +100,13 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
     ui.picked =
       target?.kind === 'wall'
         ? { kind: 'wall', roomId: target.roomId, edge: target.edge, side: target.side, materialId: target.materialId }
-        : target?.kind === 'ceiling'
-          ? { kind: 'ceiling', roomId: target.roomId }
+        : target?.kind === 'ceiling' || target?.kind === 'floor'
+          ? { kind: target.kind, roomId: target.roomId }
           : target?.kind === 'jamb' && target.openingId
             ? { kind: 'jamb', openingId: target.openingId, materialId: target.materialId ?? '' }
-            : null;
+            : target?.kind === 'furniture' && isWallBox(target.furnitureId)
+              ? { kind: 'furniture', furnitureId: target.furnitureId }
+              : null;
     render();
   },
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
