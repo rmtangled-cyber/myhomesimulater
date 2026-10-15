@@ -91,7 +91,14 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
   onWalkInfo,
   // ウォークスルーで壁・天井をクリックしたら、パネルに「クロスを試す」を出す
   onPickSurface: (target) => {
-    ui.picked = target && (target.kind === 'wall' || target.kind === 'ceiling') ? { roomId: target.roomId, kind: target.kind, side: target.kind === 'wall' ? target.side : undefined } : null;
+    ui.picked =
+      target?.kind === 'wall'
+        ? { kind: 'wall', roomId: target.roomId, edge: target.edge, side: target.side, materialId: target.materialId }
+        : target?.kind === 'ceiling'
+          ? { kind: 'ceiling', roomId: target.roomId }
+          : target?.kind === 'jamb' && target.openingId
+            ? { kind: 'jamb', openingId: target.openingId, materialId: target.materialId ?? '' }
+            : null;
     render();
   },
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
@@ -171,6 +178,11 @@ const panel = new Panel(document.getElementById('panel')!, {
     store.edit((p) => {
       const r = findRoom(p, id)?.room;
       if (r) fn(r);
+    }),
+  updateOpening: (id, fn) =>
+    store.edit((p) => {
+      const o = p.floors.flatMap((f) => f.openings).find((x) => x.id === id);
+      if (o) fn(o);
     }),
   updateFurniture: (id, fn) =>
     store.edit((p) => {

@@ -129,7 +129,7 @@ function drawFloor(g: CanvasRenderingContext2D, plan: Plan, floor: Floor, b: { x
   for (const r of floor.rooms) {
     const [cx, cy] = centroid(r.polygon);
     const area = Math.abs(signedArea(r.polygon)) / 1e6;
-    if (area < 0.6) continue;
+    if (area < 0.6 || r.noLabel) continue;
     g.fillStyle = '#333';
     g.font = '13px sans-serif';
     g.fillText(r.name, cx * PX, cy * PX);

@@ -467,7 +467,7 @@ const floor = (id: string, name: string, draw: MaterialDef['draw'], tile: [numbe
 const FLOOR_TILE: [number, number] = [1820, 900];
 
 /** ウォークスルーで試せる候補のクロス（これまでに出てきた品番） */
-export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2541', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
+export const CANDIDATE_WALLPAPERS = ['cross-sp2540', 'cross-sp2541', 'cross-th34283', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
 
 export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 床 ----
@@ -513,12 +513,15 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 実際に使う品番（サンゲツ）。色は見本チップと施工例の写真の中間に合わせている ----
   wall('cross-sp2540', 'SP2540 石目調ライトグレー', stone('#d3d2ce', 900, { contrast: 0.05, pores: 14, tint: '#cbcac5' }), [900, 900], 0.92, 1.1),
   wall('cross-sp2541', 'SP2541 石目調グレー', stone('#b1b0ac', 900, { contrast: 0.06, pores: 14, tint: '#a9a8a4' }), [900, 900], 0.92, 1.1),
-  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色・目地入り）', concretePanels('#c2bdb6', [920, 920], [460, 460], { holes: false, toneVar: 0.05, seam: 0.93 }), [920, 920], 0.9, 1.2),
+  // SP2563 は目地のない、細かい粒が散ったコンクリート柄（リピート 32×46cm）
+  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色）', stone('#c3bdb4', 920, { contrast: 0.09, pores: 60, tint: '#b8b1a7' }), [920, 920], 0.9, 1.3),
   wall('cross-sp2562', 'SP2562 織物調ダークグレージュ', woven('#5f5b58', 450), [450, 450], 0.7, 0.9),
   wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#78787a', 920, { contrast: 0.14, pores: 4, tint: '#6e6f72' }), [920, 640], 0.85, 1.3),
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cacccc', 920, { contrast: 0.03, pores: 6, tint: '#c4c6c6' }), [920, 640], 0.8, 1),
   wall('cross-th34190', 'TH34190 木目調（神代杉・ダークブラウン）', woodPaper('#544c47', [920, 641], { contrast: 0.12 }), [920, 641], 0.75, 0.8),
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
+  // FAITH の織物調（施工例では落ち着いた中間のグレー）
+  wall('cross-th34283', 'TH34283 織物調グレー', woven('#828387', 450), [450, 450], 0.85, 0.9),
   wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ネイビーグレー）', stone('#3a3e48', 920, { contrast: 0.12, pores: 6, tint: '#33373f' }), [920, 641], 0.5, 0.8),
   wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a09e99', [930, 1250], [465, 625], { toneVar: 0.12 }), [930, 1250], 0.85, 1.2),
   // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）
@@ -539,7 +542,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'wood-darkbrown', name: '木目調（ダークブラウン・造作家具）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.5, draw: woodPaper('#4a3a30', [900, 900], { contrast: 0.14 }) },
   { id: 'wood-rosewood-dark', name: '木目調（ダークローズウッド・ピアノ）', categories: [], tile: [900, 900], roughness: 0.45, bump: 0.3, draw: woodPaper('#3b2620', [900, 900], { contrast: 0.12 }) },
   { id: 'marble-lightgray', name: '大理石調（ライトグレー・セラミック天板）', categories: [], tile: [1200, 1200], roughness: 0.35, bump: 0, draw: marble('#c3c0bb', '#dedbd6', 1200, { veins: 3, strength: 0.35 }) },
-  { id: 'wood-oak-light', name: '木目調（ナチュラルオーク・今のベッド）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.4, draw: woodPaper('#c9b08f', [900, 900], { contrast: 0.12 }) },
+  { id: 'wood-oak-light', name: '木目調（ナチュラルオーク・今のベッド）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.4, draw: woodPaper('#dccab0', [900, 900], { contrast: 0.08 }) },
+  { id: 'baseboard-gray', name: '巾木（ダークグレー）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0, draw: plaster('#6b6a67', 900, { mottle: 0.02 }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 
   // ---- 外壁 ----

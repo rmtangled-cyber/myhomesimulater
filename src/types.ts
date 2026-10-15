@@ -25,6 +25,12 @@ export interface Room {
   ceilingHeight?: number;
   /** 床を張らない（階段の吹き抜けなど） */
   void?: boolean;
+  /** 部屋名を図面と 3D に出さない（隣の部屋の一部のような小さな区切り） */
+  noLabel?: boolean;
+  /** 壁 1 面ごとのクロス（キーは polygon の辺の番号。i 番目の点から i+1 番目の点への辺）。accent・wall より優先 */
+  edges?: Record<string, string>;
+  /** 巾木を付けない（浴室・車庫・ポーチなど） */
+  noBaseboard?: boolean;
 }
 
 export type OpeningType = 'window' | 'door' | 'opening';
@@ -40,6 +46,12 @@ export interface Opening {
   sill: number;
   /** 窓の種類。fix は開かない窓（障子なし）。省略時は横長なら横すべり出し、それ以外は引き違い／縦長 */
   style?: 'fix' | 'slide';
+  /** 開口部まわりの面（壁の厚みの面）のクロス。省略時は隣の壁と同じ */
+  jamb?: string;
+  /** 片引き戸の戸袋。戸がある部屋（slideRoom）の側の壁を、戸を引く向き（slideTo）に開口部の幅だけ slideDepth（既定 40）削る */
+  slideRoom?: string;
+  slideTo?: Side;
+  slideDepth?: number;
 }
 
 export interface Furniture {
@@ -68,6 +80,10 @@ export interface Furniture {
   count?: number;
   /** キッチンの下台の扉・引出しの割り付け（左からの幅。負の数は 1 枚扉、60 未満はフィラー） */
   modules?: number[];
+  /** 片引き戸（壁を削った戸袋に引き込む）。レールや床のガイドは枠・戸袋の中で見えない */
+  pocket?: boolean;
+  /** 開き戸の開く向き。1 = 正面（+z）の側へ開く（省略時）、-1 = 背面の側へ開く */
+  swing?: 1 | -1;
   /** L 字ソファのカウチの前への出幅（mm） */
   chaise?: number;
 }

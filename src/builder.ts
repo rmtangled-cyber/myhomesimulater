@@ -23,11 +23,11 @@ import type { Floor, Plan, Point, Room, Side } from './types';
 
 /** ウォークスルーで「見ているもの」を出すため、面に付けておく情報 */
 export type SurfaceInfo =
-  | { kind: 'wall'; roomId: string; materialId: string; side: Side }
+  | { kind: 'wall'; roomId: string; materialId: string; side: Side; edge: number }
   | { kind: 'floor' | 'ceiling'; roomId: string; materialId: string }
   | { kind: 'exterior'; materialId: string }
   | { kind: 'opening'; openingId: string }
-  | { kind: 'jamb' };
+  | { kind: 'jamb'; materialId?: string; openingId?: string };
 
 export interface BuiltFloor {
   group: THREE.Group;
@@ -68,6 +68,23 @@ class Frame {
 }
 
 const Y = new THREE.Vector3(0, 1, 0);
+/** 方角の向き（平面図の x, y） */
+const SIDE_VEC: Record<Side, Point> = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] };
+
+/** 線分（f の向き）の上の開口部 s の、片引き戸の戸袋の範囲 [u0, u1]（戸を引く向きに、戸の幅 = 開口部 + 80） */
+function pocketSpan(f: Frame, s: { u0: number; u1: number; opening: { slideTo?: Side } }, len: number): [number, number] | null {
+  if (!s.opening.slideTo) return null;
+  const v = SIDE_VEC[s.opening.slideTo];
+  const along = v[0] * f.D.x + v[1] * f.D.z;
+  if (Math.abs(along) < 0.5) return null;
+  const w = s.u1 - s.u0 + 80;
+  const [u0, u1] = along > 0 ? [s.u1, s.u1 + w] : [s.u0 - w, s.u0];
+  return [Math.max(0, u0), Math.min(len, u1)];
+}
+
+/** 巾木の高さと出 */
+const BASEBOARD_H = 60;
+const BASEBOARD_T = 8;
 
 /** 四角形を三角形2枚で追加する。法線は a × b の向き。UV は mm。 */
 class MeshBuilder {
@@ -109,6 +126,39 @@ interface Rect {
  * 長さ len、高さ v0〜v1 の面から開口部をくり抜き、残りを長方形の集まりで返す。
  * 開口部の高さ（sill など）は v と同じ基準（階の FL）で測る。
  */
+/** 壁の片側（s = +1 は N の側）の面の穴（片引き戸の戸袋） */
+interface Hole {
+  s: 1 | -1;
+  u0: number;
+  u1: number;
+  v0: number;
+  v1: number;
+}
+
+/** 長方形 r から穴を抜いた残りの長方形 */
+function cutRect(r: Rect, holes: { u0: number; u1: number; v0: number; v1: number }[]): Rect[] {
+  let rects: Rect[] = [r];
+  for (const hl of holes) {
+    const next: Rect[] = [];
+    for (const q of rects) {
+      const u0 = Math.max(q.u0, hl.u0);
+      const u1 = Math.min(q.u1, hl.u1);
+      const v0 = Math.max(q.v0, hl.v0);
+      const v1 = Math.min(q.v1, hl.v1);
+      if (u1 - u0 < 0.5 || v1 - v0 < 0.5) {
+        next.push(q);
+        continue;
+      }
+      if (u0 > q.u0) next.push({ ...q, u1: u0 });
+      if (u1 < q.u1) next.push({ ...q, u0: u1 });
+      if (v0 > q.v0) next.push({ u0, u1, v0: q.v0, v1: v0 });
+      if (v1 < q.v1) next.push({ u0, u1, v0: v1, v1: q.v1 });
+    }
+    rects = next;
+  }
+  return rects.filter((q) => q.u1 - q.u0 > 0.5 && q.v1 - q.v0 > 0.5);
+}
+
 function rectsWithHoles(len: number, v0: number, v1: number, spans: OpeningSpan[]): Rect[] {
   const rects: Rect[] = [];
   let u = 0;
@@ -194,7 +244,6 @@ function buildFloor(
   // ---- 構造壁（外壁の素材で作り、室内側は仕上げ面で覆う） ----
   const walls = deriveWalls(rooms);
   const wallBuilder = new MeshBuilder();
-  const jambBuilder = new MeshBuilder();
   // 壁の端に、ほかの壁（開口部で抜けていない所）がつながっているか。
   // つながる壁が端のすぐ横（壁の厚みの半分以内）で開口部になっているときは、延ばすと開口部の中に切れ端（柱のような物）が出るので、つながっていないことにする
   const joined = (p: Point, self: WallSegment) =>
@@ -205,7 +254,8 @@ function buildFloor(
       if (off > 1 || u < -1 || u > len2 + 1) return false;
       return !openingsOnSegment(floor.openings, w2.from, w2.to, t / 2 + 1).some((s) => u > s.u0 - t / 2 - 1 && u < s.u1 + t / 2 + 1);
     });
-  // 壁の切れ目（何もつながらない端）の端面は、両側の部屋の壁クロスで巻き込む（両側で違うときは標準の SP2540）
+  // 開口部まわり・壁の切れ目の面（壁の厚みの面）は、すぐ隣の壁のクロスで巻き込む。
+  // 厚みの真ん中で分けて、それぞれの側の部屋の壁クロス（部屋がない外側は外壁）を貼る
   const finishAt = (p: Point): string | undefined => {
     const room = rooms.find((r) => pointInPolygon(p, r.polygon));
     if (!room) return undefined;
@@ -218,15 +268,17 @@ function buildFloor(
     });
     return room.accent?.[edgeSide(room.polygon, best)] ?? room.wall;
   };
-  const endBuilders = new Map<string, MeshBuilder>();
-  const endFaceBuilder = (p: Point, inward: Point): MeshBuilder => {
-    const n: Point = [-inward[1], inward[0]];
-    const q = (s: number): Point => [p[0] + inward[0] * 30 + n[0] * s * (t / 2 + 20), p[1] + inward[1] * 30 + n[1] * s * (t / 2 + 20)];
-    const [a, b] = [finishAt(q(1)), finishAt(q(-1))];
-    const id = a && (a === b || !b) ? a : b && !a ? b : 'cross-sp2540';
-    const mb = endBuilders.get(id) ?? new MeshBuilder();
-    endBuilders.set(id, mb);
-    return mb;
+  const exteriorId = floor.exterior ?? plan.exterior;
+  const sideBuilders = new Map<string, { mb: MeshBuilder; id: string; openingId?: string }>();
+  /** 壁 f の位置 u で、s の側（+1 = N の側）の仕上げを入れる先。開口部まわりの面で、開口部にクロスの指定があればそれを貼る */
+  const sideBuilder = (f: Frame, u: number, s: 1 | -1, openingId?: string): MeshBuilder => {
+    const p = f.at(u, 0, s * (t / 2 + 20));
+    const own = openingId ? floor.openings.find((o) => o.id === openingId)?.jamb : undefined;
+    const id = own ?? finishAt([p.x, p.z]) ?? exteriorId;
+    const key = `${id}|${openingId ?? ''}`;
+    const entry = sideBuilders.get(key) ?? { mb: new MeshBuilder(), id, openingId };
+    sideBuilders.set(key, entry);
+    return entry.mb;
   };
   for (const w of walls) {
     const len0 = dist(w.from, w.to);
@@ -246,26 +298,34 @@ function buildFloor(
       u0: s.u0 <= e0 + 2 ? 0 : s.u0,
       u1: s.u1 >= len - e1 - 2 ? len : s.u1,
     }));
-    const freeStart = joinStart ? null : endFaceBuilder(w.from, dir);
-    const freeEnd = joinEnd ? null : endFaceBuilder(w.to, [-dir[0], -dir[1]]);
+    // 位置 u にある開口部（開口部まわりの面がどの開口部のものか）
+    const openingAt = (u: number) => spans.find((s) => u > s.u0 - 2 && u < s.u1 + 2)?.opening.id;
+    // 片引き戸の戸袋で削る所（壁の片側の面の穴）
+    const holes: Hole[] = [];
+    for (const sp of spans) {
+      const o = sp.opening;
+      const ps = o.slideRoom ? pocketSpan(f, sp, len) : null;
+      const room = o.slideRoom ? rooms.find((x) => x.id === o.slideRoom) : undefined;
+      if (!ps || !room) continue;
+      // 戸のある部屋が壁のどちらの側か（部屋の中心で調べる。戸袋が隣の部屋の前まで続いても同じ側を削る）
+      const [cx, cy] = centroid(room.polygon);
+      const q = f.at((sp.u0 + sp.u1) / 2, 0, 0);
+      holes.push({ s: (cx - q.x) * f.N.x + (cy - q.z) * f.N.z > 0 ? 1 : -1, u0: ps[0], u1: ps[1], v0: o.sill, v1: o.sill + o.height });
+    }
     for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) {
-      const sf = r.u0 > 0.5 ? jambBuilder : freeStart;
-      const ef = r.u1 < len - 0.5 ? jambBuilder : freeEnd;
-      addWallBox(wallBuilder, jambBuilder, f, r, t, wallBottom, wallTop, sf, ef, floor.ceilingHeight);
+      const drawStart = r.u0 > 0.5 || !joinStart;
+      const drawEnd = r.u1 < len - 0.5 || !joinEnd;
+      addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes);
     }
   }
   if (!wallBuilder.empty) {
-    // 開口部の側面（壁の厚み）はクロスで巻き込むので、家の標準の壁クロスで描く
-    const jambs = new THREE.Mesh(jambBuilder.geometry(), getMaterial('cross-sp2540', { clip }));
-    jambs.userData.info = { kind: 'jamb' } satisfies SurfaceInfo;
-    jambs.castShadow = jambs.receiveShadow = true;
-    group.add(jambs);
-    for (const [id, mb] of endBuilders) {
+    // 開口部の側面などの壁の厚みの面（隣の壁のクロスで巻き込む）
+    for (const { mb, id, openingId } of sideBuilders.values()) {
       if (mb.empty) continue;
-      const ends = new THREE.Mesh(mb.geometry(), getMaterial(id, { clip }));
-      ends.userData.info = { kind: 'jamb' } satisfies SurfaceInfo;
-      ends.receiveShadow = true;
-      group.add(ends);
+      const faces = new THREE.Mesh(mb.geometry(), getMaterial(id, { clip }));
+      faces.userData.info = { kind: 'jamb', materialId: id, openingId } satisfies SurfaceInfo;
+      faces.castShadow = faces.receiveShadow = true;
+      group.add(faces);
     }
     const mesh = new THREE.Mesh(wallBuilder.geometry(), getMaterial(floor.exterior ?? plan.exterior, { clip }));
     mesh.userData.info = { kind: 'exterior', materialId: floor.exterior ?? plan.exterior } satisfies SurfaceInfo;
@@ -291,6 +351,21 @@ function buildFloor(
   const ceilings: THREE.Mesh[] = [];
   const caps: THREE.Mesh[] = [];
   const labels: CSS2DObject[] = [];
+  const baseboard = new MeshBuilder();
+  // 片引き戸の戸袋（壁の線・戸袋の範囲・削る側）。戸袋の長さは戸の幅（開口部 + 80）
+  const pocketDefs = floor.openings.flatMap((o) => {
+    const room = o.slideRoom && o.slideTo ? rooms.find((r) => r.id === o.slideRoom) : undefined;
+    if (!room || !o.slideTo) return [];
+    const v = SIDE_VEC[o.slideTo];
+    const vertical = v[0] === 0;
+    const dir = v[0] + v[1];
+    const c = vertical ? o.at[1] : o.at[0];
+    const start = c + (dir * o.width) / 2;
+    const far = start + dir * (o.width + 80);
+    const [cx, cy] = centroid(room.polygon);
+    const line = vertical ? o.at[0] : o.at[1];
+    return [{ o, vertical, line, p0: Math.min(start, far), p1: Math.max(start, far), far, sideSign: Math.sign((vertical ? cx : cy) - line) }];
+  });
   for (const room of rooms) {
     checkMaterial(room.floor, `${room.name}の床`);
     checkMaterial(room.wall, `${room.name}の壁`);
@@ -411,8 +486,11 @@ function buildFloor(
 
     // 壁クロス。方角ごとに素材が違うことがあるので、方角ごとにまとめる（見ている面の情報にも使う）
     const finish = insetPolygon(room.polygon, t / 2 + 1);
-    const bySide = new Map<string, { mb: MeshBuilder; side: Side; matId: string }>();
     const n = room.polygon.length;
+    // 外形の向きをそろえたときに逆順にした部屋は、辺の番号を元の polygon の番号に戻す
+    const original = floor.rooms.find((r) => r.id === room.id)!.polygon;
+    const reversed = signedArea(original) <= 0;
+    const edgeIndex = (i: number) => (reversed ? (((n - 2 - i) % n) + n) % n : i);
     // 出隅でない角（部屋の内側から見て 90° の角）では、仕上げを壁の中心線まで延ばす。
     // 隣の部屋と壁なしでつながっている所で、仕上げの切れ目から構造壁が見えないようにするため
     const convex = (k: number) => {
@@ -429,24 +507,73 @@ function buildFloor(
       const b: Point = [finish[(i + 1) % finish.length][0] + dir[0] * e1, finish[(i + 1) % finish.length][1] + dir[1] * e1];
       const len = len0 + e0 + e1;
       const side = edgeSide(room.polygon, i);
-      const matId = room.accent?.[side] ?? room.wall;
-      const entry = bySide.get(side) ?? { mb: new MeshBuilder(), side, matId };
-      bySide.set(side, entry);
-      const mb = entry.mb;
+      const edge = edgeIndex(i);
+      const matId = room.edges?.[String(edge)] ?? room.accent?.[side] ?? room.wall;
+      const mb = new MeshBuilder();
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
       const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5);
-      for (const r of rectsWithHoles(len, level, finishTop, spans)) {
-        mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
+      // 部屋の内側の向き（巾木を出す側）
+      const m = f.at(len / 2, 0, 30);
+      const inward = pointInPolygon([m.x, m.z], room.polygon) ? 1 : -1;
+      // 片引き戸の戸袋（この部屋の側の壁を削った所）
+      const recess = new MeshBuilder();
+      const pockets: Hole[] = [];
+      // 戸袋は隣の部屋の壁まで続くことがある（シューズクロークの入口など）ので、同じ壁の線で同じ側にある辺なら削る
+      const pa = room.polygon[i];
+      const pb = room.polygon[(i + 1) % n];
+      for (const pd of pocketDefs) {
+        const c = pd.vertical ? 0 : 1;
+        if (Math.abs(pa[c] - pd.line) > 1 || Math.abs(pb[c] - pd.line) > 1) continue;
+        if (Math.sign((pd.vertical ? m.x : m.z) - pd.line) !== pd.sideSign) continue;
+        // 戸袋の範囲（壁に沿った座標）を、この仕上げの辺の u に直す
+        const k = pd.vertical ? f.D.z : f.D.x;
+        const a0 = pd.vertical ? a[1] : a[0];
+        const ua = (pd.p0 - a0) * k;
+        const ub = (pd.p1 - a0) * k;
+        const u0 = Math.max(0, Math.min(ua, ub));
+        const u1 = Math.min(len, Math.max(ua, ub));
+        if (u1 - u0 < 1) continue;
+        const o = pd.o;
+        const dep = o.slideDepth ?? 40;
+        const [v0, v1] = [o.sill, o.sill + o.height];
+        pockets.push({ s: 1, u0, u1, v0, v1 });
+        const back = -inward * dep;
+        const du = u1 - u0;
+        // 面の向きを気にしなくてよいよう、表と裏の 2 枚ずつ張る（素材を複製すると描けないことがあるため）
+        const both = (o: THREE.Vector3, p: THREE.Vector3, q: THREE.Vector3, uv: [number, number], size: [number, number]) => {
+          recess.quad(o, p, q, uv, size);
+          recess.quad(o, q, p, [uv[1], uv[0]], [size[1], size[0]]);
+        };
+        both(f.at(u0, v0, back), f.D.clone().multiplyScalar(du), Y.clone().multiplyScalar(v1 - v0), [u0, v0], [du, v1 - v0]);
+        both(f.at(u0, v1, 0), f.D.clone().multiplyScalar(du), f.N.clone().multiplyScalar(back), [u0, 0], [du, dep]);
+        // 戸袋の奥の端（開口部と反対の端がこの辺の中にあれば）
+        const farU = (pd.far - a0) * k;
+        if (farU > -1 && farU < len + 1) both(f.at(farU, v0, 0), f.N.clone().multiplyScalar(back), Y.clone().multiplyScalar(v1 - v0), [0, v0], [dep, v1 - v0]);
       }
-    }
-    for (const { mb, side, matId } of bySide.values()) {
+      const finishRects = rectsWithHoles(len, level, finishTop, spans).flatMap((r) => cutRect(r, pockets));
+      if (!recess.empty) {
+        const rm = new THREE.Mesh(recess.geometry(), getMaterial(matId, { clip }));
+        rm.receiveShadow = true;
+        rm.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side, edge } satisfies SurfaceInfo;
+        group.add(rm);
+      }
+      for (const r of finishRects) {
+        mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
+        // 巾木（床に接する所だけ。高さ 60・出 8）
+        if (!room.noBaseboard && !room.void && Math.abs(r.v0 - level) < 1) {
+          const du = f.D.clone().multiplyScalar(r.u1 - r.u0);
+          baseboard.quad(f.at(r.u0, level, inward * BASEBOARD_T), du, Y.clone().multiplyScalar(BASEBOARD_H), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_H]);
+          baseboard.quad(f.at(r.u0, level + BASEBOARD_H, 0), du, f.N.clone().multiplyScalar(inward * BASEBOARD_T), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_T]);
+        }
+      }
       if (mb.empty) continue;
       const mesh = new THREE.Mesh(mb.geometry(), getMaterial(matId, { clip }));
       mesh.receiveShadow = true;
-      mesh.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side } satisfies SurfaceInfo;
+      mesh.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side, edge } satisfies SurfaceInfo;
       group.add(mesh);
     }
 
+    if (room.noLabel) continue;
     const [cx, cy] = centroid(inner);
     const areaM2 = Math.abs(signedArea(room.polygon)) / 1e6;
     const el = document.createElement('div');
@@ -456,6 +583,14 @@ function buildFloor(
     label.position.set(cx, level + 50, cy);
     group.add(label);
     labels.push(label);
+  }
+
+  if (!baseboard.empty) {
+    const mat = getMaterial('baseboard-gray', { clip });
+    mat.side = THREE.DoubleSide;
+    const mesh = new THREE.Mesh(baseboard.geometry(), mat);
+    mesh.receiveShadow = true;
+    group.add(mesh);
   }
 
   // ---- 家具 ----
@@ -470,27 +605,50 @@ function buildFloor(
   return { group, floorMeshes, ceilings, caps, labels };
 }
 
-/** 壁の箱。両側の面は mb（外壁の素材）、開口部の枠まわりの面は jamb（室内の白い仕上げ）に入れる */
-/** startFace / endFace: 端面を入れる先。開口部に面する端・壁の切れ目だけ描く（壁どうしの角の端面は隣の壁と重なってちらつくので null） */
-function addWallBox(mb: MeshBuilder, jamb: MeshBuilder, f: Frame, r: Rect, t: number, bottom: number, top: number, startFace: MeshBuilder | null, endFace: MeshBuilder | null, ceiling: number) {
+/**
+ * 壁の箱。両側の面は mb（外壁の素材）。開口部まわり・壁の切れ目の厚みの面は、真ん中で分けて side(u, ±1) の側の仕上げに入れる。
+ * drawStart / drawEnd: 端面を描くか（開口部に面する端・壁の切れ目だけ。壁どうしの角の端面は隣の壁と重なってちらつくので描かない）
+ */
+function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = []) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
   const N = f.N;
+  const h = t / 2;
   const along = D.clone().multiplyScalar(du);
   const up = Y.clone().multiplyScalar(dv);
-  const back = D.clone().multiplyScalar(-du);
-  // 両側の面
-  mb.quad(f.at(r.u0, r.v0, t / 2), along, up, [r.u0, r.v0], [du, dv]);
-  mb.quad(f.at(r.u1, r.v0, -t / 2), back, up, [-r.u1, r.v0], [du, dv]);
+  const nHalf = N.clone().multiplyScalar(h);
+  const nHalfNeg = N.clone().multiplyScalar(-h);
+  const mid = (r.u0 + r.u1) / 2;
+  // 両側の面（片引き戸の戸袋で削る所は抜く）
+  for (const q of cutRect(r, holes.filter((x) => x.s === 1))) mb.quad(f.at(q.u0, q.v0, h), D.clone().multiplyScalar(q.u1 - q.u0), Y.clone().multiplyScalar(q.v1 - q.v0), [q.u0, q.v0], [q.u1 - q.u0, q.v1 - q.v0]);
+  for (const q of cutRect(r, holes.filter((x) => x.s === -1))) mb.quad(f.at(q.u1, q.v0, -h), D.clone().multiplyScalar(-(q.u1 - q.u0)), Y.clone().multiplyScalar(q.v1 - q.v0), [-q.u1, q.v0], [q.u1 - q.u0, q.v1 - q.v0]);
   // 上面・下面（壁の上端・下端の面は見えないので省く）
   // 床の高さ以下で終わる部分（掃き出しの開口部の下）は床でふさがるので上面を描かない
-  if (r.v1 < top && r.v1 > 0) jamb.quad(f.at(r.u0, r.v1, t / 2), along, N.clone().multiplyScalar(-t), [r.u0, 0], [du, t]);
+  if (r.v1 < top && r.v1 > 0) {
+    const o = openingAt(mid);
+    side(mid, 1, o).quad(f.at(r.u0, r.v1, h), along, nHalfNeg, [r.u0, 0], [du, h]);
+    side(mid, -1, o).quad(f.at(r.u0, r.v1, 0), along, nHalfNeg, [r.u0, h], [du, h]);
+  }
   // 天井の高さまである開口部の上の壁の下面は、両側の天井でふさがるので描かない
-  if (r.v0 > bottom && r.v0 < ceiling - 1) jamb.quad(f.at(r.u0, r.v0, -t / 2), along, N.clone().multiplyScalar(t), [r.u0, 0], [du, t]);
-  // 端面（開口部の側面になる）
-  startFace?.quad(f.at(r.u0, r.v0, -t / 2), N.clone().multiplyScalar(t), up, [0, r.v0], [t, dv]);
-  endFace?.quad(f.at(r.u1, r.v0, -t / 2), up, N.clone().multiplyScalar(t), [r.v0, 0], [dv, t]);
+  if (r.v0 > bottom && r.v0 < ceiling - 1) {
+    const o = openingAt(mid);
+    side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
+    side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
+  }
+  // 端面（開口部の側面・壁の切れ目）。隣の壁の位置（端から 30 内側）で両側の仕上げを調べる
+  if (drawStart) {
+    const u = Math.min(r.u0 + 30, mid);
+    const o = openingAt(r.u0 - 3);
+    side(u, -1, o).quad(f.at(r.u0, r.v0, -h), nHalf, up, [0, r.v0], [h, dv]);
+    side(u, 1, o).quad(f.at(r.u0, r.v0, 0), nHalf, up, [h, r.v0], [h, dv]);
+  }
+  if (drawEnd) {
+    const u = Math.max(r.u1 - 30, mid);
+    const o = openingAt(r.u1 + 3);
+    side(u, -1, o).quad(f.at(r.u1, r.v0, -h), up, nHalf, [r.v0, 0], [dv, h]);
+    side(u, 1, o).quad(f.at(r.u1, r.v0, 0), up, nHalf, [r.v0, h], [dv, h]);
+  }
 }
 
 function findWall(walls: WallSegment[], p: Point, t: number): WallSegment | undefined {

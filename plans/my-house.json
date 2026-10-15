@@ -36,7 +36,8 @@
           "floor": "floor-sazana-raggray",
           "wall": "panel-sazana-greyishwalnut",
           "ceiling": "cross-white",
-          "ceilingHeight": 2150
+          "ceilingHeight": 2150,
+          "noBaseboard": true
         },
         {
           "id": "1f-ps",
@@ -61,7 +62,8 @@
           ],
           "floor": "floor-cushion-white",
           "wall": "cross-white",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "noBaseboard": true
         },
         {
           "id": "1f-washroom",
@@ -144,6 +146,9 @@
           "ceiling": "cross-sp2540",
           "accent": {
             "east": "cross-hf3122"
+          },
+          "edges": {
+            "1": "cross-sp2540"
           }
         },
         {
@@ -229,7 +234,7 @@
         },
         {
           "id": "1f-hall-west",
-          "name": "ホール（アートの壁）",
+          "name": "ホール（西）",
           "polygon": [
             [
               200,
@@ -250,7 +255,8 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "noLabel": true
         },
         {
           "id": "1f-shoes-entry",
@@ -359,7 +365,8 @@
           "wall": "exterior-lightgray",
           "ceiling": "cross-light-gray",
           "level": -180,
-          "ceilingHeight": 2620
+          "ceilingHeight": 2620,
+          "noBaseboard": true
         },
         {
           "id": "1f-porch-step",
@@ -386,7 +393,8 @@
           "wall": "exterior-lightgray",
           "ceiling": "cross-light-gray",
           "level": -370,
-          "ceilingHeight": 2810
+          "ceilingHeight": 2810,
+          "noBaseboard": true
         },
         {
           "id": "1f-wic",
@@ -442,7 +450,8 @@
           "wall": "cross-light-gray",
           "ceiling": "cross-black",
           "level": -560,
-          "ceilingHeight": 2960
+          "ceilingHeight": 2960,
+          "noBaseboard": true
         }
       ],
       "openings": [
@@ -466,7 +475,9 @@
           ],
           "width": 780,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "slideRoom": "1f-washroom",
+          "slideTo": "south"
         },
         {
           "id": "1f-washroom-window",
@@ -523,7 +534,9 @@
           ],
           "width": 650,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "slideRoom": "1f-wic",
+          "slideTo": "north"
         },
         {
           "id": "1f-hall-shoes",
@@ -556,7 +569,9 @@
           ],
           "width": 620,
           "height": 2550,
-          "sill": -150
+          "sill": -150,
+          "slideRoom": "1f-shoes",
+          "slideTo": "north"
         },
         {
           "id": "1f-garage-shutter",
@@ -663,7 +678,7 @@
           "type": "opening",
           "at": [
             3640,
-            335
+            485
           ],
           "width": 550,
           "height": 2050,
@@ -763,23 +778,24 @@
           "id": "mirror-1",
           "type": "mirror-sliding-door",
           "name": "ミラー扉（フルハイトドア fit）",
-          "x": 1740,
-          "y": 5317.5,
+          "x": 1780,
+          "y": 5287.5,
           "w": 680,
           "d": 36,
           "h": 2400,
           "rotation": 270,
           "color": "#2a2a2b",
           "z": 0,
-          "flip": true
+          "flip": true,
+          "pocket": true
         },
         {
           "id": "shoe-shelf-back",
           "type": "resin-shelf",
           "name": "樹脂棚板 D450（奥）",
-          "x": 835,
+          "x": 910,
           "y": 6540,
-          "w": 950,
+          "w": 1700,
           "d": 450,
           "h": 2000,
           "rotation": 180,
@@ -792,13 +808,13 @@
           "type": "resin-shelf",
           "name": "樹脂棚板 D300（横）",
           "x": 210,
-          "y": 5801,
-          "w": 1928,
+          "y": 5576,
+          "w": 1478,
           "d": 300,
           "h": 1500,
           "rotation": 270,
           "color": "#3d3e40",
-          "z": -150,
+          "z": 350,
           "count": 8
         },
         {
@@ -1058,8 +1074,8 @@
           "type": "box",
           "name": "フロートベンチ",
           "x": 4265,
-          "y": 5263.75,
-          "w": 727.5,
+          "y": 5053.75,
+          "w": 1147.5,
           "d": 450,
           "h": 150,
           "rotation": 90,
@@ -1071,8 +1087,8 @@
           "type": "line-light",
           "name": "間接照明（ベンチ下）",
           "x": 4265,
-          "y": 5263.75,
-          "w": 677.5,
+          "y": 5093.75,
+          "w": 1017.5,
           "d": 40,
           "h": 15,
           "rotation": 90,
@@ -1097,8 +1113,8 @@
           "type": "resin-shelf",
           "name": "樹脂棚板 D450（玄関側）",
           "x": 1535,
-          "y": 6232,
-          "w": 1065,
+          "y": 6007.25,
+          "w": 615.5,
           "d": 450,
           "h": 1990,
           "rotation": 90,
@@ -1565,7 +1581,7 @@
           "type": "trash-niche-storage",
           "name": "壁面収納（壁に埋め込み・下は薄型ゴミ箱のニッチ）",
           "x": 3660,
-          "y": 335,
+          "y": 485,
           "w": 550,
           "d": 160,
           "h": 2050,
@@ -1575,29 +1591,31 @@
         {
           "id": "wash-door",
           "type": "sliding-door",
-          "name": "洗面脱衣室の引き戸（上吊り）",
-          "x": 3562,
-          "y": 1300,
+          "name": "洗面脱衣室の引き戸（片引き戸）",
+          "x": 3600,
+          "y": 1330,
           "w": 840,
           "d": 36,
           "h": 2400,
           "rotation": 90,
           "color": "#1f1f20",
-          "flip": true
+          "flip": true,
+          "pocket": true
         },
         {
           "id": "wic-door",
           "type": "mirror-sheet-door",
           "name": "WICの引き戸（ハイドア＋ミラーシート）",
-          "x": 4628,
-          "y": 980,
+          "x": 4590,
+          "y": 960,
           "w": 690,
           "d": 36,
           "h": 2400,
           "rotation": 270,
           "color": "#cfccc5",
           "flip": true,
-          "material": "cross-sp2540"
+          "material": "cross-sp2540",
+          "pocket": true
         },
         {
           "id": "wic-downlight",
@@ -1643,15 +1661,15 @@
         {
           "id": "genkan-bench-leg",
           "type": "box",
-          "name": "フロートベンチの脚（土間に立つ板・L字）",
+          "name": "フロートベンチの脚（ホールの床に立つ板・L字）",
           "x": 4265,
-          "y": 4920,
+          "y": 4500,
           "w": 450,
           "d": 40,
-          "h": 300,
+          "h": 150,
           "rotation": 0,
           "color": "#4a4b4d",
-          "z": -150
+          "z": 0
         },
         {
           "id": "hatch-stairs",
@@ -1708,59 +1726,6 @@
           "color": "#3a3b3d"
         },
         {
-          "id": "wash-storage-back",
-          "type": "box",
-          "name": "埋め込み収納の裏（ホール側に出る部分のカバー・奥）",
-          "x": 3742.5,
-          "y": 335,
-          "w": 5,
-          "d": 570,
-          "h": 2060,
-          "rotation": 0,
-          "color": "#cbc8c2",
-          "material": "cross-sp2540"
-        },
-        {
-          "id": "wash-storage-back-n",
-          "type": "box",
-          "name": "埋め込み収納の裏（カバー・北）",
-          "x": 3720,
-          "y": 55,
-          "w": 45,
-          "d": 10,
-          "h": 2060,
-          "rotation": 0,
-          "color": "#cbc8c2",
-          "material": "cross-sp2540"
-        },
-        {
-          "id": "wash-storage-back-s",
-          "type": "box",
-          "name": "埋め込み収納の裏（カバー・南）",
-          "x": 3720,
-          "y": 615,
-          "w": 45,
-          "d": 10,
-          "h": 2060,
-          "rotation": 0,
-          "color": "#cbc8c2",
-          "material": "cross-sp2540"
-        },
-        {
-          "id": "wash-storage-back-top",
-          "type": "box",
-          "name": "埋め込み収納の裏（カバー・上）",
-          "x": 3720,
-          "y": 335,
-          "w": 45,
-          "d": 570,
-          "h": 10,
-          "rotation": 0,
-          "color": "#cbc8c2",
-          "material": "cross-sp2540",
-          "z": 2050
-        },
-        {
           "id": "hall-north-downlight",
           "type": "downlight",
           "name": "ダウンライト（WIC 前の廊下）",
@@ -1785,6 +1750,115 @@
           "rotation": 0,
           "color": "#f4f4f4",
           "z": 2400
+        },
+        {
+          "id": "hall-north-furring-storage",
+          "type": "box",
+          "name": "ふかし壁（埋め込み収納の裏・ホール側）",
+          "x": 3742.5,
+          "y": 485,
+          "w": 5,
+          "d": 550,
+          "h": 2050,
+          "rotation": 0,
+          "color": "#cbc8c2",
+          "material": "cross-sp2540"
+        },
+        {
+          "id": "hall-north-furring-storage-top",
+          "type": "box",
+          "name": "ふかし壁（埋め込み収納の上）",
+          "x": 3722.5,
+          "y": 485,
+          "w": 45,
+          "d": 550,
+          "h": 350,
+          "rotation": 0,
+          "color": "#cbc8c2",
+          "material": "cross-sp2540",
+          "z": 2050
+        },
+        {
+          "id": "hall-north-furring-1",
+          "type": "box",
+          "name": "ふかし壁（ホール北の西の壁・収納と入口の間）",
+          "x": 3722.5,
+          "y": 835,
+          "w": 45,
+          "d": 150,
+          "h": 2400,
+          "rotation": 0,
+          "color": "#cbc8c2",
+          "material": "cross-sp2540"
+        },
+        {
+          "id": "genkan-step-riser",
+          "type": "box",
+          "name": "上がり框の下の立ち上がり（玄関タイル貼り）",
+          "x": 3185,
+          "y": 4555,
+          "w": 2610,
+          "d": 10,
+          "h": 150,
+          "rotation": 0,
+          "color": "#7e7c79",
+          "z": -150,
+          "material": "floor-ipf300-con2"
+        },
+        {
+          "id": "shoes-step-riser",
+          "type": "box",
+          "name": "シューズクロークの段差の立ち上がり（玄関タイル貼り）",
+          "x": 910,
+          "y": 4782.5,
+          "w": 1700,
+          "d": 10,
+          "h": 150,
+          "rotation": 0,
+          "color": "#7e7c79",
+          "z": -150,
+          "material": "floor-ipf300-con2"
+        },
+        {
+          "id": "hall-north-furring-0",
+          "type": "box",
+          "name": "ふかし壁（ホール北の西の壁・北の壁と収納の間）",
+          "x": 3722.5,
+          "y": 135,
+          "w": 45,
+          "d": 150,
+          "h": 2400,
+          "rotation": 0,
+          "color": "#cbc8c2",
+          "material": "cross-sp2540"
+        },
+        {
+          "id": "porch-step-riser-1",
+          "type": "box",
+          "name": "ポーチの段の立ち上がり（車庫から・玄関タイル）",
+          "x": 4555,
+          "y": 6256.25,
+          "w": 10,
+          "d": 1017,
+          "h": 190,
+          "rotation": 0,
+          "color": "#7e7c79",
+          "material": "floor-ipf300-con2",
+          "z": -560
+        },
+        {
+          "id": "porch-step-riser-2",
+          "type": "box",
+          "name": "ポーチの立ち上がり（段から・玄関タイル）",
+          "x": 4255,
+          "y": 6256.25,
+          "w": 10,
+          "d": 1017,
+          "h": 190,
+          "rotation": 0,
+          "color": "#7e7c79",
+          "material": "floor-ipf300-con2",
+          "z": -370
         }
       ]
     },
@@ -2026,7 +2100,10 @@
           ],
           "floor": "floor-lassissa-lightgray",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "edges": {
+            "1": "cross-hf3122"
+          }
         }
       ],
       "openings": [
@@ -2072,7 +2149,9 @@
           ],
           "width": 720,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "slideRoom": "2f-toilet",
+          "slideTo": "north"
         },
         {
           "id": "2f-storage-sw-door",
@@ -2083,7 +2162,9 @@
           ],
           "width": 700,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "slideRoom": "2f-storage-sw",
+          "slideTo": "west"
         },
         {
           "id": "2f-stairs-split",
@@ -2324,50 +2405,50 @@
         {
           "id": "chair-1",
           "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・ベージュの布張り）",
+          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
           "x": 5450,
           "y": 4950,
           "w": 460,
           "d": 520,
           "h": 820,
           "rotation": 270,
-          "color": "#cfc4b6"
+          "color": "#2e2e30"
         },
         {
           "id": "chair-2",
           "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・ベージュの布張り）",
+          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
           "x": 5450,
           "y": 5600,
           "w": 460,
           "d": 520,
           "h": 820,
           "rotation": 270,
-          "color": "#cfc4b6"
+          "color": "#2e2e30"
         },
         {
           "id": "chair-3",
           "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・ベージュの布張り）",
+          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
           "x": 6820,
           "y": 4950,
           "w": 460,
           "d": 520,
           "h": 820,
           "rotation": 90,
-          "color": "#cfc4b6"
+          "color": "#2e2e30"
         },
         {
           "id": "chair-4",
           "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・ベージュの布張り）",
+          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
           "x": 6820,
           "y": 5600,
           "w": 460,
           "d": 520,
           "h": 820,
           "rotation": 90,
-          "color": "#cfc4b6"
+          "color": "#2e2e30"
         },
         {
           "id": "sofa-1",
@@ -2402,7 +2483,7 @@
           "y": 3112.5,
           "w": 400,
           "d": 700,
-          "h": 470,
+          "h": 515,
           "rotation": 0,
           "color": "#f7f7f5"
         },
@@ -2468,19 +2549,21 @@
           "h": 2380,
           "rotation": 90,
           "color": "#1f1f20",
-          "flip": true
+          "flip": true,
+          "swing": -1
         },
         {
           "id": "2f-toilet-door-leaf",
           "type": "sliding-door",
-          "name": "トイレの引き戸（上吊り）",
-          "x": 832,
-          "y": 3870,
+          "name": "トイレの引き戸（片引き戸）",
+          "x": 870,
+          "y": 3850,
           "w": 760,
           "d": 36,
           "h": 2400,
           "rotation": 90,
-          "color": "#efeeea"
+          "color": "#efeeea",
+          "pocket": true
         },
         {
           "id": "rods-2-top-n",
@@ -2523,29 +2606,29 @@
         {
           "id": "kitchen-drop-ceiling",
           "type": "box",
-          "name": "下がり天井（天井から浮かせた板）",
+          "name": "下がり天井（天井から浮かせた板・TH34283）",
           "x": 6941,
           "y": 4390,
           "w": 2378,
           "d": 3642,
           "h": 100,
           "rotation": 0,
-          "color": "#cbc8c2",
+          "color": "#828387",
           "z": 2230,
-          "material": "cross-sp2540"
+          "material": "cross-th34283"
         },
         {
           "id": "bed-tape-e",
           "type": "line-light",
-          "name": "テープライト（ベッドの下・足元）",
-          "x": 2265,
+          "name": "テープライト（ベッドの下・足元側・隠し）",
+          "x": 2100,
           "y": 1251.25,
-          "w": 1860,
+          "w": 1760,
           "d": 10,
           "h": 10,
           "rotation": 90,
           "color": "#f4f4f4",
-          "z": 80
+          "z": 150
         },
         {
           "id": "bedroom-roll-screen",
@@ -2618,15 +2701,16 @@
         {
           "id": "2f-storage-sw-door-leaf",
           "type": "sliding-door",
-          "name": "納戸の引き戸（上吊り・SP2540 に近いライトグレー）",
-          "x": 1399,
-          "y": 4400.5,
+          "name": "納戸の引き戸（片引き戸・SP2540 に近いライトグレー）",
+          "x": 1369,
+          "y": 4363,
           "w": 760,
           "d": 36,
           "h": 2400,
           "rotation": 0,
           "color": "#cfccc5",
-          "material": "cross-sp2540"
+          "material": "cross-sp2540",
+          "pocket": true
         },
         {
           "id": "toilet2-niche-front",
@@ -2722,15 +2806,16 @@
         {
           "id": "toilet2-vent",
           "type": "ceiling-vent",
-          "name": "排気口（sumika・奥の天井）",
+          "name": "排気口（sumika・床・奥の隅）",
           "x": 780,
-          "y": 2640,
+          "y": 2850,
           "w": 150,
           "d": 150,
           "h": 10,
           "rotation": 0,
-          "color": "#eeeeec",
-          "z": 2400
+          "color": "#9c9e9f",
+          "z": 0,
+          "flip": true
         },
         {
           "id": "ac-2f-bedroom",
@@ -2757,18 +2842,6 @@
           "rotation": 0,
           "color": "#f4f4f2",
           "z": 2050
-        },
-        {
-          "id": "rug-1",
-          "type": "rug",
-          "name": "ラグ（ライトグレージュ）",
-          "x": 3800,
-          "y": 5640,
-          "w": 2200,
-          "d": 2400,
-          "h": 8,
-          "rotation": 0,
-          "color": "#c4bdb3"
         },
         {
           "id": "wall-light-2f",
@@ -2813,10 +2886,10 @@
           "id": "bed-headboard-top",
           "type": "box",
           "name": "造作のヘッドボードの天板（今のベッドの棚を覆う）",
-          "x": 285,
+          "x": 240.5,
           "y": 1251.25,
           "w": 2382.5,
-          "d": 250,
+          "d": 161,
           "h": 10,
           "rotation": 90,
           "color": "#4b4846",
@@ -2826,14 +2899,14 @@
           "id": "bed-headboard-fascia",
           "type": "box",
           "name": "造作のヘッドボードの前の幕板（今のベッドの棚を隠す）",
-          "x": 400,
+          "x": 311,
           "y": 1251.25,
           "w": 2382.5,
           "d": 20,
-          "h": 450,
+          "h": 410,
           "rotation": 90,
           "color": "#4b4846",
-          "z": 490
+          "z": 530
         },
         {
           "id": "bed-1-north",
@@ -2843,9 +2916,9 @@
           "y": 761.25,
           "w": 980,
           "d": 2090,
-          "h": 465,
+          "h": 510,
           "rotation": 270,
-          "color": "#c9b08f",
+          "color": "#dccab0",
           "material": "wood-oak-light"
         },
         {
@@ -2856,10 +2929,23 @@
           "y": 1741.25,
           "w": 980,
           "d": 2090,
-          "h": 465,
+          "h": 510,
           "rotation": 270,
-          "color": "#c9b08f",
+          "color": "#dccab0",
           "material": "wood-oak-light"
+        },
+        {
+          "id": "2f-storage-sw-downlight",
+          "type": "downlight",
+          "name": "ダウンライト（トイレ横の納戸）",
+          "x": 910,
+          "y": 5573.75,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400
         }
       ]
     },
@@ -3307,7 +3393,7 @@
           "y": 2047.5,
           "w": 400,
           "d": 700,
-          "h": 470,
+          "h": 515,
           "rotation": 270,
           "color": "#f7f7f5"
         },
@@ -3335,7 +3421,8 @@
           "h": 1970,
           "rotation": 90,
           "color": "#efeeea",
-          "flip": true
+          "flip": true,
+          "swing": -1
         },
         {
           "id": "3f-room1-door-leaf",
@@ -3359,7 +3446,8 @@
           "d": 36,
           "h": 2380,
           "rotation": 90,
-          "color": "#efeeea"
+          "color": "#efeeea",
+          "swing": -1
         },
         {
           "id": "3f-room3-door-leaf",
@@ -3389,15 +3477,16 @@
         {
           "id": "toilet3-vent",
           "type": "ceiling-vent",
-          "name": "排気口（sumika・奥の天井）",
+          "name": "排気口（sumika・床・奥の隅）",
           "x": 1990,
-          "y": 2300,
+          "y": 2380,
           "w": 150,
           "d": 150,
           "h": 10,
           "rotation": 0,
-          "color": "#eeeeec",
-          "z": 2400
+          "color": "#9c9e9f",
+          "z": 0,
+          "flip": true
         },
         {
           "id": "ac-3f-room2",

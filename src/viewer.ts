@@ -24,6 +24,17 @@ export interface WalkInfo {
   target: WalkTarget | null;
 }
 
+/** 開け閉めできる扉の状態（家具の部品の userData.door） */
+interface DoorState {
+  type: 'slide' | 'swing';
+  /** 0 = 閉、1 = 開 */
+  t: number;
+  open?: boolean;
+  dx?: number;
+  x0?: number;
+  angle?: number;
+}
+
 export interface ViewerEvents {
   /** 家具をクリックした（null は何もない所） */
   onSelectFurniture: (id: string | null) => void;
@@ -66,6 +77,8 @@ export class Viewer {
   private floorView: number | 'all' = 'all';
   /** ウォークスルー中の階と目の高さ（m） */
   private walkFloor = 0;
+  /** 開け閉めしている途中の扉 */
+  private movingDoors = new Set<THREE.Object3D>();
   /** 床からの目の高さ（m）。身長で変える */
   private eyeHeight = eyeHeightFor(160);
   private eyeY = this.eyeHeight;
@@ -466,7 +479,11 @@ export class Viewer {
       if (!clicked || !this.built || e.button !== 0) return;
       const ndc = this.pointer(e);
       if (this.mode === 'walk') {
-        this.events.onPickSurface(this.targetAt(ndc));
+        const target = this.targetAt(ndc);
+        // 扉（引き戸・開き戸・収納の扉）なら開け閉めする
+        const g = target?.kind === 'furniture' ? this.built.furniture.get(target.furnitureId) : undefined;
+        if (g && this.toggleDoors(g)) return;
+        this.events.onPickSurface(target);
         return;
       }
       const hit = this.hitFurniture(ndc);
@@ -499,9 +516,36 @@ export class Viewer {
     window.addEventListener('blur', () => this.keys.clear());
   }
 
+  /** 家具の中の扉をすべて開け閉めする。扉がなければ false */
+  private toggleDoors(g: THREE.Object3D): boolean {
+    let found = false;
+    g.traverse((o) => {
+      const d = o.userData.door as DoorState | undefined;
+      if (!d) return;
+      found = true;
+      d.open = !d.open;
+      this.movingDoors.add(o);
+    });
+    return found;
+  }
+
+  /** 開け閉め中の扉を少しずつ動かす（0.4 秒くらいで開く） */
+  private animateDoors(dt: number) {
+    for (const o of this.movingDoors) {
+      const d = o.userData.door as DoorState;
+      const goal = d.open ? 1 : 0;
+      d.t += Math.sign(goal - d.t) * Math.min(Math.abs(goal - d.t), dt * 2.5);
+      const e = d.t * d.t * (3 - 2 * d.t);
+      if (d.type === 'slide') o.position.x = (d.x0 ?? 0) + (d.dx ?? 0) * e;
+      else o.rotation.y = (d.angle ?? 0) * e;
+      if (d.t === goal) this.movingDoors.delete(o);
+    }
+  }
+
   private tick() {
     this.timer.update();
     const dt = Math.min(this.timer.getDelta(), 0.1);
+    this.animateDoors(dt);
     if (this.mode === 'walk') {
       const speed = (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') ? 3 : 1.4) * dt;
       const fwd = new THREE.Vector3(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
