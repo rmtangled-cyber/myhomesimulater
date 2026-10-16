@@ -676,9 +676,9 @@
           "type": "opening",
           "at": [
             3640,
-            485
+            460
           ],
-          "width": 550,
+          "width": 500,
           "height": 2050,
           "sill": 0
         },
@@ -732,45 +732,6 @@
           "rotation": 270,
           "color": "#111111",
           "z": 1030
-        },
-        {
-          "id": "bracket-1",
-          "type": "bracket-light",
-          "name": "ブラケットライト",
-          "x": 2030,
-          "y": 4695,
-          "w": 200,
-          "d": 300,
-          "h": 300,
-          "rotation": 270,
-          "color": "#1c1c1d",
-          "z": 1850
-        },
-        {
-          "id": "wall-light-1",
-          "type": "wall-light",
-          "name": "ブラケットライト（KOIZUMI arkia AB54807・1階の階段）",
-          "x": 985,
-          "y": 2957.5,
-          "w": 120,
-          "d": 30,
-          "h": 120,
-          "rotation": 270,
-          "color": "#1a1a1a",
-          "z": 2140
-        },
-        {
-          "id": "downlight-2",
-          "type": "downlight",
-          "name": "ダウンライト（玄関）",
-          "x": 3185,
-          "y": 5118.75,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400
         },
         {
           "id": "mirror-1",
@@ -923,19 +884,6 @@
           "z": 1255
         },
         {
-          "id": "wash-mirror-light",
-          "type": "line-light",
-          "name": "間接照明（ミラーのふかしの下・隠し）",
-          "x": 2730,
-          "y": 130,
-          "w": 1640,
-          "d": 30,
-          "h": 15,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 1234
-        },
-        {
           "id": "wash-storage",
           "type": "laundry-shelf",
           "name": "造作棚（下に洗濯かご・前開きの扉・ダークブラウン木目）",
@@ -1081,32 +1029,6 @@
           "z": 150
         },
         {
-          "id": "genkan-bench-light",
-          "type": "line-light",
-          "name": "間接照明（ベンチ下）",
-          "x": 4265,
-          "y": 5093.75,
-          "w": 1017.5,
-          "d": 40,
-          "h": 15,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 135
-        },
-        {
-          "id": "step-light",
-          "type": "line-light",
-          "name": "間接照明（上がり框の下）",
-          "x": 3185,
-          "y": 4587.5,
-          "w": 2600,
-          "d": 30,
-          "h": 15,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": -55
-        },
-        {
           "id": "shoe-shelf-east",
           "type": "resin-shelf",
           "name": "樹脂棚板 D450（玄関側）",
@@ -1172,19 +1094,6 @@
           "z": 2050
         },
         {
-          "id": "wic-tape-light",
-          "type": "line-light",
-          "name": "テープライト（枕棚の下）",
-          "x": 6340,
-          "y": 390,
-          "w": 2880,
-          "d": 20,
-          "h": 10,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2045
-        },
-        {
           "id": "wic-pipe-upper",
           "type": "box",
           "name": "ハンガーパイプ（上）",
@@ -1222,19 +1131,6 @@
           "rotation": 0,
           "color": "#b8b8b8",
           "z": 900
-        },
-        {
-          "id": "garage-line-light",
-          "type": "line-light",
-          "name": "間接照明（車庫）",
-          "x": 6370,
-          "y": 1650,
-          "w": 3400,
-          "d": 60,
-          "h": 15,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2390
         },
         {
           "id": "garage-camera",
@@ -1276,19 +1172,6 @@
           "z": 760
         },
         {
-          "id": "porch-light-1",
-          "type": "down-bracket",
-          "name": "表札灯（KOIZUMI AU54604）",
-          "x": 2150,
-          "y": 6935,
-          "w": 100,
-          "d": 100,
-          "h": 100,
-          "rotation": 0,
-          "color": "#1c1c1d",
-          "z": 1340
-        },
-        {
           "id": "pole-1",
           "type": "utility-pole",
           "name": "電柱（家の前）",
@@ -1300,32 +1183,6 @@
           "rotation": 0,
           "color": "#a9a8a3",
           "z": -560
-        },
-        {
-          "id": "porch-downlight-1",
-          "type": "downlight",
-          "name": "ダウンライト（ポーチ）",
-          "x": 2700,
-          "y": 6545,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2440
-        },
-        {
-          "id": "porch-downlight-2",
-          "type": "downlight",
-          "name": "ダウンライト（ポーチ）",
-          "x": 3900,
-          "y": 6545,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2440
         },
         {
           "id": "porch-camera",
@@ -1380,19 +1237,6 @@
           "z": -560
         },
         {
-          "id": "wic-tape-light-east",
-          "type": "line-light",
-          "name": "テープライト（東の枕棚の下）",
-          "x": 7800,
-          "y": 857,
-          "w": 895,
-          "d": 20,
-          "h": 10,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 2045
-        },
-        {
           "id": "wash-iron-bar",
           "type": "iron-bar",
           "name": "タオル干し アイアンバー（L字）",
@@ -1443,19 +1287,6 @@
           "rotation": 270,
           "color": "#f2f2f0",
           "z": 1720
-        },
-        {
-          "id": "bath-light",
-          "type": "downlight",
-          "name": "ダウンライト（浴室）",
-          "x": 910,
-          "y": 1300,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2150
         },
         {
           "id": "sidewalk-near",
@@ -1536,19 +1367,6 @@
           "count": 3
         },
         {
-          "id": "hall-west-cove",
-          "type": "line-light",
-          "name": "間接照明（洗面室〜廊下の西の壁の上）",
-          "x": 150,
-          "y": 3412.5,
-          "w": 1700,
-          "d": 40,
-          "h": 15,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 2440
-        },
-        {
           "id": "bath-door",
           "type": "framed-glass-door",
           "name": "浴室ドア（黒枠・くもりガラス 開き戸）",
@@ -1579,12 +1397,16 @@
           "type": "trash-niche-storage",
           "name": "壁面収納（壁に埋め込み・下は薄型ゴミ箱のニッチ）",
           "x": 3660,
-          "y": 485,
-          "w": 550,
+          "y": 460,
+          "w": 500,
           "d": 160,
           "h": 2050,
           "rotation": 90,
-          "color": "#1f1f20"
+          "color": "#1f1f20",
+          "doorAngles": [
+            90,
+            105
+          ]
         },
         {
           "id": "wash-door",
@@ -1614,19 +1436,6 @@
           "flip": true,
           "material": "cross-sp2540",
           "pocket": true
-        },
-        {
-          "id": "wic-downlight",
-          "type": "downlight",
-          "name": "ダウンライト（WIC）",
-          "x": 6370,
-          "y": 682,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400
         },
         {
           "id": "wash-mirror-wall",
@@ -1724,39 +1533,13 @@
           "color": "#3a3b3d"
         },
         {
-          "id": "hall-north-downlight",
-          "type": "downlight",
-          "name": "ダウンライト（WIC 前の廊下）",
-          "x": 4095,
-          "y": 1251.25,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400
-        },
-        {
-          "id": "shoes-downlight",
-          "type": "downlight",
-          "name": "ダウンライト（シューズクローク）",
-          "x": 910,
-          "y": 5573.75,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400
-        },
-        {
           "id": "hall-north-furring-storage",
           "type": "box",
           "name": "ふかし壁（埋め込み収納の裏・ホール側）",
           "x": 3742.5,
-          "y": 485,
+          "y": 460,
           "w": 5,
-          "d": 550,
+          "d": 500,
           "h": 2050,
           "rotation": 0,
           "color": "#cbc8c2",
@@ -1767,9 +1550,9 @@
           "type": "box",
           "name": "ふかし壁（埋め込み収納の上）",
           "x": 3722.5,
-          "y": 485,
+          "y": 460,
           "w": 45,
-          "d": 550,
+          "d": 500,
           "h": 350,
           "rotation": 0,
           "color": "#cbc8c2",
@@ -1781,9 +1564,9 @@
           "type": "box",
           "name": "ふかし壁（ホール北の西の壁・収納と入口の間）",
           "x": 3722.5,
-          "y": 835,
+          "y": 810,
           "w": 45,
-          "d": 150,
+          "d": 200,
           "h": 2400,
           "rotation": 0,
           "color": "#cbc8c2",
@@ -1857,6 +1640,427 @@
           "color": "#7e7c79",
           "material": "floor-ipf300-con2",
           "z": -370
+        },
+        {
+          "id": "std-1f-wic-dl-1",
+          "type": "downlight",
+          "name": "ダウンライト WIC（DAIKO DDL-6132AB）（標準）",
+          "x": 5660,
+          "y": 700,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-wic-dl-2",
+          "type": "downlight",
+          "name": "ダウンライト WIC（DAIKO DDL-6132AB）（標準）",
+          "x": 6694,
+          "y": 700,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-wash-dl",
+          "type": "downlight",
+          "name": "ダウンライト 洗面脱衣室（DAIKO DDL-6134AB）（標準）",
+          "x": 2730,
+          "y": 1250,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-hallnorth-dl",
+          "type": "downlight",
+          "name": "ダウンライト 廊下（WIC 前・人感センサー・DAIKO DDL-5702AB）（標準）",
+          "x": 4095,
+          "y": 1250,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500,
+          "sensor": true
+        },
+        {
+          "id": "std-1f-hall-dl-1",
+          "type": "downlight",
+          "name": "ダウンライト ホール（DAIKO DDL-6034ABG）（標準）",
+          "x": 766,
+          "y": 3867,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 60,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-hall-dl-2",
+          "type": "downlight",
+          "name": "ダウンライト ホール（人感センサー・DAIKO DDL-5704AB）（標準）",
+          "x": 2278,
+          "y": 3980,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 680,
+          "beam": 90,
+          "kelvin": 3500,
+          "sensor": true
+        },
+        {
+          "id": "std-1f-hall-dl-3",
+          "type": "downlight",
+          "name": "ダウンライト ホール（DAIKO DDL-6034ABG）（標準）",
+          "x": 3790,
+          "y": 3980,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 60,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-shoes-dl",
+          "type": "downlight",
+          "name": "ダウンライト シューズクローク（DAIKO DDL-6134AB）（標準）",
+          "x": 910,
+          "y": 5550,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-porch-dl",
+          "type": "downlight",
+          "name": "ダウンライト ポーチ（人感センサー・DAIKO DDL-5702YB）（標準）",
+          "x": 3300,
+          "y": 6250,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2440,
+          "lumen": 425,
+          "beam": 90,
+          "kelvin": 2700,
+          "sensor": true
+        },
+        {
+          "id": "std-1f-bath-light",
+          "type": "downlight",
+          "name": "浴室の照明（ユニットバス付属）（標準）",
+          "x": 910,
+          "y": 1300,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2150,
+          "lumen": 700,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-stairs-bracket",
+          "type": "wall-light",
+          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
+          "x": 1830,
+          "y": 2612.5,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1950.0,
+          "lumen": 250,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-1f-outdoor-spot",
+          "type": "spot-light",
+          "name": "スポットライト 外（DAIKO DOL-4824YB）（標準）",
+          "x": 300,
+          "y": 6960.0,
+          "w": 70,
+          "d": 150,
+          "h": 120,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1840.0,
+          "lumen": 300,
+          "beam": 50,
+          "kelvin": 2700
+        },
+        {
+          "id": "std-1f-sw-bath",
+          "type": "switch",
+          "name": "スイッチ 浴室（上: 照明／下: 換気乾燥暖房機）（標準）",
+          "x": 1884.0,
+          "y": 1000,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 2
+        },
+        {
+          "id": "std-1f-sw-wash",
+          "type": "switch",
+          "name": "スイッチ 洗面脱衣室（標準は入口の南＝戸袋の所なので、北の 200 の壁へ移動）（標準）",
+          "x": 3576.0,
+          "y": 810,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-1f-sw-wic",
+          "type": "switch",
+          "name": "スイッチ WIC（標準）",
+          "x": 4800,
+          "y": 1301.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-1f-sw-stairs",
+          "type": "switch",
+          "name": "スイッチ 階段（3 路・2 階の階段を上がった所と連動）（標準）",
+          "x": 974.0,
+          "y": 3300,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-1f-sw-hall-a",
+          "type": "switch",
+          "name": "スイッチ ホール（上から: 外のスポット／廊下（WIC 前）／ホール）（標準）",
+          "x": 700,
+          "y": 4258.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 3
+        },
+        {
+          "id": "std-1f-sw-hall-b",
+          "type": "switch",
+          "name": "スイッチ（上: シューズクローク／下: ポーチ）（標準）",
+          "x": 860,
+          "y": 4258.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 2
+        },
+        {
+          "id": "std-1f-out-washer",
+          "type": "outlet",
+          "name": "コンセント 洗濯機用 2 口・アース付（標準は北の壁 → 洗濯機の上へ移動）（標準）",
+          "x": 3220,
+          "y": 2438.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1290.0
+        },
+        {
+          "id": "std-1f-out-wash",
+          "type": "outlet",
+          "name": "コンセント 洗面脱衣室 2 口（標準）",
+          "x": 3576.0,
+          "y": 810,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 990.0
+        },
+        {
+          "id": "std-1f-out-wic",
+          "type": "outlet",
+          "name": "コンセント WIC 2 口（標準）",
+          "x": 8126.0,
+          "y": 1100,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-1f-out-heatex",
+          "type": "outlet",
+          "name": "コンセント 熱交換器用（標準）",
+          "x": 4900,
+          "y": 64.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 2140.0,
+          "count": 1
+        },
+        {
+          "id": "std-1f-out-shoes",
+          "type": "outlet",
+          "name": "コンセント シューズクローク 2 口（標準）",
+          "x": 1756.0,
+          "y": 6100,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 40.0
+        },
+        {
+          "id": "std-1f-out-smartdoor",
+          "type": "outlet",
+          "name": "コンセント スマートドア用（標準）",
+          "x": 2600,
+          "y": 5623.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1940.0,
+          "count": 1
+        },
+        {
+          "id": "std-1f-out-wp",
+          "type": "outlet",
+          "name": "防水コンセント 外（Panasonic WK4602BK）（標準）",
+          "x": -80.0,
+          "y": 6550,
+          "w": 90,
+          "d": 40,
+          "h": 130,
+          "rotation": 90,
+          "color": "#1e1e1f",
+          "z": -365.0
+        },
+        {
+          "id": "std-1f-out-ecocute",
+          "type": "outlet",
+          "name": "コンセント エコキュート用 200V（外）（標準）",
+          "x": -64.0,
+          "y": 2400,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": -360.0,
+          "count": 1
+        },
+        {
+          "id": "std-1f-bath-remote",
+          "type": "remote-panel",
+          "name": "給湯器のリモコン（浴室）（標準）",
+          "x": 64.0,
+          "y": 1100,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1040.0
+        },
+        {
+          "id": "std-1f-bath-heater",
+          "type": "box",
+          "name": "浴室換気乾燥暖房機（200V）（標準）",
+          "x": 910,
+          "y": 1900,
+          "w": 420,
+          "d": 300,
+          "h": 12,
+          "rotation": 0,
+          "color": "#eeeeec",
+          "z": 2138
+        },
+        {
+          "id": "std-1f-panel",
+          "type": "box",
+          "name": "分電盤（洗面脱衣室の西の壁）（標準）",
+          "x": 1930,
+          "y": 1950,
+          "w": 100,
+          "d": 400,
+          "h": 450,
+          "rotation": 0,
+          "color": "#f2f2f0",
+          "z": 1650
         }
       ]
     },
@@ -2634,19 +2838,6 @@
           "material": "cross-th34283"
         },
         {
-          "id": "bed-tape-e",
-          "type": "line-light",
-          "name": "テープライト（ベッドの下・足元側・隠し）",
-          "x": 2100,
-          "y": 1251.25,
-          "w": 1760,
-          "d": 10,
-          "h": 10,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 150
-        },
-        {
           "id": "bedroom-roll-screen",
           "type": "roll-screen",
           "name": "ロールスクリーン（ダークグレー）",
@@ -2671,48 +2862,6 @@
           "rotation": 270,
           "color": "#4c4b4a",
           "material": "toclas-z-greystone"
-        },
-        {
-          "id": "kitchen-cove-w",
-          "type": "line-light",
-          "name": "間接照明（下がり天井の上・西）",
-          "x": 5872,
-          "y": 4390,
-          "w": 3402,
-          "d": 30,
-          "h": 15,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 2332,
-          "flip": true
-        },
-        {
-          "id": "kitchen-cove-s",
-          "type": "line-light",
-          "name": "間接照明（下がり天井の上・南）",
-          "x": 6941,
-          "y": 6091,
-          "w": 2138,
-          "d": 30,
-          "h": 15,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2332,
-          "flip": true
-        },
-        {
-          "id": "kitchen-cove-n",
-          "type": "line-light",
-          "name": "間接照明（下がり天井の上・北）",
-          "x": 6941,
-          "y": 2689,
-          "w": 2138,
-          "d": 30,
-          "h": 15,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2332,
-          "flip": true
         },
         {
           "id": "2f-storage-sw-door-leaf",
@@ -2781,19 +2930,6 @@
           "z": 1800
         },
         {
-          "id": "toilet2-niche-light",
-          "type": "line-light",
-          "name": "間接照明（ふかし壁の中・縦）",
-          "x": 685,
-          "y": 2585,
-          "w": 12,
-          "d": 12,
-          "h": 2300,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 50
-        },
-        {
           "id": "toilet2-cable-hole",
           "type": "box",
           "name": "配線の穴（後ろのコンセントへ）",
@@ -2860,19 +2996,6 @@
           "z": 2050
         },
         {
-          "id": "wall-light-2f",
-          "type": "wall-light",
-          "name": "ブラケットライト（KOIZUMI arkia AB54807・2階の階段）",
-          "x": 985,
-          "y": 2957.5,
-          "w": 120,
-          "d": 30,
-          "h": 120,
-          "rotation": 270,
-          "color": "#1a1a1a",
-          "z": 2040
-        },
-        {
           "id": "bed-headboard",
           "type": "box",
           "name": "造作のヘッドボード（照明の部分・壁側 100）",
@@ -2883,20 +3006,6 @@
           "h": 940,
           "rotation": 90,
           "color": "#4b4846"
-        },
-        {
-          "id": "bed-headboard-light",
-          "type": "line-light",
-          "name": "間接照明（ヘッドボードの壁側に埋め込み・上はアクリル板）",
-          "x": 110,
-          "y": 1251.25,
-          "w": 2382.5,
-          "d": 100,
-          "h": 10,
-          "rotation": 90,
-          "color": "#f4f4f4",
-          "z": 940,
-          "flip": true
         },
         {
           "id": "bed-headboard-top",
@@ -2951,17 +3060,601 @@
           "material": "wood-oak-light"
         },
         {
-          "id": "2f-storage-sw-downlight",
+          "id": "std-2f-bed-cl",
+          "type": "ceiling-light",
+          "name": "シーリングライト 寝室（DAIKO DCL-42121）（標準）",
+          "x": 1820,
+          "y": 1250,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3699,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-wic-dl",
           "type": "downlight",
-          "name": "ダウンライト（トイレ横の納戸）",
-          "x": 910,
-          "y": 5573.75,
+          "name": "ダウンライト WIC（DAIKO DDL-6132AB）（標準）",
+          "x": 4436,
+          "y": 800,
           "w": 100,
           "d": 100,
           "h": 20,
           "rotation": 0,
           "color": "#f4f4f4",
-          "z": 2400
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-storn-dl",
+          "type": "downlight",
+          "name": "ダウンライト 納戸（DAIKO DDL-6132AB）（標準）",
+          "x": 6800,
+          "y": 800,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-toilet-dl",
+          "type": "downlight",
+          "name": "ダウンライト トイレ（DAIKO DDL-6132AB）（標準）",
+          "x": 455,
+          "y": 3700,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-storsw-dl",
+          "type": "downlight",
+          "name": "ダウンライト 納戸（DAIKO DDL-6132AB）（標準）",
+          "x": 910,
+          "y": 5580,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-1",
+          "type": "downlight",
+          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
+          "x": 6846,
+          "y": 2700,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-2",
+          "type": "downlight",
+          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
+          "x": 6025,
+          "y": 3600,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-3",
+          "type": "downlight",
+          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
+          "x": 6832,
+          "y": 4275,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-4",
+          "type": "downlight",
+          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
+          "x": 6839,
+          "y": 5335,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-5",
+          "type": "downlight",
+          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
+          "x": 6018,
+          "y": 5335,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-living-dl-1",
+          "type": "downlight",
+          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
+          "x": 3073,
+          "y": 4886,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-living-dl-2",
+          "type": "downlight",
+          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
+          "x": 4265,
+          "y": 4886,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-living-dl-3",
+          "type": "downlight",
+          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
+          "x": 3066,
+          "y": 6043,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-living-dl-4",
+          "type": "downlight",
+          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
+          "x": 4258,
+          "y": 6043,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-stairs-bracket-1",
+          "type": "wall-light",
+          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
+          "x": 1900,
+          "y": 2612.5,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1950.0,
+          "lumen": 250,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-stairs-bracket-2",
+          "type": "wall-light",
+          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
+          "x": 3500,
+          "y": 2612.5,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1950.0,
+          "lumen": 250,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-sw-bed",
+          "type": "switch",
+          "name": "スイッチ 寝室（標準）",
+          "x": 3576.0,
+          "y": 1500,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-2f-sw-wic",
+          "type": "switch",
+          "name": "スイッチ WIC（標準）",
+          "x": 3704.0,
+          "y": 1450,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-2f-sw-kitchen",
+          "type": "switch",
+          "name": "スイッチ（上から: 納戸（北）／キッチン／ダイニング）（標準）",
+          "x": 6300,
+          "y": 1656.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 3
+        },
+        {
+          "id": "std-2f-sw-stairs-top",
+          "type": "switch",
+          "name": "スイッチ 階段を上がった所（上: 階段 3 路／下: リビング 3 路）（標準は手すりの端で壁がないので、WIC の壁へ移動）（標準）",
+          "x": 4400,
+          "y": 1656.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 2
+        },
+        {
+          "id": "std-2f-sw-toilet",
+          "type": "switch",
+          "name": "スイッチ トイレの横（上から: トイレ／階段 3 路（3 階と連動）／リビング 3 路）（標準）",
+          "x": 974.0,
+          "y": 3455,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 3
+        },
+        {
+          "id": "std-2f-sw-storsw",
+          "type": "switch",
+          "name": "スイッチ 納戸（標準）",
+          "x": 1756.0,
+          "y": 4600,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-2f-intercom",
+          "type": "remote-panel",
+          "name": "インターホン 親機（Panasonic VL-SE26XL）（標準）",
+          "x": 6050,
+          "y": 1665.0,
+          "w": 180,
+          "d": 25,
+          "h": 130,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1335.0
+        },
+        {
+          "id": "std-2f-kyuto-remote",
+          "type": "remote-panel",
+          "name": "給湯器のリモコン（台所）（標準）",
+          "x": 5830,
+          "y": 1656.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1340.0
+        },
+        {
+          "id": "std-2f-heatex-remote",
+          "type": "remote-panel",
+          "name": "熱交換器（換気）のリモコン（標準）",
+          "x": 5650,
+          "y": 1656.5,
+          "w": 90,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1340.0
+        },
+        {
+          "id": "std-2f-out-kitchen-n",
+          "type": "outlet",
+          "name": "コンセント 2 口（標準）",
+          "x": 6150,
+          "y": 1656.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-fridge",
+          "type": "outlet",
+          "name": "コンセント 冷蔵庫用 2 口・アース付（標準）",
+          "x": 5296.5,
+          "y": 1222,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1790.0
+        },
+        {
+          "id": "std-2f-out-stor-n",
+          "type": "outlet",
+          "name": "コンセント 納戸 2 口（標準）",
+          "x": 7900,
+          "y": 64.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-wic",
+          "type": "outlet",
+          "name": "コンセント WIC 2 口（標準）",
+          "x": 5000,
+          "y": 64.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-bed-ne",
+          "type": "outlet",
+          "name": "コンセント 寝室 2 口（標準）",
+          "x": 3300,
+          "y": 64.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-bed-1",
+          "type": "outlet",
+          "name": "コンセント 寝室 2 口（標準は北の壁 → 枕元（ヘッドボードの上・北）へ移動）（標準）",
+          "x": 64.0,
+          "y": 200,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 990.0
+        },
+        {
+          "id": "std-2f-out-bed-2",
+          "type": "outlet",
+          "name": "コンセント 寝室 2 口・テレビ端子（標準は西の壁の南 → ヘッドボードと重なるので枕元（南）へ移動）（標準）",
+          "x": 64.0,
+          "y": 2300,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 990.0
+        },
+        {
+          "id": "std-2f-out-bed-ac",
+          "type": "outlet",
+          "name": "コンセント エアコン用（寝室・専用）（標準）",
+          "x": 64.0,
+          "y": 950,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1840.0,
+          "count": 1
+        },
+        {
+          "id": "std-2f-out-toilet",
+          "type": "outlet",
+          "name": "コンセント トイレ 2 口・アース付（標準）",
+          "x": 64.0,
+          "y": 2800,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-kitchen-ne",
+          "type": "outlet",
+          "name": "コンセント 2 口（標準）",
+          "x": 8126.0,
+          "y": 2150,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-mw-1",
+          "type": "outlet",
+          "name": "コンセント キッチン 専用 2 口・アース付（電子レンジなど）（標準）",
+          "x": 8126.0,
+          "y": 5033,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-2f-out-mw-2",
+          "type": "outlet",
+          "name": "コンセント キッチン 専用 2 口・アース付（標準）",
+          "x": 8126.0,
+          "y": 5910,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-2f-out-tv",
+          "type": "outlet",
+          "name": "コンセント テレビ端子付き（リビング）（標準）",
+          "x": 1884.0,
+          "y": 5292,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-lan",
+          "type": "outlet",
+          "name": "コンセント LAN（空配管）付き（リビング）（標準）",
+          "x": 1884.0,
+          "y": 5636,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-ldk-sw",
+          "type": "outlet",
+          "name": "コンセント リビング 2 口（標準）",
+          "x": 2050,
+          "y": 7216.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-ldk-se",
+          "type": "outlet",
+          "name": "コンセント ダイニング 2 口（標準）",
+          "x": 7176,
+          "y": 7216.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-2f-out-storsw",
+          "type": "outlet",
+          "name": "コンセント 納戸 2 口（標準）",
+          "x": 64.0,
+          "y": 6380,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
         }
       ]
     },
@@ -3544,17 +4237,632 @@
           "z": 2050
         },
         {
-          "id": "wall-light-3f",
+          "id": "std-3f-toilet-dl",
+          "type": "downlight",
+          "name": "ダウンライト トイレ（DAIKO DDL-6132AB）（標準）",
+          "x": 2734,
+          "y": 2266,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-3f-hall-dl",
+          "type": "downlight",
+          "name": "ダウンライト ホール（人感センサー・DAIKO DDL-5702AB）（標準）",
+          "x": 5006,
+          "y": 3172,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 440,
+          "beam": 90,
+          "kelvin": 3500,
+          "sensor": true
+        },
+        {
+          "id": "std-3f-room2-cl",
+          "type": "ceiling-light",
+          "name": "シーリングライト 書斎（北東）（DAIKO DCL-42121）（標準）",
+          "x": 6825,
+          "y": 3070,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3699,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-3f-room1-cl",
+          "type": "ceiling-light",
+          "name": "シーリングライト 書斎（南西）（DAIKO DCL-42121）（標準）",
+          "x": 3185,
+          "y": 5346,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3699,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-3f-room3-cl",
+          "type": "ceiling-light",
+          "name": "シーリングライト 洋室3（DAIKO DCL-42121）（標準）",
+          "x": 6370,
+          "y": 5915,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3699,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-3f-stairs-bracket",
           "type": "wall-light",
-          "name": "ブラケットライト（KOIZUMI arkia AB54807・3階の階段）",
-          "x": 4300,
-          "y": 2577.5,
-          "w": 120,
-          "d": 30,
+          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
+          "x": 3500,
+          "y": 2612.5,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1950.0,
+          "lumen": 250,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-3f-sw-toilet",
+          "type": "switch",
+          "name": "スイッチ トイレ（標準）",
+          "x": 3704.0,
+          "y": 2400,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-3f-sw-room2",
+          "type": "switch",
+          "name": "スイッチ 書斎（北東）（標準）",
+          "x": 5524.0,
+          "y": 3300,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-3f-sw-hall",
+          "type": "switch",
+          "name": "スイッチ 3 階ホール（上: 階段 3 路（2 階と連動）／下: ホール）（標準）",
+          "x": 4400,
+          "y": 3348.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 1140.0,
+          "count": 2
+        },
+        {
+          "id": "std-3f-sw-room1",
+          "type": "switch",
+          "name": "スイッチ 書斎（南西）（標準）",
+          "x": 4486.0,
+          "y": 4400,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-3f-sw-room3",
+          "type": "switch",
+          "name": "スイッチ 洋室3（標準）",
+          "x": 5550,
+          "y": 4614.0,
+          "w": 70,
+          "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#1a1a1a",
-          "z": 1445
+          "color": "#f7f7f5",
+          "z": 1140.0
+        },
+        {
+          "id": "std-3f-out-toilet",
+          "type": "outlet",
+          "name": "コンセント トイレ 2 口・アース付（標準）",
+          "x": 1884.0,
+          "y": 1750,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room2",
+          "type": "outlet",
+          "name": "コンセント 書斎（北東）2 口（標準）",
+          "x": 8126.0,
+          "y": 2400,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room2-ac",
+          "type": "outlet",
+          "name": "コンセント エアコン用（書斎（北東）・専用）（標準）",
+          "x": 8126.0,
+          "y": 2550,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1840.0,
+          "count": 1
+        },
+        {
+          "id": "std-3f-out-room2-tv",
+          "type": "outlet",
+          "name": "コンセント 書斎（北東）2 口・テレビ端子（標準）",
+          "x": 7622,
+          "y": 4486.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room1",
+          "type": "outlet",
+          "name": "コンセント 書斎（南西）2 口（標準）",
+          "x": 1884.0,
+          "y": 4171,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room1-ac",
+          "type": "outlet",
+          "name": "コンセント エアコン用（書斎（南西）・専用）（標準）",
+          "x": 1884.0,
+          "y": 4400,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 1840.0,
+          "count": 1
+        },
+        {
+          "id": "std-3f-out-room1-tv",
+          "type": "outlet",
+          "name": "コンセント 書斎（南西）2 口・テレビ端子（標準）",
+          "x": 1884.0,
+          "y": 6714,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room3",
+          "type": "outlet",
+          "name": "コンセント 洋室3 2 口（標準）",
+          "x": 8126.0,
+          "y": 5623,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 190.0
+        },
+        {
+          "id": "std-3f-out-room3-ac",
+          "type": "outlet",
+          "name": "コンセント エアコン用（洋室3・専用）（標準）",
+          "x": 8126.0,
+          "y": 4700,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1840.0,
+          "count": 1
+        },
+        {
+          "id": "std-3f-out-room3-tv",
+          "type": "outlet",
+          "name": "コンセント 洋室3 2 口・テレビ端子（標準）",
+          "x": 7615,
+          "y": 7216.0,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 190.0
+        }
+      ]
+    }
+  ],
+  "circuits": [
+    {
+      "id": "c-1f-bath",
+      "name": "浴室の照明",
+      "lights": [
+        "std-1f-bath-light"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-bath",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-1f-bath-fan",
+      "name": "浴室換気乾燥暖房機",
+      "lights": [],
+      "switches": [
+        {
+          "id": "std-1f-sw-bath",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-1f-wash",
+      "name": "洗面脱衣室の照明",
+      "lights": [
+        "std-1f-wash-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-wash",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-1f-wic",
+      "name": "WIC の照明",
+      "lights": [
+        "std-1f-wic-dl-1",
+        "std-1f-wic-dl-2"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-wic",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-stairs-1f-2f",
+      "name": "階段の照明（1 階〜2 階）",
+      "lights": [
+        "std-1f-stairs-bracket",
+        "std-2f-stairs-bracket-2"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-stairs",
+          "button": 0
+        },
+        {
+          "id": "std-2f-sw-stairs-top",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-1f-spot",
+      "name": "外のスポットライト",
+      "lights": [
+        "std-1f-outdoor-spot"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-hall-a",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-1f-hallnorth",
+      "name": "廊下（WIC 前）の照明（人感センサー）",
+      "lights": [
+        "std-1f-hallnorth-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-hall-a",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-1f-hall",
+      "name": "ホールの照明",
+      "lights": [
+        "std-1f-hall-dl-1",
+        "std-1f-hall-dl-2",
+        "std-1f-hall-dl-3"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-hall-a",
+          "button": 2
+        }
+      ]
+    },
+    {
+      "id": "c-1f-shoes",
+      "name": "シューズクロークの照明",
+      "lights": [
+        "std-1f-shoes-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-hall-b",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-1f-porch",
+      "name": "ポーチの照明（人感センサー）",
+      "lights": [
+        "std-1f-porch-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-1f-sw-hall-b",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-2f-bed",
+      "name": "寝室の照明",
+      "lights": [
+        "std-2f-bed-cl"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-bed",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-2f-wic",
+      "name": "WIC の照明",
+      "lights": [
+        "std-2f-wic-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-wic",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-2f-storage-n",
+      "name": "納戸（北）の照明",
+      "lights": [
+        "std-2f-storn-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-kitchen",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-2f-kitchen",
+      "name": "キッチンの照明",
+      "lights": [
+        "std-2f-kitchen-dl-1",
+        "std-2f-kitchen-dl-2",
+        "std-2f-kitchen-dl-3"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-kitchen",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-2f-dining",
+      "name": "ダイニングの照明",
+      "lights": [
+        "std-2f-kitchen-dl-4",
+        "std-2f-kitchen-dl-5"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-kitchen",
+          "button": 2
+        }
+      ]
+    },
+    {
+      "id": "c-2f-toilet",
+      "name": "トイレの照明",
+      "lights": [
+        "std-2f-toilet-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-toilet",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-stairs-2f-3f",
+      "name": "階段の照明（2 階〜3 階）",
+      "lights": [
+        "std-2f-stairs-bracket-1",
+        "std-3f-stairs-bracket"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-toilet",
+          "button": 1
+        },
+        {
+          "id": "std-3f-sw-hall",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-2f-living",
+      "name": "リビングの照明",
+      "lights": [
+        "std-2f-living-dl-1",
+        "std-2f-living-dl-2",
+        "std-2f-living-dl-3",
+        "std-2f-living-dl-4"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-toilet",
+          "button": 2
+        },
+        {
+          "id": "std-2f-sw-stairs-top",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-2f-storage-sw",
+      "name": "納戸（西）の照明",
+      "lights": [
+        "std-2f-storsw-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-storsw",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-3f-toilet",
+      "name": "トイレの照明",
+      "lights": [
+        "std-3f-toilet-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-3f-sw-toilet",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-3f-hall",
+      "name": "ホールの照明（人感センサー）",
+      "lights": [
+        "std-3f-hall-dl"
+      ],
+      "switches": [
+        {
+          "id": "std-3f-sw-hall",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-3f-room2",
+      "name": "書斎（北東）の照明",
+      "lights": [
+        "std-3f-room2-cl"
+      ],
+      "switches": [
+        {
+          "id": "std-3f-sw-room2",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-3f-room1",
+      "name": "書斎（南西）の照明",
+      "lights": [
+        "std-3f-room1-cl"
+      ],
+      "switches": [
+        {
+          "id": "std-3f-sw-room1",
+          "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-3f-room3",
+      "name": "洋室3 の照明",
+      "lights": [
+        "std-3f-room3-cl"
+      ],
+      "switches": [
+        {
+          "id": "std-3f-sw-room3",
+          "button": 0
         }
       ]
     }

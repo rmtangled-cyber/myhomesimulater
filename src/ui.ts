@@ -1,5 +1,6 @@
 // 右側の操作パネル。状態から HTML を作り直し、操作は data-action で受け取る。
 
+import { WEB } from './env';
 import { FURNITURE_TYPES, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
 import { CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
@@ -31,6 +32,8 @@ export interface PanelState {
   /** ウォークスルーで立っている部屋 */
   walkRoomId: string | null;
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
+  /** ウォークスルーで押したスイッチ（どの回路をつけ消ししたか） */
+  pressed: { switchId: string; button: number; circuitId: string | null; on: boolean } | null;
   picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | null;
   status: SaveStatus;
   statusMessage?: string;
@@ -52,6 +55,8 @@ export interface PanelActions {
   duplicatePlan(): void;
   select(sel: Selection): void;
   walkInto(roomId: string): void;
+  /** Web 版で別の階のページへ移る */
+  openWebFloor(index: number): void;
   updateRoom(id: string, fn: (r: Room) => void): void;
   updateOpening(id: string, fn: (o: Opening) => void): void;
   updateFurniture(id: string, fn: (f: Furniture) => void): void;
@@ -139,7 +144,7 @@ export class Panel {
     this.state = state;
     const scroll = this.el.scrollTop;
     // ウォークスルー中は、立っている部屋の情報だけを出す
-    const lists = state.mode === 'walk' ? [this.walkSection()] : [this.roomsSection(), this.addSection()];
+    const lists = state.mode === 'walk' ? [this.walkSection()] : WEB ? [this.roomsSection()] : [this.roomsSection(), this.addSection()];
     this.el.innerHTML = [this.header(), this.viewSection(), this.selectionSection(), ...lists, this.warningsSection(), this.helpSection()].join('');
     this.el.scrollTop = scroll;
   }
@@ -151,10 +156,10 @@ export class Panel {
       <header>
         <h1>${esc(s.plan.name)}</h1>
         <div class="row">
-          <select data-change="plan" title="間取り案を切り替え">${opts}</select>
-          <button data-action="duplicate-plan" title="今の案をコピーして新しい案を作る">案を複製</button>
+          ${WEB ? '' : `<select data-change="plan" title="間取り案を切り替え">${opts}</select>`}
+          ${WEB ? '' : `<button data-action="duplicate-plan" title="今の案をコピーして新しい案を作る">案を複製</button>`}
         </div>
-        <div class="status ${s.status}">${STATUS_TEXT[s.status]}${s.statusMessage ? `：${esc(s.statusMessage)}` : ''}</div>
+        <div class="status ${s.status}">${WEB ? 'Web版（見るだけ）。試した変更はこの画面だけで、保存されません' : STATUS_TEXT[s.status]}${s.statusMessage ? `：${esc(s.statusMessage)}` : ''}</div>
       </header>`;
   }
 
@@ -170,8 +175,8 @@ export class Panel {
     return `
       <section>
         <h2>表示</h2>
-        ${floorSeg}
-        ${seg('mode', [['orbit', '俯瞰'], ['walk', 'ウォークスルー']], s.mode)}
+        ${WEB ? seg('web-floor', floors.map((f, i): [string, string] => [String(i), f.name]), String(this.walkFloorIndex())) : floorSeg}
+        ${WEB ? '' : seg('mode', [['orbit', '俯瞰'], ['walk', 'ウォークスルー']], s.mode)}
         ${seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
         <div class="row">
           <label><input type="checkbox" data-change="cutaway" ${s.cutaway ? 'checked' : ''}> 壁を低く切る</label>
@@ -191,8 +196,8 @@ export class Panel {
         <div class="row">
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
           <button data-action="redo" title="Ctrl+Shift+Z">↷ やり直す</button>
-          <button data-action="screenshot">📷 画像を保存</button>
-          <button data-action="export-plan" title="今の間取りの平面図（各階）を PNG で保存します">📐 図面出力</button>
+          ${WEB ? '' : `<button data-action="screenshot">📷 画像を保存</button>
+          <button data-action="export-plan" title="今の間取りの平面図（各階）を PNG で保存します">📐 図面出力</button>`}
         </div>
       </section>`;
   }
@@ -245,8 +250,8 @@ export class Panel {
         ${SIDES.map(([side, label]) => `<div class="accent"><span>${label}の壁</span>${materialSelect('wall', r.accent?.[side] ?? '', `data-accent="${side}"`, true)}</div>`).join('')}
         <div class="row">
           <button data-action="walk-into" data-value="${esc(r.id)}">この部屋に入る</button>
-          <button data-action="add-image" title="メーカーの見本画像などを素材として登録します">＋ 画像から素材を追加</button>
-          <input type="file" id="image-file" accept="image/jpeg,image/png,image/webp" hidden>
+          ${WEB ? '' : `<button data-action="add-image" title="メーカーの見本画像などを素材として登録します">＋ 画像から素材を追加</button>
+          <input type="file" id="image-file" accept="image/jpeg,image/png,image/webp" hidden>`}
         </div>
       </section>`;
   }
@@ -284,6 +289,56 @@ export class Panel {
   }
 
   private walkSection(): string {
+    const s = this.state;
+    const jump = WEB
+      ? `<section><h2>部屋へ移動</h2><select data-change="walk-room"><option value="">（部屋を選ぶ）</option>${s.plan.floors[this.walkFloorIndex()].rooms
+          .filter((r) => !r.void && !r.noLabel)
+          .map((r) => `<option value="${esc(r.id)}">${esc(r.name)}</option>`)
+          .join('')}</select></section>`
+      : '';
+    return (WEB ? '' : this.switchSection()) + jump + this.walkRoom();
+  }
+
+  /** ウォークスルーで立っている階（部屋が分からなければ 1 階） */
+  private walkFloorIndex(): number {
+    const id = this.state.walkRoomId;
+    const i = id ? this.state.plan.floors.findIndex((f) => f.rooms.some((r) => r.id === id)) : -1;
+    return Math.max(0, i);
+  }
+
+  /** 押したスイッチの回路: つけ消しした照明と、同じ照明をつけ消しできるほかのスイッチ（3 路） */
+  private switchSection(): string {
+    const p = this.state.pressed;
+    if (!p) return `<section><h2>スイッチ</h2><p class="hint">壁のスイッチをクリックすると、つながっている照明がつき消しします（ボタンが複数あるスイッチは、押したボタンの回路）。</p></section>`;
+    const plan = this.state.plan;
+    const where = (id: string) => {
+      for (const f of plan.floors) {
+        const x = f.furniture.find((y) => y.id === id);
+        if (x) return { floor: f.name, name: x.name.replace('（標準）', '') };
+      }
+      return { floor: '', name: id };
+    };
+    const sw = where(p.switchId);
+    const c = plan.circuits?.find((x) => x.id === p.circuitId);
+    if (!c) return `<section><h2>スイッチ</h2><p>${esc(sw.name)}（上から ${p.button + 1} 番目）は、照明の回路が登録されていません。</p></section>`;
+    const lights = c.lights.map((id) => where(id)).map((x) => `<li>${esc(x.floor)}・${esc(x.name)}</li>`).join('');
+    const others = c.switches
+      .filter((s) => !(s.id === p.switchId && (s.button ?? 0) === p.button))
+      .map((s) => ({ ...where(s.id), button: s.button ?? 0 }))
+      .map((x) => `<li>${esc(x.floor)}・${esc(x.name)}（上から ${x.button + 1} 番目）</li>`)
+      .join('');
+    return `
+      <section class="switch-info">
+        <h2>スイッチ <small>${c.switches.length > 1 ? `3 路（${c.switches.length} か所から操作）` : '1 か所から操作'}</small></h2>
+        <h3>${esc(c.name)}：${p.on ? 'つけた' : '消した'}</h3>
+        <p class="hint">押したスイッチ: ${esc(sw.floor)}・${esc(sw.name)}（上から ${p.button + 1} 番目）</p>
+        ${lights ? `<h3>つけ消しする照明</h3><ul class="walk-items">${lights}</ul>` : '<p class="hint">照明ではない設備の回路です。</p>'}
+        ${c.lights.some((id) => plan.floors.some((f) => f.furniture.some((x) => x.id === id && x.sensor))) ? `<p class="hint">人感センサー付きです。スイッチが入っている間、近づく（約 2.5m）とつき、離れて約 10 秒で消えます（実物の消えるまでの時間は設定で 30 秒〜数分）。</p>` : ''}
+        ${others ? `<h3>同じ照明をつけ消しできるスイッチ</h3><ul class="walk-items">${others}</ul>` : ''}
+      </section>`;
+  }
+
+  private walkRoom(): string {
     const s = this.state;
     const found = s.walkRoomId ? s.plan.floors.map((f) => ({ f, r: f.rooms.find((r) => r.id === s.walkRoomId) })).find((x) => x.r) : undefined;
     if (!found?.r) return `<section><h2>今いる場所</h2><p class="hint">部屋の外にいます。</p></section>`;
@@ -371,6 +426,7 @@ export class Panel {
       case 'select-room': return a.select({ kind: 'room', id: v });
       case 'select-furn': return a.select({ kind: 'furniture', id: v });
       case 'walk-into': return a.walkInto(v);
+      case 'web-floor': return a.openWebFloor(Number(v));
       case 'add-image': {
         const input = this.el.querySelector<HTMLInputElement>('#image-file')!;
         input.onchange = () => input.files?.[0] && a.addImageMaterial(input.files[0]);
@@ -401,6 +457,12 @@ export class Panel {
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
+    if (d.change === 'walk-room') {
+      // 選んだらすぐキーで歩けるよう、欄から外す
+      t.blur();
+      if (t.value) a.walkInto(t.value);
+      return;
+    }
     if (d.change === 'stature') {
       const cm = Math.round(Number(t.value));
       if (cm >= 80 && cm <= 220) a.setStature(cm);

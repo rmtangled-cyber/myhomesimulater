@@ -84,6 +84,16 @@ export interface Furniture {
   pocket?: boolean;
   /** 開き戸の開く向き。1 = 正面（+z）の側へ開く（省略時）、-1 = 背面の側へ開く */
   swing?: 1 | -1;
+  /** 両開きの扉の開く角度（度）。[正面から見て左の扉, 右の扉]。省略時は 105°（鏡などに当たる側は開き角度制限付きの丁番で 90° にする） */
+  doorAngles?: [number, number];
+  /** 照明の明るさ（全光束 lm）。製品の定格光束。省略時は器具の種類ごとの目安 */
+  lumen?: number;
+  /** 照明の光の広がり（度）。省略時は器具の種類ごとの目安 */
+  beam?: number;
+  /** 照明の色温度（K）。2700 = 電球色、3500 = 温白色、5000 = 昼白色 */
+  kelvin?: number;
+  /** 人感センサー付きの照明。スイッチが入っていても、ウォークスルーで近づいた時だけつき、離れると少しして消える */
+  sensor?: boolean;
   /** L 字ソファのカウチの前への出幅（mm） */
   chaise?: number;
 }
@@ -136,4 +146,16 @@ export interface Plan {
   /** 画像から作った素材 */
   materials?: CustomMaterial[];
   floors: Floor[];
+  /** 照明の回路（どのスイッチでどの照明がつくか）。2 か所以上のスイッチがある回路は 3 路スイッチ */
+  circuits?: Circuit[];
+}
+
+/** 照明の回路。lights の照明を、switches のどのスイッチからでもつけ消しできる */
+export interface Circuit {
+  id: string;
+  name: string;
+  /** つけ消しする照明（家具の id）。換気扇など照明でない物の回路は空 */
+  lights: string[];
+  /** この回路のスイッチ。button は何番目のスイッチか（0 が一番上） */
+  switches: { id: string; button?: number }[];
 }

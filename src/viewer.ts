@@ -10,7 +10,8 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { pointInPolygon } from './geometry';
 import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
-import type { Plan } from './types';
+import type { Circuit, Plan } from './types';
+import { WEB } from './env';
 
 export type ViewMode = 'orbit' | 'walk';
 export type TimeOfDay = 'day' | 'evening' | 'night';
@@ -43,9 +44,14 @@ export interface ViewerEvents {
   onWalkInfo: (info: WalkInfo | null) => void;
   /** ウォークスルーで壁・天井などをクリックした（クロスを試すため） */
   onPickSurface: (target: WalkTarget | null) => void;
+  /** ウォークスルーでスイッチを押した（button は上から何番目か） */
+  onPressSwitch?: (switchId: string, button: number) => void;
 }
 
 const MM = 0.001;
+/** 人感センサーが人を見つける範囲（器具の真下からの距離 m）と、離れてから消えるまでの秒数（実物は設定で 30 秒〜数分） */
+const SENSOR_RANGE = 2.5;
+const SENSOR_HOLD = 10;
 /** 身長から目の高さ（m）を出す。目は頭のてっぺんより 11cm ほど下 */
 export const eyeHeightFor = (statureCm: number) => Math.max(0.5, (statureCm - 11) / 100);
 
@@ -77,6 +83,15 @@ export class Viewer {
   private floorView: number | 'all' = 'all';
   /** ウォークスルー中の階と目の高さ（m） */
   private walkFloor = 0;
+  /** 照明の回路。回路ごとのつけ消し（未設定なら「夕方・夜・昼も照明をつける」に従う） */
+  private circuits: Circuit[] = [];
+  private circuitState = new Map<string, boolean>();
+  private lightCircuit = new Map<string, string>();
+  /** 人感センサー付きの照明と、あと何秒ついているか（ウォークスルーで近づくとつき、離れて SENSOR_HOLD 秒で消える） */
+  private sensors = new Map<string, THREE.Vector3>();
+  private sensorTimer = new Map<string, number>();
+  /** 家具がどの階にあるか（ウォークスルーでは今いる階の照明だけを計算して軽くする） */
+  private furnitureFloor = new Map<string, number>();
   /** 開け閉めしている途中の扉 */
   private movingDoors = new Set<THREE.Object3D>();
   /** 床からの目の高さ（m）。身長で変える */
@@ -166,6 +181,15 @@ export class Viewer {
       disposeTree(this.built.root);
     }
     this.built = buildPlan(plan, [this.clipPlane]);
+    // Web 版（スマホ・iPad）は軽くするため、スイッチの回路と人感センサーは使わない（照明は時間帯の通り）
+    this.circuits = WEB ? [] : (plan.circuits ?? []);
+    this.lightCircuit.clear();
+    for (const c of this.circuits) for (const l of c.lights) this.lightCircuit.set(l, c.id);
+    this.furnitureFloor.clear();
+    plan.floors.forEach((f, i) => f.furniture.forEach((x) => this.furnitureFloor.set(x.id, i)));
+    this.sensors.clear();
+    for (const f of plan.floors)
+      for (const x of f.furniture) if (x.sensor && !WEB) this.sensors.set(x.id, new THREE.Vector3(x.x * MM, (f.elevation + (x.z ?? 0)) * MM, x.y * MM));
     this.world.add(this.built.root);
     this.walkTargets = [...this.built.floors.flatMap((f) => f.floorMeshes.filter((m) => m.visible)), ...[...this.built.furniture.values()].filter((g) => g.userData.walkable)];
     this.ground.position.y = (plan.groundLevel ?? 0) * MM - 0.005;
@@ -191,10 +215,17 @@ export class Viewer {
         const size = box.getSize(new THREE.Vector3());
         if (size.x * size.z < 2 || !mesh.visible) continue;
         const room = plan.floors[index].rooms.find((r) => r.id === mesh.userData.roomId);
-        if (room && fixtures.some((f) => pointInPolygon([f.x, f.y], room.polygon))) continue;
+        // 器具を置いた部屋も、床や壁で跳ね返った光（部屋全体をうっすら明るくする分）を足す。器具の数に応じて強くする
+        // 跳ね返りの強さは、部屋の器具の光束の合計（lm）に比べる（60W 相当 700lm 1 台で 5）
+        const inRoom = room ? fixtures.filter((f) => pointInPolygon([f.x, f.y], room.polygon)) : [];
+        const lm = inRoom.reduce((sum, f) => sum + (f.lumen ?? 700), 0);
         const c = box.getCenter(new THREE.Vector3());
-        const light = new THREE.PointLight('#ffd6a0', 30, 6, 2);
-        light.position.set(c.x, floor.group.position.y * MM + mesh.userData.lightHeight * MM, c.z);
+        const light = new THREE.PointLight('#ffd6a0', inRoom.length ? Math.min(30, (lm / 700) * 5) : 30, 6, 2);
+        light.userData.base = light.intensity;
+        light.userData.fixtures = inRoom.map((f) => ({ id: f.id, lm: f.lumen ?? 700 }));
+        // 跳ね返りの光は部屋の真ん中の高さ（床から 1.3m）から。天井の近くに置くと天井だけが白く飛ぶ
+        const fy = inRoom.length ? box.max.y + 1.3 : floor.group.position.y * MM + mesh.userData.lightHeight * MM;
+        light.position.set(c.x, fy, c.z);
         light.userData.floorIndex = index;
         this.roomLights.add(light);
       }
@@ -345,9 +376,76 @@ export class Viewer {
     this.built.root.traverse((o) => {
       if (o.userData.hideWhenCut) o.visible = !cut;
     });
-    for (const l of this.roomLights.children) {
+    this.applyLights();
+    if (!walk) for (const l of this.roomLights.children) if (l.visible) l.visible = (l.userData.floorIndex as number) <= top;
+  }
+
+  /** 夕方・夜、または「昼も照明をつける」のとき */
+  private get lit() {
+    return this.lightsOn || this.time !== 'day';
+  }
+
+  /** 回路がついているか */
+  circuitOn(id: string): boolean {
+    return this.circuitState.get(id) ?? this.lit;
+  }
+
+  /** 照明（家具の id）がついているか。回路のない照明は時間帯に従う。人感センサー付きは、ウォークスルーでは人（自分）が近くにいる間だけ */
+  private lightOn(id: string): boolean {
+    const c = this.lightCircuit.get(id);
+    const on = c ? this.circuitOn(c) : this.lit;
+    if (on && this.mode === 'walk' && this.sensors.has(id)) return (this.sensorTimer.get(id) ?? 0) > 0;
+    return on;
+  }
+
+  /** 人感センサーの見張り。近く（床の上で半径 SENSOR_RANGE）にいればつけ、離れて SENSOR_HOLD 秒で消す */
+  private updateSensors(dt: number) {
+    if (!this.sensors.size) return;
+    const p = this.camera.position;
+    const feet = p.y - this.eyeHeight;
+    let changed = false;
+    for (const [id, s] of this.sensors) {
+      const before = (this.sensorTimer.get(id) ?? 0) > 0;
+      const near = Math.hypot(p.x - s.x, p.z - s.z) < SENSOR_RANGE && feet > s.y - 3.2 && feet < s.y + 0.3;
+      const t = near ? SENSOR_HOLD : Math.max(0, (this.sensorTimer.get(id) ?? 0) - dt);
+      this.sensorTimer.set(id, t);
+      if (before !== t > 0) changed = true;
+    }
+    if (changed) this.applyLights();
+  }
+
+  /** 回路をつけ消しする。つけたら true */
+  toggleCircuit(id: string): boolean {
+    const on = !this.circuitOn(id);
+    this.circuitState.set(id, on);
+    this.applyLights();
+    return on;
+  }
+
+  /** 照明器具の光と光る部分、部屋の跳ね返りの光を、回路・時間帯・今いる階に合わせる */
+  private applyLights() {
+    if (!this.built) return;
+    const walk = this.mode === 'walk';
+    for (const [id, g] of this.built.furniture) {
+      const on = this.lightOn(id);
+      // ウォークスルーでは今いる階と上下の階の照明だけを計算する（光源が多いと重い）。Web 版は今いる階だけ
+      const near = !walk || Math.abs((this.furnitureFloor.get(id) ?? 0) - this.walkFloor) <= (WEB ? 0 : 1);
+      g.traverse((o) => {
+        if (o.userData.fixture) o.visible = on && near;
+        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (m?.userData?.glow !== undefined) m.emissiveIntensity = on ? m.userData.glow : 0;
+      });
+    }
+    const scale = this.time === 'night' ? 1 : 1 / 3;
+    this.roomLights.visible = true;
+    for (const l of this.roomLights.children as THREE.PointLight[]) {
+      const fx = (l.userData.fixtures as { id: string; lm: number }[] | undefined) ?? [];
+      const total = fx.reduce((s, f) => s + f.lm, 0);
+      const onLm = fx.filter((f) => this.lightOn(f.id)).reduce((s, f) => s + f.lm, 0);
+      const frac = fx.length ? onLm / total : this.lit ? 1 : 0;
+      l.intensity = ((l.userData.base as number) ?? 30) * scale * frac;
       const i = l.userData.floorIndex as number;
-      l.visible = walk ? i === this.walkFloor : i <= top;
+      l.visible = frac > 0 && (walk ? i === this.walkFloor : true);
     }
   }
 
@@ -366,15 +464,7 @@ export class Viewer {
     this.hemi.groundColor.set(t === 'night' ? '#3a3328' : '#cfc6b6');
     this.hemi.intensity = t === 'night' ? 0.15 : t === 'evening' ? 0.7 : 0.8;
     this.scene.environmentIntensity = t === 'night' ? 0.04 : t === 'evening' ? 0.3 : 0.45;
-    const lit = this.lightsOn || t !== 'day';
-    this.roomLights.visible = lit;
-    for (const l of this.roomLights.children as THREE.PointLight[]) l.intensity = t === 'night' ? 30 : 10;
-    // 照明器具の光源と、光る部分
-    this.built?.root.traverse((o) => {
-      if (o.userData.fixture) o.visible = lit;
-      const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
-      if (m?.userData?.glow !== undefined) m.emissiveIntensity = lit ? m.userData.glow : 0;
-    });
+    this.applyLights();
     this.scene.background = new THREE.Color(t === 'night' ? '#121826' : t === 'evening' ? '#e9b48f' : '#cfe0ee');
     this.renderer.toneMappingExposure = t === 'night' ? 1.1 : 1;
     this.updateSunPosition();
@@ -456,7 +546,12 @@ export class Viewer {
     let look: { x: number; y: number } | null = null;
 
     // 俯瞰は見るだけ（家具はドラッグで動かさない）。クリックした家具・部屋を選んでパネルに出す
+    // 3D の画面を押したら、キー操作がこの画面に届くようにする（パネルの欄から外し、iPad などでも画面にフォーカスを移す）
+    el.tabIndex = -1;
+    el.style.outline = 'none';
     el.addEventListener('pointerdown', (e) => {
+      if (document.activeElement instanceof HTMLElement && document.activeElement !== el) document.activeElement.blur();
+      el.focus({ preventScroll: true });
       down = { x: e.clientX, y: e.clientY };
       if (this.mode === 'walk') {
         look = { x: e.clientX, y: e.clientY };
@@ -480,6 +575,14 @@ export class Viewer {
       const ndc = this.pointer(e);
       if (this.mode === 'walk') {
         const target = this.targetAt(ndc);
+        // スイッチなら、押したボタンの回路をつけ消しする
+        if (target?.kind === 'furniture' && this.events.onPressSwitch) {
+          const button = this.switchButtonAt(ndc, target.furnitureId);
+          if (button !== null) {
+            this.events.onPressSwitch(target.furnitureId, button);
+            return;
+          }
+        }
         // 扉（引き戸・開き戸・収納の扉）なら開け閉めする
         const g = target?.kind === 'furniture' ? this.built.furniture.get(target.furnitureId) : undefined;
         if (g && this.toggleDoors(g)) return;
@@ -506,14 +609,27 @@ export class Viewer {
   private setupKeys() {
     const isTyping = () => {
       const a = document.activeElement;
-      return a instanceof HTMLInputElement || a instanceof HTMLSelectElement || a instanceof HTMLTextAreaElement;
+      // チェックボックスやボタンを押したあとでも歩けるように、文字を打つ欄だけを除く
+      return (a instanceof HTMLInputElement && ['text', 'number', 'search'].includes(a.type)) || a instanceof HTMLSelectElement || a instanceof HTMLTextAreaElement;
     };
+    // iPad のキーボードや日本語入力中は code が空になることがあるので、key からも決める
+    const KEY_CODES: Record<string, string> = { w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', ArrowUp: 'ArrowUp', ArrowDown: 'ArrowDown', ArrowLeft: 'ArrowLeft', ArrowRight: 'ArrowRight', Shift: 'ShiftLeft' };
+    const codeOf = (e: KeyboardEvent) => (e.code && e.code !== 'Unidentified' ? e.code : (KEY_CODES[e.key] ?? KEY_CODES[e.key.toLowerCase()] ?? e.key));
     window.addEventListener('keydown', (e) => {
       if (isTyping()) return;
-      this.keys.add(e.code);
+      const code = codeOf(e);
+      this.keys.add(code);
+      // 矢印キーで画面がスクロールしないように
+      if (this.mode === 'walk' && code.startsWith('Arrow')) e.preventDefault();
     });
-    window.addEventListener('keyup', (e) => this.keys.delete(e.code));
+    window.addEventListener('keyup', (e) => this.keys.delete(codeOf(e)));
     window.addEventListener('blur', () => this.keys.clear());
+  }
+
+  /** 画面のボタン（スマホの移動ボタン）で、キーを押している状態にする */
+  setVirtualKey(code: string, on: boolean) {
+    if (on) this.keys.add(code);
+    else this.keys.delete(code);
   }
 
   /** 家具の中の扉をすべて開け閉めする。扉がなければ false */
@@ -566,6 +682,7 @@ export class Viewer {
       // 立っている部屋と見ている物は 0.2 秒ごとに調べる（毎フレームだと重い）
       this.walkInfoTimer -= dt;
       if (this.walkInfoTimer <= 0) {
+        this.updateSensors(0.2 - this.walkInfoTimer);
         this.walkInfoTimer = 0.2;
         this.updateWalkInfo();
       }
@@ -614,6 +731,28 @@ export class Viewer {
     if (key === this.walkInfoKey) return;
     this.walkInfoKey = key;
     this.events.onWalkInfo({ roomId, target });
+  }
+
+  /** 画面の点（NDC）がスイッチのどのボタンか。スイッチでなければ null（プレートの縁なら一番近いボタン） */
+  private switchButtonAt(ndc: THREE.Vector2, id: string): number | null {
+    const g = this.built?.furniture.get(id);
+    if (!g || g.userData.furnitureType !== 'switch') return null;
+    this.raycaster.setFromCamera(ndc, this.camera);
+    const hit = this.raycaster.intersectObject(g, true)[0];
+    let o: THREE.Object3D | null = hit?.object ?? null;
+    while (o && o !== g && o.userData.button === undefined) o = o.parent;
+    if (o && o.userData.button !== undefined) return o.userData.button as number;
+    // ボタンの間やプレートの縁を押したときは、高さが一番近いボタン
+    if (!hit) return 0;
+    let best = 0;
+    let bestD = Infinity;
+    g.traverse((k) => {
+      if (k.userData.button === undefined) return;
+      const p = k.getWorldPosition(new THREE.Vector3());
+      const dd = Math.abs(p.y - hit.point.y);
+      if (dd < bestD) [best, bestD] = [k.userData.button as number, dd];
+    });
+    return best;
   }
 
   /** 画面の点（NDC）に見えている物。見えていない物・照明の光源は飛ばす */

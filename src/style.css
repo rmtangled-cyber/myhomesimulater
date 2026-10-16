@@ -25,7 +25,7 @@ body {
 
 #app {
   display: flex;
-  height: 100vh;
+  height: 100%;
 }
 
 #viewport {
@@ -407,4 +407,71 @@ label.num.stature {
 
 label.num.stature input {
   width: 64px;
+}
+
+/* ウォークスルーの移動ボタン（スマホなど） */
+.touch-pad {
+  position: absolute;
+  left: calc(12px + env(safe-area-inset-left, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  gap: 6px;
+  z-index: 5;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.touch-pad button {
+  height: 52px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  background: rgba(42, 42, 40, 0.55);
+  color: #fff;
+  font-size: 20px;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.touch-pad button:active {
+  background: rgba(208, 102, 29, 0.8);
+}
+
+/* 細い画面（スマホ）: 3D を上、パネルを下に並べる */
+@media (max-width: 760px) {
+  #app {
+    flex-direction: column;
+  }
+
+  #viewport {
+    flex: 1 1 58%;
+    min-height: 0;
+  }
+
+  #panel {
+    width: auto;
+    flex: 1 1 42%;
+    min-height: 0;
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .touch-pad {
+    grid-template-columns: repeat(3, 46px);
+  }
+
+  /* 見ている物の名前は上に出す（下は移動ボタン） */
+  .walk-hud .walk-target {
+    top: 12px;
+    bottom: auto;
+  }
+
+  .touch-pad button {
+    height: 46px;
+  }
+}
+
+.touch-pad[hidden] {
+  display: none;
 }

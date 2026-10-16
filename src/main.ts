@@ -6,6 +6,7 @@ import type { Furniture, Plan, Room } from './types';
 import { describeTarget, Panel, type PanelState, type Selection } from './ui';
 import { exportPlan } from './planExport';
 import { Viewer, type WalkInfo } from './viewer';
+import { WEB, WEB_START_ROOMS, WEB_FLOOR } from './env';
 
 const store = new PlanStore();
 
@@ -44,11 +45,13 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   cutaway: true,
   labels: true,
   lightsOn: false,
-  highQuality: true,
+  // Web 版（スマホ）は軽くするため、陰影の後処理を切っておく
+  highQuality: !WEB,
   invertLook: loadFlag('invertLook'),
   stature: loadNumber('stature', 160),
   walkRoomId: null,
   picked: null,
+  pressed: null,
   status: 'saved',
   warnings: [],
 };
@@ -107,6 +110,14 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
             : target?.kind === 'furniture' && isWallBox(target.furnitureId)
               ? { kind: 'furniture', furnitureId: target.furnitureId }
               : null;
+    render();
+  },
+  // スイッチを押したら、その回路の照明をつけ消しし、どこと連動しているかをパネルに出す
+  onPressSwitch: WEB ? undefined : (switchId, button) => {
+    const c = (store.plan.circuits ?? []).find((x) => x.switches.some((s) => s.id === switchId && (s.button ?? 0) === button));
+    const on = c ? viewer.toggleCircuit(c.id) : false;
+    ui.pressed = { switchId, button, circuitId: c?.id ?? null, on };
+    ui.picked = null;
     render();
   },
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
@@ -177,6 +188,12 @@ const panel = new Panel(document.getElementById('panel')!, {
     render();
   },
   select,
+  // Web 版で階を選んだら、その階の決まった部屋に立つ
+  openWebFloor: (i) => {
+    viewer.walkInto(WEB_START_ROOMS[i] ?? store.plan.floors[i].rooms[0].id);
+    ui.mode = 'walk';
+    render();
+  },
   walkInto: (id) => {
     viewer.walkInto(id);
     ui.mode = 'walk';
@@ -284,12 +301,44 @@ function select(sel: Selection) {
   render();
 }
 
+/** ウォークスルーの移動ボタン（スマホなどキーボードのない画面用）。押している間だけ進む */
+const touchPad = document.createElement('div');
+touchPad.className = 'touch-pad';
+touchPad.innerHTML = [
+  ['ArrowLeft', '↺', '左を向く'],
+  ['KeyW', '▲', '前へ'],
+  ['ArrowRight', '↻', '右を向く'],
+  ['KeyA', '◀', '左へ'],
+  ['KeyS', '▼', '後ろへ'],
+  ['KeyD', '▶', '右へ'],
+]
+  .map(([code, label, title]) => `<button type="button" data-key="${code}" aria-label="${title}" title="${title}">${label}</button>`)
+  .join('');
+for (const b of touchPad.querySelectorAll<HTMLButtonElement>('button')) {
+  const code = b.dataset.key!;
+  const on = (e: PointerEvent) => {
+    e.preventDefault();
+    b.setPointerCapture(e.pointerId);
+    viewer.setVirtualKey(code, true);
+  };
+  const off = () => viewer.setVirtualKey(code, false);
+  b.addEventListener('pointerdown', on);
+  b.addEventListener('pointerup', off);
+  b.addEventListener('pointercancel', off);
+  b.addEventListener('lostpointercapture', off);
+  b.addEventListener('contextmenu', (e) => e.preventDefault());
+}
+document.getElementById('viewport')!.append(touchPad);
+const showTouchPad = WEB || matchMedia('(pointer: coarse)').matches;
+
 function render() {
   if (!store.plan) return;
+  touchPad.hidden = !(showTouchPad && ui.mode === 'walk');
   panel.render({ ...ui, plan: store.plan, planName: store.name });
 }
 
 viewer.setInvertLook(ui.invertLook);
+viewer.setHighQuality(ui.highQuality);
 viewer.setStature(ui.stature);
 viewer.setTime(ui.time);
 viewer.setLightsOn(ui.lightsOn);
@@ -315,14 +364,24 @@ store.onStatus = (status: SaveStatus, message?: string) => {
 async function openPlan(name: string) {
   ui.selection = null;
   await store.load(name);
-  // 平屋なら最初から中を、複数階なら外観を見せる
-  setFloorView(store.plan.floors.length > 1 ? 'all' : 0);
+  // 平屋なら最初から中を、複数階なら外観を見せる（Web 版は軽くするため 1 階から）
+  setFloorView(store.plan.floors.length > 1 && !WEB ? 'all' : 0);
   try {
     localStorage.setItem('lastPlan', name);
   } catch {
     // 保存できない環境でも動かす
   }
-  history.replaceState(null, '', `?plan=${encodeURIComponent(name)}`);
+  if (!WEB) history.replaceState(null, '', `?plan=${encodeURIComponent(name)}`);
+  // Web 版は俯瞰なし。その階の決まった部屋に立って始める
+  if (WEB) {
+    const rooms = store.plan.floors[WEB_FLOOR]?.rooms ?? store.plan.floors[0].rooms;
+    const start = rooms.find((r) => r.id === WEB_START_ROOMS[WEB_FLOOR]) ?? rooms.find((r) => !r.void);
+    if (start) {
+      viewer.walkInto(start.id);
+      ui.mode = 'walk';
+      render();
+    }
+  }
 }
 
 window.addEventListener('keydown', (e) => {
@@ -342,7 +401,7 @@ window.addEventListener('keydown', (e) => {
   }
   const sel = ui.selection;
   if (e.code === 'Escape') {
-    if (ui.mode === 'walk') {
+    if (ui.mode === 'walk' && !WEB) {
       viewer.setMode('orbit');
       ui.mode = 'orbit';
     }
@@ -386,4 +445,4 @@ if (import.meta.hot) {
 })();
 
 // 開発中にブラウザのコンソールや自動テストから触れるようにする
-if (import.meta.env.DEV) Object.assign(window, { viewer, store });
+if (import.meta.env.DEV || WEB) Object.assign(window, { viewer, store });

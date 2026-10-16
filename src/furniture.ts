@@ -13,6 +13,24 @@ import { getMaterial, getMaterialDef } from './materials';
 import type { Furniture } from './types';
 
 const WARM = '#ffcf94';
+
+/** 色温度（K）から光の色。電球色 2700K・温白色 3500K・昼白色 5000K などの間を補う */
+function kelvinColor(k?: number): string {
+  if (!k) return WARM;
+  const table: [number, string][] = [[2700, '#ffc489'], [3000, '#ffcd9c'], [3500, '#ffd9b4'], [4000, '#ffe3c8'], [5000, '#fff0e2'], [6500, '#f6f4ff']];
+  for (const [t, c] of table) if (k <= t) return c;
+  return table[table.length - 1][1];
+}
+
+/**
+ * 全光束（lm）と光の広がり（度）から、真下の光度（cd）を出す。広がりの中に光が均一に出るとみなす。
+ * 画面の明るさは実物の明るさを測ったものではないので、CAL で全体を合わせる（60W 相当のダウンライトが自然に見える値）
+ */
+const CAL = 0.75;
+function candela(lm: number, beam: number): number {
+  const sr = 2 * Math.PI * (1 - Math.cos(THREE.MathUtils.degToRad(Math.min(beam, 179) / 2)));
+  return (lm / sr) * CAL;
+}
 /** 面光源の幅・高さは m で指定する */
 const MM_LIGHT = 0.001;
 
@@ -39,8 +57,8 @@ const black = new THREE.MeshStandardMaterial({ color: '#1c1c1d', roughness: 0.45
 black.userData.shared = true;
 
 /** 下向き（dir）のスポットライト。intensity はカンデラ、angle は度、distance は光が届く距離（m） */
-function spot(x: number, y: number, z: number, dir: [number, number, number], intensity: number, angle: number, shadow: boolean, distance = 8): THREE.Object3D[] {
-  const l = new THREE.SpotLight(WARM, intensity, distance, THREE.MathUtils.degToRad(angle / 2), 0.6, 2);
+function spot(x: number, y: number, z: number, dir: [number, number, number], intensity: number, angle: number, shadow: boolean, distance = 8, color = WARM): THREE.Object3D[] {
+  const l = new THREE.SpotLight(color, intensity, distance, THREE.MathUtils.degToRad(angle / 2), 0.6, 2);
   l.position.set(x, y, z);
   l.target.position.set(x + dir[0] * 1000, y + dir[1] * 1000, z + dir[2] * 1000);
   l.castShadow = shadow;
@@ -675,7 +693,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '壁面収納（壁埋め込み・ゴミ箱のニッチ付き）',
     hint: '正面を壁の仕上げ面にそろえて、壁の中に埋め込む。上は黒い扉付きの収納（棚板 3 枚、一番下の段に逆さのティッシュとコンセント）、カウンターの高さ（850）に四角い投入口の棚、その下は薄型のゴミ箱を置くニッチ（奥と両側は TH34190）',
     defaults: { w: 550, d: 160, h: 2050, color: '#1f1f20' },
-    build: ({ w, d, h }, mat) => {
+    build: ({ w, d, h, doorAngles }, mat) => {
       const counter = 850;
       const cab = 1080;
       const lining = getMaterial('cross-th34190');
@@ -718,12 +736,13 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       );
       const bottom = 240;
       for (const y of [cab + bottom, cab + bottom + 245, cab + bottom + 490]) out.push(box(w - 40, 16, inner, 0, y, -11 + 2, mat));
-      // 扉は両開き（左右 2 枚）。クリックで開く（開いた角度 105°）
+      // 扉は両開き（左右 2 枚）。クリックで開く（開いた角度は doorAngles、省略時 105°）
       const dw = (w - 6) / 2;
       for (const side of [1, -1]) {
         const door = new THREE.Group();
         door.position.set(side * (w / 2 - 2), cab + 22, d / 2);
-        door.userData.door = { type: 'swing', angle: side * 1.83, t: 0 };
+        const deg = (side === 1 ? doorAngles?.[1] : doorAngles?.[0]) ?? 105;
+        door.userData.door = { type: 'swing', angle: side * THREE.MathUtils.degToRad(deg), t: 0 };
         door.add(box(dw, h - cab - 24, 20, -side * (dw / 2), 0, -10, mat), box(10, 120, 14, -side * (dw - 30), (h - cab) / 2 - 60, 6, black));
         out.push(door);
       }
@@ -799,7 +818,13 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     defaults: { w: 100, d: 100, h: 100, color: '#1c1c1d' },
     build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.8, 4, d * 0.8, 0, h, 0, glow()), box(w * 0.8, 4, d * 0.8, 0, -4, 0, glow())],
     // 上下に約 90° の光（コイズミ arkia AB54807 などの壁面を照らすブラケット）
-    lights: ({ h }) => [...spot(0, h + 10, 20, [0, 1, 0.12], 40, 90, false), ...spot(0, -10, 20, [0, -1, 0.12], 40, 90, false)],
+    // 光束の半分ずつを上下へ（省略時は 250lm くらいの小さなブラケット）
+    lights: ({ h, lumen, beam, kelvin }) => {
+      const b = beam ?? 90;
+      const cd = candela((lumen ?? 250) / 2, b);
+      const c = kelvinColor(kelvin);
+      return [...spot(0, h + 10, 20, [0, 1, 0.12], cd, b, false, 8, c), ...spot(0, -10, 20, [0, -1, 0.12], cd, b, false, 8, c)];
+    },
   },
   {
     type: 'downlight',
@@ -811,8 +836,82 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       m.position.y = -4;
       return [m];
     },
+    // 明るさは家具の lumen（製品の定格光束）と beam（広がり）から。省略時は一般的な 60W 相当（700lm・90°）。
     // 影は付けない（影を付ける光源ごとに GPU のテクスチャの枠を使い、線の光の分と合わせると上限 16 を超えて壁が描けなくなる）
-    lights: () => spot(0, -15, 0, [0, -1, 0], 80, 70, false),
+    lights: ({ lumen, beam, kelvin }) => spot(0, -15, 0, [0, -1, 0], candela(lumen ?? 700, beam ?? 90), beam ?? 90, false, 8, kelvinColor(kelvin)),
+  },
+  {
+    type: 'ceiling-light',
+    label: 'シーリングライト',
+    hint: '天井付け。「床からの高さ」を天井高にする。施工会社の標準は DAIKO DCL-42121（丸い薄型・3,699lm・6 畳まで・調光調色）',
+    defaults: { w: 560, d: 560, h: 90, color: '#f6f6f4' },
+    build: ({ w, h }, mat) => {
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2 - 20, h, 48), mat);
+      body.position.y = -h / 2;
+      const lens = new THREE.Mesh(new THREE.CylinderGeometry(w / 2 - 22, w / 2 - 22, 4, 48), glow(WARM, 2));
+      lens.position.y = -h - 2;
+      return [body, lens];
+    },
+    // 部屋全体に広がる光（真下の光度は 全光束 / π くらい）。省略時は 6 畳用（3,700lm）
+    lights: ({ h, lumen, kelvin }) => spot(0, -h - 10, 0, [0, -1, 0], ((lumen ?? 3700) / Math.PI) * CAL, 170, false, 8, kelvinColor(kelvin)),
+  },
+  {
+    type: 'spot-light',
+    label: 'スポットライト（壁付け・外）',
+    hint: '壁付け。背面を壁に付け、「床からの高さ」で取付高さを決める。施工会社の標準は DAIKO DOL-4824YB（黒い筒形・300lm）',
+    defaults: { w: 70, d: 150, h: 120, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => {
+      const can = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, d - 30, 20), mat);
+      can.rotation.x = Math.PI / 2 - 0.6;
+      can.position.set(0, h / 2, 10);
+      can.castShadow = true;
+      return [box(60, 90, 20, 0, h / 2 - 45, -d / 2 + 10, mat), box(14, 14, 50, 0, h / 2 - 7, -d / 2 + 40, mat), can];
+    },
+    lights: ({ h, lumen, beam, kelvin }) => spot(0, h / 2 - 30, 40, [0, -1, 0.7], candela(lumen ?? 300, beam ?? 50), beam ?? 50, false, 8, kelvinColor(kelvin)),
+  },
+  {
+    type: 'outlet',
+    label: 'コンセント',
+    hint: '壁付け。背面を壁に付け、「床からの高さ」でプレートの下端を決める（中心が FL+250 なら 190）。施工会社の標準のプレートはコスモワイド スクエア。名前に種類（2 口・アース付・専用・エアコン用・テレビなど）を書く',
+    defaults: { w: 70, d: 8, h: 120, color: '#f7f7f5' },
+    build: ({ w, d, h, count }, mat) => {
+      const slot = new THREE.MeshStandardMaterial({ color: '#4b4b4b', roughness: 0.6 });
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      // 差し込み口（count 個、上下に並べる）
+      const n = count ?? 2;
+      for (let i = 0; i < n; i++) {
+        const y = h / 2 + (i - (n - 1) / 2) * 34 - 9;
+        out.push(box(4, 12, 2, -7, y, d / 2 + 1, slot), box(4, 12, 2, 7, y, d / 2 + 1, slot));
+      }
+      return out;
+    },
+  },
+  {
+    type: 'switch',
+    label: 'スイッチ',
+    hint: '壁付け。背面を壁に付け、「床からの高さ」でプレートの下端を決める（中心が FL+1200 なら 1140）。count はスイッチの数。施工会社の標準はコスモワイド スクエア（ネームなし・ホタルあり）',
+    defaults: { w: 70, d: 8, h: 120, color: '#f7f7f5' },
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(1, count ?? 1);
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      const kh = (h - 24) / n;
+      const hotaru = glow('#7fd17f', 1.2);
+      // ボタンは上から 0, 1, 2…（クリックしたボタンで回路を選ぶ）
+      for (let i = 0; i < n; i++) {
+        const y = 12 + (n - 1 - i) * kh;
+        const key = box(w - 18, kh - 4, 4, 0, y + 2, d / 2 + 2, mat);
+        key.userData.button = i;
+        out.push(key, box(6, 3, 2, w / 2 - 18, y + kh / 2, d / 2 + 4, hotaru));
+      }
+      return out;
+    },
+  },
+  {
+    type: 'remote-panel',
+    label: 'リモコン・モニター（壁付け）',
+    hint: '壁付け。インターホンの親機、給湯器のリモコン、換気（熱交換器）のリモコンなど。名前に種類を書く',
+    defaults: { w: 120, d: 20, h: 120, color: '#f2f2f0' },
+    build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w - 24, h * 0.45, 2, 0, h * 0.45, d / 2 + 1, new THREE.MeshStandardMaterial({ color: '#202224', roughness: 0.3 }))],
   },
   {
     type: 'line-light',
@@ -1523,6 +1622,7 @@ export function buildFurniture(f: Furniture): THREE.Group {
   // 平面図で時計回り = 上から見て時計回り = three.js の y 軸まわりで負の回転
   g.rotation.y = -THREE.MathUtils.degToRad(f.rotation);
   g.userData.furnitureId = f.id;
+  g.userData.furnitureType = f.type;
   // ウォークスルーで上り下りできる物（階段）
   g.userData.walkable = ['stairs', 'stairs-box', 'winder-stairs'].includes(f.type);
   return g;

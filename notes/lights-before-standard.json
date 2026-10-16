@@ -1,0 +1,422 @@
+[
+  {
+    "floor": 0,
+    "item": {
+      "id": "bracket-1",
+      "type": "bracket-light",
+      "name": "ブラケットライト",
+      "x": 2030,
+      "y": 4695,
+      "w": 200,
+      "d": 300,
+      "h": 300,
+      "rotation": 270,
+      "color": "#1c1c1d",
+      "z": 1850
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "wall-light-1",
+      "type": "wall-light",
+      "name": "ブラケットライト（KOIZUMI arkia AB54807・1階の階段）",
+      "x": 985,
+      "y": 2957.5,
+      "w": 120,
+      "d": 30,
+      "h": 120,
+      "rotation": 270,
+      "color": "#1a1a1a",
+      "z": 2140
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "downlight-2",
+      "type": "downlight",
+      "name": "ダウンライト（玄関）",
+      "x": 3185,
+      "y": 5118.75,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2400
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "wash-mirror-light",
+      "type": "line-light",
+      "name": "間接照明（ミラーのふかしの下・隠し）",
+      "x": 2730,
+      "y": 130,
+      "w": 1640,
+      "d": 30,
+      "h": 15,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 1234
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "genkan-bench-light",
+      "type": "line-light",
+      "name": "間接照明（ベンチ下）",
+      "x": 4265,
+      "y": 5093.75,
+      "w": 1017.5,
+      "d": 40,
+      "h": 15,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 135
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "step-light",
+      "type": "line-light",
+      "name": "間接照明（上がり框の下）",
+      "x": 3185,
+      "y": 4587.5,
+      "w": 2600,
+      "d": 30,
+      "h": 15,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": -55
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "wic-tape-light",
+      "type": "line-light",
+      "name": "テープライト（枕棚の下）",
+      "x": 6340,
+      "y": 390,
+      "w": 2880,
+      "d": 20,
+      "h": 10,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2045
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "garage-line-light",
+      "type": "line-light",
+      "name": "間接照明（車庫）",
+      "x": 6370,
+      "y": 1650,
+      "w": 3400,
+      "d": 60,
+      "h": 15,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2390
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "porch-light-1",
+      "type": "down-bracket",
+      "name": "表札灯（KOIZUMI AU54604）",
+      "x": 2150,
+      "y": 6935,
+      "w": 100,
+      "d": 100,
+      "h": 100,
+      "rotation": 0,
+      "color": "#1c1c1d",
+      "z": 1340
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "porch-downlight-1",
+      "type": "downlight",
+      "name": "ダウンライト（ポーチ）",
+      "x": 2700,
+      "y": 6545,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2440
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "porch-downlight-2",
+      "type": "downlight",
+      "name": "ダウンライト（ポーチ）",
+      "x": 3900,
+      "y": 6545,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2440
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "wic-tape-light-east",
+      "type": "line-light",
+      "name": "テープライト（東の枕棚の下）",
+      "x": 7800,
+      "y": 857,
+      "w": 895,
+      "d": 20,
+      "h": 10,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 2045
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "bath-light",
+      "type": "downlight",
+      "name": "ダウンライト（浴室）",
+      "x": 910,
+      "y": 1300,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2150
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "hall-west-cove",
+      "type": "line-light",
+      "name": "間接照明（洗面室〜廊下の西の壁の上）",
+      "x": 150,
+      "y": 3412.5,
+      "w": 1700,
+      "d": 40,
+      "h": 15,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 2440
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "wic-downlight",
+      "type": "downlight",
+      "name": "ダウンライト（WIC）",
+      "x": 6370,
+      "y": 682,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2400
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "hall-north-downlight",
+      "type": "downlight",
+      "name": "ダウンライト（WIC 前の廊下）",
+      "x": 4095,
+      "y": 1251.25,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2400
+    }
+  },
+  {
+    "floor": 0,
+    "item": {
+      "id": "shoes-downlight",
+      "type": "downlight",
+      "name": "ダウンライト（シューズクローク）",
+      "x": 910,
+      "y": 5573.75,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2400
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "bed-tape-e",
+      "type": "line-light",
+      "name": "テープライト（ベッドの下・足元側・隠し）",
+      "x": 2100,
+      "y": 1251.25,
+      "w": 1760,
+      "d": 10,
+      "h": 10,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 150
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "kitchen-cove-w",
+      "type": "line-light",
+      "name": "間接照明（下がり天井の上・西）",
+      "x": 5872,
+      "y": 4390,
+      "w": 3402,
+      "d": 30,
+      "h": 15,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 2332,
+      "flip": true
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "kitchen-cove-s",
+      "type": "line-light",
+      "name": "間接照明（下がり天井の上・南）",
+      "x": 6941,
+      "y": 6091,
+      "w": 2138,
+      "d": 30,
+      "h": 15,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2332,
+      "flip": true
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "kitchen-cove-n",
+      "type": "line-light",
+      "name": "間接照明（下がり天井の上・北）",
+      "x": 6941,
+      "y": 2689,
+      "w": 2138,
+      "d": 30,
+      "h": 15,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2332,
+      "flip": true
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "toilet2-niche-light",
+      "type": "line-light",
+      "name": "間接照明（ふかし壁の中・縦）",
+      "x": 685,
+      "y": 2585,
+      "w": 12,
+      "d": 12,
+      "h": 2300,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 50
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "wall-light-2f",
+      "type": "wall-light",
+      "name": "ブラケットライト（KOIZUMI arkia AB54807・2階の階段）",
+      "x": 985,
+      "y": 2957.5,
+      "w": 120,
+      "d": 30,
+      "h": 120,
+      "rotation": 270,
+      "color": "#1a1a1a",
+      "z": 2040
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "bed-headboard-light",
+      "type": "line-light",
+      "name": "間接照明（ヘッドボードの壁側に埋め込み・上はアクリル板）",
+      "x": 110,
+      "y": 1251.25,
+      "w": 2382.5,
+      "d": 100,
+      "h": 10,
+      "rotation": 90,
+      "color": "#f4f4f4",
+      "z": 940,
+      "flip": true
+    }
+  },
+  {
+    "floor": 1,
+    "item": {
+      "id": "2f-storage-sw-downlight",
+      "type": "downlight",
+      "name": "ダウンライト（トイレ横の納戸）",
+      "x": 910,
+      "y": 5573.75,
+      "w": 100,
+      "d": 100,
+      "h": 20,
+      "rotation": 0,
+      "color": "#f4f4f4",
+      "z": 2400
+    }
+  },
+  {
+    "floor": 2,
+    "item": {
+      "id": "wall-light-3f",
+      "type": "wall-light",
+      "name": "ブラケットライト（KOIZUMI arkia AB54807・3階の階段）",
+      "x": 4300,
+      "y": 2577.5,
+      "w": 120,
+      "d": 30,
+      "h": 120,
+      "rotation": 0,
+      "color": "#1a1a1a",
+      "z": 1445
+    }
+  }
+]

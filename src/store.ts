@@ -1,5 +1,6 @@
 // 編集中の間取りを持ち、保存・元に戻す・外部の変更の読み込みを受け持つ。
 
+import { WEB } from './env';
 import type { Plan } from './types';
 
 export type SaveStatus = 'saved' | 'saving' | 'error' | 'reloaded';
@@ -26,14 +27,21 @@ export class PlanStore {
   }
 
   async list(): Promise<string[]> {
+    if (WEB) return ['my-house'];
     const res = await fetch('/api/plans');
     return res.json();
   }
 
   async load(name: string) {
-    const res = await fetch(`/api/plans/${encodeURIComponent(name)}`);
-    if (!res.ok) throw new Error(`${name} を読み込めませんでした (${res.status})`);
-    const text = await res.text();
+    let text: string;
+    if (WEB) {
+      // Web 版はビルドに埋め込んだ間取りを使う
+      text = JSON.stringify((await import('../plans/my-house.json')).default);
+    } else {
+      const res = await fetch(`/api/plans/${encodeURIComponent(name)}`);
+      if (!res.ok) throw new Error(`${name} を読み込めませんでした (${res.status})`);
+      text = await res.text();
+    }
     this.name = name;
     this.plan = JSON.parse(text) as Plan;
     this.lastSynced = JSON.stringify(this.plan);
@@ -103,6 +111,8 @@ export class PlanStore {
   }
 
   async save(name: string) {
+    // Web 版は保存しない（試した変更はその画面の中だけ）
+    if (WEB) return this.onStatus('saved');
     const json = JSON.stringify(this.plan);
     try {
       const res = await fetch(`/api/plans/${encodeURIComponent(name)}`, {
