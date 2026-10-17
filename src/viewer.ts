@@ -92,6 +92,8 @@ export class Viewer {
   private sensorTimer = new Map<string, number>();
   /** 家具がどの階にあるか（ウォークスルーでは今いる階の照明だけを計算して軽くする） */
   private furnitureFloor = new Map<string, number>();
+  /** 最後に作った間取り（描画が止まって戻ったときに作り直す） */
+  private lastPlan: Plan | null = null;
   /** 開け閉めしている途中の扉 */
   private movingDoors = new Set<THREE.Object3D>();
   /** 床からの目の高さ（m）。身長で変える */
@@ -114,8 +116,16 @@ export class Viewer {
     private container: HTMLElement,
     private events: ViewerEvents,
   ) {
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Web 版（iPad・スマホ）は描画のメモリを減らす（足りなくなると描画が止まって画面が真っ暗になる）
+    this.renderer = new THREE.WebGLRenderer({ antialias: !WEB, preserveDrawingBuffer: !WEB });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, WEB ? 1.25 : 2));
+    // 描画のメモリが足りなくなって描画が止まったら（画面が真っ暗になる）、戻ったときに 3D を作り直す
+    this.renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault());
+    this.renderer.domElement.addEventListener('webglcontextrestored', () => {
+      // 周りの照り返し（環境光）も描画先に作り直す
+      this.makeEnvironment();
+      if (this.lastPlan) this.setPlan(this.lastPlan);
+    });
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -133,8 +143,7 @@ export class Viewer {
     this.orbit.maxPolarAngle = Math.PI / 2 - 0.05;
 
     // 周りの景色の映り込み・環境光（室内向けの柔らかい環境）
-    const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.makeEnvironment();
 
     // ウォークスルー用の高画質描画（壁際や家具の下の陰影）
     this.composer = new EffectComposer(this.renderer);
@@ -158,7 +167,7 @@ export class Viewer {
     this.scene.add(this.ground);
 
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(4096, 4096);
+    this.sun.shadow.mapSize.set(WEB ? 2048 : 4096, WEB ? 2048 : 4096);
     this.sun.shadow.bias = -0.0005;
     this.sun.shadow.normalBias = 0.02;
     this.scene.add(this.hemi, this.sun, this.sun.target, this.roomLights, this.selection);
@@ -175,6 +184,7 @@ export class Viewer {
   // ---------- 間取りの反映 ----------
 
   setPlan(plan: Plan): string[] {
+    this.lastPlan = plan;
     const first = !this.built;
     if (this.built) {
       this.world.remove(this.built.root);
@@ -380,6 +390,14 @@ export class Viewer {
     if (!walk) for (const l of this.roomLights.children) if (l.visible) l.visible = (l.userData.floorIndex as number) <= top;
   }
 
+  /** 部屋の中の照り返し（環境光）。描画が止まって戻ったときも作り直す */
+  private makeEnvironment() {
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment?.dispose();
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    pmrem.dispose();
+  }
+
   /** 夕方・夜、または「昼も照明をつける」のとき */
   private get lit() {
     return this.lightsOn || this.time !== 'day';
@@ -574,19 +592,7 @@ export class Viewer {
       if (!clicked || !this.built || e.button !== 0) return;
       const ndc = this.pointer(e);
       if (this.mode === 'walk') {
-        const target = this.targetAt(ndc);
-        // スイッチなら、押したボタンの回路をつけ消しする
-        if (target?.kind === 'furniture' && this.events.onPressSwitch) {
-          const button = this.switchButtonAt(ndc, target.furnitureId);
-          if (button !== null) {
-            this.events.onPressSwitch(target.furnitureId, button);
-            return;
-          }
-        }
-        // 扉（引き戸・開き戸・収納の扉）なら開け閉めする
-        const g = target?.kind === 'furniture' ? this.built.furniture.get(target.furnitureId) : undefined;
-        if (g && this.toggleDoors(g)) return;
-        this.events.onPickSurface(target);
+        this.walkClick(ndc);
         return;
       }
       const hit = this.hitFurniture(ndc);
@@ -606,6 +612,24 @@ export class Viewer {
     });
   }
 
+  /** ウォークスルーで画面の点（NDC）をクリックした（スペースキーは画面の真ん中の＋） */
+  private walkClick(ndc: THREE.Vector2) {
+    if (!this.built) return;
+    const target = this.targetAt(ndc);
+    // スイッチなら、押したボタンの回路をつけ消しする
+    if (target?.kind === 'furniture' && this.events.onPressSwitch) {
+      const button = this.switchButtonAt(ndc, target.furnitureId);
+      if (button !== null) {
+        this.events.onPressSwitch(target.furnitureId, button);
+        return;
+      }
+    }
+    // 扉（引き戸・開き戸・収納の扉）なら開け閉めする
+    const g = target?.kind === 'furniture' ? this.built.furniture.get(target.furnitureId) : undefined;
+    if (g && this.toggleDoors(g)) return;
+    this.events.onPickSurface(target);
+  }
+
   private setupKeys() {
     const isTyping = () => {
       const a = document.activeElement;
@@ -618,6 +642,12 @@ export class Viewer {
     window.addEventListener('keydown', (e) => {
       if (isTyping()) return;
       const code = codeOf(e);
+      // スペースキー: ウォークスルーで画面の真ん中（＋）をクリックしたのと同じ（扉の開け閉め・スイッチ・クロスを試す）
+      if ((code === 'Space' || e.key === ' ') && this.mode === 'walk') {
+        e.preventDefault();
+        if (!e.repeat) this.walkClick(new THREE.Vector2(0, 0));
+        return;
+      }
       this.keys.add(code);
       // 矢印キーで画面がスクロールしないように
       if (this.mode === 'walk' && code.startsWith('Arrow')) e.preventDefault();
@@ -667,8 +697,11 @@ export class Viewer {
       const fwd = new THREE.Vector3(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
       const right = new THREE.Vector3(-fwd.z, 0, fwd.x);
       const move = new THREE.Vector3();
-      if (this.keys.has('KeyW') || this.keys.has('ArrowUp')) move.add(fwd);
-      if (this.keys.has('KeyS') || this.keys.has('ArrowDown')) move.sub(fwd);
+      if (this.keys.has('KeyW')) move.add(fwd);
+      if (this.keys.has('KeyS')) move.sub(fwd);
+      // 矢印キーの上下は見上げる・見下ろす（左右は向きを変える）
+      if (this.keys.has('ArrowUp')) this.pitch = Math.min(1.3, this.pitch + 1.2 * dt);
+      if (this.keys.has('ArrowDown')) this.pitch = Math.max(-1.3, this.pitch - 1.2 * dt);
       if (this.keys.has('KeyD')) move.add(right);
       if (this.keys.has('KeyA')) move.sub(right);
       if (this.keys.has('ArrowLeft')) this.yaw += 1.5 * dt;
@@ -802,8 +835,9 @@ function disposeTree(root: THREE.Object3D) {
     if (o instanceof THREE.Mesh) {
       o.geometry.dispose();
       // 素材カタログのマテリアルはキャッシュして使い回すので捨てない
-      const m = o.material as THREE.Material;
-      if (!m.userData.shared) m.dispose();
+      // 屋根のように面ごとに素材が違う物は配列
+      const ms = (Array.isArray(o.material) ? o.material : [o.material]) as THREE.Material[];
+      for (const m of ms) if (!m.userData.shared) m.dispose();
     }
     // 鏡は映り込み用の描画先を持っている
     const r = o as THREE.Object3D & { isReflector?: boolean; dispose?: () => void };

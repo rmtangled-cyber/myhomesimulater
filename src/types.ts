@@ -5,7 +5,21 @@ export type Point = [number, number];
 
 export type Side = 'north' | 'east' | 'south' | 'west';
 
+/** 壁 1 面のうち、ある範囲だけ別のクロスを貼る所（キッチンの背面の、下がり天井の端から端まで など） */
+export interface WallZone {
+  id: string;
+  name: string;
+  /** polygon の辺の番号 */
+  edge: number;
+  /** 範囲の両端（平面図の座標。辺の上に投影して使う） */
+  start: Point;
+  end: Point;
+  material: string;
+}
+
 export interface Room {
+  /** 壁の一部だけ別のクロスを貼る所（クリックで張り替えられる） */
+  zones?: WallZone[];
   /** すべての階を通して重ならない ID */
   id: string;
   name: string;
@@ -99,6 +113,8 @@ export interface Furniture {
 }
 
 export interface Floor {
+  /** 壁の切れ目の面（開口部に属さない、壁の厚みの面）のクロス。キーは面の位置（"x,y"、その面の側の 20mm 外の点を 10mm 単位で丸めた座標） */
+  jambs?: Record<string, string>;
   id: string;
   name: string;
   /** 1階の FL からこの階の FL までの高さ */
@@ -148,6 +164,40 @@ export interface Plan {
   floors: Floor[];
   /** 照明の回路（どのスイッチでどの照明がつくか）。2 か所以上のスイッチがある回路は 3 路スイッチ */
   circuits?: Circuit[];
+  /** 屋根（片流れ）。壁の上にかぶせ、低い側の軒先に雨どいを付ける */
+  roofs?: Roof[];
+  /** 基礎の高さ（GL から、ふつう 400）。1 階の外壁の下に基礎と土台水切りを描く */
+  foundationHeight?: number;
+}
+
+/** 片流れの屋根 */
+export interface Roof {
+  id: string;
+  /** どの階の上にかぶせるか（floors の番号） */
+  floor: number;
+  /** 屋根をかける範囲（壁芯の外形） */
+  polygon: Point[];
+  /** 低い側（雨どいの側） */
+  low: Side;
+  /** 勾配（0.05 = 0.5/10） */
+  slope: number;
+  /** 軒の出（壁の外の面から、mm） */
+  eave: number;
+  /** 屋根の厚み（鼻隠しの高さ） */
+  thickness: number;
+  material: string;
+  /** 竪樋の位置（平面図の座標）。下に低い屋根があればそこまで、なければ地面まで */
+  downpipes?: Point[];
+  /** 太陽光パネル。屋根の真ん中に cols × rows 枚を並べる（屋根の勾配なりに、屋根から 100 浮かせる） */
+  solar?: {
+    name: string;
+    /** パネル 1 枚の寸法 [幅, 長さ, 厚み]（mm）。長さを屋根の流れの向きに置く */
+    size: [number, number, number];
+    cols: number;
+    rows: number;
+    /** パネルどうしのすき間（mm） */
+    gap?: number;
+  };
 }
 
 /** 照明の回路。lights の照明を、switches のどのスイッチからでもつけ消しできる */

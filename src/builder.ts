@@ -19,15 +19,15 @@ import {
 } from './geometry';
 import { buildFurniture, getFurnitureType } from './furniture';
 import { getMaterial, getMaterialDef, setCustomMaterials } from './materials';
-import type { Floor, Plan, Point, Room, Side } from './types';
+import type { Floor, Plan, Point, Roof, Room, Side } from './types';
 
 /** ウォークスルーで「見ているもの」を出すため、面に付けておく情報 */
 export type SurfaceInfo =
-  | { kind: 'wall'; roomId: string; materialId: string; side: Side; edge: number }
+  | { kind: 'wall'; roomId: string; materialId: string; side: Side; edge: number; zone?: string }
   | { kind: 'floor' | 'ceiling'; roomId: string; materialId: string }
   | { kind: 'exterior'; materialId: string }
   | { kind: 'opening'; openingId: string }
-  | { kind: 'jamb'; materialId?: string; openingId?: string };
+  | { kind: 'jamb'; materialId?: string; openingId?: string; floor?: number; capKey?: string };
 
 export interface BuiltFloor {
   group: THREE.Group;
@@ -180,7 +180,224 @@ function rectsWithHoles(len: number, v0: number, v1: number, spans: OpeningSpan[
 
 const slabMat = new THREE.MeshStandardMaterial({ color: '#b9b6b0', roughness: 0.9 });
 const roofMat = new THREE.MeshStandardMaterial({ color: '#5d5f62', roughness: 0.8 });
+/** 黒い板金（雨どい・水切り・鼻隠し） */
+const blackMetal = new THREE.MeshStandardMaterial({ color: '#17181a', roughness: 0.45, metalness: 0.5 });
+blackMetal.userData.shared = true;
+/** 水切りの薄い板（表裏の両面を描く） */
+const blackMetalBoth = new THREE.MeshStandardMaterial({ color: '#17181a', roughness: 0.45, metalness: 0.5, side: THREE.DoubleSide });
+blackMetalBoth.userData.shared = true;
 slabMat.userData.shared = roofMat.userData.shared = true;
+
+/**
+ * 屋根の外形（軒先）。外に面した辺は壁の外の面から軒の出だけ外へ、上の階の壁に突き当たる辺（辺の外が上の階の部屋）は
+ * 壁芯で止める（家の中に軒が出ないように）
+ */
+function roofOutline(plan: Plan, roof: Roof): Point[] {
+  const t = plan.wallThickness;
+  const poly = signedArea(roof.polygon) > 0 ? roof.polygon : [...roof.polygon].reverse();
+  const upper = plan.floors[roof.floor + 1]?.rooms ?? [];
+  const n = poly.length;
+  // 辺ごとの外への距離と、ずらした直線（点 p と向き d）
+  const lines = poly.map((a, i) => {
+    const b = poly[(i + 1) % n];
+    const len = dist(a, b);
+    const d: Point = [(b[0] - a[0]) / len, (b[1] - a[1]) / len];
+    // 外向き（反時計回りなので右手側）
+    const nx = d[1];
+    const ny = -d[0];
+    const probe: Point = [(a[0] + b[0]) / 2 + nx * (t / 2 + 30), (a[1] + b[1]) / 2 + ny * (t / 2 + 30)];
+    const off = upper.some((r) => pointInPolygon(probe, r.polygon)) ? 0 : t / 2 + roof.eave;
+    return { p: [a[0] + nx * off, a[1] + ny * off] as Point, d };
+  });
+  return poly.map((_, i) => {
+    const l1 = lines[(i + n - 1) % n];
+    const l2 = lines[i];
+    const den = l1.d[0] * l2.d[1] - l1.d[1] * l2.d[0];
+    if (Math.abs(den) < 1e-9) return l2.p;
+    const s = ((l2.p[0] - l1.p[0]) * l2.d[1] - (l2.p[1] - l1.p[1]) * l2.d[0]) / den;
+    return [l1.p[0] + l1.d[0] * s, l1.p[1] + l1.d[1] * s] as Point;
+  });
+}
+
+/** 片流れの屋根で、平面図の点 (x, y) が低い側の軒先からどれだけ上がるか（mm） */
+function roofRise(roof: Roof, outline: Point[], x: number, y: number): number {
+  const xs = outline.map((p) => p[0]);
+  const ys = outline.map((p) => p[1]);
+  const d = roof.low === 'north' ? y - Math.min(...ys) : roof.low === 'south' ? Math.max(...ys) - y : roof.low === 'west' ? x - Math.min(...xs) : Math.max(...xs) - x;
+  return d * roof.slope;
+}
+
+/**
+ * 片流れの屋根（軒の出・鼻隠し・黒い軒天）、壁の上端から屋根の下までの外壁、低い側の軒樋と竪樋を作る。
+ * 高さは階の壁の上端（階高）から。屋根は「階の上面」と同じく、俯瞰でその階を見るときは隠す
+ */
+function buildRoof(plan: Plan, roof: Roof, built: BuiltFloor, warnings: string[]) {
+  const floor = plan.floors[roof.floor];
+  if (!floor) return;
+  if (!getMaterialDef(roof.material)) warnings.push(`屋根: 素材ID「${roof.material}」が見つかりません（マゼンタで表示）`);
+  const t = plan.wallThickness;
+  const base = floor.height;
+  const poly = signedArea(roof.polygon) > 0 ? roof.polygon : [...roof.polygon].reverse();
+  const outline = roofOutline(plan, roof);
+  const rise = (x: number, y: number) => roofRise(roof, outline, x, y);
+  const objs: THREE.Mesh[] = [];
+
+  // 屋根の板（上面は屋根材、側面＝鼻隠しと下面＝軒天は黒）
+  const shape = new THREE.Shape(outline.map(([x, y]) => new THREE.Vector2(x, -y)));
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: roof.thickness, bevelEnabled: false });
+  geo.rotateX(-Math.PI / 2);
+  const pos = geo.getAttribute('position') as THREE.BufferAttribute;
+  for (let i = 0; i < pos.count; i++) pos.setY(i, pos.getY(i) + base + rise(pos.getX(i), pos.getZ(i)));
+  geo.computeVertexNormals();
+  const slab = new THREE.Mesh(geo, [getMaterial(roof.material), blackMetal]);
+  objs.push(slab);
+
+  // 壁の上端から屋根の下までの外壁（高い側ほど高くなる三角・台形の部分）
+  const ext = getMaterial(floor.exterior ?? plan.exterior);
+  const fill: number[] = [];
+  const fuv: number[] = [];
+  const n = poly.length;
+  for (let i = 0; i < n; i++) {
+    const a = poly[i];
+    const b = poly[(i + 1) % n];
+    const len = dist(a, b);
+    if (len < 1) continue;
+    // 外側（反時計回りの外形なので右手側）へ壁の厚みの半分ずらした外の面
+    const nx = (b[1] - a[1]) / len;
+    const ny = -(b[0] - a[0]) / len;
+    const o = t / 2 + 1;
+    const p0: Point = [a[0] + nx * o, a[1] + ny * o];
+    const p1: Point = [b[0] + nx * o, b[1] + ny * o];
+    const h0 = rise(p0[0], p0[1]);
+    const h1 = rise(p1[0], p1[1]);
+    if (h0 < 1 && h1 < 1) continue;
+    const v = [
+      [p0[0], base, p0[1]], [p1[0], base, p1[1]], [p1[0], base + h1, p1[1]],
+      [p0[0], base, p0[1]], [p1[0], base + h1, p1[1]], [p0[0], base + h0, p0[1]],
+    ];
+    const uv = [[0, 0], [len, 0], [len, h1], [0, 0], [len, h1], [0, h0]];
+    // 表裏の両方から見えるように、逆回りの三角形も足す（素材を複製すると描けなくなる環境がある）
+    for (const k of [0, 1, 2, 3, 4, 5, 2, 1, 0, 5, 4, 3]) fill.push(...v[k]);
+    for (const k of [0, 1, 2, 3, 4, 5, 2, 1, 0, 5, 4, 3]) fuv.push(...uv[k]);
+  }
+  if (fill.length) {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(fill, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(fuv, 2));
+    g.computeVertexNormals();
+    objs.push(new THREE.Mesh(g, ext));
+  }
+
+  // 軒樋（低い側の軒先の外、黒の角樋）
+  const xs = outline.map((p) => p[0]);
+  const ys = outline.map((p) => p[1]);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const gw = 105;
+  const gh = 90;
+  const gy = base + roof.thickness - gh - 15;
+  const along = roof.low === 'north' || roof.low === 'south';
+  const gl = along ? x1 - x0 : y1 - y0;
+  const gutter = new THREE.Mesh(new THREE.BoxGeometry(along ? gl : gw, gh, along ? gw : gl), blackMetal);
+  const edge = roof.low === 'north' ? y0 - gw / 2 : roof.low === 'south' ? y1 + gw / 2 : roof.low === 'west' ? x0 - gw / 2 : x1 + gw / 2;
+  gutter.position.set(along ? (x0 + x1) / 2 : edge, gy + gh / 2, along ? edge : (y0 + y1) / 2);
+  objs.push(gutter);
+
+  // 竪樋（軒樋から下へ。下に低い屋根があればその上面まで、なければ地面まで）
+  for (const [px, py] of roof.downpipes ?? []) {
+    let bottom = (plan.groundLevel ?? 0) - floor.elevation;
+    for (const r of plan.roofs ?? []) {
+      if (r === roof || r.floor >= roof.floor) continue;
+      const rf = plan.floors[r.floor];
+      const ro = roofOutline(plan, r);
+      if (pointInPolygon([px, py], ro)) bottom = Math.max(bottom, rf.elevation + rf.height + r.thickness + roofRise(r, ro, px, py) - floor.elevation);
+    }
+    const top = gy;
+    const pipe = new THREE.Mesh(new THREE.BoxGeometry(60, top - bottom, 60), blackMetal);
+    pipe.position.set(px, (top + bottom) / 2, py);
+    objs.push(pipe);
+    // 軒樋から竪樋への呼び樋（横向き）
+    const gx = along ? px : edge;
+    const gz = along ? edge : py;
+    const len = Math.hypot(px - gx, py - gz);
+    if (len > 30) {
+      const link = new THREE.Mesh(new THREE.BoxGeometry(50, 50, len), blackMetal);
+      link.position.set((px + gx) / 2, top - 60, (py + gz) / 2);
+      link.lookAt(new THREE.Vector3(px, top - 60, py).add(built.group.position));
+      objs.push(link);
+    }
+  }
+  // 太陽光パネル（屋根の勾配なりに並べる）
+  if (roof.solar) {
+    const { size, cols, rows } = roof.solar;
+    const gap = roof.solar.gap ?? 20;
+    const [pw, pl, pt] = size;
+    // 流れの向き（低い側から高い側）と、それに直交する向き
+    const flowX = roof.low === 'west' ? 1 : roof.low === 'east' ? -1 : 0;
+    const flowZ = roof.low === 'north' ? 1 : roof.low === 'south' ? -1 : 0;
+    const across = flowZ !== 0;
+    const cx = (x0 + x1) / 2;
+    const cz = (y0 + y1) / 2;
+    const totalA = cols * pw + (cols - 1) * gap;
+    const totalF = rows * pl + (rows - 1) * gap;
+    const panelMat = solarMaterial();
+    const angle = Math.atan(roof.slope);
+    for (let c = 0; c < cols; c++) {
+      for (let r = 0; r < rows; r++) {
+        const a = -totalA / 2 + pw / 2 + c * (pw + gap);
+        const f = -totalF / 2 + pl / 2 + r * (pl + gap);
+        const x = cx + (across ? a : f * flowX);
+        const z = cz + (across ? f * flowZ : a);
+        const y = base + roof.thickness + rise(x, z) + 100;
+        const panel = new THREE.Mesh(new THREE.BoxGeometry(across ? pw : pl, pt, across ? pl : pw), [blackMetal, blackMetal, panelMat, blackMetal, blackMetal, blackMetal]);
+        panel.position.set(x, y + pt / 2, z);
+        // 高い側へ上がるように傾ける
+        if (across) panel.rotation.x = -angle * flowZ;
+        else panel.rotation.z = angle * flowX;
+        objs.push(panel);
+      }
+    }
+  }
+  for (const m of objs) {
+    m.castShadow = true;
+    m.receiveShadow = true;
+    built.group.add(m);
+    built.caps.push(m);
+  }
+}
+
+/** 太陽光パネルの表面（黒いセルと細い線。真ん中で上下 2 つに分かれる） */
+let solarMat: THREE.MeshStandardMaterial | null = null;
+function solarMaterial(): THREE.MeshStandardMaterial {
+  if (solarMat) return solarMat;
+  const c = document.createElement('canvas');
+  c.width = 120;
+  c.height = 186;
+  const g = c.getContext('2d')!;
+  g.fillStyle = '#0d1016';
+  g.fillRect(0, 0, c.width, c.height);
+  g.strokeStyle = '#2a2f38';
+  g.lineWidth = 1;
+  // 6 列 × 上下 10 段ずつのセル
+  for (let i = 1; i < 6; i++) {
+    g.beginPath();
+    g.moveTo((i * c.width) / 6, 0);
+    g.lineTo((i * c.width) / 6, c.height);
+    g.stroke();
+  }
+  for (let j = 1; j < 20; j++) {
+    g.beginPath();
+    g.moveTo(0, (j * c.height) / 20);
+    g.lineTo(c.width, (j * c.height) / 20);
+    g.stroke();
+  }
+  g.fillStyle = '#5b6068';
+  g.fillRect(0, c.height / 2 - 1.5, c.width, 3);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  solarMat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.15, metalness: 0.3 });
+  solarMat.userData.shared = true;
+  return solarMat;
+}
 
 export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
   setCustomMaterials(plan.materials);
@@ -202,6 +419,7 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
     const built = buildFloor(plan, floor, index, clip, warnings, furniture);
     built.group.position.y = floor.elevation;
     root.add(built.group);
+    for (const roof of plan.roofs ?? []) if (roof.floor === index) buildRoof(plan, roof, built, warnings);
     for (const r of floor.rooms) {
       for (const [x, y] of r.polygon) {
         bounds.expandByPoint(new THREE.Vector3(x, floor.elevation, y));
@@ -241,19 +459,86 @@ function buildFloor(
   const wallBottom = index === 0 ? Math.min(lowest, plan.groundLevel ?? 0) : 0;
   const wallTop = floor.height;
 
+  // ---- 1 階の基礎（GL から基礎の高さまで）と土台水切り（黒） ----
+  if (index === 0 && plan.foundationHeight) {
+    const gl = plan.groundLevel ?? 0;
+    const topF = gl + plan.foundationHeight;
+    const found = new MeshBuilder();
+    const flash = new MeshBuilder();
+    for (const room of rooms) {
+      const n = room.polygon.length;
+      for (let i = 0; i < n; i++) {
+        const a = room.polygon[i];
+        const b = room.polygon[(i + 1) % n];
+        const len = dist(a, b);
+        if (len < 1) continue;
+        // 外側（反時計回りなので右手側）に部屋がなければ外壁
+        const nx = (b[1] - a[1]) / len;
+        const ny = -(b[0] - a[0]) / len;
+        const mid: Point = [(a[0] + b[0]) / 2 + nx * (t / 2 + 30), (a[1] + b[1]) / 2 + ny * (t / 2 + 30)];
+        const outsideRoom = rooms.some((r) => pointInPolygon(mid, r.polygon));
+        // 外に面していない壁でも、この部屋の床が基礎の上端より低ければ（車庫・ポーチ・ポーチの段）、部屋の側に基礎が見える
+        const lvl = room.level ?? 0;
+        const lowInside = lvl < topF - 1;
+        if (outsideRoom && !lowInside) continue;
+        // 床まで抜けた開口部（玄関・シャッター・壁のない所）は除く
+        const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5)
+          .filter((s) => (s.opening.sill ?? 0) <= (room.level ?? 0) + 1 && s.opening.type !== 'window')
+          .map((s) => [s.u0, s.u1] as [number, number])
+          .sort((p, q) => p[0] - q[0]);
+        const runs: [number, number][] = [];
+        let u = -t / 2;
+        for (const [s0, s1] of spans) {
+          if (s0 > u + 1) runs.push([u, s0]);
+          u = Math.max(u, s1);
+        }
+        if (len + t / 2 > u + 1) runs.push([u, len + t / 2]);
+        const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
+        // N は左手側（部屋の内側）なので、外は −N
+        const out = -(t / 2 + 4);
+        for (const [r0, r1] of runs) {
+          const w = r1 - r0;
+          if (!outsideRoom) {
+            found.quad(f.at(r1, gl, out), f.D.clone().multiplyScalar(-w), Y.clone().multiplyScalar(topF - gl), [r0, gl], [w, topF - gl]);
+            flash.quad(f.at(r1, topF - 5, out - 18), f.D.clone().multiplyScalar(-w), Y.clone().multiplyScalar(35), [r0, 0], [w, 35]);
+            flash.quad(f.at(r1, topF + 30, out - 18), f.D.clone().multiplyScalar(-w), f.N.clone().multiplyScalar(-(out - 18) + out), [r0, 0], [w, 18]);
+          }
+          if (lowInside) {
+            // 部屋の側（N の向き）の面。床から基礎の上端まで
+            const inn = t / 2 + 4;
+            found.quad(f.at(r0, lvl, inn), f.D.clone().multiplyScalar(w), Y.clone().multiplyScalar(topF - lvl), [r0, lvl], [w, topF - lvl]);
+            flash.quad(f.at(r0, topF - 5, inn + 18), f.D.clone().multiplyScalar(w), Y.clone().multiplyScalar(35), [r0, 0], [w, 35]);
+            flash.quad(f.at(r0, topF + 30, inn), f.D.clone().multiplyScalar(w), f.N.clone().multiplyScalar(18), [r0, 0], [w, 18]);
+          }
+        }
+      }
+    }
+    if (!found.empty) {
+      const fm = new THREE.Mesh(found.geometry(), getMaterial('foundation-concrete', { clip }));
+      fm.receiveShadow = true;
+      group.add(fm);
+    }
+    if (!flash.empty) {
+      const m = new THREE.Mesh(flash.geometry(), blackMetalBoth);
+      m.castShadow = true;
+      group.add(m);
+    }
+  }
+
   // ---- 構造壁（外壁の素材で作り、室内側は仕上げ面で覆う） ----
   const walls = deriveWalls(rooms);
   const wallBuilder = new MeshBuilder();
   // 壁の端に、ほかの壁（開口部で抜けていない所）がつながっているか。
   // つながる壁が端のすぐ横（壁の厚みの半分以内）で開口部になっているときは、延ばすと開口部の中に切れ端（柱のような物）が出るので、つながっていないことにする
-  const joined = (p: Point, self: WallSegment) =>
-    walls.some((w2) => {
+  const joined = (p: Point, self: WallSegment) => {
+    return walls.some((w2) => {
       if (w2 === self) return false;
       const len2 = dist(w2.from, w2.to);
       const { u, off } = projectOnLine(p, w2.from, w2.to);
       if (off > 1 || u < -1 || u > len2 + 1) return false;
       return !openingsOnSegment(floor.openings, w2.from, w2.to, t / 2 + 1).some((s) => u > s.u0 - t / 2 - 1 && u < s.u1 + t / 2 + 1);
     });
+  };
   // 開口部まわり・壁の切れ目の面（壁の厚みの面）は、すぐ隣の壁のクロスで巻き込む。
   // 厚みの真ん中で分けて、それぞれの側の部屋の壁クロス（部屋がない外側は外壁）を貼る
   const finishAt = (p: Point): string | undefined => {
@@ -269,14 +554,16 @@ function buildFloor(
     return room.accent?.[edgeSide(room.polygon, best)] ?? room.wall;
   };
   const exteriorId = floor.exterior ?? plan.exterior;
-  const sideBuilders = new Map<string, { mb: MeshBuilder; id: string; openingId?: string }>();
+  const sideBuilders = new Map<string, { mb: MeshBuilder; id: string; openingId?: string; capKey?: string }>();
   /** 壁 f の位置 u で、s の側（+1 = N の側）の仕上げを入れる先。開口部まわりの面で、開口部にクロスの指定があればそれを貼る */
   const sideBuilder = (f: Frame, u: number, s: 1 | -1, openingId?: string): MeshBuilder => {
     const p = f.at(u, 0, s * (t / 2 + 20));
-    const own = openingId ? floor.openings.find((o) => o.id === openingId)?.jamb : undefined;
+    // 開口部に属さない面（壁の切れ目）は、面の位置をキーにして 1 面ずつ張り替えられるようにする
+    const capKey = openingId ? undefined : `${Math.round(p.x / 10) * 10},${Math.round(p.z / 10) * 10}`;
+    const own = openingId ? floor.openings.find((o) => o.id === openingId)?.jamb : floor.jambs?.[capKey!];
     const id = own ?? finishAt([p.x, p.z]) ?? exteriorId;
-    const key = `${id}|${openingId ?? ''}`;
-    const entry = sideBuilders.get(key) ?? { mb: new MeshBuilder(), id, openingId };
+    const key = `${id}|${openingId ?? ''}|${capKey ?? ''}`;
+    const entry = sideBuilders.get(key) ?? { mb: new MeshBuilder(), id, openingId, capKey };
     sideBuilders.set(key, entry);
     return entry.mb;
   };
@@ -315,15 +602,22 @@ function buildFloor(
     for (const r of rectsWithHoles(len, wallBottom, wallTop, spans)) {
       const drawStart = r.u0 > 0.5 || !joinStart;
       const drawEnd = r.u1 < len - 0.5 || !joinEnd;
-      addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes);
+      addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes, (u, s, v) => {
+        // その側の部屋に、この高さで天井があるか（天井がない・もっと高いなら下面を描く）
+        const p = f.at(u, 0, s * (t / 2 + 20));
+        const room = rooms.find((x) => pointInPolygon([p.x, p.z], x.polygon));
+        if (!room) return true;
+        if (!room.ceiling) return true;
+        return (room.level ?? 0) + (room.ceilingHeight ?? floor.ceilingHeight) > v + 1;
+      });
     }
   }
   if (!wallBuilder.empty) {
     // 開口部の側面などの壁の厚みの面（隣の壁のクロスで巻き込む）
-    for (const { mb, id, openingId } of sideBuilders.values()) {
+    for (const { mb, id, openingId, capKey } of sideBuilders.values()) {
       if (mb.empty) continue;
       const faces = new THREE.Mesh(mb.geometry(), getMaterial(id, { clip }));
-      faces.userData.info = { kind: 'jamb', materialId: id, openingId } satisfies SurfaceInfo;
+      faces.userData.info = { kind: 'jamb', materialId: id, openingId, floor: index, capKey } satisfies SurfaceInfo;
       faces.castShadow = faces.receiveShadow = true;
       group.add(faces);
     }
@@ -416,6 +710,7 @@ function buildFloor(
       group.add(under);
       const outside = new MeshBuilder();
       const inside = new MeshBuilder();
+      const flashing = new MeshBuilder();
       const n = room.polygon.length;
       for (let i = 0; i < n; i++) {
         const a = outline[i];
@@ -450,6 +745,10 @@ function buildFloor(
             const u0 = (runStart / steps) * len;
             const u1 = (k / steps) * len;
             outside.quad(f.at(u0, -slabT, 0), f.D.clone().multiplyScalar(u1 - u0), Y.clone().multiplyScalar(slabT), [u0, 0], [u1 - u0, slabT]);
+            // 張り出した所の外壁の下端の水切り（黒い板金。外へ 20 出す）
+            flashing.quad(f.at(u0, -12, 20), f.D.clone().multiplyScalar(u1 - u0), Y.clone().multiplyScalar(30), [u0, 0], [u1 - u0, 30]);
+            flashing.quad(f.at(u1, 18, 20), f.D.clone().multiplyScalar(-(u1 - u0)), f.N.clone().multiplyScalar(-20), [u0, 0], [u1 - u0, 20]);
+            flashing.quad(f.at(u0, -12, 20), f.N.clone().multiplyScalar(-20), f.D.clone().multiplyScalar(u1 - u0), [u0, 0], [u1 - u0, 20]);
             runStart = -1;
           }
         }
@@ -459,6 +758,11 @@ function buildFloor(
         const sides = new THREE.Mesh(mb.geometry(), getMaterial(id));
         sides.receiveShadow = true;
         group.add(sides);
+      }
+      if (!flashing.empty) {
+        const fl = new THREE.Mesh(flashing.geometry(), blackMetalBoth);
+        fl.castShadow = true;
+        group.add(fl);
       }
     }
 
@@ -501,8 +805,36 @@ function buildFloor(
       const len0 = dist(finish[i], finish[(i + 1) % finish.length]);
       if (len0 < 1) continue;
       const dir: Point = [(finish[(i + 1) % finish.length][0] - finish[i][0]) / len0, (finish[(i + 1) % finish.length][1] - finish[i][1]) / len0];
-      const e0 = convex(i) ? t / 2 + 1 : 0;
-      const e1 = convex((i + 1) % n) ? t / 2 + 1 : 0;
+      // 角の先の辺が、角から始まる通り抜けの開口部のとき（壁の角の先が開口部）は、角を埋めた構造の壁の厚みの分まで仕上げを延ばす
+      // （延ばさないと、開口部から構造の壁の外壁の面が細い帯のように見える）
+      const passage = (sp: OpeningSpan) => (sp.opening.sill ?? 0) <= (room.level ?? 0) + 1 && sp.opening.height >= 2000 && sp.opening.type !== 'window';
+      const openAtCorner = (j: number, atStart: boolean) => {
+        const pa = room.polygon[(j + n) % n];
+        const pb = room.polygon[(j + 1) % n];
+        const l = dist(pa, pb);
+        return openingsOnSegment(floor.openings, pa, pb, t / 2 + 5).some((sp) => passage(sp) && (atStart ? sp.u0 < 2 : sp.u1 > l - 2));
+      };
+      // 点 p に、向き (dx, dz) の壁の本体（開口部でない所）があるか
+      const solidAt = (p: Point, dx: number, dz: number) =>
+        walls.some((w) => {
+          const wl = dist(w.from, w.to);
+          if (Math.abs(((w.to[0] - w.from[0]) * dx + (w.to[1] - w.from[1]) * dz) / wl) < 0.99) return false;
+          const { u, off } = projectOnLine(p, w.from, w.to);
+          if (off > 1 || u < 0 || u > wl) return false;
+          return !openingsOnSegment(floor.openings, w.from, w.to, t / 2 + 1).some((sp) => u > sp.u0 - 1 && u < sp.u1 + 1);
+        });
+      // 角の先（隣の辺の線を角の向こうへ延ばした所）に壁が続いているか。続いていれば、角を埋めた分まで仕上げで覆う
+      const wallBeyond = (k: number, j: number, atEnd: boolean) => {
+        const pa = room.polygon[(j + n) % n];
+        const pb = room.polygon[(j + 1) % n];
+        const l = dist(pa, pb);
+        const d: Point = [(pb[0] - pa[0]) / l, (pb[1] - pa[1]) / l];
+        const c = room.polygon[k % n];
+        const sgn = atEnd ? 1 : -1;
+        return solidAt([c[0] + d[0] * sgn * (t / 2 + 20), c[1] + d[1] * sgn * (t / 2 + 20)], d[0], d[1]);
+      };
+      const e0 = convex(i) ? (openAtCorner(i - 1, false) && wallBeyond(i, i - 1, true) ? t + 1 : t / 2 + 1) : 0;
+      const e1 = convex((i + 1) % n) ? (openAtCorner(i + 1, true) && wallBeyond(i + 1, i + 1, false) ? t + 1 : t / 2 + 1) : 0;
       const a: Point = [finish[i][0] - dir[0] * e0, finish[i][1] - dir[1] * e0];
       const b: Point = [finish[(i + 1) % finish.length][0] + dir[0] * e1, finish[(i + 1) % finish.length][1] + dir[1] * e1];
       const len = len0 + e0 + e1;
@@ -515,10 +847,26 @@ function buildFloor(
       // 頂点の手前で終わる開口部は、その先に構造の壁の切れ端が残るので仕上げも残す（抜くと外壁の面が見える）
       const v0 = e0 > 0 ? 0 : t / 2 + 1;
       const v1 = e1 > 0 ? len : len - t / 2 - 1;
+      // 開口部の端に、直角の壁が突き当たっているとき（その壁の芯が開口部の端）は、角を埋めた構造の壁の厚みの半分まで仕上げを残す
+      const inwardSign = (() => {
+        const m0 = f.at(len / 2, 0, 30);
+        return pointInPolygon([m0.x, m0.z], room.polygon) ? 1 : -1;
+      })();
+      const teeAt = (u: number, side: 1 | -1) => {
+        const c = f.at(u, 0, -inwardSign * (t / 2 + 1));
+        // 開口部と反対の側に、この辺の壁の本体が続いているときだけ（続いていなければ仕上げが宙に飛び出す）
+        if (!solidAt([c.x + f.D.x * side * (t / 2 + 20), c.z + f.D.z * side * (t / 2 + 20)], f.D.x, f.D.z)) return false;
+        return walls.some((w) => {
+          const wd: Point = [w.to[0] - w.from[0], w.to[1] - w.from[1]];
+          const wl = Math.hypot(wd[0], wd[1]);
+          if (Math.abs((wd[0] * f.D.x + wd[1] * f.D.z) / wl) > 0.1) return false;
+          return Math.hypot(w.from[0] - c.x, w.from[1] - c.z) < 3 || Math.hypot(w.to[0] - c.x, w.to[1] - c.z) < 3;
+        });
+      };
       const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5).map((sp) => ({
         ...sp,
-        u0: sp.u0 <= v0 + 3 ? 0 : sp.u0,
-        u1: sp.u1 >= v1 - 3 ? len : sp.u1,
+        u0: sp.u0 <= v0 + 3 ? 0 : teeAt(sp.u0, -1) && passage(sp) ? sp.u0 + t / 2 : sp.u0,
+        u1: sp.u1 >= v1 - 3 ? len : teeAt(sp.u1, 1) && passage(sp) ? sp.u1 - t / 2 : sp.u1,
       }));
       // 部屋の内側の向き（巾木を出す側）
       const m = f.at(len / 2, 0, 30);
@@ -565,14 +913,46 @@ function buildFloor(
         rm.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side, edge } satisfies SurfaceInfo;
         group.add(rm);
       }
+      // 壁の一部だけ別のクロスを貼る所（ゾーン）。辺の上の範囲 [u0, u1]
+      const zoneDefs = (room.zones ?? [])
+        .filter((z) => z.edge === edge)
+        .map((z) => {
+          const p0 = projectOnLine(z.start, a, b).u;
+          const p1 = projectOnLine(z.end, a, b).u;
+          return { z, u0: Math.min(p0, p1), u1: Math.max(p0, p1), mb: new MeshBuilder() };
+        });
       for (const r of finishRects) {
-        mb.quad(f.at(r.u0, r.v0, 0), f.D.clone().multiplyScalar(r.u1 - r.u0), Y.clone().multiplyScalar(r.v1 - r.v0), [r.u0, r.v0], [r.u1 - r.u0, r.v1 - r.v0]);
+        let segs: [number, number][] = [[r.u0, r.u1]];
+        for (const zd of zoneDefs) {
+          const next: [number, number][] = [];
+          for (const [s0, s1] of segs) {
+            const o0 = Math.max(s0, zd.u0);
+            const o1 = Math.min(s1, zd.u1);
+            if (o1 - o0 < 1) {
+              next.push([s0, s1]);
+              continue;
+            }
+            zd.mb.quad(f.at(o0, r.v0, 0), f.D.clone().multiplyScalar(o1 - o0), Y.clone().multiplyScalar(r.v1 - r.v0), [o0, r.v0], [o1 - o0, r.v1 - r.v0]);
+            if (o0 - s0 > 1) next.push([s0, o0]);
+            if (s1 - o1 > 1) next.push([o1, s1]);
+          }
+          segs = next;
+        }
+        for (const [s0, s1] of segs) mb.quad(f.at(s0, r.v0, 0), f.D.clone().multiplyScalar(s1 - s0), Y.clone().multiplyScalar(r.v1 - r.v0), [s0, r.v0], [s1 - s0, r.v1 - r.v0]);
         // 巾木（床に接する所だけ。高さ 60・出 8）
         if (!room.noBaseboard && !room.void && Math.abs(r.v0 - level) < 1) {
           const du = f.D.clone().multiplyScalar(r.u1 - r.u0);
           baseboard.quad(f.at(r.u0, level, inward * BASEBOARD_T), du, Y.clone().multiplyScalar(BASEBOARD_H), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_H]);
           baseboard.quad(f.at(r.u0, level + BASEBOARD_H, 0), du, f.N.clone().multiplyScalar(inward * BASEBOARD_T), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_T]);
         }
+      }
+      for (const zd of zoneDefs) {
+        if (zd.mb.empty) continue;
+        checkMaterial(zd.z.material, `${room.name}の${zd.z.name}`);
+        const zm = new THREE.Mesh(zd.mb.geometry(), getMaterial(zd.z.material, { clip }));
+        zm.receiveShadow = true;
+        zm.userData.info = { kind: 'wall', roomId: room.id, materialId: zd.z.material, side, edge, zone: zd.z.id } satisfies SurfaceInfo;
+        group.add(zm);
       }
       if (mb.empty) continue;
       const mesh = new THREE.Mesh(mb.geometry(), getMaterial(matId, { clip }));
@@ -617,7 +997,7 @@ function buildFloor(
  * 壁の箱。両側の面は mb（外壁の素材）。開口部まわり・壁の切れ目の厚みの面は、真ん中で分けて side(u, ±1) の側の仕上げに入れる。
  * drawStart / drawEnd: 端面を描くか（開口部に面する端・壁の切れ目だけ。壁どうしの角の端面は隣の壁と重なってちらつくので描かない）
  */
-function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = []) {
+function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = [], needSoffit: (u: number, s: 1 | -1, v: number) => boolean = () => false) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -638,11 +1018,12 @@ function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: st
     side(mid, 1, o).quad(f.at(r.u0, r.v1, h), along, nHalfNeg, [r.u0, 0], [du, h]);
     side(mid, -1, o).quad(f.at(r.u0, r.v1, 0), along, nHalfNeg, [r.u0, h], [du, h]);
   }
-  // 天井の高さまである開口部の上の壁の下面は、両側の天井でふさがるので描かない
-  if (r.v0 > bottom && r.v0 < ceiling - 1) {
+  // 天井の高さまである開口部の上の壁の下面は、その側の天井でふさがるので描かない。
+  // ただし天井がない側（階段の吹き抜けなど）や天井がもっと高い側は、描かないと壁の中が見えるので描く
+  if (r.v0 > bottom) {
     const o = openingAt(mid);
-    side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
-    side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
+    if (r.v0 < ceiling - 1 || needSoffit(mid, -1, r.v0)) side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
+    if (r.v0 < ceiling - 1 || needSoffit(mid, 1, r.v0)) side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
   }
   // 端面（開口部の側面・壁の切れ目）。隣の壁の位置（端から 30 内側）で両側の仕上げを調べる
   if (drawStart) {

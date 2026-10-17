@@ -36,7 +36,8 @@ export class PlanStore {
     let text: string;
     if (WEB) {
       // Web 版はビルドに埋め込んだ間取りを使う
-      text = JSON.stringify((await import('../plans/my-house.json')).default);
+      // @ts-expect-error vite.config.ts のプラグインが作る仮のモジュール（Web 版のビルドでだけ中身がある）
+      text = JSON.stringify((await import('virtual:web-plan')).default);
     } else {
       const res = await fetch(`/api/plans/${encodeURIComponent(name)}`);
       if (!res.ok) throw new Error(`${name} を読み込めませんでした (${res.status})`);

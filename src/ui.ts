@@ -5,7 +5,7 @@ import { FURNITURE_TYPES, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
 import { CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
-import type { Furniture, Opening, Plan, Room, Side } from './types';
+import type { Floor, Furniture, Opening, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
 
 export type Selection = { kind: 'furniture'; id: string } | { kind: 'room'; id: string } | null;
@@ -34,7 +34,7 @@ export interface PanelState {
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
   /** ウォークスルーで押したスイッチ（どの回路をつけ消ししたか） */
   pressed: { switchId: string; button: number; circuitId: string | null; on: boolean } | null;
-  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | null;
+  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | { kind: 'cap'; floor: number; capKey: string; materialId: string } | { kind: 'zone'; roomId: string; zoneId: string; materialId: string } | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -58,6 +58,8 @@ export interface PanelActions {
   /** Web 版で別の階のページへ移る */
   openWebFloor(index: number): void;
   updateRoom(id: string, fn: (r: Room) => void): void;
+  /** 階の設定を変える（壁の切れ目の面のクロスなど） */
+  updateFloor(index: number, fn: (f: Floor) => void): void;
   updateOpening(id: string, fn: (o: Opening) => void): void;
   updateFurniture(id: string, fn: (f: Furniture) => void): void;
   addFurniture(type: string): void;
@@ -170,7 +172,7 @@ export class Panel {
     const floors = s.plan.floors;
     const floorSeg =
       floors.length > 1
-        ? seg('floor-view', [...floors.map((f, i): [string, string] => [String(i), f.name]), ['all', '外観']], s.mode === 'walk' ? '' : String(s.floorView))
+        ? seg('floor-view', [...floors.map((f, i): [string, string] => [String(i), f.name]), ['all', '外観']], s.mode === 'walk' ? String(this.walkFloorIndex()) : String(s.floorView))
         : '';
     return `
       <section>
@@ -368,7 +370,16 @@ export class Panel {
     const rooms = this.state.plan.floors.flatMap((f) => f.rooms);
     let title = '';
     let current = '';
-    if (p.kind === 'furniture') {
+    if (p.kind === 'zone') {
+      const r = rooms.find((x) => x.id === p.roomId);
+      const z = r?.zones?.find((x) => x.id === p.zoneId);
+      if (!r || !z) return '';
+      title = `${r.name}・${z.name}`;
+      current = z.material;
+    } else if (p.kind === 'cap') {
+      title = `${this.state.plan.floors[p.floor]?.name ?? ''}・壁の切れ目の面`;
+      current = this.state.plan.floors[p.floor]?.jambs?.[p.capKey] ?? p.materialId;
+    } else if (p.kind === 'furniture') {
       const f = this.state.plan.floors.flatMap((x) => x.furniture).find((x) => x.id === p.furnitureId);
       if (!f) return '';
       title = f.name ?? '壁';
@@ -403,7 +414,7 @@ export class Panel {
         <h2>操作</h2>
         <dl>
           <dt>俯瞰</dt><dd>左ドラッグ: 回転 / 右ドラッグ: 平行移動 / ホイール: ズーム / 床をダブルクリック: その部屋に入る</dd>
-          <dt>ウォークスルー</dt><dd>W A S D・矢印キー: 移動（Shift で速く） / ドラッグ: 見回す（向きは「見回す向きを逆にする」で変えられます） / Esc: 俯瞰に戻る</dd>
+          <dt>ウォークスルー</dt><dd>W A S D: 前・左・後ろ・右へ移動（Shift で速く） / 矢印キー ←→: 向きを変える・↑↓: 見上げる・見下ろす / スペース: 画面の真ん中（＋）をクリックしたのと同じ / ドラッグ: 見回す（向きは「見回す向きを逆にする」で変えられます） / Esc: 俯瞰に戻る</dd>
         </dl>
       </section>`;
   }
@@ -473,7 +484,16 @@ export class Panel {
       const id = t.value;
       // キー操作で歩けるよう、選んだらフォーカスを外す
       t.blur();
-      if (picked.kind === 'furniture') {
+      if (picked.kind === 'zone') {
+        const { zoneId } = picked;
+        a.updateRoom(picked.roomId, (r) => {
+          const z = r.zones?.find((x) => x.id === zoneId);
+          if (z) z.material = id;
+        });
+      } else if (picked.kind === 'cap') {
+        const { floor, capKey } = picked;
+        a.updateFloor(floor, (f) => (f.jambs = { ...(f.jambs ?? {}), [capKey]: id }));
+      } else if (picked.kind === 'furniture') {
         a.updateFurniture(picked.furnitureId, (f) => (f.material = id));
       } else if (picked.kind === 'jamb') {
         a.updateOpening(picked.openingId, (o) => (o.jamb = id));

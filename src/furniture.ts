@@ -1109,6 +1109,15 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const hx = -w / 2 + fr + mainW - 90;
       const leaf: THREE.Object3D[] = [box(mainW - 4, h - fr, d, -w / 2 + fr + mainW / 2, 0, 0, mat)];
       for (const s of [1, -1]) leaf.push(box(24, 1000, 24, hx, 550, s * (d / 2 + 40), black));
+      // ポケット Key（YKK AP のスマートキー）: 外側のハンドルにリクエストボタン、扉に上下 2 つの電気錠のシリンダー
+      const silver = new THREE.MeshStandardMaterial({ color: '#b9bcbf', roughness: 0.3, metalness: 0.8 });
+      leaf.push(box(18, 30, 6, hx, 1080, d / 2 + 54, silver));
+      for (const y of [820, 1180]) {
+        const cyl = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 6, 20), silver);
+        cyl.rotation.x = Math.PI / 2;
+        cyl.position.set(hx - 70, y, d / 2 + 3);
+        leaf.push(cyl);
+      }
       out.push(swingLeaf(leaf, -w / 2 + fr, -Math.PI / 2));
       return out;
     },

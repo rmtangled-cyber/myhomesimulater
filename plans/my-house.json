@@ -253,7 +253,11 @@
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
-          "noLabel": true
+          "noLabel": true,
+          "edges": {
+            "1": "cross-sp2563",
+            "2": "cross-hf3122"
+          }
         },
         {
           "id": "1f-shoes-entry",
@@ -520,7 +524,8 @@
           ],
           "width": 3640,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2540"
         },
         {
           "id": "1f-wic-door",
@@ -545,7 +550,7 @@
           "width": 800,
           "height": 2400,
           "sill": 0,
-          "jamb": "cross-sp2540"
+          "jamb": "cross-sp2563"
         },
         {
           "id": "1f-hall-genkan",
@@ -569,7 +574,8 @@
           "height": 2550,
           "sill": -150,
           "slideRoom": "1f-shoes",
-          "slideTo": "north"
+          "slideTo": "north",
+          "jamb": "cross-hf3122"
         },
         {
           "id": "1f-garage-shutter",
@@ -621,11 +627,12 @@
           "type": "opening",
           "at": [
             1820,
-            3867.5
+            3807.5
           ],
-          "width": 1030,
+          "width": 910,
           "height": 2990,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-hf3122"
         },
         {
           "id": "1f-stairs-hall-north",
@@ -636,7 +643,8 @@
           ],
           "width": 910,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2540"
         },
         {
           "id": "1f-porch-step-open",
@@ -1004,7 +1012,7 @@
         {
           "id": "entry-door-1",
           "type": "entry-door",
-          "name": "玄関ドア（ヴェナート D30 C10 親子・カームブラック）",
+          "name": "玄関ドア（ヴェナート D30 C10 親子・カームブラック・ポケットKey 付き）",
           "x": 3373,
           "y": 5687.5,
           "w": 1235,
@@ -1806,15 +1814,15 @@
         {
           "id": "std-1f-stairs-bracket",
           "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
-          "x": 1830,
-          "y": 2612.5,
+          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
+          "x": 1020,
+          "y": 2957.5,
           "w": 100,
           "d": 100,
           "h": 100,
-          "rotation": 0,
+          "rotation": 270,
           "color": "#1c1c1d",
-          "z": 1950.0,
+          "z": 2140,
           "lumen": 250,
           "beam": 90,
           "kelvin": 3500
@@ -1824,13 +1832,13 @@
           "type": "spot-light",
           "name": "スポットライト 外（DAIKO DOL-4824YB）（標準）",
           "x": 300,
-          "y": 6960.0,
+          "y": 6960,
           "w": 70,
           "d": 150,
           "h": 120,
           "rotation": 0,
           "color": "#1c1c1d",
-          "z": 1840.0,
+          "z": 1840,
           "lumen": 300,
           "beam": 50,
           "kelvin": 2700
@@ -1839,54 +1847,54 @@
           "id": "std-1f-sw-bath",
           "type": "switch",
           "name": "スイッチ 浴室（上: 照明／下: 換気乾燥暖房機）（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 1000,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 2
         },
         {
           "id": "std-1f-sw-wash",
           "type": "switch",
           "name": "スイッチ 洗面脱衣室（標準は入口の南＝戸袋の所なので、北の 200 の壁へ移動）（標準）",
-          "x": 3576.0,
+          "x": 3576,
           "y": 810,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-1f-sw-wic",
           "type": "switch",
           "name": "スイッチ WIC（標準）",
           "x": 4800,
-          "y": 1301.0,
+          "y": 1301,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-1f-sw-stairs",
           "type": "switch",
           "name": "スイッチ 階段（3 路・2 階の階段を上がった所と連動）（標準）",
-          "x": 974.0,
+          "x": 974,
           "y": 3300,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-1f-sw-hall-a",
@@ -1899,7 +1907,7 @@
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 3
         },
         {
@@ -1913,7 +1921,7 @@
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 2
         },
         {
@@ -1927,60 +1935,60 @@
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1290.0
+          "z": 1290
         },
         {
           "id": "std-1f-out-wash",
           "type": "outlet",
           "name": "コンセント 洗面脱衣室 2 口（標準）",
-          "x": 3576.0,
+          "x": 3576,
           "y": 810,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 990.0
+          "z": 990
         },
         {
           "id": "std-1f-out-wic",
           "type": "outlet",
           "name": "コンセント WIC 2 口（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 1100,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-1f-out-heatex",
           "type": "outlet",
           "name": "コンセント 熱交換器用（標準）",
           "x": 4900,
-          "y": 64.0,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 2140.0,
+          "z": 2140,
           "count": 1
         },
         {
           "id": "std-1f-out-shoes",
           "type": "outlet",
           "name": "コンセント シューズクローク 2 口（標準）",
-          "x": 1756.0,
+          "x": 1756,
           "y": 6100,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 40.0
+          "z": 40
         },
         {
           "id": "std-1f-out-smartdoor",
@@ -1993,48 +2001,48 @@
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1940.0,
+          "z": 1940,
           "count": 1
         },
         {
           "id": "std-1f-out-wp",
           "type": "outlet",
           "name": "防水コンセント 外（Panasonic WK4602BK）（標準）",
-          "x": -80.0,
+          "x": -80,
           "y": 6550,
           "w": 90,
           "d": 40,
           "h": 130,
           "rotation": 90,
           "color": "#1e1e1f",
-          "z": -365.0
+          "z": -365
         },
         {
           "id": "std-1f-out-ecocute",
           "type": "outlet",
           "name": "コンセント エコキュート用 200V（外）（標準）",
-          "x": -64.0,
+          "x": -64,
           "y": 2400,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": -360.0,
+          "z": -360,
           "count": 1
         },
         {
           "id": "std-1f-bath-remote",
           "type": "remote-panel",
           "name": "給湯器のリモコン（浴室）（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 1100,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1040.0
+          "z": 1040
         },
         {
           "id": "std-1f-bath-heater",
@@ -2061,8 +2069,26 @@
           "rotation": 0,
           "color": "#f2f2f0",
           "z": 1650
+        },
+        {
+          "id": "bracket-1",
+          "type": "bracket-light",
+          "name": "ブラケットライト（玄関・アートの壁の上の黒い傘。階段の 2 階の 2 台目の代わり）",
+          "x": 2030,
+          "y": 4695,
+          "w": 200,
+          "d": 300,
+          "h": 300,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 1850
         }
-      ]
+      ],
+      "jambs": {
+        "1790,4400": "cross-hf3122",
+        "1790,4240": "cross-hf3122",
+        "830,3380": "cross-hf3122"
+      }
     },
     {
       "id": "2f",
@@ -2126,7 +2152,12 @@
           ],
           "floor": "floor-lassissa-greigeelm",
           "wall": "cross-white",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "edges": {
+            "0": "cross-sp2540",
+            "1": "cross-sp2540",
+            "2": "cross-sp2540"
+          }
         },
         {
           "id": "2f-storage-n",
@@ -2308,7 +2339,23 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "zones": [
+            {
+              "id": "kitchen-back-accent",
+              "name": "キッチン背面（下がり天井の範囲）",
+              "edge": 1,
+              "start": [
+                8190,
+                2569
+              ],
+              "end": [
+                8190,
+                6211
+              ],
+              "material": "cross-fe76661"
+            }
+          ]
         }
       ],
       "openings": [
@@ -2332,7 +2379,8 @@
           ],
           "width": 650,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2540"
         },
         {
           "id": "2f-storage-n-opening",
@@ -2768,7 +2816,7 @@
           "d": 36,
           "h": 2380,
           "rotation": 90,
-          "color": "#1f1f20",
+          "color": "#cfccc5",
           "flip": true,
           "swing": -1
         },
@@ -2782,7 +2830,7 @@
           "d": 36,
           "h": 2400,
           "rotation": 90,
-          "color": "#efeeea",
+          "color": "#cfccc5",
           "pocket": true
         },
         {
@@ -3285,31 +3333,15 @@
         {
           "id": "std-2f-stairs-bracket-1",
           "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
-          "x": 1900,
-          "y": 2612.5,
+          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
+          "x": 1020,
+          "y": 2957.5,
           "w": 100,
           "d": 100,
           "h": 100,
-          "rotation": 0,
+          "rotation": 270,
           "color": "#1c1c1d",
-          "z": 1950.0,
-          "lumen": 250,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-stairs-bracket-2",
-          "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
-          "x": 3500,
-          "y": 2612.5,
-          "w": 100,
-          "d": 100,
-          "h": 100,
-          "rotation": 0,
-          "color": "#1c1c1d",
-          "z": 1950.0,
+          "z": 2040,
           "lumen": 250,
           "beam": 90,
           "kelvin": 3500
@@ -3318,27 +3350,27 @@
           "id": "std-2f-sw-bed",
           "type": "switch",
           "name": "スイッチ 寝室（標準）",
-          "x": 3576.0,
+          "x": 3576,
           "y": 1500,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-2f-sw-wic",
           "type": "switch",
           "name": "スイッチ WIC（標準）",
-          "x": 3704.0,
+          "x": 3704,
           "y": 1450,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-2f-sw-kitchen",
@@ -3351,7 +3383,7 @@
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 3
         },
         {
@@ -3365,48 +3397,48 @@
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 2
         },
         {
           "id": "std-2f-sw-toilet",
           "type": "switch",
           "name": "スイッチ トイレの横（上から: トイレ／階段 3 路（3 階と連動）／リビング 3 路）（標準）",
-          "x": 974.0,
+          "x": 974,
           "y": 3455,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 3
         },
         {
           "id": "std-2f-sw-storsw",
           "type": "switch",
           "name": "スイッチ 納戸（標準）",
-          "x": 1756.0,
+          "x": 1756,
           "y": 4600,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-2f-intercom",
           "type": "remote-panel",
           "name": "インターホン 親機（Panasonic VL-SE26XL）（標準）",
           "x": 6050,
-          "y": 1665.0,
+          "y": 1665,
           "w": 180,
           "d": 25,
           "h": 130,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1335.0
+          "z": 1335
         },
         {
           "id": "std-2f-kyuto-remote",
@@ -3419,7 +3451,7 @@
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1340.0
+          "z": 1340
         },
         {
           "id": "std-2f-heatex-remote",
@@ -3432,7 +3464,7 @@
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1340.0
+          "z": 1340
         },
         {
           "id": "std-2f-out-kitchen-n",
@@ -3445,7 +3477,7 @@
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-fridge",
@@ -3458,203 +3490,229 @@
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1790.0
+          "z": 1790
         },
         {
           "id": "std-2f-out-stor-n",
           "type": "outlet",
           "name": "コンセント 納戸 2 口（標準）",
           "x": 7900,
-          "y": 64.0,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-wic",
           "type": "outlet",
           "name": "コンセント WIC 2 口（標準）",
           "x": 5000,
-          "y": 64.0,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-bed-ne",
           "type": "outlet",
           "name": "コンセント 寝室 2 口（標準）",
           "x": 3300,
-          "y": 64.0,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-bed-1",
           "type": "outlet",
           "name": "コンセント 寝室 2 口（標準は北の壁 → 枕元（ヘッドボードの上・北）へ移動）（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 200,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 990.0
+          "z": 990
         },
         {
           "id": "std-2f-out-bed-2",
           "type": "outlet",
           "name": "コンセント 寝室 2 口・テレビ端子（標準は西の壁の南 → ヘッドボードと重なるので枕元（南）へ移動）（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 2300,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 990.0
+          "z": 990
         },
         {
           "id": "std-2f-out-bed-ac",
           "type": "outlet",
           "name": "コンセント エアコン用（寝室・専用）（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 950,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1840.0,
+          "z": 1840,
           "count": 1
         },
         {
           "id": "std-2f-out-toilet",
           "type": "outlet",
           "name": "コンセント トイレ 2 口・アース付（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 2800,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-kitchen-ne",
           "type": "outlet",
           "name": "コンセント 2 口（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 2150,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-mw-1",
           "type": "outlet",
           "name": "コンセント キッチン 専用 2 口・アース付（電子レンジなど）（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 5033,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-2f-out-mw-2",
           "type": "outlet",
           "name": "コンセント キッチン 専用 2 口・アース付（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 5910,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-2f-out-tv",
           "type": "outlet",
           "name": "コンセント テレビ端子付き（リビング）（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 5292,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-lan",
           "type": "outlet",
           "name": "コンセント LAN（空配管）付き（リビング）（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 5636,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-ldk-sw",
           "type": "outlet",
           "name": "コンセント リビング 2 口（標準）",
           "x": 2050,
-          "y": 7216.0,
+          "y": 7216,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-ldk-se",
           "type": "outlet",
           "name": "コンセント ダイニング 2 口（標準）",
           "x": 7176,
-          "y": 7216.0,
+          "y": 7216,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-2f-out-storsw",
           "type": "outlet",
           "name": "コンセント 納戸 2 口（標準）",
-          "x": 64.0,
+          "x": 64,
           "y": 6380,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
+        },
+        {
+          "id": "2f-wic-upper-shelf",
+          "type": "box",
+          "name": "枕棚（WIC・北の壁）",
+          "x": 4436.25,
+          "y": 235,
+          "w": 1472.5,
+          "d": 350,
+          "h": 20,
+          "rotation": 0,
+          "color": "#4a4b4d",
+          "z": 2050
+        },
+        {
+          "id": "2f-wic-pipe",
+          "type": "box",
+          "name": "ハンガーパイプ（WIC・北の壁）",
+          "x": 4436.25,
+          "y": 300,
+          "w": 1452.5,
+          "d": 25,
+          "h": 25,
+          "rotation": 0,
+          "color": "#b8b8b8",
+          "z": 1980
         }
       ]
     },
@@ -3740,7 +3798,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-hf3122",
-          "ceiling": "cross-sp2541",
+          "ceiling": "cross-hf3122",
           "void": true,
           "ceilingHeight": 2500
         },
@@ -3775,7 +3833,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541"
+          "ceiling": "cross-hf3122"
         },
         {
           "id": "3f-room1",
@@ -3856,9 +3914,15 @@
               5460
             ]
           ],
-          "floor": "floor-lassissa-sandblack",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541"
+          "ceiling": "cross-sp2539",
+          "edges": {
+            "0": "cross-sp2539",
+            "1": "cross-sp2539",
+            "2": "cross-sp2539",
+            "4": "cross-sp2539"
+          }
         },
         {
           "id": "3f-closet",
@@ -3881,9 +3945,13 @@
               7280
             ]
           ],
-          "floor": "floor-lassissa-sandblack",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541"
+          "ceiling": "cross-sp2539",
+          "edges": {
+            "2": "cross-sp2539",
+            "3": "cross-sp2539"
+          }
         }
       ],
       "openings": [
@@ -3907,7 +3975,8 @@
           ],
           "width": 910,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-hf3122"
         },
         {
           "id": "3f-room1-door",
@@ -3951,7 +4020,8 @@
           ],
           "width": 1600,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jamb": "cross-sp2539"
         },
         {
           "id": "3f-north-window",
@@ -4016,7 +4086,7 @@
             2047.5
           ],
           "width": 1940,
-          "height": 2400,
+          "height": 2100,
           "sill": 0
         }
       ],
@@ -4129,7 +4199,7 @@
           "d": 36,
           "h": 1970,
           "rotation": 90,
-          "color": "#efeeea",
+          "color": "#cfccc5",
           "flip": true,
           "swing": -1
         },
@@ -4143,19 +4213,20 @@
           "d": 36,
           "h": 2380,
           "rotation": 90,
-          "color": "#efeeea"
+          "color": "#cfccc5"
         },
         {
           "id": "3f-room2-door-leaf",
           "type": "swing-door",
-          "name": "書斎（北東）の開き戸（北の吊元・室内へ開く）",
+          "name": "書斎（北東）の開き戸（南の吊元・室内へ開く）",
           "x": 5460,
           "y": 3850,
           "w": 720,
           "d": 36,
           "h": 2380,
           "rotation": 90,
-          "color": "#efeeea",
+          "color": "#cfccc5",
+          "flip": true,
           "swing": -1
         },
         {
@@ -4168,7 +4239,7 @@
           "d": 36,
           "h": 2380,
           "rotation": 0,
-          "color": "#efeeea"
+          "color": "#cfccc5"
         },
         {
           "id": "toilet3-paper",
@@ -4317,15 +4388,15 @@
         {
           "id": "std-3f-stairs-bracket",
           "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A）（標準）",
-          "x": 3500,
+          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
+          "x": 4300,
           "y": 2612.5,
           "w": 100,
           "d": 100,
           "h": 100,
           "rotation": 0,
           "color": "#1c1c1d",
-          "z": 1950.0,
+          "z": 1445,
           "lumen": 250,
           "beam": 90,
           "kelvin": 3500
@@ -4334,27 +4405,27 @@
           "id": "std-3f-sw-toilet",
           "type": "switch",
           "name": "スイッチ トイレ（標準）",
-          "x": 3704.0,
+          "x": 3704,
           "y": 2400,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-3f-sw-room2",
           "type": "switch",
           "name": "スイッチ 書斎（北東）（標準）",
-          "x": 5524.0,
+          "x": 5524,
           "y": 3300,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-3f-sw-hall",
@@ -4367,73 +4438,73 @@
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 1140.0,
+          "z": 1140,
           "count": 2
         },
         {
           "id": "std-3f-sw-room1",
           "type": "switch",
           "name": "スイッチ 書斎（南西）（標準）",
-          "x": 4486.0,
+          "x": 4486,
           "y": 4400,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-3f-sw-room3",
           "type": "switch",
           "name": "スイッチ 洋室3（標準）",
           "x": 5550,
-          "y": 4614.0,
+          "y": 4614,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1140.0
+          "z": 1140
         },
         {
           "id": "std-3f-out-toilet",
           "type": "outlet",
           "name": "コンセント トイレ 2 口・アース付（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 1750,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room2",
           "type": "outlet",
           "name": "コンセント 書斎（北東）2 口（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 2400,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room2-ac",
           "type": "outlet",
           "name": "コンセント エアコン用（書斎（北東）・専用）（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 2550,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1840.0,
+          "z": 1840,
           "count": 1
         },
         {
@@ -4441,79 +4512,79 @@
           "type": "outlet",
           "name": "コンセント 書斎（北東）2 口・テレビ端子（標準）",
           "x": 7622,
-          "y": 4486.0,
+          "y": 4486,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room1",
           "type": "outlet",
           "name": "コンセント 書斎（南西）2 口（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 4171,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room1-ac",
           "type": "outlet",
           "name": "コンセント エアコン用（書斎（南西）・専用）（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 4400,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1840.0,
+          "z": 1840,
           "count": 1
         },
         {
           "id": "std-3f-out-room1-tv",
           "type": "outlet",
           "name": "コンセント 書斎（南西）2 口・テレビ端子（標準）",
-          "x": 1884.0,
+          "x": 1884,
           "y": 6714,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room3",
           "type": "outlet",
           "name": "コンセント 洋室3 2 口（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 5623,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
         },
         {
           "id": "std-3f-out-room3-ac",
           "type": "outlet",
           "name": "コンセント エアコン用（洋室3・専用）（標準）",
-          "x": 8126.0,
+          "x": 8126,
           "y": 4700,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1840.0,
+          "z": 1840,
           "count": 1
         },
         {
@@ -4521,15 +4592,44 @@
           "type": "outlet",
           "name": "コンセント 洋室3 2 口・テレビ端子（標準）",
           "x": 7615,
-          "y": 7216.0,
+          "y": 7216,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
           "color": "#f7f7f5",
-          "z": 190.0
+          "z": 190
+        },
+        {
+          "id": "3f-closet-upper-shelf",
+          "type": "box",
+          "name": "枕棚（子供部屋の収納・西の壁）",
+          "x": 4785,
+          "y": 6370,
+          "w": 1700,
+          "d": 350,
+          "h": 20,
+          "rotation": 90,
+          "color": "#4a4b4d",
+          "z": 2050
+        },
+        {
+          "id": "3f-closet-pipe",
+          "type": "box",
+          "name": "ハンガーパイプ（子供部屋の収納・西の壁）",
+          "x": 4850,
+          "y": 6370,
+          "w": 1680,
+          "d": 25,
+          "h": 25,
+          "rotation": 90,
+          "color": "#b8b8b8",
+          "z": 1980
         }
-      ]
+      ],
+      "jambs": {
+        "4520,2420": "cross-hf3122"
+      }
     }
   ],
   "circuits": [
@@ -4588,8 +4688,7 @@
       "id": "c-stairs-1f-2f",
       "name": "階段の照明（1 階〜2 階）",
       "lights": [
-        "std-1f-stairs-bracket",
-        "std-2f-stairs-bracket-2"
+        "std-1f-stairs-bracket"
       ],
       "switches": [
         {
@@ -4630,11 +4729,12 @@
     },
     {
       "id": "c-1f-hall",
-      "name": "ホールの照明",
+      "name": "ホールと玄関（アートの壁）の照明",
       "lights": [
         "std-1f-hall-dl-1",
         "std-1f-hall-dl-2",
-        "std-1f-hall-dl-3"
+        "std-1f-hall-dl-3",
+        "bracket-1"
       ],
       "switches": [
         {
@@ -4864,6 +4964,123 @@
           "id": "std-3f-sw-room3",
           "button": 0
         }
+      ]
+    }
+  ],
+  "foundationHeight": 400,
+  "roofs": [
+    {
+      "id": "roof-3f",
+      "floor": 2,
+      "polygon": [
+        [
+          1820,
+          1592.5
+        ],
+        [
+          8190,
+          1592.5
+        ],
+        [
+          8190,
+          7280
+        ],
+        [
+          1820,
+          7280
+        ]
+      ],
+      "low": "north",
+      "slope": 0.05,
+      "eave": 150,
+      "thickness": 130,
+      "material": "roof-kiwami-jetblack",
+      "downpipes": [
+        [
+          8100,
+          1497.5
+        ]
+      ],
+      "solar": {
+        "name": "MODULUS 470W（1134×1762×35）",
+        "size": [
+          1134,
+          1762,
+          35
+        ],
+        "cols": 5,
+        "rows": 3,
+        "gap": 20
+      }
+    },
+    {
+      "id": "roof-2f-north",
+      "floor": 1,
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          8190,
+          0
+        ],
+        [
+          8190,
+          1592.5
+        ],
+        [
+          0,
+          1592.5
+        ]
+      ],
+      "low": "north",
+      "slope": 0.05,
+      "eave": 150,
+      "thickness": 130,
+      "material": "roof-kiwami-jetblack",
+      "downpipes": [
+        [
+          90,
+          -95
+        ],
+        [
+          8100,
+          -95
+        ]
+      ]
+    },
+    {
+      "id": "roof-2f-west",
+      "floor": 1,
+      "polygon": [
+        [
+          0,
+          1592.5
+        ],
+        [
+          1820,
+          1592.5
+        ],
+        [
+          1820,
+          6825
+        ],
+        [
+          0,
+          6825
+        ]
+      ],
+      "low": "west",
+      "slope": 0.05,
+      "eave": 150,
+      "thickness": 130,
+      "material": "roof-kiwami-jetblack",
+      "downpipes": [
+        [
+          -95,
+          6735
+        ]
       ]
     }
   ]

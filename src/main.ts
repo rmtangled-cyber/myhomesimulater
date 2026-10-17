@@ -101,12 +101,16 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
   // ウォークスルーで壁・天井をクリックしたら、パネルに「クロスを試す」を出す
   onPickSurface: (target) => {
     ui.picked =
-      target?.kind === 'wall'
+      target?.kind === 'wall' && target.zone
+        ? { kind: 'zone', roomId: target.roomId, zoneId: target.zone, materialId: target.materialId }
+        : target?.kind === 'wall'
         ? { kind: 'wall', roomId: target.roomId, edge: target.edge, side: target.side, materialId: target.materialId }
         : target?.kind === 'ceiling' || target?.kind === 'floor'
           ? { kind: target.kind, roomId: target.roomId }
           : target?.kind === 'jamb' && target.openingId
             ? { kind: 'jamb', openingId: target.openingId, materialId: target.materialId ?? '' }
+            : target?.kind === 'jamb' && target.capKey !== undefined && target.floor !== undefined
+              ? { kind: 'cap', floor: target.floor, capKey: target.capKey, materialId: target.materialId ?? '' }
             : target?.kind === 'furniture' && isWallBox(target.furnitureId)
               ? { kind: 'furniture', furnitureId: target.furnitureId }
               : null;
@@ -125,6 +129,17 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
 });
 
 function setFloorView(view: number | 'all') {
+  // ウォークスルー中に階を選んだら、ウォークスルーのまま、その階の決まった部屋へ移る（外観は俯瞰に戻る）
+  if (ui.mode === 'walk' && view !== 'all') {
+    const rooms = store.plan.floors[view]?.rooms ?? [];
+    const start = rooms.find((r) => r.id === WEB_START_ROOMS[view]) ?? rooms.find((r) => !r.void);
+    if (start) {
+      ui.floor = view;
+      viewer.walkInto(start.id);
+      render();
+      return;
+    }
+  }
   ui.floorView = view;
   if (view !== 'all') ui.floor = view;
   viewer.setFloorView(view);
@@ -203,6 +218,11 @@ const panel = new Panel(document.getElementById('panel')!, {
     store.edit((p) => {
       const r = findRoom(p, id)?.room;
       if (r) fn(r);
+    }),
+  updateFloor: (index, fn) =>
+    store.edit((p) => {
+      const f = p.floors[index];
+      if (f) fn(f);
     }),
   updateOpening: (id, fn) =>
     store.edit((p) => {

@@ -109,6 +109,28 @@ function woven(base: string, tileMm: number) {
   };
 }
 
+/** 金属の縦葺き屋根（立平葺き）。屋根の流れの向き（テクスチャの縦）に pitch ごとのハゼ（細い立ち上がり） */
+function standingSeam(base: string, pitch: number, tileMm: [number, number]) {
+  const c = rgb(base);
+  return (w: number, h: number, rand: Rand): Generated => {
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 600), octaves: 3 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    const px = (w / tileMm[0]) * pitch;
+    const seam = Math.max(2, (w / tileMm[0]) * 18);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const dx = Math.abs(((x + px / 2) % px) - px / 2);
+        const ridge = dx < seam ? 1 - dx / seam : 0;
+        height[i] = ridge;
+        put(color.data, i, c, 1 + (m[i] - 0.5) * 0.06 + ridge * 0.35);
+      }
+    }
+    return { color, height };
+  };
+}
+
 /** 石目・コンクリート調。大きなムラ、細かい粒、小さな気泡 */
 function stone(base: string, tileMm: number, opts: { contrast?: number; pores?: number; tint?: string } = {}) {
   const c = rgb(base);
@@ -528,7 +550,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-sp2539', 'SP2539 石目調ホワイト', stone('#dcdbd7', 900, { contrast: 0.04, pores: 14, tint: '#d4d3cf' }), [900, 900], 0.92, 1.1),
   wall('cross-sp2541', 'SP2541 石目調グレー', stone('#b1b0ac', 900, { contrast: 0.06, pores: 14, tint: '#a9a8a4' }), [900, 900], 0.92, 1.1),
   // SP2563 は目地のない、細かい粒が散ったコンクリート柄（リピート 32×46cm）
-  wall('cross-sp2563', 'SP2563 コンクリート柄（淡色）', stone('#c3bdb4', 920, { contrast: 0.09, pores: 60, tint: '#b8b1a7' }), [920, 920], 0.9, 1.3),
+  // 商品名は「コンクリート調 ライトグレー」。茶色みのない明るいグレー（SP2565 の色違い）
+  wall('cross-sp2563', 'SP2563 コンクリート調ライトグレー', stone('#c5c5c2', 920, { contrast: 0.09, pores: 60, tint: '#bbbbb8' }), [920, 920], 0.9, 1.3),
   wall('cross-sp2562', 'SP2562 織物調ダークグレージュ', woven('#5f5b58', 450), [450, 450], 0.7, 0.9),
   wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', stone('#78787a', 920, { contrast: 0.14, pores: 4, tint: '#6e6f72' }), [920, 640], 0.85, 1.3),
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', stone('#cacccc', 920, { contrast: 0.03, pores: 6, tint: '#c4c6c6' }), [920, 640], 0.8, 1),
@@ -573,6 +596,9 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ニチハ。色は施工写真に合わせた
   { id: 'exterior-charmrock', name: 'ニチハ モエンエクセラード60 シャルムロック プレミアム', categories: ['exterior'], tile: [1820, 910], roughness: 0.85, bump: 3, draw: siding('#58595d', 455, [1820, 910], { rough: 0.3 }) },
   { id: 'exterior-ekg103fk', name: 'ニチハ EKG103FK エピMGライトグレーV', categories: ['exterior'], tile: [1820, 910], roughness: 0.85, bump: 2, draw: tiles('#b9bbbb', '#a4a6a6', 2, 2, [1820, 910], { mottle: 0.1, variation: 0.08, groutMm: 6 }) },
+  // JFE 鋼板 極み-MAX（ガルバリウム鋼板の縦葺き）ジェットブラック。ハゼの間隔 約 455
+  { id: 'roof-kiwami-jetblack', name: 'JFE鋼板 極み-MAX ジェットブラック（屋根）', categories: ['exterior'], tile: [910, 910], roughness: 0.45, bump: 1.5, draw: standingSeam('#1d1e20', 455, [910, 910]) },
+  { id: 'foundation-concrete', name: '基礎（コンクリート・刷毛引き）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 1.5, draw: stone('#9b9b97', 1200, { contrast: 0.06, pores: 10 }) },
   { id: 'exterior-lightgray', name: '外壁（ライトグレー）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.85, bump: 1, draw: stone('#b6b9b9', 1200, { contrast: 0.04, pores: 3 }) },
   { id: 'exterior-plaster-beige', name: '塗り壁（ベージュ）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 2.5, draw: stone('#ddd2bd', 1200, { contrast: 0.06, pores: 4 }) },
 ];
