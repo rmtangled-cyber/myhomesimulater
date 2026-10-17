@@ -499,7 +499,11 @@ const FLOOR_TILE: [number, number] = [1820, 900];
 /** ウォークスルーで試せる候補の床（ラシッサ Dフロア耐水UDわん） */
 export const CANDIDATE_FLOORS = ['floor-lassissa-mortar', 'floor-lassissa-marblewhite', 'floor-lassissa-lightgray', 'floor-lassissa-sandblack', 'floor-lassissa-greigeelm'];
 
-export const CANDIDATE_WALLPAPERS = ['cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th32208', 'cross-th34282', 'cross-th34283', 'cross-fe76661', 'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650'];
+// 品番のアルファベット順（FE → HF → SP → TH）に並べて出す
+export const CANDIDATE_WALLPAPERS = [
+  'cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th32208', 'cross-th34282', 'cross-th34283', 'cross-fe76661',
+  'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650', 'cross-fe76649',
+].sort();
 
 export const BUILTIN_MATERIALS: MaterialDef[] = [
   // ---- 床 ----
@@ -569,6 +573,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ネイビーグレー）', stone('#3a3e48', 920, { contrast: 0.12, pores: 6, tint: '#33373f' }), [920, 641], 0.5, 0.8),
   wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', concretePanels('#a09e99', [930, 1250], [465, 625], { toneVar: 0.12 }), [930, 1250], 0.85, 1.2),
   // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）
+  // FE76650 の色違い（サンゲツ FINE コンクリート・ストーン）。販売店では「ライトグレー」。型枠跡の四角い目地は FE76650 と同じ
+  wall('cross-fe76649', 'FE76649 コンクリート調（30cm 角の型枠跡・ライトグレー）', concretePanels('#b5b5b2', [900, 900], [300, 300], { holes: false, toneVar: 0.1 }), [900, 900], 0.85, 1.2),
   wall('cross-fe76650', 'FE76650 コンクリート調（30cm 角の型枠跡・ダークグレー）', concretePanels('#6b6b69', [900, 900], [300, 300], { holes: false, toneVar: 0.14 }), [900, 900], 0.85, 1.2),
   wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
   wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),

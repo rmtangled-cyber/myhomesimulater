@@ -3858,7 +3858,13 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541"
+          "ceiling": "cross-fe76649",
+          "edges": {
+            "0": "cross-fe76649",
+            "1": "cross-fe76649",
+            "2": "cross-fe76649",
+            "3": "cross-fe76649"
+          }
         },
         {
           "id": "3f-room2",
