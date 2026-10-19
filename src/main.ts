@@ -90,6 +90,13 @@ function onWalkInfo(info: WalkInfo | null) {
   }
 }
 
+/** 色を試せる室内ドア（開き戸・引き戸・ミラーシートの戸。全面ミラーの戸は除く） */
+const TRY_DOOR_TYPES = ['swing-door', 'sliding-door', 'mirror-sheet-door', 'bifold-door', 'fire-roll-screen', 'roll-screen', 'vertical-blind'];
+function isTryDoor(id: string): boolean {
+  const f = findFurniture(store.plan, id)?.item;
+  return !!f && TRY_DOOR_TYPES.includes(f.type);
+}
+
 /** クロスを貼った箱（ふかし壁・折り上げの立ち上がりなど）。壁と同じくクリックでクロスを張り替えられる */
 function isWallBox(id: string): boolean {
   const f = findFurniture(store.plan, id)?.item;
@@ -111,6 +118,8 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
             ? { kind: 'jamb', openingId: target.openingId, materialId: target.materialId ?? '' }
             : target?.kind === 'jamb' && target.capKey !== undefined && target.floor !== undefined
               ? { kind: 'cap', floor: target.floor, capKey: target.capKey, materialId: target.materialId ?? '' }
+            : target?.kind === 'furniture' && isTryDoor(target.furnitureId)
+              ? { kind: 'door', furnitureId: target.furnitureId }
             : target?.kind === 'furniture' && isWallBox(target.furnitureId)
               ? { kind: 'furniture', furnitureId: target.furnitureId }
               : null;

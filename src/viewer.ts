@@ -27,13 +27,24 @@ export interface WalkInfo {
 
 /** 開け閉めできる扉の状態（家具の部品の userData.door） */
 interface DoorState {
-  type: 'slide' | 'swing';
+  /** fold = 折れ戸（吊元の側の板が angle、先の板（userData.foldInner の子）が逆へ 2 倍回って、先の端がレールの上を滑る） */
+  type: 'slide' | 'swing' | 'fold' | 'roll';
   /** 0 = 閉、1 = 開 */
   t: number;
   open?: boolean;
   dx?: number;
   x0?: number;
+  /** 引出し: 前（家具の正面の向き）へ出す長さ */
+  dz?: number;
+  z0?: number;
+  /** 上下に動く物（ロールスクリーンの下のバー）: 下へ動く長さ */
+  dy?: number;
+  y0?: number;
+  /** roll = ロールスクリーンの生地。巻き上げたときの縦の倍率（開 = 下ろした状態で 1） */
+  roll?: number;
   angle?: number;
+  /** クリックした扉・引出しだけを動かす（冷蔵庫・キッチンの引出しなど）。なければ家具の扉をまとめて動かす */
+  part?: boolean;
 }
 
 export interface ViewerEvents {
@@ -626,7 +637,12 @@ export class Viewer {
     }
     // 扉（引き戸・開き戸・収納の扉）なら開け閉めする
     const g = target?.kind === 'furniture' ? this.built.furniture.get(target.furnitureId) : undefined;
-    if (g && this.toggleDoors(g)) return;
+    // 扉なら開け閉めし、パネルに「ドアを試す」を出す
+    if (g && this.togglePartAt(ndc, g)) return;
+    if (g && this.toggleDoors(g)) {
+      this.events.onPickSurface(target);
+      return;
+    }
     this.events.onPickSurface(target);
   }
 
@@ -662,12 +678,26 @@ export class Viewer {
     else this.keys.delete(code);
   }
 
+  /** クリックした所の扉・引出し（part の物）だけを開け閉めする。なければ false */
+  private togglePartAt(ndc: THREE.Vector2, g: THREE.Object3D): boolean {
+    this.raycaster.setFromCamera(ndc, this.camera);
+    const hit = this.raycaster.intersectObject(g, true)[0];
+    let o: THREE.Object3D | null = hit?.object ?? null;
+    while (o && o !== g && !o.userData.door) o = o.parent;
+    const d = o?.userData.door as DoorState | undefined;
+    if (!o || !d?.part) return false;
+    d.open = !d.open;
+    this.movingDoors.add(o);
+    return true;
+  }
+
   /** 家具の中の扉をすべて開け閉めする。扉がなければ false */
   private toggleDoors(g: THREE.Object3D): boolean {
     let found = false;
     g.traverse((o) => {
       const d = o.userData.door as DoorState | undefined;
-      if (!d) return;
+      // 1 つずつ開ける扉・引出し（part）は、クリックした物だけを動かす（本体をクリックしても全部は開けない）
+      if (!d || d.part) return;
       found = true;
       d.open = !d.open;
       this.movingDoors.add(o);
@@ -682,8 +712,12 @@ export class Viewer {
       const goal = d.open ? 1 : 0;
       d.t += Math.sign(goal - d.t) * Math.min(Math.abs(goal - d.t), dt * 2.5);
       const e = d.t * d.t * (3 - 2 * d.t);
-      if (d.type === 'slide') o.position.x = (d.x0 ?? 0) + (d.dx ?? 0) * e;
+      if (d.type === 'roll') o.scale.y = (d.roll ?? 0.02) + (1 - (d.roll ?? 0.02)) * e;
+      else if (d.type === 'slide' && d.dy !== undefined) o.position.y = (d.y0 ?? 0) + d.dy * e;
+      else if (d.type === 'slide' && d.dz !== undefined) o.position.z = (d.z0 ?? 0) + d.dz * e;
+      else if (d.type === 'slide') o.position.x = (d.x0 ?? 0) + (d.dx ?? 0) * e;
       else o.rotation.y = (d.angle ?? 0) * e;
+      if (d.type === 'fold') for (const c of o.children) if (c.userData.foldInner) c.rotation.y = -2 * (d.angle ?? 0) * e;
       if (d.t === goal) this.movingDoors.delete(o);
     }
   }

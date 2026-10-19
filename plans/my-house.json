@@ -2,6 +2,7 @@
   "name": "我が家（木造3階建て）",
   "grid": 910,
   "wallThickness": 120,
+  "claddingThickness": 43,
   "exterior": "exterior-ekg103fk",
   "groundLevel": -560,
   "floors": [
@@ -118,7 +119,10 @@
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
-          "ceilingHeight": 2500
+          "ceilingHeight": 2500,
+          "edges": {
+            "2": "cross-hf3122"
+          }
         },
         {
           "id": "1f-powder",
@@ -255,7 +259,7 @@
           "ceiling": "cross-sp2540",
           "noLabel": true,
           "edges": {
-            "1": "cross-sp2563",
+            "1": "cross-hf3122",
             "2": "cross-hf3122"
           }
         },
@@ -550,7 +554,7 @@
           "width": 800,
           "height": 2400,
           "sill": 0,
-          "jamb": "cross-sp2563"
+          "jamb": "cross-hf3122"
         },
         {
           "id": "1f-hall-genkan",
@@ -575,7 +579,8 @@
           "sill": -150,
           "slideRoom": "1f-shoes",
           "slideTo": "north",
-          "jamb": "cross-hf3122"
+          "jamb": "cross-hf3122",
+          "slideDepth": 50
         },
         {
           "id": "1f-garage-shutter",
@@ -609,18 +614,6 @@
           "width": 1017,
           "height": 3000,
           "sill": -560
-        },
-        {
-          "id": "1f-porch-window",
-          "type": "window",
-          "at": [
-            3050,
-            6825
-          ],
-          "width": 300,
-          "height": 600,
-          "sill": 600,
-          "style": "fix"
         },
         {
           "id": "1f-hall-west-open",
@@ -706,12 +699,12 @@
         {
           "id": "car-1",
           "type": "car",
-          "name": "車（トヨタ アクア・ブラック）",
+          "name": "車（ホンダ フィット・ブラック）",
           "x": 6370,
           "y": 4300,
           "w": 1695,
-          "d": 4050,
-          "h": 1485,
+          "d": 3995,
+          "h": 1540,
           "rotation": 0,
           "color": "#141517",
           "z": -560
@@ -744,8 +737,8 @@
         {
           "id": "mirror-1",
           "type": "mirror-sliding-door",
-          "name": "ミラー扉（フルハイトドア fit）",
-          "x": 1780,
+          "name": "ミラー引き戸（フルハイトドア fit・片引きの引込み戸。シューズクロークの側の壁を 50 薄くした戸袋に入る。彫り込みの引手）",
+          "x": 1785,
           "y": 5287.5,
           "w": 680,
           "d": 36,
@@ -854,41 +847,41 @@
         },
         {
           "id": "wash-basin",
-          "type": "basin",
-          "name": "洗面ボウル（オンボウル・右側）",
+          "type": "oval-bowl",
+          "name": "洗面ボウル（AICA スマートサニタリーU オンボウル D600 標準フランジ 白 KMB6AGW-3N・517×366×136）",
           "x": 3205,
           "y": 435,
-          "w": 450,
-          "d": 350,
-          "h": 130,
+          "w": 517,
+          "d": 366,
+          "h": 136,
           "rotation": 0,
           "color": "#f6f6f4",
           "z": 850
         },
         {
           "id": "wash-faucet",
-          "type": "faucet",
-          "name": "壁付け水栓（黒）",
+          "type": "wall-faucet",
+          "name": "壁付け水栓（黒・スマートサニタリーU の壁水栓タイプ。吐水口とレバーが別の座）",
           "x": 3205,
-          "y": 250,
-          "w": 30,
-          "d": 180,
-          "h": 30,
+          "y": 298.5,
+          "w": 50,
+          "d": 277,
+          "h": 50,
           "rotation": 0,
           "color": "#1c1c1d",
-          "z": 1030
+          "z": 1100
         },
         {
           "id": "wash-mirror",
-          "type": "mirror",
-          "name": "ミラー（ふかし壁に貼る大きな鏡）",
+          "type": "pitta-mirror",
+          "name": "ピッタミラー（ミラタップ・LED なし・W1690×H800×厚み 40・壁と壁の間。フレームの色は仮にブラック）",
           "x": 2730,
-          "y": 157.5,
+          "y": 140,
           "w": 1690,
-          "d": 5,
+          "d": 40,
           "h": 800,
           "rotation": 0,
-          "color": "#c8ccd0",
+          "color": "#1f1f20",
           "z": 1255
         },
         {
@@ -1130,10 +1123,10 @@
         {
           "id": "wic-pipe-lower",
           "type": "box",
-          "name": "ハンガーパイプ（下）",
-          "x": 6350,
+          "name": "ハンガーパイプ（下・東の壁まで）",
+          "x": 6515,
           "y": 300,
-          "w": 2900,
+          "w": 3230,
           "d": 25,
           "h": 25,
           "rotation": 0,
@@ -1156,28 +1149,29 @@
         {
           "id": "post-1",
           "type": "post-box",
-          "name": "宅配ボックス（NastaBox+POST）",
-          "x": 2150,
-          "y": 6825,
+          "name": "宅配ボックス（Nasta Box+POST・壁を貫通して、道路側から入れて玄関前の通路（ポーチ）から取り出す。くもり窓の所。前入後出のタイプにする要確認・L・マットブラック×ブラック）",
+          "x": 3050,
+          "y": 6738,
           "w": 360,
-          "d": 170,
+          "d": 380,
           "h": 600,
           "rotation": 0,
           "color": "#1e1f20",
-          "z": -60
+          "z": 277,
+          "flip": true
         },
         {
           "id": "intercom-1",
           "type": "intercom",
-          "name": "インターホン（Nasta KS-ND02A）",
-          "x": 2450,
-          "y": 6900,
+          "name": "インターホン（Nasta Interphone2 KS-ND02A・玄関子機ブラック）",
+          "x": 3345,
+          "y": 6943,
           "w": 100,
           "d": 30,
           "h": 160,
           "rotation": 0,
           "color": "#1e1f20",
-          "z": 760
+          "z": 717
         },
         {
           "id": "pole-1",
@@ -1208,27 +1202,27 @@
         {
           "id": "umbrella-hanger",
           "type": "box",
-          "name": "傘掛け（森田アルミ ViK ブラック）",
-          "x": 4625,
+          "name": "傘掛け（森田アルミ vik 玄関用マルチフック VKK11-BK ブラック）",
+          "x": 4647.5,
           "y": 5200,
-          "w": 400,
-          "d": 30,
-          "h": 20,
+          "w": 200,
+          "d": 75,
+          "h": 26,
           "rotation": 270,
           "color": "#1c1c1d",
           "z": 440
         },
         {
           "id": "ac-outdoor-1",
-          "type": "box",
-          "name": "エアコン室外機",
-          "x": 8400,
+          "type": "outdoor-unit",
+          "name": "エアコン室外機（東の外・南寄り。外水栓の北）",
+          "x": 8543,
           "y": 6050,
           "w": 800,
           "d": 300,
-          "h": 630,
+          "h": 640,
           "rotation": 270,
-          "color": "#e8e8e6",
+          "color": "#e9e8e3",
           "z": -560
         },
         {
@@ -1428,7 +1422,9 @@
           "rotation": 90,
           "color": "#1f1f20",
           "flip": true,
-          "pocket": true
+          "pocket": true,
+          "material": "raffis-tellwalnut",
+          "handle": "nickel"
         },
         {
           "id": "wic-door",
@@ -1442,17 +1438,18 @@
           "rotation": 270,
           "color": "#cfccc5",
           "flip": true,
-          "material": "cross-sp2540",
-          "pocket": true
+          "material": "raffis-preciouswhite",
+          "pocket": true,
+          "handle": "nickel"
         },
         {
           "id": "wash-mirror-wall",
           "type": "box",
-          "name": "ミラーのふかし壁",
+          "name": "ミラーのふかし壁（奥行 60。ピッタミラーの面を水栓のふかしの面にそろえる）",
           "x": 2730,
-          "y": 107.5,
+          "y": 90,
           "w": 1700,
-          "d": 95,
+          "d": 60,
           "h": 810,
           "rotation": 0,
           "color": "#bdbab4",
@@ -1828,22 +1825,6 @@
           "kelvin": 3500
         },
         {
-          "id": "std-1f-outdoor-spot",
-          "type": "spot-light",
-          "name": "スポットライト 外（DAIKO DOL-4824YB）（標準）",
-          "x": 300,
-          "y": 6960,
-          "w": 70,
-          "d": 150,
-          "h": 120,
-          "rotation": 0,
-          "color": "#1c1c1d",
-          "z": 1840,
-          "lumen": 300,
-          "beam": 50,
-          "kelvin": 2700
-        },
-        {
           "id": "std-1f-sw-bath",
           "type": "switch",
           "name": "スイッチ 浴室（上: 照明／下: 換気乾燥暖房機）（標準）",
@@ -2007,21 +1988,21 @@
         {
           "id": "std-1f-out-wp",
           "type": "outlet",
-          "name": "防水コンセント 外（Panasonic WK4602BK）（標準）",
-          "x": -80,
-          "y": 6550,
-          "w": 90,
+          "name": "EV・PHEV 充電用コンセント（200V・防水。車庫の北西の隅・北の壁。標準の外の防水コンセント WK4602BK を移動して充電用に変更・機種と差額は要確認）",
+          "x": 4800,
+          "y": 1445,
+          "w": 120,
           "d": 40,
-          "h": 130,
-          "rotation": 90,
-          "color": "#1e1e1f",
-          "z": -365
+          "h": 180,
+          "rotation": 0,
+          "color": "#d9d9d6",
+          "z": 440
         },
         {
           "id": "std-1f-out-ecocute",
           "type": "outlet",
           "name": "コンセント エコキュート用 200V（外）（標準）",
-          "x": -64,
+          "x": -107,
           "y": 2400,
           "w": 70,
           "d": 8,
@@ -2072,16 +2053,120 @@
         },
         {
           "id": "bracket-1",
-          "type": "bracket-light",
-          "name": "ブラケットライト（玄関・アートの壁の上の黒い傘。階段の 2 階の 2 台目の代わり）",
-          "x": 2030,
+          "type": "aj-wall-lamp",
+          "name": "ブラケットライト（beaubelle チボリ bbw-009 ブラック・アートの壁の上）",
+          "x": 1962.5,
           "y": 4695,
-          "w": 200,
-          "d": 300,
-          "h": 300,
+          "w": 258,
+          "d": 165,
+          "h": 276,
           "rotation": 270,
           "color": "#1c1c1d",
           "z": 1850
+        },
+        {
+          "id": "ecocute-tank",
+          "type": "ecocute-tank",
+          "name": "エコキュート 貯湯タンク（最新の図面（1 階 平面詳細図・北側立面図）で浴室の北の外・東寄り。図面の大きさ 680×600 くらい。機種は未定）",
+          "x": 1335,
+          "y": -403,
+          "w": 680,
+          "d": 600,
+          "h": 1810,
+          "rotation": 180,
+          "color": "#e9e8e3",
+          "z": -560
+        },
+        {
+          "id": "ecocute-heatpump",
+          "type": "outdoor-unit",
+          "name": "エコキュート ヒートポンプユニット（最新の図面で浴室の北の外・西寄り。機種は未定）",
+          "x": 403,
+          "y": -253,
+          "w": 800,
+          "d": 300,
+          "h": 640,
+          "rotation": 180,
+          "color": "#e9e8e3",
+          "z": -560
+        },
+        {
+          "id": "ac-outdoor-bedroom",
+          "type": "outdoor-unit",
+          "name": "エアコン室外機（2 階 寝室・図面の西の外、浴室の外の「室外機」）",
+          "x": -353,
+          "y": 460,
+          "w": 800,
+          "d": 300,
+          "h": 640,
+          "rotation": 90,
+          "color": "#e9e8e3",
+          "z": -560
+        },
+        {
+          "id": "ac-outdoor-2",
+          "type": "outdoor-unit",
+          "name": "エアコン室外機（最新の 1 階 平面詳細図（1/60）で東の外・北寄り）",
+          "x": 8543,
+          "y": 1395,
+          "w": 800,
+          "d": 300,
+          "h": 640,
+          "rotation": 270,
+          "color": "#e9e8e3",
+          "z": -560
+        },
+        {
+          "id": "porch-light-1",
+          "type": "down-bracket",
+          "name": "表札灯（KOIZUMI AU54604。標準の外のスポットライト DOL-4824YB の代わり）",
+          "x": 3170,
+          "y": 6978,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1280
+        },
+        {
+          "id": "vb-1f-hall",
+          "type": "vertical-blind",
+          "name": "縦型ブラインド（1 階 ホールの北の縦長の窓・商品は未定）",
+          "x": 4095,
+          "y": 95,
+          "w": 790,
+          "d": 70,
+          "h": 2080,
+          "rotation": 0,
+          "color": "#4a4b4d",
+          "z": 0
+        },
+        {
+          "id": "sic-roll-screen",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（シューズクロークの入口・ホール（階段の側）からの入口の開口の中に、突っ張り棒式で後付け。商品は未定）",
+          "x": 1365,
+          "y": 4322.5,
+          "w": 790,
+          "d": 40,
+          "h": 2390,
+          "rotation": 180,
+          "color": "#4a4b4d",
+          "z": 0
+        },
+        {
+          "id": "wash-mirror-light",
+          "type": "line-light",
+          "name": "間接照明（ミラーのふかしの下・隠し。リストから戻した）",
+          "x": 2730,
+          "y": 140,
+          "w": 1640,
+          "d": 30,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 1238
         }
       ],
       "jambs": {
@@ -2119,14 +2204,11 @@
               2502.5
             ]
           ],
-          "floor": "floor-lassissa-mortar",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
           "accent": {
             "west": "cross-fe76650"
-          },
-          "edges": {
-            "3": "cross-fe76661"
           }
         },
         {
@@ -2150,7 +2232,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-lassissa-greigeelm",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-white",
           "ceiling": "cross-sp2540",
           "edges": {
@@ -2180,7 +2262,7 @@
               1592.5
             ]
           ],
-          "floor": "floor-lassissa-mortar",
+          "floor": "floor-lassissa-lightgray",
           "wall": "cross-sp2563",
           "ceiling": "cross-sp2540"
         },
@@ -2212,7 +2294,8 @@
             "north": "cross-th34606"
           },
           "edges": {
-            "0": "cross-sp2563"
+            "0": "cross-sp2563",
+            "3": "cross-th34082"
           }
         },
         {
@@ -2288,7 +2371,7 @@
               6825
             ]
           ],
-          "floor": "floor-lassissa-mortar",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-white",
           "ceiling": "cross-sp2540"
         },
@@ -2337,7 +2420,7 @@
               2502.5
             ]
           ],
-          "floor": "floor-lassissa-mortar",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
           "zones": [
@@ -2353,7 +2436,7 @@
                 8190,
                 6211
               ],
-              "material": "cross-fe76661"
+              "material": "cross-fe76649"
             }
           ]
         }
@@ -2375,7 +2458,7 @@
           "type": "opening",
           "at": [
             3640,
-            1000
+            850
           ],
           "width": 650,
           "height": 2400,
@@ -2540,6 +2623,30 @@
             900,
             900,
             18
+          ],
+          "fronts": [
+            [],
+            [
+              200,
+              360,
+              260
+            ],
+            [
+              200,
+              190,
+              430
+            ],
+            [
+              200,
+              190,
+              430
+            ],
+            [
+              200,
+              190,
+              430
+            ],
+            []
           ]
         },
         {
@@ -2558,34 +2665,34 @@
         },
         {
           "id": "kitchen-hob",
-          "type": "cooktop",
-          "name": "ガスコンロ（ハーマン W600 ガラストップ 3口）",
+          "type": "ih-cooktop",
+          "name": "IH クッキングヒーター（3 口・機種は未定。見積もりのハーマン ガスコンロ W600 から変更）",
           "x": 7785,
           "y": 3043,
           "w": 600,
-          "d": 500,
-          "h": 10,
+          "d": 510,
+          "h": 8,
           "rotation": 90,
-          "color": "#141516",
+          "color": "#101112",
           "z": 900
         },
         {
           "id": "kitchen-hood",
           "type": "range-hood",
-          "name": "レンジフード（デザインフード FED テクスチャーブラック）",
+          "name": "レンジフード（デザインフード FED テクスチャーブラック 5FEDL952TBKY・幅 900・下端 FL+1700）",
           "x": 7830,
           "y": 3043,
           "w": 900,
-          "d": 600,
-          "h": 545,
+          "d": 630,
+          "h": 530,
           "rotation": 90,
           "color": "#1d1d1e",
-          "z": 1685
+          "z": 1700
         },
         {
           "id": "kitchen-island",
           "type": "kitchen-cabinet",
-          "name": "キッチン アイランド（トクラス コラージア・シンク側）",
+          "name": "キッチン アイランド（トクラス コラージア・シンク側。シンク下はフリースペース）",
           "x": 6314,
           "y": 3490,
           "w": 1842,
@@ -2601,6 +2708,27 @@
             900,
             150,
             21
+          ],
+          "fronts": [
+            [],
+            [
+              190,
+              370,
+              320
+            ],
+            [
+              -60,
+              500,
+              320
+            ],
+            [
+              -205,
+              0
+            ],
+            [
+              820
+            ],
+            []
           ]
         },
         {
@@ -2608,27 +2736,95 @@
           "type": "box",
           "name": "天板（テノール アイアンブラック）",
           "x": 6196,
-          "y": 3490,
-          "w": 1842,
-          "d": 888,
+          "y": 2688,
+          "w": 888,
+          "d": 238,
           "h": 20,
-          "rotation": 270,
+          "rotation": 0,
           "color": "#2e2f31",
           "z": 880,
           "material": "toclas-tenor-ironblack"
         },
         {
+          "id": "kitchen-island-top-s",
+          "type": "box",
+          "name": "天板（テノール アイアンブラック）・シンクの南",
+          "x": 6196,
+          "y": 3989,
+          "w": 888,
+          "d": 844,
+          "h": 20,
+          "rotation": 0,
+          "color": "#2e2f31",
+          "z": 880,
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-island-top-w",
+          "type": "box",
+          "name": "天板（テノール アイアンブラック）・シンクの西",
+          "x": 5935.5,
+          "y": 3187,
+          "w": 367,
+          "d": 760,
+          "h": 20,
+          "rotation": 0,
+          "color": "#2e2f31",
+          "z": 880,
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-island-top-e",
+          "type": "box",
+          "name": "天板（テノール アイアンブラック）・シンクの東",
+          "x": 6614.5,
+          "y": 3187,
+          "w": 51,
+          "d": 760,
+          "h": 20,
+          "rotation": 0,
+          "color": "#2e2f31",
+          "z": 880,
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-island-end-s",
+          "type": "box",
+          "name": "アイランドの南の端の側板（天板と同じテノール アイアンブラック。天板と「コ」の字につながる）",
+          "x": 6197,
+          "y": 4400,
+          "w": 892,
+          "d": 22,
+          "h": 880,
+          "rotation": 0,
+          "color": "#2e2f31",
+          "material": "toclas-tenor-ironblack"
+        },
+        {
+          "id": "kitchen-island-end-n",
+          "type": "box",
+          "name": "アイランドの北の端の側板（天板と同じテノール アイアンブラック。天板と「コ」の字につながる）",
+          "x": 6197,
+          "y": 2580,
+          "w": 892,
+          "d": 22,
+          "h": 880,
+          "rotation": 0,
+          "color": "#2e2f31",
+          "material": "toclas-tenor-ironblack"
+        },
+        {
           "id": "kitchen-sink",
-          "type": "basin",
-          "name": "H2シンク（グレー）",
+          "type": "kitchen-sink-bowl",
+          "name": "H2シンク（グレー・天板の下に付く 2 段のシンク）",
           "x": 6354,
           "y": 3187,
           "w": 760,
           "d": 470,
-          "h": 10,
+          "h": 200,
           "rotation": 270,
           "color": "#9aa0a3",
-          "z": 900
+          "z": 700
         },
         {
           "id": "kitchen-faucet",
@@ -2645,64 +2841,65 @@
         },
         {
           "id": "dining-table-1",
-          "type": "dining-table-frame",
-          "name": "ダイニングテーブル（大理石調ライトグレーの天板・黒いフレーム）",
+          "type": "ceramic-ext-table",
+          "name": "ダイニングテーブル（家具のきむら のびーるセラミック・ブラック・幅 1400〜1800）",
           "x": 6135,
           "y": 5300,
           "w": 1400,
-          "d": 850,
+          "d": 805,
           "h": 720,
           "rotation": 90,
-          "color": "#c9c6c1",
-          "material": "marble-lightgray"
+          "color": "#2a2a2b"
         },
         {
           "id": "chair-1",
-          "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
-          "x": 5450,
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック）",
+          "x": 5522.5,
           "y": 4950,
-          "w": 460,
-          "d": 520,
-          "h": 820,
+          "w": 520,
+          "d": 660,
+          "h": 720,
           "rotation": 270,
-          "color": "#2e2e30"
+          "color": "#1e1e1f"
         },
         {
           "id": "chair-2",
-          "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
-          "x": 5450,
-          "y": 5600,
-          "w": 460,
-          "d": 520,
-          "h": 820,
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック）",
+          "x": 5522.5,
+          "y": 5650,
+          "w": 520,
+          "d": 660,
+          "h": 720,
           "rotation": 270,
-          "color": "#2e2e30"
+          "color": "#1e1e1f"
         },
         {
           "id": "chair-3",
-          "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
-          "x": 6820,
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック。テーブルに引っ掛けた状態）",
+          "x": 6607,
           "y": 4950,
-          "w": 460,
-          "d": 520,
-          "h": 820,
+          "w": 520,
+          "d": 660,
+          "h": 720,
           "rotation": 90,
-          "color": "#2e2e30"
+          "color": "#1e1e1f",
+          "z": 150
         },
         {
           "id": "chair-4",
-          "type": "dining-chair",
-          "name": "ダイニングチェア（黒いフレーム・黒の布張り）",
-          "x": 6820,
-          "y": 5600,
-          "w": 460,
-          "d": 520,
-          "h": 820,
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック。テーブルに引っ掛けた状態）",
+          "x": 6607,
+          "y": 5650,
+          "w": 520,
+          "d": 660,
+          "h": 720,
           "rotation": 90,
-          "color": "#2e2e30"
+          "color": "#1e1e1f",
+          "z": 150
         },
         {
           "id": "sofa-1",
@@ -2797,14 +2994,15 @@
         {
           "id": "rods-2",
           "type": "rod-screen",
-          "name": "ロッド手すり（2階の階段）",
-          "x": 2730,
+          "name": "ロッド手すり（2階の階段・南側。吹き抜けの西の端から上り口の手前まで等間隔）",
+          "x": 3033.5,
           "y": 3382.5,
-          "w": 1800,
+          "w": 2407,
           "d": 25,
           "h": 2400,
           "rotation": 0,
-          "color": "#1c1c1d"
+          "color": "#1c1c1d",
+          "count": 9
         },
         {
           "id": "2f-bedroom-door-leaf",
@@ -2812,13 +3010,17 @@
           "name": "寝室の開き戸",
           "x": 3640,
           "y": 2047.5,
-          "w": 720,
+          "w": 764,
           "d": 36,
           "h": 2380,
           "rotation": 90,
           "color": "#cfccc5",
           "flip": true,
-          "swing": -1
+          "swing": -1,
+          "material": "raffis-preciouswhite",
+          "handle": "nickel",
+          "stopper": "secret",
+          "stopperColor": "BE"
         },
         {
           "id": "2f-toilet-door-leaf",
@@ -2831,7 +3033,9 @@
           "h": 2400,
           "rotation": 90,
           "color": "#cfccc5",
-          "pocket": true
+          "pocket": true,
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
         },
         {
           "id": "rods-2-top-n",
@@ -2839,19 +3043,6 @@
           "name": "ロッド手すり（2階の上り口・左）",
           "x": 3953.3333333333335,
           "y": 2502.5,
-          "w": 566.6666666666666,
-          "d": 25,
-          "h": 2400,
-          "rotation": 0,
-          "color": "#1c1c1d",
-          "count": 3
-        },
-        {
-          "id": "rods-2-top-s",
-          "type": "rod-screen",
-          "name": "ロッド手すり（2階の上り口・右）",
-          "x": 3953.3333333333335,
-          "y": 3382.5,
           "w": 566.6666666666666,
           "d": 25,
           "h": 2400,
@@ -2869,46 +3060,37 @@
           "d": 649,
           "h": 1850,
           "rotation": 270,
-          "color": "#6c6966"
+          "color": "#696868",
+          "doorAngles": [
+            90,
+            90
+          ]
         },
         {
           "id": "kitchen-drop-ceiling",
           "type": "box",
-          "name": "下がり天井（天井から浮かせた板・TH34283）",
+          "name": "下がり天井（天井から浮かせた板・TH34705 木目調 チェリー 柾目）",
           "x": 6941,
           "y": 4390,
           "w": 2378,
           "d": 3642,
           "h": 100,
           "rotation": 0,
-          "color": "#828387",
+          "color": "#b2a89c",
           "z": 2230,
-          "material": "cross-th34283"
-        },
-        {
-          "id": "bedroom-roll-screen",
-          "type": "roll-screen",
-          "name": "ロールスクリーン（ダークグレー）",
-          "x": 1790,
-          "y": 90,
-          "w": 1750,
-          "d": 60,
-          "h": 450,
-          "rotation": 0,
-          "color": "#4a4b4d",
-          "z": 1700
+          "material": "cross-th34705"
         },
         {
           "id": "kitchen-island-back",
           "type": "box",
-          "name": "アイランドの背面パネル（ダイニング側）",
+          "name": "アイランドの本体の背面パネル（グレーストーン）。その外の奥行 236 は天板の下が空いたカウンター（ハイチェアを入れられる。階段を上った所の圧迫感を減らすため）",
           "x": 5978,
           "y": 3490,
           "w": 1842,
           "d": 20,
           "h": 880,
           "rotation": 270,
-          "color": "#4c4b4a",
+          "color": "#696868",
           "material": "toclas-z-greystone"
         },
         {
@@ -2922,8 +3104,9 @@
           "h": 2400,
           "rotation": 0,
           "color": "#cfccc5",
-          "material": "cross-sp2540",
-          "pocket": true
+          "material": "raffis-preciouswhite",
+          "pocket": true,
+          "handle": "nickel"
         },
         {
           "id": "toilet2-niche-front",
@@ -2936,7 +3119,7 @@
           "h": 2400,
           "rotation": 0,
           "color": "#3a3e48",
-          "material": "cross-th34606"
+          "material": "cross-th34083"
         },
         {
           "id": "toilet2-niche-shelf-1",
@@ -3141,7 +3324,7 @@
         {
           "id": "std-2f-storn-dl",
           "type": "downlight",
-          "name": "ダウンライト 納戸（DAIKO DDL-6132AB）（標準）",
+          "name": "ダウンライト パントリー（納戸（北）・人感センサー・DAIKO DDL-5702AB）",
           "x": 6800,
           "y": 800,
           "w": 100,
@@ -3152,7 +3335,8 @@
           "z": 2400,
           "lumen": 440,
           "beam": 90,
-          "kelvin": 3500
+          "kelvin": 3500,
+          "sensor": true
         },
         {
           "id": "std-2f-toilet-dl",
@@ -3183,86 +3367,6 @@
           "color": "#f4f4f4",
           "z": 2400,
           "lumen": 440,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-kitchen-dl-1",
-          "type": "downlight",
-          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
-          "x": 6846,
-          "y": 2700,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2230,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-kitchen-dl-2",
-          "type": "downlight",
-          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
-          "x": 6025,
-          "y": 3600,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2230,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-kitchen-dl-3",
-          "type": "downlight",
-          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
-          "x": 6832,
-          "y": 4275,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2230,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-kitchen-dl-4",
-          "type": "downlight",
-          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
-          "x": 6839,
-          "y": 5335,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2230,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-kitchen-dl-5",
-          "type": "downlight",
-          "name": "ダウンライト キッチン・ダイニング（DAIKO DDL-6134AB・下がり天井の板に付く）（標準）",
-          "x": 6018,
-          "y": 5335,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2230,
-          "lumen": 780,
           "beam": 90,
           "kelvin": 3500
         },
@@ -3375,7 +3479,7 @@
         {
           "id": "std-2f-sw-kitchen",
           "type": "switch",
-          "name": "スイッチ（上から: 納戸（北）／キッチン／ダイニング）（標準）",
+          "name": "スイッチ（上から: キッチン壁際のダウンライト／ライティングレール キッチン側／ライティングレール ダイニング側／下がり天井の上の間接照明）（標準の位置）",
           "x": 6300,
           "y": 1656.5,
           "w": 70,
@@ -3384,7 +3488,7 @@
           "rotation": 0,
           "color": "#f7f7f5",
           "z": 1140,
-          "count": 3
+          "count": 4
         },
         {
           "id": "std-2f-sw-stairs-top",
@@ -3713,6 +3817,299 @@
           "rotation": 0,
           "color": "#b8b8b8",
           "z": 1980
+        },
+        {
+          "id": "2f-stairs-edge-fill",
+          "type": "box",
+          "name": "2階ホールの床の端（階段の吹き抜けの北の縁。1階からの階段の踏板の端までのすき間をふさぐ）（床）",
+          "x": 3981.25,
+          "y": 2517.5,
+          "w": 682.5,
+          "d": 30,
+          "h": 20,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": -20,
+          "material": "floor-lassissa-mortar"
+        },
+        {
+          "id": "2f-stairs-edge-fill-face",
+          "type": "box",
+          "name": "2階ホールの床の端（階段の吹き抜けの北の縁。1階からの階段の踏板の端までのすき間をふさぐ）（床の厚みの面・階段の壁と同じ HF3122）",
+          "x": 3981.25,
+          "y": 2517.5,
+          "w": 682.5,
+          "d": 30,
+          "h": 280,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": -300,
+          "material": "cross-hf3122"
+        },
+        {
+          "id": "2f-stairs-south-fill",
+          "type": "box",
+          "name": "2階 LDK の床の端（階段の吹き抜けの南の縁。階段の端までのすき間をふさぐ）（床）",
+          "x": 2616.25,
+          "y": 3397.5,
+          "w": 3412.5,
+          "d": 30,
+          "h": 20,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": -20,
+          "material": "floor-lassissa-mortar"
+        },
+        {
+          "id": "2f-stairs-south-fill-face",
+          "type": "box",
+          "name": "2階 LDK の床の端（階段の吹き抜けの南の縁。階段の端までのすき間をふさぐ）（床の厚みの面・階段の壁と同じ HF3122）",
+          "x": 2616.25,
+          "y": 3397.5,
+          "w": 3412.5,
+          "d": 30,
+          "h": 280,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": -300,
+          "material": "cross-hf3122"
+        },
+        {
+          "id": "firecut-2f-ldk-south",
+          "type": "fire-roll-screen",
+          "name": "防火ロールスクリーン（三協アルミ FIRECUT-RS・図面の「ファイヤーカット【込】」・Fix 窓 08320 の室内側。商品は要確認）",
+          "x": 7700,
+          "y": 7181,
+          "w": 910,
+          "d": 70,
+          "h": 2140,
+          "rotation": 180,
+          "color": "#232324",
+          "z": 170,
+          "screen": "frost"
+        },
+        {
+          "id": "plant-kitchen-south",
+          "type": "silk-jasmine",
+          "name": "観葉植物（シルクジャスミン・グレーのストーン調の鉢。キッチン横の南の窓の前）",
+          "x": 7700,
+          "y": 6850,
+          "w": 560,
+          "d": 560,
+          "h": 1450,
+          "rotation": 0,
+          "color": "#2f5a2a"
+        },
+        {
+          "id": "rail-kitchen",
+          "type": "lighting-rail",
+          "name": "ライティングレール（キッチン側・シンクの上。スポットライト 2 灯・商品は未定。ダイニング側のレールと 1 本に見えるように続けて付ける）",
+          "x": 6250,
+          "y": 3650,
+          "w": 1500,
+          "d": 40,
+          "h": 20,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 2230,
+          "count": 2,
+          "fixture": "spot"
+        },
+        {
+          "id": "kitchen-cove-w",
+          "type": "line-light",
+          "name": "間接照明（下がり天井の上・西）",
+          "x": 5872,
+          "y": 4390,
+          "w": 3402,
+          "d": 30,
+          "h": 15,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 2332,
+          "flip": true
+        },
+        {
+          "id": "kitchen-cove-s",
+          "type": "line-light",
+          "name": "間接照明（下がり天井の上・南）",
+          "x": 6941,
+          "y": 6091,
+          "w": 2138,
+          "d": 30,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2332,
+          "flip": true
+        },
+        {
+          "id": "kitchen-cove-n",
+          "type": "line-light",
+          "name": "間接照明（下がり天井の上・北）",
+          "x": 6941,
+          "y": 2689,
+          "w": 2138,
+          "d": 30,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2332,
+          "flip": true
+        },
+        {
+          "id": "std-2f-kitchen-dl-1",
+          "type": "downlight",
+          "name": "ダウンライト キッチン コンロ側の上（DAIKO DDL-6134AB・下がり天井の板に付く。壁に寄せて壁を照らす）（標準）",
+          "x": 7880,
+          "y": 3943,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-3",
+          "type": "downlight",
+          "name": "ダウンライト キッチン コンロ側の上（DAIKO DDL-6134AB・下がり天井の板に付く。壁に寄せて壁を照らす）（標準）",
+          "x": 7880,
+          "y": 4843,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "std-2f-kitchen-dl-4",
+          "type": "downlight",
+          "name": "ダウンライト キッチン コンロ側の上（DAIKO DDL-6134AB・下がり天井の板に付く。壁に寄せて壁を照らす）（標準）",
+          "x": 7880,
+          "y": 5743,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2230,
+          "lumen": 780,
+          "beam": 90,
+          "kelvin": 3500
+        },
+        {
+          "id": "2f-wic-upper-shelf-s",
+          "type": "box",
+          "name": "枕棚（WIC・南の壁）",
+          "x": 4436.25,
+          "y": 1357.5,
+          "w": 1472.5,
+          "d": 350,
+          "h": 20,
+          "rotation": 0,
+          "color": "#4a4b4d",
+          "z": 2050
+        },
+        {
+          "id": "2f-wic-pipe-s",
+          "type": "box",
+          "name": "ハンガーパイプ（WIC・南の壁）",
+          "x": 4436.25,
+          "y": 1292.5,
+          "w": 1452.5,
+          "d": 25,
+          "h": 25,
+          "rotation": 0,
+          "color": "#b8b8b8",
+          "z": 1980
+        },
+        {
+          "id": "rail-dining",
+          "type": "lighting-rail",
+          "name": "ライティングレール（ダイニング側・テーブルの上。ペンダントライト 2 灯・商品は未定）",
+          "x": 6250,
+          "y": 5150,
+          "w": 1500,
+          "d": 40,
+          "h": 20,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 2230,
+          "count": 2,
+          "fixture": "pendant"
+        },
+        {
+          "id": "kitchen-oil-guard",
+          "type": "glass-panel",
+          "name": "油はね防止のガラスパネル（クリア・コンロ側の北の端。天板からレンジフードの下端 FL+1700 まで。商品は未定）",
+          "x": 7815,
+          "y": 2585,
+          "w": 630,
+          "d": 6,
+          "h": 800,
+          "rotation": 0,
+          "color": "#dfe9ec",
+          "z": 900
+        },
+        {
+          "id": "bedroom-roll-screen",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（窓枠の内側に付ける・寝室・ダークグレー。商品は未定）",
+          "x": 1790,
+          "y": 30,
+          "w": 1640,
+          "d": 40,
+          "h": 495,
+          "rotation": 0,
+          "color": "#4a4b4d",
+          "z": 1500
+        },
+        {
+          "id": "vb-2f-east-1",
+          "type": "vertical-blind",
+          "name": "縦型ブラインド（LDK・東の縦長の窓 北・商品は未定）",
+          "x": 8095,
+          "y": 2020,
+          "w": 700,
+          "d": 70,
+          "h": 2080,
+          "rotation": 90,
+          "color": "#4a4b4d",
+          "z": 200
+        },
+        {
+          "id": "vb-2f-east-2",
+          "type": "vertical-blind",
+          "name": "縦型ブラインド（LDK・東の縦長の窓 南・商品は未定）",
+          "x": 8095,
+          "y": 6800,
+          "w": 700,
+          "d": 70,
+          "h": 2080,
+          "rotation": 90,
+          "color": "#4a4b4d",
+          "z": 200
+        },
+        {
+          "id": "vb-2f-west",
+          "type": "vertical-blind",
+          "name": "縦型ブラインド（LDK・西の縦長の窓・商品は未定）",
+          "x": 1915,
+          "y": 7052.5,
+          "w": 360,
+          "d": 70,
+          "h": 2080,
+          "rotation": 270,
+          "color": "#4a4b4d",
+          "z": 200
         }
       ]
     },
@@ -3833,7 +4230,12 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-hf3122"
+          "ceiling": "cross-hf3122",
+          "edges": {
+            "0": "cross-sp2541",
+            "1": "cross-sp2541",
+            "3": "cross-sp2541"
+          }
         },
         {
           "id": "3f-room1",
@@ -3889,7 +4291,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-th34672",
-          "ceiling": "cross-th34672"
+          "ceiling": "cross-th34705"
         },
         {
           "id": "3f-room3",
@@ -3951,7 +4353,7 @@
               7280
             ]
           ],
-          "floor": "floor-lassissa-lightgray",
+          "floor": "floor-lassissa-greigeelm",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2539",
           "edges": {
@@ -3970,7 +4372,8 @@
           ],
           "width": 600,
           "height": 2000,
-          "sill": 0
+          "sill": 0,
+          "frame": "black"
         },
         {
           "id": "3f-stairs-hall",
@@ -3979,7 +4382,7 @@
             4550,
             2957.5
           ],
-          "width": 910,
+          "width": 790,
           "height": 2400,
           "sill": 0,
           "jamb": "cross-hf3122"
@@ -3993,7 +4396,8 @@
           ],
           "width": 780,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "frame": "black"
         },
         {
           "id": "3f-room2-door",
@@ -4004,7 +4408,9 @@
           ],
           "width": 780,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "frame": "none",
+          "frameColor": "#1f1d1e"
         },
         {
           "id": "3f-room3-door",
@@ -4015,7 +4421,8 @@
           ],
           "width": 780,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "frame": "black"
         },
         {
           "id": "3f-closet-doors",
@@ -4033,7 +4440,7 @@
           "id": "3f-north-window",
           "type": "window",
           "at": [
-            4320,
+            4550,
             1592.5
           ],
           "width": 1600,
@@ -4125,12 +4532,12 @@
           "id": "piano-1",
           "type": "digital-piano",
           "name": "電子ピアノ（Roland OBRP107 ダークローズウッド）",
-          "x": 6300,
-          "y": 1867.5,
+          "x": 5725,
+          "y": 2391.5,
           "w": 1378,
           "d": 410,
           "h": 982,
-          "rotation": 0,
+          "rotation": 270,
           "color": "#3b2620",
           "material": "wood-rosewood-dark"
         },
@@ -4145,30 +4552,6 @@
           "h": 450,
           "rotation": 90,
           "color": "#e8e4dc"
-        },
-        {
-          "id": "desk-2",
-          "type": "desk",
-          "name": "デスク",
-          "x": 7470,
-          "y": 4190,
-          "w": 730,
-          "d": 590,
-          "h": 720,
-          "rotation": 90,
-          "color": "#c9a26f"
-        },
-        {
-          "id": "chair-6",
-          "type": "chair",
-          "name": "デスクチェア",
-          "x": 7300,
-          "y": 6420,
-          "w": 450,
-          "d": 500,
-          "h": 800,
-          "rotation": 270,
-          "color": "#3a3b3d"
         },
         {
           "id": "toilet3",
@@ -4201,13 +4584,15 @@
           "name": "トイレの開き戸",
           "x": 3640,
           "y": 1980,
-          "w": 540,
+          "w": 584,
           "d": 36,
           "h": 1970,
           "rotation": 90,
           "color": "#cfccc5",
           "flip": true,
-          "swing": -1
+          "swing": -1,
+          "material": "raffis-gray",
+          "handle": "nickel"
         },
         {
           "id": "3f-room1-door-leaf",
@@ -4215,25 +4600,31 @@
           "name": "書斎（南西）の開き戸（北の吊元・室内へ開く）",
           "x": 4550,
           "y": 3850,
-          "w": 720,
-          "d": 36,
-          "h": 2380,
-          "rotation": 90,
-          "color": "#cfccc5"
-        },
-        {
-          "id": "3f-room2-door-leaf",
-          "type": "swing-door",
-          "name": "書斎（北東）の開き戸（南の吊元・室内へ開く）",
-          "x": 5460,
-          "y": 3850,
-          "w": 720,
+          "w": 764,
           "d": 36,
           "h": 2380,
           "rotation": 90,
           "color": "#cfccc5",
+          "material": "raffis-gray",
+          "handle": "nickel",
+          "stopper": "secret",
+          "stopperColor": "YY"
+        },
+        {
+          "id": "3f-room2-door-leaf",
+          "type": "swing-door",
+          "name": "書斎（北東）の開き戸（KAMIYA フルハイトドア CALM CH-1・枠なし・南の吊元・室内へ開く・鍵なし）",
+          "x": 5460,
+          "y": 3850,
+          "w": 776,
+          "d": 36,
+          "h": 2405,
+          "rotation": 90,
+          "color": "#cfccc5",
           "flip": true,
-          "swing": -1
+          "swing": -1,
+          "material": "calm-tb",
+          "doorSeries": "calm"
         },
         {
           "id": "3f-room3-door-leaf",
@@ -4241,11 +4632,15 @@
           "name": "子供部屋の開き戸（西の吊元・室内へ開く）",
           "x": 5005,
           "y": 4550,
-          "w": 720,
+          "w": 764,
           "d": 36,
           "h": 2380,
           "rotation": 0,
-          "color": "#cfccc5"
+          "color": "#cfccc5",
+          "material": "raffis-gray",
+          "handle": "nickel",
+          "stopper": "secret",
+          "stopperColor": "RA"
         },
         {
           "id": "toilet3-paper",
@@ -4347,21 +4742,6 @@
           "sensor": true
         },
         {
-          "id": "std-3f-room2-cl",
-          "type": "ceiling-light",
-          "name": "シーリングライト 書斎（北東）（DAIKO DCL-42121）（標準）",
-          "x": 6825,
-          "y": 3070,
-          "w": 560,
-          "d": 560,
-          "h": 90,
-          "rotation": 0,
-          "color": "#f6f6f4",
-          "z": 2400,
-          "lumen": 3699,
-          "kelvin": 3500
-        },
-        {
           "id": "std-3f-room1-cl",
           "type": "ceiling-light",
           "name": "シーリングライト 書斎（南西）（DAIKO DCL-42121）（標準）",
@@ -4394,15 +4774,15 @@
         {
           "id": "std-3f-stairs-bracket",
           "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
-          "x": 4300,
-          "y": 2612.5,
+          "name": "ブラケット 階段（DAIKO DBK-41132A・1・2 階のブラケットと同じ西の壁側。3 階は壁が 1 マス内側）（標準）",
+          "x": 1930,
+          "y": 2957.5,
           "w": 100,
           "d": 100,
           "h": 100,
-          "rotation": 0,
+          "rotation": 270,
           "color": "#1c1c1d",
-          "z": 1445,
+          "z": 2040,
           "lumen": 250,
           "beam": 90,
           "kelvin": 3500
@@ -4489,15 +4869,16 @@
         {
           "id": "std-3f-out-room2",
           "type": "outlet",
-          "name": "コンセント 書斎（北東）2 口（標準）",
-          "x": 8126,
-          "y": 2400,
+          "name": "コンセント 書斎（北東）2 口＋有線 LAN（標準の東の壁 → 北の壁のデスクの裏へ移動。LAN 付きは要確認）（標準）",
+          "x": 7160,
+          "y": 1656.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
+          "rotation": 0,
           "color": "#f7f7f5",
-          "z": 190
+          "z": 190,
+          "lan": true
         },
         {
           "id": "std-3f-out-room2-ac",
@@ -4516,13 +4897,13 @@
         {
           "id": "std-3f-out-room2-tv",
           "type": "outlet",
-          "name": "コンセント 書斎（北東）2 口・テレビ端子（標準）",
-          "x": 7622,
-          "y": 4486,
+          "name": "コンセント 書斎（北東）2 口・テレビ端子（標準の南の壁 → 西の壁の電子ピアノの裏へ移動）（標準）",
+          "x": 5524,
+          "y": 2391.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 180,
+          "rotation": 270,
           "color": "#f7f7f5",
           "z": 190
         },
@@ -4609,7 +4990,7 @@
         {
           "id": "3f-closet-upper-shelf",
           "type": "box",
-          "name": "枕棚（子供部屋の収納・西の壁）",
+          "name": "枕棚（子供部屋の収納・西の壁。一般的な高さ FL+1800）",
           "x": 4785,
           "y": 6370,
           "w": 1700,
@@ -4617,12 +4998,12 @@
           "h": 20,
           "rotation": 90,
           "color": "#4a4b4d",
-          "z": 2050
+          "z": 1800
         },
         {
           "id": "3f-closet-pipe",
           "type": "box",
-          "name": "ハンガーパイプ（子供部屋の収納・西の壁）",
+          "name": "ハンガーパイプ（子供部屋の収納・西の壁。一般的な高さ FL+1700）",
           "x": 4850,
           "y": 6370,
           "w": 1680,
@@ -4630,7 +5011,283 @@
           "h": 25,
           "rotation": 90,
           "color": "#b8b8b8",
-          "z": 1980
+          "z": 1700
+        },
+        {
+          "id": "3f-stairs-top-edge",
+          "type": "box",
+          "name": "3階の床の端（2階からの階段の上り切り。床の厚みの面で、最後の段との間のすき間をふさぐ）",
+          "x": 4560,
+          "y": 2957.5,
+          "w": 20,
+          "d": 910,
+          "h": 300,
+          "rotation": 0,
+          "color": "#3a3b3d",
+          "z": -300,
+          "material": "cross-hf3122"
+        },
+        {
+          "id": "kids-desk",
+          "type": "pc-desk-lexia",
+          "name": "パソコンデスク（YM WORLD レクシア 00-146 ブラウン・幅 900）",
+          "x": 7905,
+          "y": 6420,
+          "w": 900,
+          "d": 450,
+          "h": 720,
+          "rotation": 90,
+          "color": "#5b3f2e"
+        },
+        {
+          "id": "kids-chair",
+          "type": "office-chair-mesh",
+          "name": "オフィスチェア（singlelife 19-001・メッシュ・肘なし・ブラック）",
+          "x": 7380,
+          "y": 6420,
+          "w": 550,
+          "d": 585,
+          "h": 930,
+          "rotation": 270,
+          "color": "#1d1d1f"
+        },
+        {
+          "id": "study-n-desk",
+          "type": "gaming-desk",
+          "name": "ゲーミングデスク（Bauhutte BHD-1200M ブラック・幅 1200）",
+          "x": 7160,
+          "y": 2202.5,
+          "w": 1200,
+          "d": 600,
+          "h": 700,
+          "rotation": 0,
+          "color": "#1a1a1b"
+        },
+        {
+          "id": "study-n-rack",
+          "type": "side-rack",
+          "name": "デスクサイドラック（Bauhutte BHS-700SM ラージ・ブラック）",
+          "x": 7950,
+          "y": 2004.5,
+          "w": 704,
+          "d": 360,
+          "h": 1513,
+          "rotation": 90,
+          "color": "#1a1a1b"
+        },
+        {
+          "id": "study-n-chair",
+          "type": "gaming-chair",
+          "name": "ゲーミングチェア（AKRacing Pro-X V2 レッド）",
+          "x": 7160,
+          "y": 2882.5,
+          "w": 700,
+          "d": 700,
+          "h": 1300,
+          "rotation": 180,
+          "color": "#b3121b"
+        },
+        {
+          "id": "study-n-ext",
+          "type": "extension-desk",
+          "name": "エクステンションデスク（Bauhutte BHC-1200H ブラック・幅 1200。ゲーミングデスクの奥、デスクより 100 高く組み立て）",
+          "x": 7160,
+          "y": 1777.5,
+          "w": 1200,
+          "d": 250,
+          "h": 800,
+          "rotation": 0,
+          "color": "#1a1a1b"
+        },
+        {
+          "id": "3f-closet-bifold",
+          "type": "bifold-door",
+          "name": "クローゼットの折れ戸（子供部屋・両開き。図面の通り）",
+          "x": 5460,
+          "y": 6370,
+          "w": 1600,
+          "d": 30,
+          "h": 2390,
+          "rotation": 270,
+          "color": "#cfccc5",
+          "material": "raffis-gray"
+        },
+        {
+          "id": "3f-closet-ceiling-hatch",
+          "type": "floor-hatch-framed",
+          "name": "天井点検口（子供部屋のクローゼット・アルミ枠 450 角。図面の位置）",
+          "x": 5005,
+          "y": 6860,
+          "w": 450,
+          "d": 450,
+          "h": 2,
+          "rotation": 0,
+          "color": "#e9e8e4",
+          "z": 2398,
+          "material": "cross-sp2539"
+        },
+        {
+          "id": "study-n-bass",
+          "type": "wall-bass",
+          "name": "ベース（壁掛け・HERCULES GSP38WBK PLUS）",
+          "x": 7000,
+          "y": 4357.5,
+          "w": 340,
+          "d": 45,
+          "h": 1170,
+          "rotation": 180,
+          "color": "#1d1d1f",
+          "z": 520
+        },
+        {
+          "id": "study-n-guitar",
+          "type": "wall-guitar",
+          "name": "ギター（壁掛け・HERCULES GSP38WBK PLUS）",
+          "x": 7600,
+          "y": 4357.5,
+          "w": 330,
+          "d": 45,
+          "h": 990,
+          "rotation": 180,
+          "color": "#e9e6df",
+          "z": 700
+        },
+        {
+          "id": "piano-bench-1",
+          "type": "piano-bench",
+          "name": "ピアノ椅子（背もたれなし・四角。ピアノの下にしまった状態）",
+          "x": 5758,
+          "y": 2391.5,
+          "w": 550,
+          "d": 330,
+          "h": 480,
+          "rotation": 90,
+          "color": "#3b2620"
+        },
+        {
+          "id": "room1-chinchilla-cage",
+          "type": "pet-cage",
+          "name": "チンチラのケージ（北の壁。上から布を掛けて北と西に垂らす。商品は未定・幅 800×奥行 500×高さ 1200 くらい）",
+          "x": 2600,
+          "y": 3732.5,
+          "w": 800,
+          "d": 500,
+          "h": 1200,
+          "rotation": 0,
+          "color": "#1d1d1f",
+          "count": 3,
+          "coverSides": [
+            "top",
+            "back",
+            "left"
+          ]
+        },
+        {
+          "id": "chinchilla-1",
+          "type": "chinchilla",
+          "name": "チンチラ（バイオレット）",
+          "x": 2800,
+          "y": 3752.5,
+          "w": 130,
+          "d": 300,
+          "h": 170,
+          "rotation": 0,
+          "color": "#a7a1ad",
+          "z": 698
+        },
+        {
+          "id": "firecut-3f-room3-south",
+          "type": "fire-roll-screen",
+          "name": "防火ロールスクリーン（三協アルミ FIRECUT-RS・図面の「ファイヤーカット【込】」・Fix 窓 08320 の室内側。商品は要確認）",
+          "x": 7700,
+          "y": 7181,
+          "w": 910,
+          "d": 70,
+          "h": 2110,
+          "rotation": 180,
+          "color": "#b8babb",
+          "z": 0,
+          "screen": "frost"
+        },
+        {
+          "id": "rail-3f-room2-n",
+          "type": "lighting-rail",
+          "name": "ライティングレール（北東の書斎・北。西から東へ。標準のシーリングライトの代わり・器具は未定・差額は要確認）",
+          "x": 7172.5,
+          "y": 2578.3,
+          "w": 1305,
+          "d": 40,
+          "h": 20,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 2400,
+          "count": 0
+        },
+        {
+          "id": "rail-3f-room2-s",
+          "type": "lighting-rail",
+          "name": "ライティングレール（北東の書斎・南。西から東へ。標準のシーリングライトの代わり・器具は未定・差額は要確認）",
+          "x": 7172.5,
+          "y": 3564.2,
+          "w": 1305,
+          "d": 40,
+          "h": 20,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 2400,
+          "count": 0
+        },
+        {
+          "id": "rs-3f-north",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（窓枠の内側に付ける・3 階 ホールの北の窓・商品は未定）",
+          "x": 4550,
+          "y": 1622.5,
+          "w": 1590,
+          "d": 40,
+          "h": 295,
+          "rotation": 0,
+          "color": "#232324",
+          "z": 1700
+        },
+        {
+          "id": "rs-3f-room1-w1",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（窓枠の内側に付ける・南西の書斎・西の窓 北・商品は未定）（ケースの上端はエアコンの下端に当たらないよう FL+2045）",
+          "x": 1850,
+          "y": 4810,
+          "w": 1180,
+          "d": 40,
+          "h": 295,
+          "rotation": 270,
+          "color": "#c9c9c6",
+          "z": 1700
+        },
+        {
+          "id": "rs-3f-room1-w2",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（窓枠の内側に付ける・南西の書斎・西の窓 南・商品は未定）",
+          "x": 1850,
+          "y": 6170,
+          "w": 1180,
+          "d": 40,
+          "h": 295,
+          "rotation": 270,
+          "color": "#c9c9c6",
+          "z": 1700
+        },
+        {
+          "id": "rs-3f-room3-e",
+          "type": "roll-screen",
+          "name": "ロールスクリーン（窓枠の内側に付ける・洋室3・東の窓・商品は未定）（ケースの上端はエアコンの下端に当たらないよう FL+2045）",
+          "x": 8160,
+          "y": 5950,
+          "w": 1640,
+          "d": 40,
+          "h": 295,
+          "rotation": 90,
+          "color": "#c9c9c6",
+          "z": 1700
         }
       ],
       "jambs": {
@@ -4711,7 +5368,7 @@
       "id": "c-1f-spot",
       "name": "外のスポットライト",
       "lights": [
-        "std-1f-outdoor-spot"
+        "porch-light-1"
       ],
       "switches": [
         {
@@ -4802,10 +5459,12 @@
       ]
     },
     {
-      "id": "c-2f-storage-n",
-      "name": "納戸（北）の照明",
+      "id": "c-2f-kitchen",
+      "name": "キッチン壁際のダウンライト",
       "lights": [
-        "std-2f-storn-dl"
+        "std-2f-kitchen-dl-1",
+        "std-2f-kitchen-dl-3",
+        "std-2f-kitchen-dl-4"
       ],
       "switches": [
         {
@@ -4815,31 +5474,17 @@
       ]
     },
     {
-      "id": "c-2f-kitchen",
-      "name": "キッチンの照明",
-      "lights": [
-        "std-2f-kitchen-dl-1",
-        "std-2f-kitchen-dl-2",
-        "std-2f-kitchen-dl-3"
-      ],
-      "switches": [
-        {
-          "id": "std-2f-sw-kitchen",
-          "button": 1
-        }
-      ]
-    },
-    {
       "id": "c-2f-dining",
-      "name": "ダイニングの照明",
+      "name": "下がり天井の上の間接照明",
       "lights": [
-        "std-2f-kitchen-dl-4",
-        "std-2f-kitchen-dl-5"
+        "kitchen-cove-w",
+        "kitchen-cove-s",
+        "kitchen-cove-n"
       ],
       "switches": [
         {
           "id": "std-2f-sw-kitchen",
-          "button": 2
+          "button": 3
         }
       ]
     },
@@ -4936,9 +5581,7 @@
     {
       "id": "c-3f-room2",
       "name": "書斎（北東）の照明",
-      "lights": [
-        "std-3f-room2-cl"
-      ],
+      "lights": [],
       "switches": [
         {
           "id": "std-3f-sw-room2",
@@ -4969,6 +5612,32 @@
         {
           "id": "std-3f-sw-room3",
           "button": 0
+        }
+      ]
+    },
+    {
+      "id": "c-2f-rail",
+      "name": "ライティングレール（キッチン側）",
+      "lights": [
+        "rail-kitchen"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-kitchen",
+          "button": 1
+        }
+      ]
+    },
+    {
+      "id": "c-2f-rail-dining",
+      "name": "ライティングレール（ダイニング側）",
+      "lights": [
+        "rail-dining"
+      ],
+      "switches": [
+        {
+          "id": "std-2f-sw-kitchen",
+          "button": 2
         }
       ]
     }

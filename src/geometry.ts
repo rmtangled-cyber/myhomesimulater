@@ -141,7 +141,8 @@ export function openingsOnSegment(
  * 多角形を内側へ d だけ縮める（各辺を平行移動して隣どうしを交差させる）。
  * 戻り値の i 番目の辺は、元の i 番目の辺に対応する。
  */
-export function insetPolygon(poly: Point[], d: number): Point[] {
+/** d は内側へずらす距離（負なら外へ）。辺ごとに変えるときは関数で渡す（i は poly[i] → poly[i+1] の辺） */
+export function insetPolygon(poly: Point[], dist0: number | ((i: number) => number)): Point[] {
   const ccw = signedArea(poly) > 0;
   const n = poly.length;
   const lines = poly.map((a, i) => {
@@ -152,6 +153,7 @@ export function insetPolygon(poly: Point[], d: number): Point[] {
     // signedArea が正なら、内側は (−dy, dx) 側
     const nx = ccw ? -dy : dy;
     const ny = ccw ? dx : -dx;
+    const d = typeof dist0 === 'number' ? dist0 : dist0(i);
     return { p: [a[0] + nx * d, a[1] + ny * d] as Point, dx, dy };
   });
   return lines.map((cur, i) => {

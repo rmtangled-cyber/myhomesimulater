@@ -62,6 +62,10 @@ export interface Opening {
   style?: 'fix' | 'slide';
   /** 開口部まわりの面（壁の厚みの面）のクロス。省略時は隣の壁と同じ */
   jamb?: string;
+  /** 室内ドアの枠の色（ラフィスのライン枠。白が標準、黒はオプション） */
+  frame?: 'white' | 'black' | 'none' | 'calm';
+  /** frame: 'calm'（KAMIYA CALM の細い枠と天井の上枠）の色。扉の色に合わせる */
+  frameColor?: string;
   /** 片引き戸の戸袋。戸がある部屋（slideRoom）の側の壁を、戸を引く向き（slideTo）に開口部の幅だけ slideDepth（既定 40）削る */
   slideRoom?: string;
   slideTo?: Side;
@@ -94,12 +98,35 @@ export interface Furniture {
   count?: number;
   /** キッチンの下台の扉・引出しの割り付け（左からの幅。負の数は 1 枚扉、60 未満はフィラー） */
   modules?: number[];
+  /** kitchen-cabinet: 引出しではなく開き戸（1 モジュール 1 枚。左半分は左吊り、右半分は右吊り） */
+  hinged?: boolean;
+  /**
+   * kitchen-cabinet: モジュールごとの前板の高さ（上から mm）。正 = 引出し、負 = 開かない板（シンクの前の幕板など）、0 = そこから下は扉のない空洞（シンク下のフリースペース）。
+   * 合計が h に足りない分は足元の台輪（奥へ引っ込む）。合計が h なら床まで（フロアスライド）。モジュールの数だけ並べる（フィラーの分は空の配列でよい）
+   */
+  fronts?: number[][];
+  /** lighting-rail に吊るす器具: spot（スポットライト・省略時）・pendant（ペンダントライト） */
+  fixture?: 'spot' | 'pendant';
+  /** fire-roll-screen（三協アルミ FIRECUT-RS）のスクリーン色。省略時は frost */
+  screen?: 'shut' | 'mesh' | 'frost';
+  /** 開き戸のドアストッパー（LIXIL ラフィス）。secret = シークレットドアストッパー（扉の下に内蔵・床に丸い部品）、cylinder = シリンダー式外付ドアストッパー（扉の下に小さな箱） */
+  stopper?: 'secret' | 'cylinder';
+  /** ドアストッパーの色（商品コードの頭 2 文字: YY・AC・AD・MM・DD・RA・BD・BE） */
+  stopperColor?: string;
   /** 片引き戸（壁を削った戸袋に引き込む）。レールや床のガイドは枠・戸袋の中で見えない */
   pocket?: boolean;
   /** 開き戸の開く向き。1 = 正面（+z）の側へ開く（省略時）、-1 = 背面の側へ開く */
   swing?: 1 | -1;
   /** 両開きの扉の開く角度（度）。[正面から見て左の扉, 右の扉]。省略時は 105°（鏡などに当たる側は開き角度制限付きの丁番で 90° にする） */
   doorAngles?: [number, number];
+  /** 扉の取手・引手の色（ラフィス: アイアンブラック・シャインニッケル・プレシャスホワイト） */
+  handle?: 'black' | 'nickel' | 'white';
+  /** 室内ドアの商品シリーズ（ウォークスルーの「ドアを試す」の色の候補）。省略時は LIXIL ラフィス、calm は神谷コーポレーション フルハイトドア CALM */
+  doorSeries?: 'raffis' | 'calm';
+  /** コンセントに有線 LAN のポート（モジュラージャック）を付ける */
+  lan?: boolean;
+  /** ケージなどに上から掛ける布の面（家具の向きで: top・back（背面）・left（正面から見て右手…ではなく家具の −x 側）・right） */
+  coverSides?: ('top' | 'back' | 'left' | 'right')[];
   /** 照明の明るさ（全光束 lm）。製品の定格光束。省略時は器具の種類ごとの目安 */
   lumen?: number;
   /** 照明の光の広がり（度）。省略時は器具の種類ごとの目安 */
@@ -153,8 +180,13 @@ export interface Plan {
   name: string;
   /** グリッドの間隔（尺モジュールなら 910） */
   grid: number;
-  /** 壁の厚さ */
+  /** 壁の厚さ（壁芯から両側へ半分ずつ。室内側の面はここまで） */
   wallThickness: number;
+  /**
+   * 外壁の外側に足す厚み（mm）。外に面した壁だけ、外の面を壁の厚みの半分よりさらに外へ出す
+   * （構造用面材・通気胴縁・外壁材のぶん）。窓のサッシは外寄りに付く
+   */
+  claddingThickness?: number;
   /** 外壁の素材ID */
   exterior: string;
   /** 地面（GL）の高さ。1階 FL からの差で、ふつうは負の値 */

@@ -1,12 +1,32 @@
 // 右側の操作パネル。状態から HTML を作り直し、操作は data-action で受け取る。
 
 import { WEB } from './env';
-import { FURNITURE_TYPES, getFurnitureType } from './furniture';
+import { FURNITURE_TYPES, STOPPER_COLORS, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
-import { CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
+import { CALM_COLORS, CALM_HEX, CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, RAFFIS_COLORS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
 import type { Floor, Furniture, Opening, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
+
+/** ロールスクリーン・縦型ブラインドの色（商品が決まるまでの一般的な色） */
+const SCREEN_COLORS: [string, string][] = [
+  ['#f2f1ec', 'ホワイト'],
+  ['#e8e2d3', 'アイボリー'],
+  ['#cbbfa8', 'ベージュ'],
+  ['#c9c9c6', 'ライトグレー'],
+  ['#8e8f8f', 'グレー'],
+  ['#4a4b4d', 'ダークグレー'],
+  ['#232324', 'ブラック'],
+  ['#6b5546', 'ブラウン'],
+];
+
+/** 三協アルミ FIRECUT-RS の枠の色（商品色）。色は公式の名前からの目安 */
+const FIRECUT_FRAMES: [string, string][] = [
+  ['#a69f92', 'シャンパングレイ（UC）'],
+  ['#232324', 'ブラック（KC）'],
+  ['#f2f2f0', 'ホワイト（WH）'],
+  ['#b8babb', 'サンシルバー（SLC）'],
+];
 
 export type Selection = { kind: 'furniture'; id: string } | { kind: 'room'; id: string } | null;
 
@@ -34,7 +54,7 @@ export interface PanelState {
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
   /** ウォークスルーで押したスイッチ（どの回路をつけ消ししたか） */
   pressed: { switchId: string; button: number; circuitId: string | null; on: boolean } | null;
-  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | { kind: 'cap'; floor: number; capKey: string; materialId: string } | { kind: 'zone'; roomId: string; zoneId: string; materialId: string } | null;
+  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | { kind: 'cap'; floor: number; capKey: string; materialId: string } | { kind: 'zone'; roomId: string; zoneId: string; materialId: string } | { kind: 'door'; furnitureId: string } | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -368,6 +388,7 @@ export class Panel {
     const p = this.state.picked;
     if (!p) return `<p class="hint">壁・天井・開口部まわりの面・床をクリックすると、その面だけ候補のクロス（床は床材）に張り替えて見比べられます。</p>`;
     const rooms = this.state.plan.floors.flatMap((f) => f.rooms);
+    if (p.kind === 'door') return this.tryDoor(p.furnitureId);
     let title = '';
     let current = '';
     if (p.kind === 'zone') {
@@ -400,6 +421,66 @@ export class Panel {
       <h3>${p.kind === 'floor' ? '床を試す' : 'クロスを試す'} <small>${esc(title)}</small></h3>
       <div class="mat-row">${swatch}<select data-walk-finish="1"><option value="">（選ぶ）</option>${options}</select></div>
       <p class="hint">クリックした面だけ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
+  }
+
+  /** ウォークスルーでクリックした室内ドアの色柄・取手・枠を、ラフィスの選択肢に変えて見比べる（防火ロールスクリーンは枠とスクリーンの色） */
+  private tryDoor(id: string): string {
+    const floor = this.state.plan.floors.find((x) => x.furniture.some((f) => f.id === id));
+    const f = floor?.furniture.find((x) => x.id === id);
+    if (!floor || !f) return '';
+    const calm = f.doorSeries === 'calm';
+    const chip = (action: string, value: string, label: string, on: boolean, swatch = '') =>
+      `<li><button data-action="${action}" data-value="${value}" class="${on ? 'on' : ''}">${swatch}${esc(label)}</button></li>`;
+    if (f.type === 'roll-screen' || f.type === 'vertical-blind') {
+      const dot = (c: string) => `<span class="swatch" style="display:inline-block;width:14px;height:14px;border:1px solid #999;background:${c};vertical-align:-2px;margin-right:4px"></span>`;
+      const colors = SCREEN_COLORS.map(([c, l]) => chip('rs-color', c, l, f.color.toLowerCase() === c, dot(c))).join('');
+      const roll = f.type === 'roll-screen';
+      return `
+      <h3>${roll ? 'ロールスクリーン' : '縦型ブラインド'}を試す <small>${esc(f.name ?? '')}</small></h3>
+      <p class="hint">${roll ? 'クリックで下ろす・巻き上げる。' : 'クリックで羽根が回って開く・閉じる。'}商品は未定なので、色は一般的な色から選べます（商品が決まったら、その商品の色に変えます）。選ぶとこの${roll ? 'スクリーン' : 'ブラインド'}だけ変わります（ファイルにも保存）。</p>
+      <h3>色</h3><ul class="chips">${colors}</ul>
+      <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
+    }
+    if (f.type === 'fire-roll-screen') {
+      const dot = (c: string) => `<span class="swatch" style="display:inline-block;width:14px;height:14px;border:1px solid #999;background:${c};vertical-align:-2px;margin-right:4px"></span>`;
+      const frames = FIRECUT_FRAMES.map(([c, l]) => chip('fc-frame', c, l, f.color.toLowerCase() === c, dot(c))).join('');
+      const scr = f.screen ?? 'frost';
+      const screens = ([['shut', 'シャットホワイト（遮光率 99.9%）'], ['mesh', 'メッシュホワイト（遮光率 80.3%）'], ['frost', 'フロストホワイト（遮光率 69%）']] as const).map(([v, l]) => chip('fc-screen', v, l, scr === v)).join('');
+      return `
+      <h3>防火ロールスクリーンを試す <small>${esc(f.name ?? '')}</small></h3>
+      <p class="hint">三協アルミ FIRECUT-RS（ファイアーカット-RS）。図面の「ファイヤーカット【込】」。窓の室内側に付ける防火設備のロールスクリーンです（商品は要確認）。クリックで下ろす・巻き上げる。選ぶとこのスクリーンだけ変わります（ファイルにも保存）。</p>
+      <h3>枠の色</h3><ul class="chips">${frames}</ul>
+      <h3>スクリーンの色</h3><ul class="chips">${screens}</ul>
+      <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
+    }
+    const opening = calm ? undefined : doorFrameOf(floor, f);
+    const list = calm ? CALM_COLORS : RAFFIS_COLORS;
+    const colors = list.map((m) => chip('door-color', m, materialLabel(m).replace('ラフィス ', '').replace('CALM ', ''), f.material === m, `<img class="swatch" style="width:16px;height:16px" src="${swatchUrl(m)}" alt="">`)).join('');
+    const handle = f.handle ?? 'black';
+    const handles = ([['black', 'アイアンブラック'], ['nickel', 'シャインニッケル'], ['white', 'プレシャスホワイト']] as const).map(([v, l]) => chip('door-handle', v, l, handle === v)).join('');
+    const frame = opening?.frame ?? 'white';
+    const frames = opening
+      ? ([['white', 'ホワイト（標準）'], ['black', 'ブラック（+2,000円）']] as const).map(([v, l]) => chip('door-frame', v, l, frame === v)).join('')
+      : '';
+    return `
+      <h3>ドアを試す <small>${esc(f.name ?? '')}</small></h3>
+      <p class="hint">${calm ? '神谷コーポレーション フルハイトドア CALM（枠の見えないドア）' : 'LIXIL ラフィス'}。${f.material && list.includes(f.material) ? '' : '今は仮の色です。'}選ぶとこのドアだけ変わります（ファイルにも保存）。</p>
+      <h3>色柄</h3><ul class="chips">${colors}</ul>
+      ${calm ? '<p class="hint">取手は CALM 専用のグレモン錠（ステンレス）だけで、ほかのハンドルは選べません。枠はなく、扉を壁の開口にぴったり合わせています（閉めるとタイト材ですき間がふさがる）。</p>' : `<h3>${f.type === 'swing-door' ? '取手（スクエア M）' : '引手'}</h3><ul class="chips">${handles}</ul>`}
+      ${frames ? `<h3>枠</h3><ul class="chips">${frames}</ul>` : ''}
+      ${f.type === 'swing-door' && !calm ? this.stopperChips(f, chip) : ''}
+      <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
+  }
+
+  /** 開き戸のドアストッパー（LIXIL ラフィス カタログ p.192）の種類と色 */
+  private stopperChips(f: Furniture, chip: (action: string, value: string, label: string, on: boolean, swatch?: string) => string): string {
+    const kinds = ([['none', 'なし'], ['secret', 'シークレット（扉に内蔵・床側 1,000 円）'], ['cylinder', 'シリンダー式外付（本体側 2,000 円＋床側 1,000 円）']] as const)
+      .map(([v, l]) => chip('door-stopper', v, l, (f.stopper ?? 'none') === v)).join('');
+    const dot = (c: string) => `<span class="swatch" style="display:inline-block;width:14px;height:14px;border:1px solid #999;background:${c};vertical-align:-2px;margin-right:4px"></span>`;
+    const colors = f.stopper
+      ? Object.entries(STOPPER_COLORS).map(([k, [l, c]]) => chip('door-stopper-color', k, l, (f.stopperColor ?? 'BE') === k, dot(c))).join('')
+      : '';
+    return `<h3>ドアストッパー</h3><ul class="chips">${kinds}</ul>${colors ? `<ul class="chips">${colors}</ul>` : ''}<p class="hint">床の丸い部品（直径 36.4mm）は、扉を 90° 開いた所。扉が壁や家具に当たるのを防ぎ、マグネットで開いたまま仮に止められる。</p>`;
   }
 
   private warningsSection(): string {
@@ -437,6 +518,48 @@ export class Panel {
       case 'select-room': return a.select({ kind: 'room', id: v });
       case 'select-furn': return a.select({ kind: 'furniture', id: v });
       case 'walk-into': return a.walkInto(v);
+      case 'door-color':
+      case 'door-handle':
+      case 'door-frame': {
+        const p = this.state.picked;
+        if (p?.kind !== 'door') return;
+        if (btn.dataset.action === 'door-color') {
+          a.updateFurniture(p.furnitureId, (f) => (f.material = v));
+          // CALM は枠も扉の色に合わせる
+          if (CALM_HEX[v]) {
+            const fl = this.state.plan.floors.find((x) => x.furniture.some((f) => f.id === p.furnitureId));
+            const df = fl?.furniture.find((x) => x.id === p.furnitureId);
+            const op = fl && df ? doorFrameOf(fl, df) : undefined;
+            if (op) a.updateOpening(op.id, (x) => (x.frameColor = CALM_HEX[v]));
+          }
+          return;
+        }
+        if (btn.dataset.action === 'door-handle') return a.updateFurniture(p.furnitureId, (f) => (v === 'black' ? delete f.handle : (f.handle = v as Furniture['handle'])));
+        const floor = this.state.plan.floors.find((x) => x.furniture.some((f) => f.id === p.furnitureId));
+        const f = floor?.furniture.find((x) => x.id === p.furnitureId);
+        const o = floor && f ? doorFrameOf(floor, f) : undefined;
+        if (o) a.updateOpening(o.id, (x) => (v === 'black' ? (x.frame = 'black') : delete x.frame));
+        return;
+      }
+      case 'door-stopper':
+      case 'door-stopper-color': {
+        const p = this.state.picked;
+        if (p?.kind !== 'door') return;
+        if (btn.dataset.action === 'door-stopper') return a.updateFurniture(p.furnitureId, (f) => (v === 'none' ? (delete f.stopper, delete f.stopperColor) : (f.stopper = v as Furniture['stopper'])));
+        return a.updateFurniture(p.furnitureId, (f) => (f.stopperColor = v));
+      }
+      case 'rs-color': {
+        const p = this.state.picked;
+        if (p?.kind !== 'door') return;
+        return a.updateFurniture(p.furnitureId, (f) => (f.color = v));
+      }
+      case 'fc-frame':
+      case 'fc-screen': {
+        const p = this.state.picked;
+        if (p?.kind !== 'door') return;
+        if (btn.dataset.action === 'fc-frame') return a.updateFurniture(p.furnitureId, (f) => (f.color = v));
+        return a.updateFurniture(p.furnitureId, (f) => (f.screen = v as Furniture['screen']));
+      }
       case 'web-floor': return a.openWebFloor(Number(v));
       case 'add-image': {
         const input = this.el.querySelector<HTMLInputElement>('#image-file')!;
@@ -543,4 +666,10 @@ export class Panel {
       });
     }
   }
+}
+
+/** 開き戸の扉の、枠のある開口部（同じ階の type: 'door' で、中心が扉の中心の近く） */
+function doorFrameOf(floor: Plan['floors'][number], f: Furniture): Opening | undefined {
+  if (f.type !== 'swing-door') return undefined;
+  return floor.openings.find((o) => o.type === 'door' && Math.hypot(o.at[0] - f.x, o.at[1] - f.y) < 150);
 }
