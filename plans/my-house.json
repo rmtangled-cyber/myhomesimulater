@@ -119,10 +119,7 @@
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
           "ceiling": "cross-sp2540",
-          "ceilingHeight": 2500,
-          "edges": {
-            "2": "cross-hf3122"
-          }
+          "ceilingHeight": 2500
         },
         {
           "id": "1f-powder",
@@ -259,9 +256,38 @@
           "ceiling": "cross-sp2540",
           "noLabel": true,
           "edges": {
-            "1": "cross-hf3122",
-            "2": "cross-hf3122"
-          }
+            "1": "cross-hf3122"
+          },
+          "zones": [
+            {
+              "id": "hall-west-e-sic-jamb",
+              "name": "東の壁の南の端（シューズクロークの入口の東の側面の、ホール（西）の側の半分）",
+              "edge": 1,
+              "start": [
+                1820,
+                4262.5
+              ],
+              "end": [
+                1820,
+                4330
+              ],
+              "material": "cross-sp2563"
+            },
+            {
+              "id": "hall-west-s-east",
+              "name": "南の壁（シューズクロークの入口より東・アートの壁の側の細い所）",
+              "edge": 2,
+              "start": [
+                1760,
+                4322.5
+              ],
+              "end": [
+                1900,
+                4322.5
+              ],
+              "material": "cross-hf3122"
+            }
+          ]
         },
         {
           "id": "1f-shoes-entry",
@@ -277,11 +303,11 @@
             ],
             [
               1820,
-              4777.5
+              5007.5
             ],
             [
               0,
-              4777.5
+              5007.5
             ]
           ],
           "floor": "floor-lassissa-mortar",
@@ -294,11 +320,11 @@
           "polygon": [
             [
               0,
-              4777.5
+              5007.5
             ],
             [
               1820,
-              4777.5
+              5007.5
             ],
             [
               1820,
@@ -551,10 +577,10 @@
             1365,
             4322.5
           ],
-          "width": 800,
+          "width": 790,
           "height": 2400,
           "sill": 0,
-          "jamb": "cross-hf3122"
+          "jamb": "cross-sp2540"
         },
         {
           "id": "1f-hall-genkan",
@@ -580,7 +606,8 @@
           "slideRoom": "1f-shoes",
           "slideTo": "north",
           "jamb": "cross-hf3122",
-          "slideDepth": 50
+          "slideDepth": 50,
+          "slideLength": 625
         },
         {
           "id": "1f-garage-shutter",
@@ -655,7 +682,7 @@
           "type": "opening",
           "at": [
             910,
-            4777.5
+            5007.5
           ],
           "width": 1940,
           "height": 2550,
@@ -747,7 +774,8 @@
           "color": "#2a2a2b",
           "z": 0,
           "flip": true,
-          "pocket": true
+          "pocket": true,
+          "travel": 565
         },
         {
           "id": "shoe-shelf-back",
@@ -766,42 +794,57 @@
         {
           "id": "shoe-shelf-side",
           "type": "resin-shelf",
-          "name": "樹脂棚板 D300（横）",
+          "name": "樹脂棚板 D300（横・ハンガーパイプの南から。棚板は 1 枚の長い板）",
           "x": 210,
-          "y": 5576,
-          "w": 1478,
+          "y": 5848.75,
+          "w": 932.5,
           "d": 300,
           "h": 1500,
           "rotation": 270,
           "color": "#3d3e40",
           "z": 350,
-          "count": 8
+          "count": 8,
+          "boards": 1
         },
         {
           "id": "shoe-pipe",
           "type": "box",
-          "name": "コート掛け（ハンガーパイプ）",
-          "x": 480,
-          "y": 4682.5,
-          "w": 840,
-          "d": 30,
+          "name": "コート掛け（ハンガーパイプ・北西に南北に掛ける。西の壁から 300、中心は FL+1700）",
+          "x": 360,
+          "y": 4832.5,
+          "w": 30,
+          "d": 900,
           "h": 30,
           "rotation": 0,
           "color": "#1c1c1d",
-          "z": 1950
+          "z": 1685
         },
         {
           "id": "shoe-upper",
           "type": "box",
-          "name": "枕棚",
-          "x": 480,
-          "y": 4532.5,
-          "w": 840,
-          "d": 300,
+          "name": "枕棚（北西・西の壁。下面 FL+1800、パイプの中心から 100 上）",
+          "x": 210,
+          "y": 4832.5,
+          "w": 300,
+          "d": 900,
           "h": 20,
           "rotation": 0,
           "color": "#3d3e40",
-          "z": 2080
+          "z": 1800
+        },
+        {
+          "id": "shoe-hanging-wall",
+          "type": "box",
+          "name": "吊り壁（ハンガーパイプと枕棚の南の端・天井から下げる）",
+          "x": 260,
+          "y": 5322.5,
+          "w": 400,
+          "d": 80,
+          "h": 800,
+          "rotation": 0,
+          "z": 1600,
+          "material": "cross-sp2563",
+          "color": "#d6d4cf"
         },
         {
           "id": "wash-counter",
@@ -909,19 +952,19 @@
           "h": 1000,
           "rotation": 180,
           "color": "#f2f2f0",
-          "z": 100
+          "z": 110
         },
         {
           "id": "washer-base",
-          "type": "box",
-          "name": "キャスター付台",
+          "type": "caster-base",
+          "name": "洗濯機のキャスター付きの台（DEWEL 洗濯機台 JS-JJL-0051N グレー・伸縮 45〜66.5cm・高さ 11〜12cm）",
           "x": 3220,
           "y": 2117.5,
           "w": 620,
-          "d": 640,
-          "h": 100,
+          "d": 660,
+          "h": 110,
           "rotation": 180,
-          "color": "#c9cacb"
+          "color": "#6b6d6f"
         },
         {
           "id": "powder-counter",
@@ -982,13 +1025,28 @@
           "type": "round-mirror",
           "name": "丸ミラー",
           "x": 455,
-          "y": 2572.5,
+          "y": 2602.5,
           "w": 500,
           "d": 20,
           "h": 500,
           "rotation": 0,
           "color": "#2a2a2a",
           "z": 1150
+        },
+        {
+          "id": "powder-mirror-halo",
+          "type": "halo-light",
+          "name": "丸ミラーの裏の間接照明（壁を丸く照らす）（追加）",
+          "x": 455,
+          "y": 2577.5,
+          "w": 500,
+          "d": 30,
+          "h": 500,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 1150,
+          "lumen": 300,
+          "kelvin": 3000
         },
         {
           "id": "bathtub-1",
@@ -1028,6 +1086,19 @@
           "rotation": 90,
           "color": "#4a4b4d",
           "z": 150
+        },
+        {
+          "id": "genkan-bench-light",
+          "type": "line-light",
+          "name": "間接照明（フロートベンチの下）（ダウンライトの移動か追加かは確認中）",
+          "x": 4265,
+          "y": 5050,
+          "w": 1020,
+          "d": 40,
+          "h": 15,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 135
         },
         {
           "id": "shoe-shelf-east",
@@ -1596,7 +1667,7 @@
           "type": "box",
           "name": "シューズクロークの段差の立ち上がり（玄関タイル貼り）",
           "x": 910,
-          "y": 4782.5,
+          "y": 5012.5,
           "w": 1700,
           "d": 10,
           "h": 150,
@@ -1712,37 +1783,18 @@
           "sensor": true
         },
         {
-          "id": "std-1f-hall-dl-1",
-          "type": "downlight",
-          "name": "ダウンライト ホール（DAIKO DDL-6034ABG）（標準）",
-          "x": 766,
-          "y": 3867,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
+          "id": "hall-west-cove",
+          "type": "line-light",
+          "name": "間接照明（洗面室〜廊下の西の壁の上・折り上げ天井の中）（追加）",
+          "x": 150,
+          "y": 3412.5,
+          "w": 1700,
+          "d": 40,
+          "h": 15,
+          "rotation": 90,
           "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 780,
-          "beam": 60,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-1f-hall-dl-2",
-          "type": "downlight",
-          "name": "ダウンライト ホール（人感センサー・DAIKO DDL-5704AB）（標準）",
-          "x": 2278,
-          "y": 3980,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 680,
-          "beam": 90,
-          "kelvin": 3500,
-          "sensor": true
+          "z": 2440,
+          "lumen": 680
         },
         {
           "id": "std-1f-hall-dl-3",
@@ -1945,6 +1997,19 @@
           "z": 190
         },
         {
+          "id": "wic-roomba",
+          "type": "robot-vacuum-base",
+          "name": "ルンバの基地（クリーンベース＋本体・機種は未定。東の壁のコンセントの前）",
+          "x": 7935,
+          "y": 1100,
+          "w": 310,
+          "d": 390,
+          "h": 480,
+          "rotation": 90,
+          "color": "#1e1f20",
+          "z": 0
+        },
+        {
           "id": "std-1f-out-heatex",
           "type": "outlet",
           "name": "コンセント 熱交換器用（標準）",
@@ -2054,7 +2119,7 @@
         {
           "id": "bracket-1",
           "type": "aj-wall-lamp",
-          "name": "ブラケットライト（beaubelle チボリ bbw-009 ブラック・アートの壁の上）",
+          "name": "ブラケットライト（beaubelle チボリ bbw-009 ブラック・アートの壁の上・傘の口を壁の側へ向けてアートを照らす）",
           "x": 1962.5,
           "y": 4695,
           "w": 258,
@@ -2062,7 +2127,8 @@
           "h": 276,
           "rotation": 270,
           "color": "#1c1c1d",
-          "z": 1850
+          "z": 1850,
+          "flip": true
         },
         {
           "id": "ecocute-tank",
@@ -2148,7 +2214,7 @@
           "name": "ロールスクリーン（シューズクロークの入口・ホール（階段の側）からの入口の開口の中に、突っ張り棒式で後付け。商品は未定）",
           "x": 1365,
           "y": 4322.5,
-          "w": 790,
+          "w": 780,
           "d": 40,
           "h": 2390,
           "rotation": 180,
@@ -2289,12 +2355,14 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2540",
+          "ceiling": "cross-th34082",
           "accent": {
             "north": "cross-th34606"
           },
           "edges": {
-            "0": "cross-sp2563",
+            "0": "cross-th34082",
+            "1": "cross-th34082",
+            "2": "cross-th34082",
             "3": "cross-th34082"
           }
         },
@@ -3119,7 +3187,7 @@
           "h": 2400,
           "rotation": 0,
           "color": "#3a3e48",
-          "material": "cross-th34083"
+          "material": "cross-th34084"
         },
         {
           "id": "toilet2-niche-shelf-1",
@@ -3188,17 +3256,16 @@
         },
         {
           "id": "toilet2-vent",
-          "type": "ceiling-vent",
-          "name": "排気口（sumika・床・奥の隅）",
-          "x": 780,
+          "type": "sumika-exhaust",
+          "name": "排気口（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・北西の隅（便器の左の奥）。色は仮にグレー）",
+          "x": 150,
           "y": 2850,
-          "w": 150,
-          "d": 150,
-          "h": 10,
+          "w": 135,
+          "d": 135,
+          "h": 6,
           "rotation": 0,
-          "color": "#9c9e9f",
-          "z": 0,
-          "flip": true
+          "color": "#3a3d3f",
+          "z": 0
         },
         {
           "id": "ac-2f-bedroom",
@@ -3339,20 +3406,32 @@
           "sensor": true
         },
         {
-          "id": "std-2f-toilet-dl",
-          "type": "downlight",
-          "name": "ダウンライト トイレ（DAIKO DDL-6132AB）（標準）",
-          "x": 455,
-          "y": 3700,
-          "w": 100,
-          "d": 100,
-          "h": 20,
+          "id": "toilet2-pendant",
+          "type": "star-pendant",
+          "name": "ペンダントライト（HFUGUD 星型 1 灯 22cm・ゴールドマット。標準のダウンライト DDL-6132AB の代わりに南西の隅。引掛シーリングが要る）",
+          "x": 250,
+          "y": 4060,
+          "w": 220,
+          "d": 220,
+          "h": 500,
           "rotation": 0,
+          "color": "#b8975a",
+          "z": 1900,
+          "lumen": 485,
+          "kelvin": 2700
+        },
+        {
+          "id": "toilet2-niche-light",
+          "type": "line-light",
+          "name": "間接照明（ふかし壁の前の板の裏に縦に付ける。東の端から 30 空ける。前の板に隠れて前から見えない）（追加）",
+          "x": 670,
+          "y": 2736.5,
+          "w": 12,
+          "d": 12,
+          "h": 2300,
+          "rotation": 180,
           "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 440,
-          "beam": 90,
-          "kelvin": 3500
+          "z": 50
         },
         {
           "id": "std-2f-storsw-dl",
@@ -3678,13 +3757,13 @@
         {
           "id": "std-2f-out-toilet",
           "type": "outlet",
-          "name": "コンセント トイレ 2 口・アース付（標準）",
-          "x": 64,
-          "y": 2800,
+          "name": "コンセント トイレ 2 口・アース付（標準）→ ふかし壁の棚の裏（北の壁・東寄り）へ移動",
+          "x": 620,
+          "y": 2566.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 0,
           "color": "#f7f7f5",
           "z": 190
         },
@@ -4291,7 +4370,10 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-th34672",
-          "ceiling": "cross-th34705"
+          "ceiling": "cross-th34705",
+          "edges": {
+            "2": "cross-th34790"
+          }
         },
         {
           "id": "3f-room3",
@@ -4657,17 +4739,16 @@
         },
         {
           "id": "toilet3-vent",
-          "type": "ceiling-vent",
-          "name": "排気口（sumika・床・奥の隅）",
+          "type": "sumika-exhaust",
+          "name": "排気口（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・奥の隅。色は仮にグレー）",
           "x": 1990,
           "y": 2380,
-          "w": 150,
-          "d": 150,
-          "h": 10,
+          "w": 135,
+          "d": 135,
+          "h": 6,
           "rotation": 0,
-          "color": "#9c9e9f",
-          "z": 0,
-          "flip": true
+          "color": "#3a3d3f",
+          "z": 0
         },
         {
           "id": "ac-3f-room2",
@@ -5213,7 +5294,7 @@
           "id": "rail-3f-room2-n",
           "type": "lighting-rail",
           "name": "ライティングレール（北東の書斎・北。西から東へ。標準のシーリングライトの代わり・器具は未定・差額は要確認）",
-          "x": 7172.5,
+          "x": 6825,
           "y": 2578.3,
           "w": 1305,
           "d": 40,
@@ -5227,7 +5308,7 @@
           "id": "rail-3f-room2-s",
           "type": "lighting-rail",
           "name": "ライティングレール（北東の書斎・南。西から東へ。標準のシーリングライトの代わり・器具は未定・差額は要確認）",
-          "x": 7172.5,
+          "x": 6825,
           "y": 3564.2,
           "w": 1305,
           "d": 40,
@@ -5394,10 +5475,11 @@
       "id": "c-1f-hall",
       "name": "ホールと玄関（アートの壁）の照明",
       "lights": [
-        "std-1f-hall-dl-1",
-        "std-1f-hall-dl-2",
         "std-1f-hall-dl-3",
-        "bracket-1"
+        "bracket-1",
+        "hall-west-cove",
+        "powder-mirror-halo",
+        "genkan-bench-light"
       ],
       "switches": [
         {
@@ -5492,7 +5574,8 @@
       "id": "c-2f-toilet",
       "name": "トイレの照明",
       "lights": [
-        "std-2f-toilet-dl"
+        "toilet2-pendant",
+        "toilet2-niche-light"
       ],
       "switches": [
         {

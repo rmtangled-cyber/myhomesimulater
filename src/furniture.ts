@@ -88,8 +88,10 @@ function spot(x: number, y: number, z: number, dir: [number, number, number], in
 function box(w: number, h: number, d: number, x: number, y: number, z: number, mat: THREE.Material): THREE.Mesh {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
   m.position.set(x, y + h / 2, z);
-  m.castShadow = true;
-  m.receiveShadow = true;
+  // クリックを受けるだけの見えない板（opacity 0）は影を落とさない（ロールスクリーンを上げると床に黒い帯が出ていた）
+  const hidden = (mat as THREE.MeshBasicMaterial).transparent && (mat as THREE.MeshBasicMaterial).opacity === 0;
+  m.castShadow = !hidden;
+  m.receiveShadow = !hidden;
   return m;
 }
 
@@ -519,9 +521,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '樹脂棚板（南海プライウッド アームハング棚柱SS）',
     hint: '背面を壁に付ける。壁の棚柱に黒いアーム（棚受）を掛け、厚さ 12mm の樹脂棚板（前に小さな立ち上がり、両端にエンドキャップ）を載せる。幅 800 ごとに板と棚柱が分かれる',
     defaults: { w: 800, d: 290, h: 1800, color: '#3d3e40' },
-    build: ({ w, d, h, count }, mat) => {
+    build: ({ w, d, h, count, boards }, mat) => {
       const n = Math.max(1, count ?? Math.round(h / 300));
-      const pieces = Math.max(1, Math.ceil(w / 800));
+      const pieces = Math.max(1, boards ?? Math.ceil(w / 800));
       const pw = w / pieces;
       const cap = new THREE.MeshStandardMaterial({ color: '#5d5e61', roughness: 0.6 });
       // 棚柱は板の継ぎ目と両端の少し内側
@@ -1475,12 +1477,14 @@ export const FURNITURE_TYPES: FurnitureType[] = [
   {
     type: 'aj-wall-lamp',
     label: 'ブラケットライト（AJ ウォールランプ型・斜めの円すいの傘）',
-    hint: '壁付け。背面を壁に付ける。beaubelle チボリ bbw-009（W258×D165×H276、傘 直径 165×高さ 282、壁の丸い台座 直径 90）。「床からの高さ」は器具の下端。傘は下向きに斜めに付き、開いた口が下を向く',
+    hint: '壁付け。背面を壁に付ける。beaubelle チボリ bbw-009（W258×D165×H276、傘 直径 165×高さ 282、壁の丸い台座 直径 90）。「床からの高さ」は器具の下端。傘は下向きに斜めに付き、開いた口が下を向く。flip で傘の口を壁の側（真下のアートなど）へ向ける',
     defaults: { w: 258, d: 165, h: 276, color: '#1c1c1d' },
-    build: ({ d, h }, mat) => {
+    build: ({ d, h, flip }, mat) => {
       mat.roughness = 0.4;
       mat.metalness = 0.3;
       mat.side = THREE.DoubleSide;
+      // 傘の傾き。ふつうは口が下・手前（部屋の側）、flip は口が下・壁の側（壁の下のアートを照らす）
+      const tilt = flip ? 0.3 : -0.6;
       // 壁の丸い台座
       const base = new THREE.Mesh(new THREE.CylinderGeometry(45, 45, 28, 32), mat);
       base.rotation.x = Math.PI / 2;
@@ -1488,18 +1492,18 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       // 斜めの円すいの傘（細い方が上・台座側、太い口が下前）
       const shade = new THREE.Mesh(new THREE.CylinderGeometry(22, 82, 282, 32, 1, true), mat);
       // 細い方を壁側の上に、太い口を下・手前（部屋の側）へ傾ける
-      shade.rotation.x = -0.6;
-      shade.position.set(0, h * 0.5, 10);
+      shade.rotation.x = tilt;
+      shade.position.set(0, h * 0.5, flip ? 30 : 10);
       shade.castShadow = true;
       const cap = new THREE.Mesh(new THREE.CylinderGeometry(22, 22, 4, 16), mat);
-      cap.rotation.x = -0.6;
-      cap.position.set(0, h * 0.5 + Math.cos(0.6) * 141, 10 - Math.sin(0.6) * 141);
+      cap.rotation.x = tilt;
+      cap.position.set(0, h * 0.5 + Math.cos(tilt) * 141, (flip ? 30 : 10) + Math.sin(tilt) * 141);
       // 傘の中の電球
       const bulb = new THREE.Mesh(new THREE.SphereGeometry(26, 12, 8), glow());
-      bulb.position.set(0, h * 0.4, 30);
+      bulb.position.set(0, h * 0.4, flip ? 20 : 30);
       return [base, shade, cap, bulb];
     },
-    lights: ({ h }) => spot(0, h * 0.25, 60, [0, -1, 0.55], 40, 90, true),
+    lights: ({ h, flip }) => (flip ? spot(0, h * 0.25, 30, [0, -1, -0.12], 40, 90, true) : spot(0, h * 0.25, 60, [0, -1, 0.55], 40, 90, true)),
   },
   {
     type: 'bracket-light',
@@ -1790,6 +1794,115 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'halo-light',
+    label: '丸ミラーの裏の間接照明（壁を丸く照らす）',
+    hint: '丸ミラーの裏に置く光る輪。w がミラーの直径、d が壁からミラーまでの浮かせ（ミラーは壁から d だけ前に出す）。「床からの高さ」はミラーの下端と同じ',
+    defaults: { w: 500, d: 30, h: 500, color: '#1c1c1d' },
+    build: ({ w, d }, mat) => {
+      // 壁から浮かせる黒い台座と、ミラーの縁の少し内側を回る光る輪（正面からはミラーに隠れる）
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(w / 2 - 60, w / 2 - 60, d, 40), mat);
+      base.rotation.x = Math.PI / 2;
+      base.position.set(0, w / 2, 0);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(w / 2 - 50, 5, 8, 64), glow(WARM, 3));
+      ring.position.set(0, w / 2, 0);
+      // 壁に映る光の輪（ミラーの縁から外へ 150 ほどぼやけて消える）。照明が消えているときは隠す
+      const R = w / 2 + 150;
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const g = c.getContext('2d')!;
+      const grad = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+      const r0 = (w / 2 - 40) / R;
+      grad.addColorStop(0, 'rgba(255,196,120,0)');
+      grad.addColorStop(r0, 'rgba(255,196,120,0.95)');
+      grad.addColorStop(Math.min(0.99, (w / 2 + 25) / R), 'rgba(255,200,130,0.7)');
+      grad.addColorStop(1, 'rgba(255,214,160,0)');
+      g.fillStyle = grad;
+      g.fillRect(0, 0, 256, 256);
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(R * 2, R * 2), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, toneMapped: false }));
+      halo.position.set(0, w / 2, -d / 2 + 2);
+      halo.userData.fixture = true;
+      return [base, ring, halo];
+    },
+    // 壁とミラーのすき間から壁へ広がる光。ミラーの真ん中の後ろの点の光で、壁に丸い光の輪ができる
+    lights: ({ w, d }) => {
+      const l = new THREE.PointLight(WARM, 0.6, (w / 2 + 350) * MM_LIGHT, 2);
+      l.position.set(0, w / 2, -d / 2 + 10);
+      l.userData.fixture = true;
+      return [l];
+    },
+  },
+  {
+    type: 'robot-vacuum-base',
+    label: 'ロボット掃除機の基地（自動ゴミ収集のベース＋本体）',
+    hint: '背面を壁（コンセントの前）に付ける。w・d・h はベースの大きさ（ルンバ j7+ のクリーンベースは 幅310×奥行390×高さ480 くらい）。本体（直径 340・高さ 87）はベースの正面に乗って、半分くらい前へ出る',
+    defaults: { w: 310, d: 390, h: 480, color: '#1e1f20' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.5;
+      const dark = new THREE.MeshStandardMaterial({ color: '#111213', roughness: 0.35 });
+      // ベース: 後ろの縦長の塔（ゴミの紙パック）と、前の低い台（本体が乗る斜面）
+      const tower = box(w, h, d * 0.45, 0, 0, -d / 2 + (d * 0.45) / 2, mat);
+      const ramp = box(w, 12, d * 0.55, 0, 0, d / 2 - (d * 0.55) / 2, dark);
+      const lid = box(w - 30, 4, d * 0.45 - 30, 0, h, -d / 2 + (d * 0.45) / 2, dark);
+      // 本体: 丸い掃除機（直径 340・高さ 87）。ベースの正面に半分くらい乗る
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(170, 170, 87, 48), mat);
+      body.position.set(0, 12 + 87 / 2, d / 2 - 60);
+      const top = new THREE.Mesh(new THREE.CylinderGeometry(150, 150, 2, 48), dark);
+      top.position.set(0, 12 + 87 + 1, d / 2 - 60);
+      for (const m of [tower, body]) m.castShadow = true;
+      return [tower, ramp, lid, body, top];
+    },
+  },
+  {
+    type: 'star-pendant',
+    label: 'ペンダントライト（星型・金色の細い枠）',
+    hint: '「床からの高さ」は星の下端の高さ。w が星の大きさ（HFUGUD 星型 1 灯は 22cm）、h はコードを含む長さ（天井まで）。2 つの三角すいを組み合わせた星の形の細い枠の中に電球',
+    defaults: { w: 220, d: 220, h: 500, color: '#b8975a' },
+    build: ({ w, h }, mat) => {
+      mat.roughness = 0.45;
+      mat.metalness = 0.7;
+      const s = w / 2;
+      const c = new THREE.Vector3(0, s, 0);
+      // 星の頂点: 立方体の 8 つの角を、偶数と奇数の組に分けた 2 つの正四面体（星形八面体）
+      const corners = [-1, 1].flatMap((x) => [-1, 1].flatMap((y) => [-1, 1].map((z) => new THREE.Vector3(x, y, z))));
+      const out: THREE.Object3D[] = [];
+      for (const parity of [1, -1]) {
+        const vs = corners.filter((v) => v.x * v.y * v.z === parity).map((v) => v.clone().multiplyScalar(s * 0.999).add(c));
+        for (let i = 0; i < vs.length; i++)
+          for (let j = i + 1; j < vs.length; j++) {
+            const a = vs[i];
+            const b = vs[j];
+            const len = a.distanceTo(b);
+            const rod = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, len, 6), mat);
+            rod.position.copy(a).add(b).multiplyScalar(0.5);
+            rod.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+            rod.castShadow = true;
+            out.push(rod);
+          }
+      }
+      // コード（天井から星の上の角まで）と電球
+      const top = w;
+      const cord = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, Math.max(1, h - top), 6), new THREE.MeshStandardMaterial({ color: '#1c1c1d', roughness: 0.6 }));
+      cord.position.set(0, top + (h - top) / 2, 0);
+      const bulb = new THREE.Mesh(new THREE.SphereGeometry(30, 12, 8), glow());
+      bulb.position.copy(c);
+      out.push(cord, bulb);
+      return out;
+    },
+    lights: ({ w }) => {
+      // 小さな部屋（トイレ）に吊るすので、影を付けて壁でさえぎる（影がないと光が壁を突き抜けて隣の部屋まで明るくなる）
+      const l = new THREE.PointLight(WARM, 12, 4, 2);
+      l.position.set(0, w / 2, 0);
+      l.castShadow = true;
+      l.shadow.mapSize.set(512, 512);
+      l.shadow.camera.near = 0.05;
+      l.shadow.bias = -0.002;
+      l.userData.fixture = true;
+      return [l];
+    },
+  },
+  {
     type: 'basin',
     label: '洗面ボウル',
     hint: 'カウンターの上に置く（「床からの高さ」をカウンター天板の高さに）。h が 30 以下ならアンダーボウル（キッチンのシンクも）',
@@ -1925,6 +2038,39 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       water.scale.set(w - 180, 1, d - 160);
       water.position.y = h + 1;
       return [body, water];
+    },
+  },
+  {
+    type: 'caster-base',
+    label: 'キャスター付きの台（洗濯機・冷蔵庫の下）',
+    hint: '洗濯機などの下に置く、伸縮するキャスター付きの枠。DEWEL 洗濯機台 JS-JJL-0051N（奥行・幅 45〜66.5cm で伸縮、高さ 11〜12cm、8 輪・360° 回転、耐荷重 500kg）。w・d は伸ばした大きさ、h は台の上面の高さ',
+    defaults: { w: 620, d: 660, h: 110, color: '#6b6d6f' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.5;
+      mat.metalness = 0.3;
+      const dark = new THREE.MeshStandardMaterial({ color: '#2a2a2b', roughness: 0.6 });
+      const rail = 40;
+      const top = h - 25;
+      const out: THREE.Object3D[] = [];
+      // 四角い枠（伸縮する角パイプ）
+      out.push(box(w, 25, rail, 0, top, -d / 2 + rail / 2, mat), box(w, 25, rail, 0, top, d / 2 - rail / 2, mat));
+      out.push(box(rail, 25, d - 2 * rail, -w / 2 + rail / 2, top, 0, mat), box(rail, 25, d - 2 * rail, w / 2 - rail / 2, top, 0, mat));
+      // 四隅の足（ゴムの受け）と、2 輪ずつのキャスター
+      for (const sx of [-1, 1])
+        for (const sz of [-1, 1]) {
+          const cx = sx * (w / 2 - rail / 2);
+          const cz = sz * (d / 2 - rail / 2);
+          out.push(box(70, 10, 70, cx, top - 10, cz, dark));
+          for (const o of [-18, 18]) {
+            const wheel = new THREE.Mesh(new THREE.CylinderGeometry(22, 22, 14, 16), dark);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(cx + o, 22, cz);
+            out.push(wheel);
+          }
+          out.push(box(50, top - 44, 12, cx, 44, cz, mat));
+        }
+      for (const m of out) m.castShadow = true;
+      return out;
     },
   },
   {
@@ -2177,6 +2323,41 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const sy = flip ? 4.5 : -6;
       const out: THREE.Object3D[] = [box(w, flip ? 4 : 5, d, 0, y, 0, mat)];
       for (let i = 0; i < 5; i++) out.push(box(w - 24, 1, 10, 0, sy, -d / 2 + 22 + ((d - 44) * i) / 4, slot));
+      return out;
+    },
+  },
+  {
+    type: 'sumika-exhaust',
+    label: '床の排気口（sumika 室内排気口・丸形）',
+    hint: '床に置く。マーベックス sumika の床用 室内排気口 KGR-SHW-0008（直径 135・床から出る縁 6、同心円の格子と十字の桟）。色は 7 色（ウォークスルーでクリックして選べる）',
+    defaults: { w: 135, d: 135, h: 6, color: '#7a7a79' },
+    build: ({ w }, mat) => {
+      mat.roughness = 0.55;
+      const r = w / 2;
+      const dark = new THREE.MeshStandardMaterial({ color: '#1e1e1e', roughness: 0.9 });
+      const out: THREE.Object3D[] = [];
+      // 縁（外周の平らな輪）と、中の暗いすき間
+      const rim = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 5, 48), mat);
+      rim.position.y = 2.5;
+      const hole = new THREE.Mesh(new THREE.CylinderGeometry(r - 14, r - 14, 1, 48), dark);
+      hole.position.y = 5.2;
+      out.push(rim, hole);
+      // 同心円の格子（4 重）と真ん中の丸、十字の桟
+      for (const k of [0.25, 0.45, 0.65, 0.85]) {
+        const ring = new THREE.Mesh(new THREE.TorusGeometry((r - 14) * k, 2.2, 6, 48), mat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = 5.5;
+        out.push(ring);
+      }
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(7, 7, 2, 20), mat);
+      hub.position.y = 5.8;
+      out.push(hub);
+      for (const a of [0, Math.PI / 2]) {
+        const rib = box(2 * (r - 14), 1.5, 3, 0, 5, 0, mat);
+        rib.rotation.y = a;
+        out.push(rib);
+      }
+      for (const o of out) o.receiveShadow = true;
       return out;
     },
   },
@@ -2560,7 +2741,7 @@ export function buildFurniture(f: Furniture): THREE.Group {
  * 上吊りの引き戸。天井に埋め込んだレールから吊るので枠も床のレールもなく、戸の下は 12mm ほど空く。
  * 床には戸の振れ止め（ガイド）だけが付く。mirror なら正面（+z）がミラー面になる。
  */
-function hungDoor({ w, d, h, flip, pocket, handle }: Furniture, mat: THREE.MeshStandardMaterial, mirror: 'none' | 'full' | 'sheet'): THREE.Object3D[] {
+function hungDoor({ w, d, h, flip, pocket, handle, travel }: Furniture, mat: THREE.MeshStandardMaterial, mirror: 'none' | 'full' | 'sheet'): THREE.Object3D[] {
   const gap = 12;
   const panelH = h - gap - 6;
   // 取手は戸の先（戸袋と反対側）。flip で反対側にする
@@ -2568,7 +2749,8 @@ function hungDoor({ w, d, h, flip, pocket, handle }: Furniture, mat: THREE.MeshS
   const leaf = new THREE.Group();
   leaf.add(box(w, panelH, d, 0, gap, 0, mat));
   // クリックで戸袋の側（取手と反対）へ、戸の幅から 60 引いた分だけ動く
-  leaf.userData.door = { type: 'slide', dx: -s * (w - 60), t: 0, x0: 0 };
+  // 開けたときに動く長さ。戸袋が短いときは travel で止める
+  leaf.userData.door = { type: 'slide', dx: -s * (travel ?? w - 60), t: 0, x0: 0 };
   const out: THREE.Object3D[] = [leaf];
   // 引込み戸（壁の中に引き込む）はレールもガイドも壁の中で見えない
   if (!pocket) {

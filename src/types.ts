@@ -6,6 +6,9 @@ export type Point = [number, number];
 export type Side = 'north' | 'east' | 'south' | 'west';
 
 /** 壁 1 面のうち、ある範囲だけ別のクロスを貼る所（キッチンの背面の、下がり天井の端から端まで など） */
+/** 開口部まわりの面の部分。a・b は左右の側面、h は上（と窓の下）の面 */
+export type JambPart = 'a' | 'b' | 'h';
+
 export interface WallZone {
   id: string;
   name: string;
@@ -60,8 +63,11 @@ export interface Opening {
   sill: number;
   /** 窓の種類。fix は開かない窓（障子なし）。省略時は横長なら横すべり出し、それ以外は引き違い／縦長 */
   style?: 'fix' | 'slide';
-  /** 開口部まわりの面（壁の厚みの面）のクロス。省略時は隣の壁と同じ */
+  /** 開口部まわりの面（壁の厚みの面）のクロス。省略時は壁の厚みの真ん中で分けて、それぞれの側の部屋の壁のクロス */
   jamb?: string;
+  /** 開口部まわりの面を 1 面ずつ。キーは「面|側の部屋 ID」（面は a = 壁の線の始まりの側の側面、b = 終わりの側の側面、h = 上・下の面。
+   *  壁の厚みの真ん中で分けた、その部屋の側の半分）か、面だけ（両側の半分とも）。jamb より優先 */
+  jambFaces?: Record<string, string>;
   /** 室内ドアの枠の色（ラフィスのライン枠。白が標準、黒はオプション） */
   frame?: 'white' | 'black' | 'none' | 'calm';
   /** frame: 'calm'（KAMIYA CALM の細い枠と天井の上枠）の色。扉の色に合わせる */
@@ -70,6 +76,8 @@ export interface Opening {
   slideRoom?: string;
   slideTo?: Side;
   slideDepth?: number;
+  /** 戸袋の長さ（既定は開口部の幅 + 80）。壁が足りないときに短くする */
+  slideLength?: number;
 }
 
 export interface Furniture {
@@ -100,6 +108,10 @@ export interface Furniture {
   modules?: number[];
   /** kitchen-cabinet: 引出しではなく開き戸（1 モジュール 1 枚。左半分は左吊り、右半分は右吊り） */
   hinged?: boolean;
+  /** 引き戸: 開けたときに動く長さ（既定は戸の幅 − 60）。戸袋が短いとき */
+  travel?: number;
+  /** resin-shelf: 棚板の枚数（横に何枚に分けるか）。省略時は幅 800 ごと */
+  boards?: number;
   /**
    * kitchen-cabinet: モジュールごとの前板の高さ（上から mm）。正 = 引出し、負 = 開かない板（シンクの前の幕板など）、0 = そこから下は扉のない空洞（シンク下のフリースペース）。
    * 合計が h に足りない分は足元の台輪（奥へ引っ込む）。合計が h なら床まで（フロアスライド）。モジュールの数だけ並べる（フィラーの分は空の配列でよい）

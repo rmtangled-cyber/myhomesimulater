@@ -12,6 +12,10 @@ import { pointInPolygon } from './geometry';
 import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
 import type { Circuit, Plan } from './types';
 import { WEB } from './env';
+import { installLightRegions, LightRegions } from './lightRegions';
+
+// 照明の光が壁・床を突き抜けないよう、シェーダーを書き換える（マテリアルを描く前に）
+installLightRegions();
 
 export type ViewMode = 'orbit' | 'walk';
 export type TimeOfDay = 'day' | 'evening' | 'night';
@@ -103,6 +107,8 @@ export class Viewer {
   private sensorTimer = new Map<string, number>();
   /** 家具がどの階にあるか（ウォークスルーでは今いる階の照明だけを計算して軽くする） */
   private furnitureFloor = new Map<string, number>();
+  /** 照明ごとの光が届いてよい範囲（部屋） */
+  private lightRegions = new LightRegions();
   /** 最後に作った間取り（描画が止まって戻ったときに作り直す） */
   private lastPlan: Plan | null = null;
   /** 開け閉めしている途中の扉 */
@@ -162,6 +168,20 @@ export class Viewer {
     this.gtao = new GTAOPass(this.scene, this.camera, 1, 1);
     this.gtao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 2, thickness: 1, scale: 1.2 });
     this.gtao.blendIntensity = 1;
+    // 陰影（AO）の計算では、クリックを受けるだけの見えない板（opacity 0）も隠す。
+    // 隠さないと、ロールスクリーンを巻き上げても見えない板の足元の床が暗い帯になる
+    const ao = this.gtao as unknown as { _overrideVisibility: () => void; _visibilityCache: THREE.Object3D[] };
+    const hideLinesOnly = ao._overrideVisibility.bind(ao);
+    ao._overrideVisibility = () => {
+      hideLinesOnly();
+      this.scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.Material | undefined;
+        if ((o as THREE.Mesh).isMesh && o.visible && m && !Array.isArray(m) && m.transparent && m.opacity === 0) {
+          o.visible = false;
+          ao._visibilityCache.push(o);
+        }
+      });
+    };
     this.composer.addPass(this.gtao);
     this.composer.addPass(new OutputPass());
 
@@ -212,6 +232,20 @@ export class Viewer {
     for (const f of plan.floors)
       for (const x of f.furniture) if (x.sensor && !WEB) this.sensors.set(x.id, new THREE.Vector3(x.x * MM, (f.elevation + (x.z ?? 0)) * MM, x.y * MM));
     this.world.add(this.built.root);
+    // 照明器具の光は、器具のある部屋（と戸のない開口でつながった部屋）の中だけに届く
+    this.lightRegions.setPlan(plan);
+    plan.floors.forEach((f, i) =>
+      f.furniture.forEach((x) => {
+        const g = this.built!.furniture.get(x.id);
+        if (!g) return;
+        const room = this.lightRegions.roomAt(i, x.x, x.y);
+        g.traverse((o) => {
+          if (!(o as THREE.Light).isLight) return;
+          o.userData.lrFloor = i;
+          o.userData.lrRoom = room;
+        });
+      }),
+    );
     this.walkTargets = [...this.built.floors.flatMap((f) => f.floorMeshes.filter((m) => m.visible)), ...[...this.built.furniture.values()].filter((g) => g.userData.walkable)];
     this.ground.position.y = (plan.groundLevel ?? 0) * MM - 0.005;
     if (typeof this.floorView === 'number') this.floorView = Math.min(this.floorView, plan.floors.length - 1);
@@ -228,6 +262,7 @@ export class Viewer {
   /** 部屋ごとの照明。小さな部屋や吹き抜けには付けない（照明が多いと重くなる） */
   private rebuildRoomLights(plan: Plan) {
     this.roomLights.clear();
+    this.lightRegions.markDirty();
     this.built!.floors.forEach((floor, index) => {
       // 照明器具を置いた部屋は、その器具だけで照らす
       const fixtures = plan.floors[index].furniture.filter((f) => this.built!.furniture.get(f.id)?.getObjectByProperty('isLight', true));
@@ -248,6 +283,8 @@ export class Viewer {
         const fy = inRoom.length ? box.max.y + 1.3 : floor.group.position.y * MM + mesh.userData.lightHeight * MM;
         light.position.set(c.x, fy, c.z);
         light.userData.floorIndex = index;
+        light.userData.lrFloor = index;
+        light.userData.lrRoom = room?.id;
         this.roomLights.add(light);
       }
     });
@@ -756,6 +793,7 @@ export class Viewer {
     } else {
       this.orbit.update();
     }
+    this.lightRegions.update(this.scene);
     // 壁を切る断面表示と相性が悪いので、陰影の後処理はウォークスルーのときだけ
     if (this.mode === 'walk' && this.highQuality) this.composer.render();
     else this.renderer.render(this.scene, this.camera);

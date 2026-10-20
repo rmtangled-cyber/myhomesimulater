@@ -5,10 +5,21 @@ import { FURNITURE_TYPES, STOPPER_COLORS, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
 import { CALM_COLORS, CALM_HEX, CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, RAFFIS_COLORS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
-import type { Floor, Furniture, Opening, Plan, Room, Side } from './types';
+import type { Floor, Furniture, JambPart, Opening, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
 
 /** ロールスクリーン・縦型ブラインドの色（商品が決まるまでの一般的な色） */
+/** マーベックス sumika 床用 室内排気口 KGR-SHW-0008 の 7 色（カタログ 2026.02 p.37 の写真の色） */
+const SUMIKA_EXHAUST_COLORS: [string, string][] = [
+  ['#d8d4c2', 'アイボリー（IV）'],
+  ['#b09d7a', 'ナチュラル（NL）'],
+  ['#85694b', 'ミディアムブラウン（MB）'],
+  ['#765536', 'ダークブラウン（DB）'],
+  ['#645a4f', 'ブラックブラウン（BB）'],
+  ['#7a7a79', 'グレー（GR）'],
+  ['#3a3d3f', 'ブラック（BK）'],
+];
+
 const SCREEN_COLORS: [string, string][] = [
   ['#f2f1ec', 'ホワイト'],
   ['#e8e2d3', 'アイボリー'],
@@ -54,7 +65,7 @@ export interface PanelState {
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
   /** ウォークスルーで押したスイッチ（どの回路をつけ消ししたか） */
   pressed: { switchId: string; button: number; circuitId: string | null; on: boolean } | null;
-  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | { kind: 'cap'; floor: number; capKey: string; materialId: string } | { kind: 'zone'; roomId: string; zoneId: string; materialId: string } | { kind: 'door'; furnitureId: string } | null;
+  picked: { kind: 'wall'; roomId: string; edge: number; side: Side; materialId: string } | { kind: 'ceiling' | 'floor'; roomId: string } | { kind: 'jamb'; openingId: string; part?: JambPart; sideRoom?: string; materialId: string } | { kind: 'furniture'; furnitureId: string } | { kind: 'cap'; floor: number; capKey: string; materialId: string } | { kind: 'zone'; roomId: string; zoneId: string; materialId: string } | { kind: 'door'; furnitureId: string } | null;
   status: SaveStatus;
   statusMessage?: string;
   warnings: string[];
@@ -112,6 +123,7 @@ const esc = (s: string) =>
 export const materialLabel = (id: string) => getMaterialDef(id)?.name ?? id;
 
 const SIDE_NAME: Record<Side, string> = { north: '北', east: '東', south: '南', west: '西' };
+const JAMB_PART_NAME = { a: '開口部まわりの壁（側面）', b: '開口部まわりの壁（側面）', h: '開口部まわりの壁（上・下の面）' } as const;
 const OPENING_NAME = { window: '窓', door: 'ドア枠', opening: '開口' } as const;
 
 /** ウォークスルーで画面の中央に見えている物の説明 */
@@ -127,7 +139,7 @@ export function describeTarget(plan: Plan, t: WalkTarget): string {
     case 'exterior':
       return `外壁　${materialLabel(t.materialId)}`;
     case 'jamb':
-      return `開口部まわりの壁（隣の壁と同じクロス）${t.materialId ? `　${materialLabel(t.materialId)}` : ''}`;
+      return `${t.openingId ? `${JAMB_PART_NAME[t.part ?? 'h']}${t.sideRoom ? `（${room(t.sideRoom)}の側の半分）` : ''}` : '壁の切れ目の面'}${t.materialId ? `　${materialLabel(t.materialId)}` : ''}`;
     case 'opening': {
       const o = plan.floors.flatMap((f) => f.openings).find((x) => x.id === t.openingId);
       return o ? `${OPENING_NAME[o.type]}（幅 ${o.width} × 高さ ${o.height}）` : '';
@@ -406,8 +418,9 @@ export class Panel {
       title = f.name ?? '壁';
       current = f.material ?? '';
     } else if (p.kind === 'jamb') {
-      title = '開口部まわりの面';
-      current = this.state.plan.floors.flatMap((f) => f.openings).find((o) => o.id === p.openingId)?.jamb ?? p.materialId;
+      const sideName = p.sideRoom ? `・${rooms.find((r) => r.id === p.sideRoom)?.name ?? ''}の側の半分` : '';
+      title = `${p.part === 'h' ? '開口部まわりの面（上・下）' : '開口部まわりの面（この側面）'}${sideName}`;
+      current = p.materialId;
     } else {
       const r = rooms.find((x) => x.id === p.roomId);
       if (!r) return '';
@@ -438,6 +451,15 @@ export class Panel {
       return `
       <h3>${roll ? 'ロールスクリーン' : '縦型ブラインド'}を試す <small>${esc(f.name ?? '')}</small></h3>
       <p class="hint">${roll ? 'クリックで下ろす・巻き上げる。' : 'クリックで羽根が回って開く・閉じる。'}商品は未定なので、色は一般的な色から選べます（商品が決まったら、その商品の色に変えます）。選ぶとこの${roll ? 'スクリーン' : 'ブラインド'}だけ変わります（ファイルにも保存）。</p>
+      <h3>色</h3><ul class="chips">${colors}</ul>
+      <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
+    }
+    if (f.type === 'sumika-exhaust') {
+      const dot = (c: string) => `<span class="swatch" style="display:inline-block;width:14px;height:14px;border:1px solid #999;border-radius:50%;background:${c};vertical-align:-2px;margin-right:4px"></span>`;
+      const colors = SUMIKA_EXHAUST_COLORS.map(([c, l]) => chip('rs-color', c, l, f.color.toLowerCase() === c, dot(c))).join('');
+      return `
+      <h3>排気口の色を試す <small>${esc(f.name ?? '')}</small></h3>
+      <p class="hint">マーベックス sumika の床用 室内排気口 KGR-SHW-0008（直径 135）。選ぶとこの排気口だけ変わります（ファイルにも保存）。</p>
       <h3>色</h3><ul class="chips">${colors}</ul>
       <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
     }
@@ -619,7 +641,10 @@ export class Panel {
       } else if (picked.kind === 'furniture') {
         a.updateFurniture(picked.furnitureId, (f) => (f.material = id));
       } else if (picked.kind === 'jamb') {
-        a.updateOpening(picked.openingId, (o) => (o.jamb = id));
+        // クリックした面（左右の側面のどちらか・上下の面）だけ
+        // 壁の厚みの真ん中で分けた、クリックした側の半分だけ
+        const key = `${picked.part ?? 'h'}|${picked.sideRoom ?? ''}`;
+        a.updateOpening(picked.openingId, (o) => (o.jambFaces = { ...(o.jambFaces ?? {}), [key]: id }));
       } else if (picked.kind === 'ceiling') {
         a.updateRoom(picked.roomId, (r) => r.ceiling && (r.ceiling = id));
       } else if (picked.kind === 'floor') {

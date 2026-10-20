@@ -546,7 +546,8 @@ function rawConcrete(base: string, tileMm: [number, number]) {
     // 型枠のパネル（公式の柄画像: 幅 465・高さ 625 が 2 列、横の継ぎ目は y 392 と 1017）。P コンは各パネルに 2 つ（パネルの幅の 0.6、高さの 0.17 と 0.71）
     const pw = 465 * px;
     const ph = 625 * (h / tileMm[1]);
-    const oy = 392 * (h / tileMm[1]);
+    // 横の継ぎ目は画像の上から 392・1017 だが、床にそろえるため（ユーザー指定 2026-10-21）継ぎ目が床（模様の下端）と 625 ごとに来るようにずらす
+    const oy = 0;
     const holeR = 12 * px;
     const holes: [number, number][] = [];
     for (let cx = 0; cx < 2; cx++) for (let cy = -1; cy < 2; cy++) for (const fy of [0.17, 0.71]) holes.push([(cx + 0.6) * pw, oy + (cy + fy) * ph]);
@@ -1060,7 +1061,7 @@ export const CANDIDATE_FLOORS = ['floor-lassissa-mortar', 'floor-lassissa-marble
 
 // 品番のアルファベット順（FE → HF → SP → TH）に並べて出す
 export const CANDIDATE_WALLPAPERS = [
-  'cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th34084', 'cross-th32208', 'cross-th34282', 'cross-th34283', 'cross-fe78140', 'cross-th34705', 'cross-hf3068', 'cross-hf3005', 'cross-hf3045', 'cross-hf3004', 'cross-hf3113', 'cross-th34788', 'cross-th34789', 'cross-th34790', 'cross-th34776', 'cross-th34774', 'cross-th34736',
+  'cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th34084', 'cross-th34282', 'cross-th34283', 'cross-fe78140', 'cross-th34705', 'cross-th34706', 'cross-hf3068', 'cross-hf3005', 'cross-hf3045', 'cross-hf3004', 'cross-hf3113', 'cross-th34788', 'cross-th34789', 'cross-th34790', 'cross-th34776', 'cross-th34774', 'cross-th34736',
   'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650', 'cross-fe76649',
 ].sort();
 
@@ -1167,6 +1168,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34776', 'TH34776 木目調（斜めの板張り・ラスティック）', planks('#b08a66', [920, 1238], { angle: 45, plankW: 108.4, minLen: 500, maxLen: 1300, contrast: 0.45, vary: 0.32, knots: 0.7 }), [920, 1238], 0.85, 0.8),
   wall('cross-th34774', 'TH34774 木目調（細い板の縦張り・ウォルナット系）', planks('#866348', [920, 1240], { angle: 0, plankW: 920 / 30, minLen: 413, maxLen: 1240, contrast: 0.32, vary: 0.4, knots: 0.15 }), [920, 1240], 0.8, 0.8),
   // TH34705（25-28 フェイス・PROGRESS WOOD チェリー 柾目）: グレージュの柾目（まっすぐな縦の木目）、全体にマット。リピート タテ 92.9・ヨコ 92cm。色は公式の柄画像・見本（#aea498・#bbada0）から
+  wall('cross-th34706', 'TH34706 木目調（PROGRESS WOOD エルム 板柾・ダークグレー）', grain('#4c4844', [925, 1240], { spacing: 26, warp: 14, flame: 45, line: 0.4, fine: 0.25, band: 0.22, bandMm: 70, knots: 0.3, dark: '#2c2a28' }), [925, 1240], 0.9, 0.7),
   wall('cross-th34705', 'TH34705 木目調（チェリー 柾目・グレージュ）', grain('#b2a89c', [920, 929], { spacing: 22, warp: 10, flame: 25, line: 0.35, fine: 0.2, band: 0.26, bandMm: 55, knots: 0.5, dark: '#6e6255' }), [920, 929], 0.85, 0.7),
   // 塗り壁調（施工例ではムラのあるやわらかいグレー）
   wall('cross-th34082', 'TH34082 塗り壁調ライトグレー', trowel('#b9b8b4', [925, 641]), [925, 641], 0.9, 1.0),

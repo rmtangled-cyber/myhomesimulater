@@ -19,7 +19,7 @@ import {
 } from './geometry';
 import { buildFurniture, getFurnitureType } from './furniture';
 import { getMaterial, getMaterialDef, setCustomMaterials } from './materials';
-import type { Floor, Plan, Point, Roof, Room, Side } from './types';
+import type { Floor, JambPart, Plan, Point, Roof, Room, Side } from './types';
 
 /** ウォークスルーで「見ているもの」を出すため、面に付けておく情報 */
 export type SurfaceInfo =
@@ -27,7 +27,7 @@ export type SurfaceInfo =
   | { kind: 'floor' | 'ceiling'; roomId: string; materialId: string }
   | { kind: 'exterior'; materialId: string }
   | { kind: 'opening'; openingId: string }
-  | { kind: 'jamb'; materialId?: string; openingId?: string; floor?: number; capKey?: string };
+  | { kind: 'jamb'; materialId?: string; openingId?: string; part?: JambPart; sideRoom?: string; floor?: number; capKey?: string };
 
 export interface BuiltFloor {
   group: THREE.Group;
@@ -72,12 +72,12 @@ const Y = new THREE.Vector3(0, 1, 0);
 const SIDE_VEC: Record<Side, Point> = { north: [0, -1], south: [0, 1], east: [1, 0], west: [-1, 0] };
 
 /** 線分（f の向き）の上の開口部 s の、片引き戸の戸袋の範囲 [u0, u1]（戸を引く向きに、戸の幅 = 開口部 + 80） */
-function pocketSpan(f: Frame, s: { u0: number; u1: number; opening: { slideTo?: Side } }, len: number): [number, number] | null {
+function pocketSpan(f: Frame, s: { u0: number; u1: number; opening: { slideTo?: Side; slideLength?: number } }, len: number): [number, number] | null {
   if (!s.opening.slideTo) return null;
   const v = SIDE_VEC[s.opening.slideTo];
   const along = v[0] * f.D.x + v[1] * f.D.z;
   if (Math.abs(along) < 0.5) return null;
-  const w = s.u1 - s.u0 + 80;
+  const w = s.opening.slideLength ?? s.u1 - s.u0 + 80;
   const [u0, u1] = along > 0 ? [s.u1, s.u1 + w] : [s.u0 - w, s.u0];
   return [Math.max(0, u0), Math.min(len, u1)];
 }
@@ -564,16 +564,20 @@ function buildFloor(
     return room.accent?.[edgeSide(room.polygon, best)] ?? room.wall;
   };
   const exteriorId = floor.exterior ?? plan.exterior;
-  const sideBuilders = new Map<string, { mb: MeshBuilder; id: string; openingId?: string; capKey?: string }>();
+  const sideBuilders = new Map<string, { mb: MeshBuilder; id: string; openingId?: string; part?: JambPart; sideRoom?: string; capKey?: string }>();
   /** 壁 f の位置 u で、s の側（+1 = N の側）の仕上げを入れる先。開口部まわりの面で、開口部にクロスの指定があればそれを貼る */
-  const sideBuilder = (f: Frame, u: number, s: 1 | -1, openingId?: string): MeshBuilder => {
+  const sideBuilder = (f: Frame, u: number, s: 1 | -1, openingId?: string, part?: JambPart): MeshBuilder => {
     const p = f.at(u, 0, s * (t / 2 + 20));
     // 開口部に属さない面（壁の切れ目）は、面の位置をキーにして 1 面ずつ張り替えられるようにする
     const capKey = openingId ? undefined : `${Math.round(p.x / 10) * 10},${Math.round(p.z / 10) * 10}`;
-    const own = openingId ? floor.openings.find((o) => o.id === openingId)?.jamb : floor.jambs?.[capKey!];
+    const op = openingId ? floor.openings.find((o) => o.id === openingId) : undefined;
+    // 開口部の面は、1 面の片側の半分（左右の側面・上の面 × 壁の厚みの真ん中で分けた部屋の側）の指定 → 1 面の指定 → 開口部全体の指定 → 側の部屋の壁のクロス
+    const sideRoom = openingId ? rooms.find((r) => pointInPolygon([p.x, p.z], r.polygon))?.id : undefined;
+    const faces = op?.jambFaces;
+    const own = openingId ? ((part && (faces?.[`${part}|${sideRoom ?? ''}`] ?? faces?.[part])) ?? op?.jamb) : floor.jambs?.[capKey!];
     const id = own ?? finishAt([p.x, p.z]) ?? exteriorId;
-    const key = `${id}|${openingId ?? ''}|${capKey ?? ''}`;
-    const entry = sideBuilders.get(key) ?? { mb: new MeshBuilder(), id, openingId, capKey };
+    const key = `${id}|${openingId ?? ''}|${part ?? ''}|${sideRoom ?? ''}|${capKey ?? ''}`;
+    const entry = sideBuilders.get(key) ?? { mb: new MeshBuilder(), id, openingId, part, sideRoom, capKey };
     sideBuilders.set(key, entry);
     return entry.mb;
   };
@@ -655,6 +659,12 @@ function buildFloor(
     }));
     // 位置 u にある開口部（開口部まわりの面がどの開口部のものか）
     const openingAt = (u: number) => spans.find((s) => u > s.u0 - 2 && u < s.u1 + 2)?.opening.id;
+    // 開口部まわりの面が、開口部のどの面か（左右の側面 a・b、上下の面 h）
+    const partOf = (u: number, id?: string): JambPart | undefined => {
+      const sp = id ? spans.find((s) => s.opening.id === id) : undefined;
+      if (!sp) return undefined;
+      return u < sp.u0 + 2 ? 'a' : u > sp.u1 - 2 ? 'b' : 'h';
+    };
     // 片引き戸の戸袋で削る所（壁の片側の面の穴）
     const holes: Hole[] = [];
     for (const sp of spans) {
@@ -672,7 +682,7 @@ function buildFloor(
     for (const r of rects) {
       const drawStart = r.u0 > 0.5 || !joinStart;
       const drawEnd = r.u1 < len - 0.5 || !joinEnd;
-      addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes, (u, s, v) => {
+      addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o, partOf(u, o)), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes, (u, s, v) => {
         // その側の部屋に、この高さで天井があるか（天井がない・もっと高いなら下面を描く）
         const p = f.at(u, 0, s * (t / 2 + 20));
         const room = rooms.find((x) => pointInPolygon([p.x, p.z], x.polygon));
@@ -684,10 +694,10 @@ function buildFloor(
   }
   if (!wallBuilder.empty) {
     // 開口部の側面などの壁の厚みの面（隣の壁のクロスで巻き込む）
-    for (const { mb, id, openingId, capKey } of sideBuilders.values()) {
+    for (const { mb, id, openingId, part, sideRoom, capKey } of sideBuilders.values()) {
       if (mb.empty) continue;
       const faces = new THREE.Mesh(mb.geometry(), getMaterial(id, { clip }));
-      faces.userData.info = { kind: 'jamb', materialId: id, openingId, floor: index, capKey } satisfies SurfaceInfo;
+      faces.userData.info = { kind: 'jamb', materialId: id, openingId, part, sideRoom, floor: index, capKey } satisfies SurfaceInfo;
       faces.castShadow = faces.receiveShadow = true;
       group.add(faces);
     }
@@ -735,7 +745,7 @@ function buildFloor(
     const dir = v[0] + v[1];
     const c = vertical ? o.at[1] : o.at[0];
     const start = c + (dir * o.width) / 2;
-    const far = start + dir * (o.width + 80);
+    const far = start + dir * (o.slideLength ?? o.width + 80);
     const [cx, cy] = centroid(room.polygon);
     const line = vertical ? o.at[0] : o.at[1];
     return [{ o, vertical, line, p0: Math.min(start, far), p1: Math.max(start, far), far, sideSign: Math.sign((vertical ? cx : cy) - line) }];

@@ -91,7 +91,7 @@ function onWalkInfo(info: WalkInfo | null) {
 }
 
 /** 色を試せる室内ドア（開き戸・引き戸・ミラーシートの戸。全面ミラーの戸は除く） */
-const TRY_DOOR_TYPES = ['swing-door', 'sliding-door', 'mirror-sheet-door', 'bifold-door', 'fire-roll-screen', 'roll-screen', 'vertical-blind'];
+const TRY_DOOR_TYPES = ['swing-door', 'sliding-door', 'mirror-sheet-door', 'bifold-door', 'fire-roll-screen', 'roll-screen', 'vertical-blind', 'sumika-exhaust'];
 function isTryDoor(id: string): boolean {
   const f = findFurniture(store.plan, id)?.item;
   return !!f && TRY_DOOR_TYPES.includes(f.type);
@@ -115,7 +115,7 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
         : target?.kind === 'ceiling' || target?.kind === 'floor'
           ? { kind: target.kind, roomId: target.roomId }
           : target?.kind === 'jamb' && target.openingId
-            ? { kind: 'jamb', openingId: target.openingId, materialId: target.materialId ?? '' }
+            ? { kind: 'jamb', openingId: target.openingId, part: target.part, sideRoom: target.sideRoom, materialId: target.materialId ?? '' }
             : target?.kind === 'jamb' && target.capKey !== undefined && target.floor !== undefined
               ? { kind: 'cap', floor: target.floor, capKey: target.capKey, materialId: target.materialId ?? '' }
             : target?.kind === 'furniture' && isTryDoor(target.furnitureId)
