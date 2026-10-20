@@ -949,6 +949,75 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'monitor-arm',
+    label: 'モニターアーム（机の奥にクランプ・ディスプレイ付き）',
+    hint: '机（デスク）の奥の端に置き、「床からの高さ」を机の天板の高さに。w・h はディスプレイ 1 枚の幅・高さ、count はディスプレイの数（2 なら上下に並べるデュアルアーム）。d はポールからディスプレイの面までの手前への出。armX でディスプレイを左右へずらす（正面から見て右が +）',
+    defaults: { w: 540, d: 260, h: 320, color: '#1c1c1d' },
+    build: ({ w, d, h, count, armX }, mat) => {
+      mat.roughness = 0.4;
+      mat.metalness = 0.4;
+      const n = Math.max(1, count ?? 1);
+      const gap = 12;
+      // ディスプレイの真ん中の高さ（天板から）: 1 枚なら 380、上下 2 枚ならその並びの真ん中が 400
+      const mid = n === 1 ? 380 : 400;
+      const total = n * h + (n - 1) * gap;
+      const pole = mid + total / 2 - 60;
+      const sx = armX ?? 0;
+      const screen = new THREE.MeshStandardMaterial({ color: '#0d0e10', roughness: 0.2, metalness: 0.1 });
+      const out: THREE.Object3D[] = [box(70, 30, 90, 0, -30, 0, mat), box(60, 10, 60, 0, 0, 0, mat)];
+      const p = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, pole, 16), mat);
+      p.position.set(0, pole / 2, 0);
+      out.push(p);
+      for (let i = 0; i < n; i++) {
+        const cy = mid + total / 2 - h / 2 - i * (h + gap);
+        // ポールから前（手前）へ伸びる 2 本の腕と、ディスプレイの裏の取付板
+        const ay = Math.min(cy, pole - 20);
+        const reach = Math.hypot(sx, d - 30);
+        const arm = box(24, 24, reach, 0, ay - 12, 0, mat);
+        arm.geometry.translate(0, 0, reach / 2);
+        arm.position.set(0, ay - 12 + 12, 0);
+        arm.rotation.y = Math.atan2(sx, d - 30);
+        out.push(arm);
+        out.push(box(100, 100, 20, sx, cy - 50, d - 30, mat));
+        // ディスプレイ（薄い板・前が画面）
+        out.push(box(w, h, 18, sx, cy - h / 2, d - 11, mat), box(w - 16, h - 16, 1, sx, cy - h / 2 + 8, d - 1.5, screen));
+      }
+      for (const m of out) m.castShadow = true;
+      return out;
+    },
+  },
+  {
+    type: 'mic-arm',
+    label: 'マイクアーム（机の端にクランプ・マイク付き）',
+    hint: '机の端に置き、「床からの高さ」を天板の高さに。正面（マイクが向く側）を座る人に向ける。d がマイクまでの手前への出、h がマイクの高さ（天板から）、armX でマイクを左右へずらす',
+    defaults: { w: 60, d: 450, h: 380, color: '#1c1c1d' },
+    build: ({ d, h, armX }, mat) => {
+      mat.roughness = 0.45;
+      mat.metalness = 0.3;
+      const sx = armX ?? 250;
+      const seg = (a: THREE.Vector3, b: THREE.Vector3, r: number) => {
+        const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, a.distanceTo(b), 10), mat);
+        m.position.copy(a).add(b).multiplyScalar(0.5);
+        m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+        m.castShadow = true;
+        return m;
+      };
+      // クランプ → 立ち上がり → 肘（高い所）→ マイク（手前へ下がる）
+      const base = new THREE.Vector3(0, 40, 0);
+      const elbow = new THREE.Vector3(sx * 0.4, h + 180, d * 0.35);
+      const tip = new THREE.Vector3(sx, h + 40, d);
+      const out: THREE.Object3D[] = [box(50, 40, 70, 0, -40, 0, mat), seg(base, elbow, 9), seg(base.clone().add(new THREE.Vector3(0, 0, 18)), elbow.clone().add(new THREE.Vector3(0, -20, 0)), 4), seg(elbow, tip, 9)];
+      // マイク（ショックマウントに付いた筒・下向きに吊る）
+      const mic = new THREE.Mesh(new THREE.CylinderGeometry(26, 24, 150, 20), mat);
+      mic.position.set(sx, h - 50, d);
+      mic.castShadow = true;
+      const grill = new THREE.Mesh(new THREE.SphereGeometry(26, 16, 10), new THREE.MeshStandardMaterial({ color: '#3a3b3d', roughness: 0.5, metalness: 0.5 }));
+      grill.position.set(sx, h - 125, d);
+      out.push(mic, grill, seg(tip, new THREE.Vector3(sx, h + 25, d), 6));
+      return out;
+    },
+  },
+  {
     type: 'wall-bass',
     label: '壁掛けのベース（HERCULES GSP38WBK PLUS のハンガー付き）',
     hint: '背面を壁に向けて置く（中心は壁の面から 110 ＋ 厚みの半分）。z はボディの下端。h は全長、w はボディの幅、d はボディの厚み',
@@ -1576,6 +1645,23 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           out.push(dome, bulb);
           continue;
         }
+        if (fixture === 'e26') {
+          // E26 電球の入る大きめの筒（直径 92・長さ 235。SenMeiGuang のダクトレール用スポットライト）。少し斜め下を向く
+          const g = new THREE.Group();
+          g.position.set(x, -60, 0);
+          g.rotation.x = 0.35;
+          const tube = new THREE.Mesh(new THREE.CylinderGeometry(46, 46, 235, 24, 1, true), mat);
+          mat.side = THREE.DoubleSide;
+          tube.position.y = -120;
+          tube.castShadow = true;
+          const cap = new THREE.Mesh(new THREE.CylinderGeometry(46, 46, 4, 24), mat);
+          cap.position.y = -2;
+          const bulb = new THREE.Mesh(new THREE.SphereGeometry(32, 16, 10), glow(WARM, 3));
+          bulb.position.y = -200;
+          g.add(tube, cap, bulb);
+          out.push(box(30, 20, 30, x, -40, 0, mat), box(10, 30, 10, x, -60, 0, mat), g);
+          continue;
+        }
         // アダプター・アーム・筒
         out.push(box(30, 20, 30, x, -40, 0, mat));
         out.push(box(10, 50, 10, x, -90, 0, mat));
@@ -1594,6 +1680,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       for (let i = 0; i < n; i++) {
         const x = -w / 2 + (w * (i + 0.5)) / n;
         if (fixture === 'pendant') out.push(...spot(x, -830, 0, [0, -1, 0], candela(lumen ?? 500, beam ?? 100), beam ?? 100, false, 8, kelvinColor(kelvin)));
+        else if (fixture === 'e26') out.push(...spot(x, -250, 70, [0, -1, 0.36], candela(lumen ?? 1080, Math.min(beam ?? 150, 120)), Math.min(beam ?? 150, 120), false, 8, kelvinColor(kelvin)));
         else out.push(...spot(x, -215, 0, [0, -1, 0], candela(lumen ?? 600, beam ?? 35), beam ?? 35, false, 8, kelvinColor(kelvin)));
       }
       return out;
@@ -1776,6 +1863,27 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       mirror.position.set(0, h / 2, d / 2 + 0.5);
       mirror.userData.hideWhenCut = true;
       return [back, frame, mirror];
+    },
+  },
+  {
+    type: 'window-mirror',
+    label: '窓枠風のウォールミラー（細い枠で 2×2 に区切った鏡）',
+    hint: '壁掛け。背面を壁に付ける。w・h が外寸、「床からの高さ」で下端の高さ。マナベ家具 テュリス 70×65（幅 700・奥行 14・高さ 653、ミラー 3mm の飛散防止ガラス、枠と十字の桟、紐で 2 本のピンに掛ける）。色は枠の色',
+    defaults: { w: 700, d: 14, h: 653, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.45;
+      const fw = 28;
+      const bar = 18;
+      const out: THREE.Object3D[] = [];
+      // 鏡（1 枚の鏡の前に枠と十字の桟）
+      const mirror = new Reflector(new THREE.PlaneGeometry(w - 2 * fw + 4, h - 2 * fw + 4), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
+      mirror.position.set(0, h / 2, -d / 2 + 4);
+      mirror.userData.hideWhenCut = true;
+      out.push(mirror, box(w - 10, h - 10, 3, 0, 5, -d / 2 + 1.5, mat));
+      out.push(box(w, fw, d, 0, 0, 0, mat), box(w, fw, d, 0, h - fw, 0, mat));
+      out.push(box(fw, h - 2 * fw, d, -w / 2 + fw / 2, fw, 0, mat), box(fw, h - 2 * fw, d, w / 2 - fw / 2, fw, 0, mat));
+      out.push(box(bar, h - 2 * fw, d - 2, 0, fw, 1, mat), box(w - 2 * fw, bar, d - 2, 0, h / 2 - bar / 2, 1, mat));
+      return out;
     },
   },
   {

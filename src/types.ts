@@ -17,6 +17,9 @@ export interface WallZone {
   /** 範囲の両端（平面図の座標。辺の上に投影して使う） */
   start: Point;
   end: Point;
+  /** 高さの範囲（部屋の床から mm）。省略時は床から天井まで。腰壁のように上下で貼り分けるとき */
+  bottom?: number;
+  top?: number;
   material: string;
 }
 
@@ -108,6 +111,8 @@ export interface Furniture {
   modules?: number[];
   /** kitchen-cabinet: 引出しではなく開き戸（1 モジュール 1 枚。左半分は左吊り、右半分は右吊り） */
   hinged?: boolean;
+  /** monitor-arm・mic-arm: ディスプレイ・マイクを左右へずらす量（mm。正面から見て右が +） */
+  armX?: number;
   /** 引き戸: 開けたときに動く長さ（既定は戸の幅 − 60）。戸袋が短いとき */
   travel?: number;
   /** resin-shelf: 棚板の枚数（横に何枚に分けるか）。省略時は幅 800 ごと */
@@ -118,7 +123,7 @@ export interface Furniture {
    */
   fronts?: number[][];
   /** lighting-rail に吊るす器具: spot（スポットライト・省略時）・pendant（ペンダントライト） */
-  fixture?: 'spot' | 'pendant';
+  fixture?: 'spot' | 'pendant' | 'e26';
   /** fire-roll-screen（三協アルミ FIRECUT-RS）のスクリーン色。省略時は frost */
   screen?: 'shut' | 'mesh' | 'frost';
   /** 開き戸のドアストッパー（LIXIL ラフィス）。secret = シークレットドアストッパー（扉の下に内蔵・床に丸い部品）、cylinder = シリンダー式外付ドアストッパー（扉の下に小さな箱） */

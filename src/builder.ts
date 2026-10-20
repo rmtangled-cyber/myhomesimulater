@@ -1017,17 +1017,27 @@ function buildFloor(
         rm.userData.info = { kind: 'wall', roomId: room.id, materialId: matId, side, edge } satisfies SurfaceInfo;
         group.add(rm);
       }
-      // 壁の一部だけ別のクロスを貼る所（ゾーン）。辺の上の範囲 [u0, u1]
+      // 壁の一部だけ別のクロスを貼る所（ゾーン）。辺の上の範囲 [u0, u1]、高さの範囲 [v0, v1]
       const zoneDefs = (room.zones ?? [])
         .filter((z) => z.edge === edge)
         .map((z) => {
           const p0 = projectOnLine(z.start, a, b).u;
           const p1 = projectOnLine(z.end, a, b).u;
-          return { z, u0: Math.min(p0, p1), u1: Math.max(p0, p1), mb: new MeshBuilder() };
+          const v0 = z.bottom !== undefined ? level + z.bottom : -Infinity;
+          const v1 = z.top !== undefined ? level + z.top : Infinity;
+          return { z, u0: Math.min(p0, p1), u1: Math.max(p0, p1), v0, v1, mb: new MeshBuilder() };
         });
-      for (const r of finishRects) {
+      // ゾーンの高さの境で、仕上げの四角を横の帯に分ける
+      const bands = finishRects.flatMap((r0) => {
+        const cuts = [r0.v0, r0.v1, ...zoneDefs.flatMap((zd) => [zd.v0, zd.v1]).filter((v) => v > r0.v0 + 1 && v < r0.v1 - 1)].sort((p, q) => p - q);
+        const out: typeof finishRects = [];
+        for (let i = 0; i + 1 < cuts.length; i++) if (cuts[i + 1] - cuts[i] > 0.5) out.push({ ...r0, v0: cuts[i], v1: cuts[i + 1] });
+        return out;
+      });
+      for (const r of bands) {
         let segs: [number, number][] = [[r.u0, r.u1]];
         for (const zd of zoneDefs) {
+          if (zd.v0 > r.v0 + 0.5 || zd.v1 < r.v1 - 0.5) continue;
           const next: [number, number][] = [];
           for (const [s0, s1] of segs) {
             const o0 = Math.max(s0, zd.u0);

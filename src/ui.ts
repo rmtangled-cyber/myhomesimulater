@@ -56,6 +56,7 @@ export interface PanelState {
   labels: boolean;
   lightsOn: boolean;
   highQuality: boolean;
+  colorCheck?: boolean;
   /** ウォークスルーで見回すドラッグの向きを逆にする */
   invertLook: boolean;
   /** ウォークスルーの目の高さを決める身長（cm） */
@@ -78,6 +79,7 @@ export interface PanelActions {
   setLabels(on: boolean): void;
   setLightsOn(on: boolean): void;
   setHighQuality(on: boolean): void;
+  setColorCheck(on: boolean): void;
   setInvertLook(on: boolean): void;
   setStature(cm: number): void;
   addImageMaterial(file: File): void;
@@ -219,6 +221,7 @@ export class Panel {
         <div class="row">
           <label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
+          <label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>
         </div>
         <div class="row">
           <label title="ウォークスルーでドラッグしたときに見回す向きを逆にします"><input type="checkbox" data-change="invert" ${s.invertLook ? 'checked' : ''}> 見回す向きを逆にする</label>
@@ -612,6 +615,7 @@ export class Panel {
     if (d.change === 'labels') return a.setLabels((t as HTMLInputElement).checked);
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
+    if (d.change === 'colorcheck') return a.setColorCheck((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
     if (d.change === 'walk-room') {
       // 選んだらすぐキーで歩けるよう、欄から外す

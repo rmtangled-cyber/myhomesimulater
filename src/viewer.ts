@@ -80,6 +80,8 @@ export class Viewer {
   private built: BuiltPlan | null = null;
   private clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.2);
   private hemi = new THREE.HemisphereLight('#dfe9f5', '#8a7f6e', 1.2);
+  /** クロスの色の確認用に、照明を無視して全体を白い光で明るくする光 */
+  private colorCheckLight = new THREE.AmbientLight('#ffffff', 0);
   private sun = new THREE.DirectionalLight('#ffffff', 2.5);
   private roomLights = new THREE.Group();
   private selection = new THREE.Box3Helper(new THREE.Box3(), new THREE.Color('#ff7a1a'));
@@ -384,6 +386,12 @@ export class Viewer {
 
   setHighQuality(on: boolean) {
     this.highQuality = on;
+  }
+
+  /** 色の確認: 照明や時間帯に関係なく、白い光で全体を均一に明るくする（クロスの色味を見る用・一時的） */
+  setColorCheck(on: boolean) {
+    if (!this.colorCheckLight.parent) this.scene.add(this.colorCheckLight);
+    this.colorCheckLight.intensity = on ? 2.2 : 0;
   }
 
   /** 身長（cm）から目の高さを変える。ウォークスルー中なら今の床からの高さをそのまま変える */

@@ -186,6 +186,10 @@ const panel = new Panel(document.getElementById('panel')!, {
     viewer.setHighQuality(on);
     ui.highQuality = on;
   },
+  setColorCheck: (on) => {
+    viewer.setColorCheck(on);
+    ui.colorCheck = on;
+  },
   setInvertLook: (on) => {
     viewer.setInvertLook(on);
     ui.invertLook = on;

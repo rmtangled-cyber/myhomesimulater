@@ -47,9 +47,16 @@ function hashString(s: string): number {
 
 type RGB = [number, number, number];
 
+/**
+ * 色見本の色（sRGB の 16 進）を、キャンバスに書く 0〜255 の値にする。
+ * テクスチャは sRGB として読まれるので、ここも sRGB のまま書く（2026-10-21 まで線形に変換して書いていたため、
+ * 模様付きの素材がすべて見本より暗く・茶色っぽく表示されていた）
+ */
 function rgb(hex: string): RGB {
   const c = new THREE.Color(hex);
-  return [c.r * 255, c.g * 255, c.b * 255];
+  const out = { r: 0, g: 0, b: 0 };
+  c.getRGB(out, THREE.SRGBColorSpace);
+  return [out.r * 255, out.g * 255, out.b * 255];
 }
 
 /** 色 c の明るさを k 倍して書き込む */
