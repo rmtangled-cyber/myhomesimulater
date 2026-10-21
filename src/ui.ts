@@ -213,13 +213,13 @@ export class Panel {
         <h2>表示</h2>
         ${WEB ? seg('web-floor', floors.map((f, i): [string, string] => [String(i), f.name]), String(this.walkFloorIndex())) : floorSeg}
         ${WEB ? '' : seg('mode', [['orbit', '俯瞰'], ['walk', 'ウォークスルー']], s.mode)}
-        ${seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
+        ${WEB ? '' : seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
         <div class="row">
           <label><input type="checkbox" data-change="cutaway" ${s.cutaway ? 'checked' : ''}> 壁を低く切る</label>
           <label><input type="checkbox" data-change="labels" ${s.labels ? 'checked' : ''}> 部屋名</label>
         </div>
         <div class="row">
-          <label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>
+          ${WEB ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
           <label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>
         </div>

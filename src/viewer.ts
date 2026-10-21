@@ -15,7 +15,7 @@ import { WEB } from './env';
 import { installLightRegions, LightRegions } from './lightRegions';
 
 // 照明の光が壁・床を突き抜けないよう、シェーダーを書き換える（マテリアルを描く前に）
-installLightRegions();
+if (!WEB) installLightRegions();
 
 export type ViewMode = 'orbit' | 'walk';
 export type TimeOfDay = 'day' | 'evening' | 'night';
@@ -801,7 +801,7 @@ export class Viewer {
     } else {
       this.orbit.update();
     }
-    this.lightRegions.update(this.scene);
+    if (!WEB) this.lightRegions.update(this.scene);
     // 壁を切る断面表示と相性が悪いので、陰影の後処理はウォークスルーのときだけ
     if (this.mode === 'walk' && this.highQuality) this.composer.render();
     else this.renderer.render(this.scene, this.camera);

@@ -11,6 +11,7 @@ import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLigh
 RectAreaLightUniformsLib.init();
 import { getMaterial, getMaterialDef } from './materials';
 import type { Furniture } from './types';
+import { WEB } from './env';
 
 const WARM = '#ffcf94';
 
@@ -2817,7 +2818,8 @@ export function buildFurniture(f: Furniture): THREE.Group {
   const g = new THREE.Group();
   const t = getFurnitureType(f.type);
   for (const o of t.build(f, mat, sub)) g.add(o);
-  for (const o of t.lights?.(f) ?? []) g.add(o);
+  // Web 版（スマホ・iPad）は重いので照明器具の光を作らない（器具の形だけ）
+  if (!WEB) for (const o of t.lights?.(f) ?? []) g.add(o);
   // 面材の指定があれば、色の代わりに素材のテクスチャを実寸で貼る
   if (f.material && getMaterialDef(f.material)) {
     const surfaceId = f.material;
