@@ -13,6 +13,15 @@ import { getMaterial, getMaterialDef } from './materials';
 import type { Furniture } from './types';
 import { WEB } from './env';
 
+/**
+ * 鏡の面。PC 版は映り込みを描く Reflector（家全体をもう 1 回描くので重い）。
+ * Web 版（スマホ・iPad）は、映り込みのない、つやのある銀色の板にする
+ */
+function mirrorSurface(geo: THREE.BufferGeometry, opts: ConstructorParameters<typeof Reflector>[1]): THREE.Mesh {
+  if (!WEB) return new Reflector(geo, opts);
+  return new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: '#c9ced3', metalness: 1, roughness: 0.08 }));
+}
+
 const WARM = '#ffcf94';
 
 /** 色温度（K）から光の色。電球色 2700K・温白色 3500K・昼白色 5000K などの間を補う */
@@ -1831,7 +1840,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     build: ({ w, d, h }, mat) => {
       const frame = box(w, h, d, 0, 0, 0, mat);
       // 周りが実際に映り込む鏡（解像度は控えめ）
-      const mirror = new Reflector(new THREE.PlaneGeometry(w - 20, h - 20), {
+      const mirror = mirrorSurface(new THREE.PlaneGeometry(w - 20, h - 20), {
         textureWidth: 512,
         textureHeight: Math.round((512 * h) / w),
         color: 0xb8bcc0,
@@ -1855,7 +1864,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const back = box(w - 120, h - 120, d - 20, 0, 60, -10, mat);
       // フレームの前面は鏡より 1mm 奥（同じ面に重なるとちらつく）
       const frame = box(w, h, d - 22, 0, 0, 10, mat);
-      const mirror = new Reflector(new THREE.PlaneGeometry(w - 3, h - 3), {
+      const mirror = mirrorSurface(new THREE.PlaneGeometry(w - 3, h - 3), {
         textureWidth: 512,
         textureHeight: Math.round((512 * h) / w),
         color: 0xc4c8ca,
@@ -1877,7 +1886,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const bar = 18;
       const out: THREE.Object3D[] = [];
       // 鏡（1 枚の鏡の前に枠と十字の桟）
-      const mirror = new Reflector(new THREE.PlaneGeometry(w - 2 * fw + 4, h - 2 * fw + 4), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
+      const mirror = mirrorSurface(new THREE.PlaneGeometry(w - 2 * fw + 4, h - 2 * fw + 4), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
       mirror.position.set(0, h / 2, -d / 2 + 4);
       mirror.userData.hideWhenCut = true;
       out.push(mirror, box(w - 10, h - 10, 3, 0, 5, -d / 2 + 1.5, mat));
@@ -1896,7 +1905,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const back = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, d, 48), mat);
       back.rotation.x = Math.PI / 2;
       back.position.set(0, w / 2, 0);
-      const mirror = new Reflector(new THREE.CircleGeometry(w / 2 - 6, 48), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
+      const mirror = mirrorSurface(new THREE.CircleGeometry(w / 2 - 6, 48), { textureWidth: 512, textureHeight: 512, color: 0xb8bcc0, clipBias: 0.003 });
       mirror.position.set(0, w / 2, d / 2 + 1);
       mirror.userData.hideWhenCut = true;
       return [back, mirror];
@@ -3109,7 +3118,7 @@ function tray(bw: number, bh: number, depth: number, x: number, y: number, zFron
 
 /** 周りが映り込む鏡（解像度は控えめ）。断面表示で切れないので、俯瞰で壁を低く切るときは隠す */
 function reflector(w: number, h: number, x: number, y: number, z: number): THREE.Object3D[] {
-  const m = new Reflector(new THREE.PlaneGeometry(w, h), { textureWidth: 512, textureHeight: Math.round((512 * h) / w), color: 0xb8bcc0, clipBias: 0.003 });
+  const m = mirrorSurface(new THREE.PlaneGeometry(w, h), { textureWidth: 512, textureHeight: Math.round((512 * h) / w), color: 0xb8bcc0, clipBias: 0.003 });
   m.position.set(x, y, z);
   m.userData.hideWhenCut = true;
   return [m];

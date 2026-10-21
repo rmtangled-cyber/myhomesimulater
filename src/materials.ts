@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { fbm, normalMapFromHeight, type Rand } from './noise';
 import type { CustomMaterial, MaterialCategory } from './types';
+import { WEB } from './env';
 
 export type { MaterialCategory };
 
@@ -1257,7 +1258,8 @@ export function materialsFor(category: MaterialCategory): MaterialDef[] {
 /** 定義が変わったら作り直すためのキー */
 const defKey = (d: MaterialDef) => `${d.id}|${d.image ?? ''}|${d.tile.join('x')}|${d.roughness}|${d.bump}`;
 
-const TEX_SIZE = 1024;
+// Web 版（スマホ・iPad）はメモリが少ないので、模様の画像を縦横半分にする（メモリは 4 分の 1）
+const TEX_SIZE = WEB ? 512 : 1024;
 const textureCache = new Map<string, { map: THREE.Texture; normal?: THREE.Texture; swatch: string }>();
 const materialCache = new Map<string, THREE.MeshStandardMaterial>();
 
@@ -1265,7 +1267,7 @@ function setupTexture(tex: THREE.Texture, def: MaterialDef, color: boolean) {
   // 画像の素材は1枚の見本写真なので、鏡写しで繰り返して継ぎ目を目立たなくする
   tex.wrapS = tex.wrapT = def.image ? THREE.MirroredRepeatWrapping : THREE.RepeatWrapping;
   tex.colorSpace = color ? THREE.SRGBColorSpace : THREE.NoColorSpace;
-  tex.anisotropy = 8;
+  tex.anisotropy = WEB ? 2 : 8;
   // UV は mm 単位で作るので、1/実寸 で繰り返す
   tex.repeat.set(1 / def.tile[0], 1 / def.tile[1]);
 }
@@ -1276,7 +1278,7 @@ function imageTextures(def: MaterialDef) {
   const map = new THREE.TextureLoader().load(url, (t) => {
     // 画像の明るさを高さとみなして凹凸を付ける
     const img = t.image as HTMLImageElement;
-    const w = Math.min(1024, img.naturalWidth);
+    const w = Math.min(TEX_SIZE, img.naturalWidth);
     const h = Math.round((w * img.naturalHeight) / img.naturalWidth);
     const canvas = document.createElement('canvas');
     canvas.width = w;

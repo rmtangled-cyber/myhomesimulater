@@ -80,6 +80,11 @@ export class Viewer {
   private built: BuiltPlan | null = null;
   private clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.2);
   private hemi = new THREE.HemisphereLight('#dfe9f5', '#8a7f6e', 1.2);
+  /** Web 版: 部屋ごとの光の代わりに、家全体を少し明るくする光 */
+  private webFill = new THREE.AmbientLight('#fff1e2', 0);
+  /** Web 版: 止まっている間は描かないため、最後に触った時刻と前のカメラ */
+  private lastActive = 0;
+  private lastCam = '';
   /** クロスの色の確認用に、照明を無視して全体を白い光で明るくする光 */
   private colorCheckLight = new THREE.AmbientLight('#ffffff', 0);
   private sun = new THREE.DirectionalLight('#ffffff', 2.5);
@@ -137,7 +142,7 @@ export class Viewer {
   ) {
     // Web 版（iPad・スマホ）は描画のメモリを減らす（足りなくなると描画が止まって画面が真っ暗になる）
     this.renderer = new THREE.WebGLRenderer({ antialias: !WEB, preserveDrawingBuffer: !WEB });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, WEB ? 1.25 : 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, WEB ? 1 : 2));
     // 描画のメモリが足りなくなって描画が止まったら（画面が真っ暗になる）、戻ったときに 3D を作り直す
     this.renderer.domElement.addEventListener('webglcontextlost', (e) => e.preventDefault());
     this.renderer.domElement.addEventListener('webglcontextrestored', () => {
@@ -204,6 +209,13 @@ export class Viewer {
     this.sun.shadow.bias = -0.0005;
     this.sun.shadow.normalBias = 0.02;
     this.scene.add(this.hemi, this.sun, this.sun.target, this.roomLights, this.selection);
+    if (WEB) {
+      this.webFill.intensity = 0.9;
+      this.scene.add(this.webFill);
+      // 触っている間（とその後 2 秒）は描き続ける
+      const poke = () => (this.lastActive = performance.now());
+      for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'touchstart', 'touchmove', 'wheel', 'keydown', 'keyup', 'resize']) window.addEventListener(ev, poke, { passive: true });
+    }
     this.selection.visible = false;
 
     this.setupPointer();
@@ -253,6 +265,8 @@ export class Viewer {
     if (typeof this.floorView === 'number') this.floorView = Math.min(this.floorView, plan.floors.length - 1);
     // 照明の位置計算などで使うので、追加した直後にワールド座標を確定させる
     this.world.updateMatrixWorld(true);
+    // 作り直したあと（画像の素材の読み込みも待って）しばらくは描き続ける
+    this.lastActive = performance.now() + 3000;
     this.applyVisibility();
     this.rebuildRoomLights(plan);
     this.fitSun();
@@ -268,6 +282,8 @@ export class Viewer {
     this.built!.floors.forEach((floor, index) => {
       // 照明器具を置いた部屋は、その器具だけで照らす
       const fixtures = plan.floors[index].furniture.filter((f) => this.built!.furniture.get(f.id)?.getObjectByProperty('isLight', true));
+      // Web 版は部屋ごとの光を作らず、家全体の 1 つの明るさ（webFill）で代わりにする
+      if (WEB) return;
       for (const mesh of floor.floorMeshes) {
         const box = new THREE.Box3().setFromObject(mesh);
         const size = box.getSize(new THREE.Vector3());
@@ -802,6 +818,14 @@ export class Viewer {
       this.orbit.update();
     }
     if (!WEB) this.lightRegions.update(this.scene);
+    // Web 版は、止まっている間は描き直さない（カメラが動いた・扉が動いている・触ってから 2 秒の間だけ描く）
+    if (WEB) {
+      const c = this.camera;
+      const cam = `${c.position.toArray().join(',')}|${c.quaternion.toArray().join(',')}|${c.fov}|${c.aspect}`;
+      const busy = cam !== this.lastCam || this.movingDoors.size > 0 || performance.now() - this.lastActive < 2000;
+      this.lastCam = cam;
+      if (!busy) return;
+    }
     // 壁を切る断面表示と相性が悪いので、陰影の後処理はウォークスルーのときだけ
     if (this.mode === 'walk' && this.highQuality) this.composer.render();
     else this.renderer.render(this.scene, this.camera);
