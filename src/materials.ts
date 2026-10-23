@@ -934,6 +934,106 @@ function boards(base: string, boardW: number, boardL: number, rows: number, opts
 }
 
 /** コンクリート打ち放し調。型枠の継ぎ目と P コンの穴（holes: false で穴なし） */
+/**
+ * 大判のタイルを縦の列ごとにずらして貼った柄（TH34645 など）。cols は [列の左端 mm, 列の右端 mm, 横の目地の高さ mm（画像の上から）]。
+ * タイルの面は細かいざらつきとゆるいムラ（錆びた金属のような）、目地は細い暗い線
+ */
+/**
+ * 積石（TH34653）。高さのばらばらな薄い石を横に積み、石ごとに濃さが違い、横に流れる筋と影になる目地
+ */
+function ledgerStone(base: string, tileMm: [number, number], opts: { rowMin?: number; rowMax?: number; minLen?: number; maxLen?: number; contrast?: number } = {}) {
+  const c = rgb(base);
+  const ct = opts.contrast ?? 0.3;
+  return (w: number, h: number, rand: Rand): Generated => {
+    const px = w / tileMm[0];
+    const py = h / tileMm[1];
+    // 段の高さを繰り返しの高さに収める
+    const rows: [number, number][] = [];
+    let y0 = 0;
+    while (y0 < tileMm[1]) {
+      let rh = (opts.rowMin ?? 25) + rand() * ((opts.rowMax ?? 80) - (opts.rowMin ?? 25));
+      if (tileMm[1] - y0 - rh < (opts.rowMin ?? 25)) rh = tileMm[1] - y0;
+      rows.push([y0, y0 + rh]);
+      y0 += rh;
+    }
+    // 段ごとに石の切れ目（横は繰り返しの幅で回り込む）
+    const cuts = rows.map(() => {
+      const out: number[] = [];
+      let x = rand() * tileMm[0];
+      const end = x + tileMm[0];
+      while (x < end - (opts.minLen ?? 120)) {
+        out.push(x % tileMm[0]);
+        x += (opts.minLen ?? 120) + rand() * ((opts.maxLen ?? 420) - (opts.minLen ?? 120));
+      }
+      return out.sort((a, b) => a - b);
+    });
+    const tones = cuts.map((cs) => cs.map(() => 1 + (rand() - 0.5) * 2 * ct));
+    const streak = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 60), cellsY: cellsFor(tileMm[1], 4), octaves: 4, persistence: 0.6 });
+    const f = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 2), cellsY: cellsFor(tileMm[1], 2), octaves: 2 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    const gap = 2.5;
+    for (let y = 0; y < h; y++) {
+      const Y = y / py;
+      const ri = Math.max(0, rows.findIndex(([a, b]) => Y >= a && Y < b));
+      const [ra, rb] = rows[ri];
+      const cs = cuts[ri];
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const X = x / px;
+        let si = cs.length - 1;
+        for (let j = 0; j < cs.length; j++) if (X >= cs[j]) si = j;
+        let dx = Infinity;
+        for (const cx of cs) dx = Math.min(dx, Math.abs(X - cx), tileMm[0] - Math.abs(X - cx));
+        const dy = Math.min(Y - ra, rb - Y);
+        let k = tones[ri][si] * (1 + (streak[i] - 0.5) * ct * 1.4 + (f[i] - 0.5) * 0.12 + (rand() - 0.5) * 0.06);
+        height[i] = 0.6 + (streak[i] - 0.5) * 0.3;
+        const e = Math.min(dx, dy);
+        if (e < gap) {
+          k *= 0.35 + 0.4 * (e / gap);
+          height[i] = 0.2;
+        } else if (Y - ra < gap * 2.5) k *= 1.08; // 石の上の縁は光が当たって明るい
+        put(color.data, i, c, k);
+      }
+    }
+    return { color, height };
+  };
+}
+
+function stepTiles(base: string, tileMm: [number, number], cols: [number, number, number][], opts: { mottle?: number; seam?: number } = {}) {
+  const c = rgb(base);
+  return (w: number, h: number, rand: Rand): Generated => {
+    const m = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 260), cellsY: cellsFor(tileMm[1], 260), octaves: 5, persistence: 0.6 });
+    const g = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 3), cellsY: cellsFor(tileMm[1], 3), octaves: 2 });
+    const color = new ImageData(w, h);
+    const height = new Float32Array(w * h);
+    const px = w / tileMm[0];
+    const py = h / tileMm[1];
+    const sw = Math.max(1.2, 1.5 * px);
+    const tone = cols.map(() => [1 + (rand() - 0.5) * 0.06, 1 + (rand() - 0.5) * 0.06]);
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x;
+        const X = x / px;
+        const ci = Math.max(0, cols.findIndex(([a, b]) => X >= a && X < b));
+        const [a, b, sy] = cols[ci];
+        const Y = y / py;
+        const t = tone[ci][Y < sy ? 0 : 1];
+        let k = t * (1 + (m[i] - 0.5) * (opts.mottle ?? 0.18) + (g[i] - 0.5) * 0.12 + (rand() - 0.5) * 0.05);
+        height[i] = 0.7 + (g[i] - 0.5) * 0.15;
+        const ex = Math.min(Math.abs(X - a), Math.abs(X - b)) * px;
+        const ey = Math.min(Math.abs(Y - sy), Y, tileMm[1] - Y) * py;
+        if (ex < sw || ey < sw) {
+          k *= opts.seam ?? 0.7;
+          height[i] = 0.45;
+        }
+        put(color.data, i, c, k);
+      }
+    }
+    return { color, height };
+  };
+}
+
 function concretePanels(base: string, tileMm: [number, number], panel: [number, number], opts: { holes?: boolean; toneVar?: number; seam?: number } = {}) {
   const c = rgb(base);
   return (w: number, h: number, rand: Rand): Generated => {
@@ -1071,7 +1171,26 @@ export const CANDIDATE_FLOORS = ['floor-lassissa-mortar', 'floor-lassissa-marble
 export const CANDIDATE_WALLPAPERS = [
   'cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th34084', 'cross-th34282', 'cross-th34283', 'cross-fe78140', 'cross-th34705', 'cross-th34706', 'cross-hf3068', 'cross-hf3005', 'cross-hf3045', 'cross-hf3004', 'cross-hf3113', 'cross-th34788', 'cross-th34789', 'cross-th34790', 'cross-th34776', 'cross-th34774', 'cross-th34736',
   'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650', 'cross-fe76649',
+  'cross-th34604', 'cross-th34191', 'cross-th34213', 'cross-th34645', 'cross-th34072', 'cross-th34081', 'cross-th34149', 'cross-th34150',
+  'cross-hf3101', 'cross-hf3102', 'cross-hf3119', 'cross-hf3121', 'cross-hf3020', 'cross-re55622', 'cross-sp2549', 'cross-sp2565', 'cross-fe78165', 'cross-fe78138', 'cross-fe78152', 'cross-re55455', 'cross-th34464', 'cross-th34465', 'cross-th34466', 'cross-th34468', 'cross-th34523',
+  'cross-th34187', 'cross-th34188', 'cross-th34193', 'cross-th34194', 'cross-th34141', 'cross-th34172', 'cross-th34554', 'cross-th34613', 'cross-th34634', 'cross-th34653', 'cross-th34654', 'cross-th34657', 'cross-th34658', 'cross-th34659', 'cross-th34660', 'cross-th34661', 'cross-th34662', 'cross-th34663', 'cross-th34664', 'cross-th34665', 'cross-th34668', 'cross-th34669', 'cross-th34671', 'cross-th34681', 'cross-th34725', 'cross-th34738', 'cross-th34740', 'cross-th34754', 'cross-th34773', 'cross-th34781',
 ].sort();
+
+/**
+ * 「クロスを試す」の候補の分け方（2026-10-22。notes/cross-candidates.md の 9 カテゴリ）。カテゴリの中は明るい色から暗い色の順。
+ * funcs はサンゲツ公式の商品ページの機能のマーク（撥水・汚れ防止・表面強化・消臭。抗菌・防かびはほぼ全部にあるので省いた）
+ */
+export const WALLPAPER_CATEGORIES: { name: string; items: { id: string; funcs: string[] }[] }[] = [
+  { name: 'SP（無料）', items: [{ id: 'cross-sp2539', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2540', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2549', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2563', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2541', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2565', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2562', funcs: ['撥水', '表面強化'] }] },
+  { name: '石目・ストーン', items: [{ id: 'cross-th34193', funcs: ['消臭'] }, { id: 'cross-hf3119', funcs: ['表面強化'] }, { id: 'cross-th34102', funcs: ['撥水', '表面強化'] }, { id: 'cross-hf3101', funcs: ['表面強化'] }, { id: 'cross-hf3102', funcs: ['表面強化'] }, { id: 'cross-th34669', funcs: [] }, { id: 'cross-th34554', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-fe78165', funcs: [] }, { id: 'cross-th34194', funcs: ['消臭'] }, { id: 'cross-hf3121', funcs: ['表面強化'] }, { id: 'cross-th34191', funcs: ['撥水'] }, { id: 'cross-th34634', funcs: [] }] },
+  { name: '塗り壁（コテ跡・スタッコ）', items: [{ id: 'cross-th34213', funcs: ['撥水'] }, { id: 'cross-th34188', funcs: ['表面強化', '消臭'] }, { id: 'cross-th34072', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34187', funcs: ['表面強化', '消臭'] }, { id: 'cross-th34082', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34081', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34083', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-hf3122', funcs: ['表面強化'] }, { id: 'cross-th34084', funcs: ['撥水', '表面強化', '消臭'] }] },
+  { name: '漆喰・無地', items: [{ id: 'cross-th34660', funcs: ['消臭'] }, { id: 'cross-th34657', funcs: ['消臭'] }, { id: 'cross-th34464', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34661', funcs: ['消臭'] }, { id: 'cross-th34658', funcs: ['消臭'] }, { id: 'cross-th34465', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-re55455', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34662', funcs: ['消臭'] }, { id: 'cross-th34466', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34659', funcs: ['消臭'] }, { id: 'cross-th34523', funcs: ['汚れ防止', '表面強化'] }] },
+  { name: 'コンクリート・モルタル', items: [{ id: 'cross-th34654', funcs: [] }, { id: 'cross-fe76649', funcs: ['撥水'] }, { id: 'cross-th34671', funcs: [] }, { id: 'cross-th34668', funcs: [] }, { id: 'cross-fe78138', funcs: ['撥水', '表面強化'] }, { id: 'cross-th34663', funcs: [] }, { id: 'cross-th34672', funcs: [] }, { id: 'cross-fe78152', funcs: [] }, { id: 'cross-th34664', funcs: [] }, { id: 'cross-fe76650', funcs: ['撥水'] }, { id: 'cross-fe78140', funcs: ['撥水', '表面強化'] }, { id: 'cross-th34665', funcs: [] }] },
+  { name: 'メタル・タイル・レザー', items: [{ id: 'cross-th34468', funcs: ['汚れ防止'] }, { id: 'cross-th34645', funcs: ['撥水'] }, { id: 'cross-th34604', funcs: ['撥水'] }, { id: 'cross-th34653', funcs: [] }, { id: 'cross-re55622', funcs: ['撥水'] }, { id: 'cross-th34681', funcs: [] }, { id: 'cross-th34606', funcs: ['撥水'] }, { id: 'cross-th34613', funcs: [] }] },
+  { name: '織物・布', items: [{ id: 'cross-th34150', funcs: ['撥水', '表面強化'] }, { id: 'cross-th34282', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34149', funcs: ['撥水', '表面強化'] }, { id: 'cross-th34283', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34141', funcs: [] }, { id: 'cross-th34172', funcs: [] }] },
+  { name: '木目', items: [{ id: 'cross-th34725', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-hf3005', funcs: ['表面強化'] }, { id: 'cross-hf3068', funcs: ['表面強化'] }, { id: 'cross-th34705', funcs: [] }, { id: 'cross-hf3004', funcs: ['表面強化'] }, { id: 'cross-hf3113', funcs: ['表面強化'] }, { id: 'cross-hf3045', funcs: ['表面強化'] }, { id: 'cross-th34738', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34773', funcs: [] }, { id: 'cross-th34736', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34754', funcs: [] }, { id: 'cross-th34190', funcs: ['撥水'] }, { id: 'cross-th34706', funcs: [] }, { id: 'cross-th34740', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-hf3020', funcs: ['表面強化'] }] },
+  { name: '板張り・OSB', items: [{ id: 'cross-th34788', funcs: [] }, { id: 'cross-th34789', funcs: [] }, { id: 'cross-th34776', funcs: [] }, { id: 'cross-th34774', funcs: ['表面強化'] }, { id: 'cross-th34781', funcs: [] }, { id: 'cross-th34790', funcs: [] }] },
+];
 
 /** 室内ドア LIXIL ラフィスの色柄（ウォークスルーで扉をクリックして試す）。色は施工例の写真からの推定 */
 export const RAFFIS_COLORS = ['raffis-preciouswhite', 'raffis-gray', 'raffis-taupe', 'raffis-black', 'raffis-faboak', 'raffis-tellwalnut', 'raffis-purewhite'];
@@ -1158,7 +1277,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-sp2562', 'SP2562 織物調ダークグレージュ', linen('#5f5b58', [300, 300], { pitch: 1.3, contrast: 0.6, light: 1.2 }), [300, 300], 0.7, 1.0),
   wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', cloud('#78787a', [920, 640], { cloud: 0.2, cloudMm: 120, grain: 0.11 }), [920, 640], 0.85, 0.9),
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', sand('#cacccc', [462, 320], { grain: 0.07, mottle: 0.03, mottleMm: 140, pearl: 0.04, veins: 0.06 }), [462, 320], 0.8, 0.9),
-  wall('cross-th34190', 'TH34190 木目調（神代杉・ダークブラウン）', grain('#595350', [920, 641], { spacing: 3, warp: 1.5, line: 0.05, fine: 0.32, band: 0.06, streakMm: 18, dark: '#3a3431' }), [920, 641], 0.75, 0.8),
+  // 公式の柄画像（2026-10-22 に見比べ）: 神代杉の柾目。暖かみのあるスモーキーなグレーブラウン（平均 RGB 96・86・83）に、細い縦の筋が密に並ぶ。むらは少なく、ゆるい濃淡の縦の帯
+  wall('cross-th34190', 'TH34190 process#100 CAVIERA（木目調・神代杉 柾目・スモーキーなグレーブラウン）', grain('#625855', [920, 641], { spacing: 2.2, warp: 1.2, line: 0.04, lineW: 0.2, fine: 0.13, band: 0.07, bandMm: 60, streakMm: 70, dark: '#4d4441' }), [920, 641], 0.75, 0.6),
   // TOTO サザナ HT シリーズの見積もりの色。施工例の写真に合わせた
   // FAITH の織物調（施工例では落ち着いた中間のグレー）
   wall('cross-th34282', 'TH34282 織物調ライトグレー', crosshatch('#bdbdbb', [925, 641], { contrast: 0.06, mottle: 0.03 }), [925, 641], 0.8, 0.7),
@@ -1179,6 +1299,64 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34706', 'TH34706 木目調（PROGRESS WOOD エルム 板柾・ダークグレー）', grain('#4c4844', [925, 1240], { spacing: 26, warp: 14, flame: 45, line: 0.4, fine: 0.25, band: 0.22, bandMm: 70, knots: 0.3, dark: '#2c2a28' }), [925, 1240], 0.9, 0.7),
   wall('cross-th34705', 'TH34705 木目調（チェリー 柾目・グレージュ）', grain('#b2a89c', [920, 929], { spacing: 22, warp: 10, flame: 25, line: 0.35, fine: 0.2, band: 0.26, bandMm: 55, knots: 0.5, dark: '#6e6255' }), [920, 929], 0.85, 0.7),
   // 塗り壁調（施工例ではムラのあるやわらかいグレー）
+  // 2026-10-22 追加（サンゲツ公式の柄画像と見比べ、色は柄画像の平均。機能は公式の商品ページの機能のマーク）
+  wall('cross-th34604', 'TH34604 MATERIA FODINA（金属光沢の塗り調・ライトグレー）', cloud('#b9b5aa', [920, 641], { cloud: 0.05, cloudMm: 260, grain: 0.05, scratch: 0.35, crinkle: 0.05 }), [920, 641], 0.5, 0.6),
+  wall('cross-th34191', 'TH34191 process#100 DROITE（石目にまっすぐな縦のストライプ・グレー）', grain('#747471', [920, 641], { spacing: 7, warp: 0.4, line: 0.05, lineW: 0.3, fine: 0.18, band: 0.12, bandMm: 30, streakMm: 400, dark: '#5c5c59' }), [920, 641], 0.85, 0.5),
+  wall('cross-th34213', 'TH34213 biocloth Serene Stucco（大きなコテ跡の塗り壁・シャドーホワイト）', cloud('#dfe1df', [925, 641], { cloud: 0.035, cloudMm: 320, grain: 0.02 }), [925, 641], 0.9, 0.5),
+  wall('cross-th34645', 'TH34645 マテリアル（大判の金属タイル・ずらし貼り・ライトグレー）', stepTiles('#c2bbb1', [920, 900], [[0, 160, 342], [160, 490, 595], [490, 920, 220]]), [920, 900], 0.75, 0.8),
+  wall('cross-th34072', 'TH34072 塗り壁調（Naturescape Shades of Air・ナチュラル）', trowel('#d2d0cb', [925, 641]), [925, 641], 0.9, 1.0),
+  wall('cross-th34081', 'TH34081 塗り壁調（Naturescape Shades of Air・グレージュ）', trowel('#b3aca9', [925, 641]), [925, 641], 0.9, 1.0),
+  wall('cross-th34149', 'TH34149 process#100 SMOKY CHIC（煙ったような濃淡の織物調・グレー）', crosshatch('#9a9c98', [920, 628], { contrast: 0.14, mottle: 0.06 }), [920, 628], 0.8, 0.7),
+  wall('cross-th34150', 'TH34150 process#100 SMOKY CHIC（煙ったような濃淡の織物調・ライトグレー）', crosshatch('#d9d8d7', [920, 628], { contrast: 0.06, mottle: 0.04 }), [920, 628], 0.8, 0.7),
+  // 2026-10-23 追加（2 回目・30 品番。サンゲツ公式の柄画像と見比べ、色は柄画像の平均）
+  wall('cross-th34187', 'TH34187 process#100 SHIMMER RIVER（縦に流れる塗り壁調・グレージュ）', grain('#c5c0b7', [925, 640], { spacing: 10, warp: 3, line: 0.01, fine: 0.02, band: 0.018, bandMm: 50, streakMm: 90 }), [925, 640], 0.95, 0.6),
+  wall('cross-th34188', 'TH34188 process#100 SHIMMER RIVER（縦に流れる塗り壁調・シャドーホワイト）', grain('#e1e0dd', [925, 640], { spacing: 10, warp: 3, line: 0.008, fine: 0.015, band: 0.015, bandMm: 50, streakMm: 90 }), [925, 640], 0.95, 0.6),
+  wall('cross-th34193', 'TH34193 process#100 PETRICHOR（ほのかなテラゾー・ホワイト）', sand('#e7e5e2', [920, 641], { grain: 0.04, mottle: 0.015, mottleMm: 60, size: 3 }), [920, 641], 0.9, 0.8),
+  wall('cross-th34194', 'TH34194 process#100 PETRICHOR（ほのかなテラゾー・グレー）', sand('#9e9b9a', [920, 641], { grain: 0.1, mottle: 0.03, mottleMm: 60, size: 3 }), [920, 641], 0.9, 0.8),
+  wall('cross-th34141', 'TH34141 process#100 SLOW AND MELLOW（パールの織物調・グレー）', linen('#827f80', [462, 321], { pitch: 0.7, contrast: 0.22, light: 0.15 }), [462, 321], 0.75, 1.0),
+  wall('cross-th34172', 'TH34172 process#100 WAVING SHADOW（揺らぐ影の織物調・グレージュ）', crosshatch('#77716f', [300, 300], { contrast: 0.14, mottle: 0.08 }), [300, 300], 0.8, 0.8),
+  wall('cross-th34554', 'TH34554 スーパー耐久性（穏やかな抑揚のストーン調・グレー）', cloud('#aeada9', [925, 641], { cloud: 0.05, cloudMm: 300, grain: 0.05 }), [925, 641], 0.9, 0.6),
+  wall('cross-th34613', 'TH34613 MATERIA CODILS（アニマルレザー調・スモークブラック）', cloud('#383630', [920, 641], { cloud: 0.25, cloudMm: 90, grain: 0.18, crinkle: 0.25 }), [920, 641], 0.7, 1.0),
+  wall('cross-th34634', 'TH34634 マテリアル（割肌の石・ブラック）', sand('#40403c', [920, 940], { grain: 0.3, mottle: 0.12, mottleMm: 150, size: 3 }), [920, 940], 0.9, 1.4),
+  wall('cross-th34653', 'TH34653 マテリアル（積石タイル・石英の光沢・グレー）', ledgerStone('#807c76', [920, 642], { rowMin: 20, rowMax: 90, minLen: 120, maxLen: 600, contrast: 0.3 }), [920, 642], 0.7, 1.4),
+  wall('cross-th34654', 'TH34654 マテリアル（さりげない光沢と塗りムラのモルタル調・ライト）', cloud('#e2ddd8', [920, 1240], { cloud: 0.025, cloudMm: 220, grain: 0.03 }), [920, 1240], 0.85, 0.6),
+  wall('cross-th34657', 'TH34657 マテリアル（漆喰調・ホワイト）', plaster('#e9e7df', 925, { mottle: 0.012, grain: 0.02 }), [925, 925], 0.9, 0.5),
+  wall('cross-th34658', 'TH34658 マテリアル（漆喰調・グレー）', plaster('#c1bdb9', 925, { mottle: 0.015, grain: 0.025 }), [925, 925], 0.9, 0.5),
+  wall('cross-th34659', 'TH34659 マテリアル（漆喰調・ダークグレー）', plaster('#5d5b5b', 925, { mottle: 0.02, grain: 0.03 }), [925, 925], 0.9, 0.5),
+  wall('cross-th34660', 'TH34660 マテリアル（粒の見える塗り壁・ホワイト）', sand('#ecece9', [925, 613], { grain: 0.08, mottle: 0.02, mottleMm: 150, size: 2 }), [925, 613], 0.9, 1.0),
+  wall('cross-th34661', 'TH34661 マテリアル（粒の見える塗り壁・グレージュ）', sand('#c5c0bd', [925, 613], { grain: 0.2, mottle: 0.03, mottleMm: 150, size: 2 }), [925, 613], 0.9, 1.0),
+  wall('cross-th34662', 'TH34662 マテリアル（粒の見える塗り壁・グレー）', sand('#787574', [925, 613], { grain: 0.24, mottle: 0.04, mottleMm: 150, size: 2 }), [925, 613], 0.9, 1.0),
+  wall('cross-th34663', 'TH34663 マテリアル（コンクリート調・ライトグレージュ）', cloud('#a7a195', [930, 940], { cloud: 0.12, cloudMm: 160, grain: 0.08 }), [930, 940], 0.85, 0.9),
+  wall('cross-th34664', 'TH34664 マテリアル（コンクリート調・グレー）', cloud('#787772', [930, 940], { cloud: 0.1, cloudMm: 160, grain: 0.07 }), [930, 940], 0.85, 0.9),
+  wall('cross-th34665', 'TH34665 マテリアル（コンクリート調・ダークグレー）', cloud('#4d4f50', [930, 940], { cloud: 0.12, cloudMm: 160, grain: 0.07 }), [930, 940], 0.85, 0.9),
+  wall('cross-th34668', 'TH34668 マテリアル（金属質の塗りあとのモルタル調・グレー）', cloud('#ada9a6', [930, 1250], { cloud: 0.13, cloudMm: 200, grain: 0.04, scratch: 0.12 }), [930, 1250], 0.7, 0.8),
+  wall('cross-th34669', 'TH34669 マテリアル（細かい粒の石目・ライトグレー）', grain('#b6b3b1', [463, 642], { spacing: 1.5, warp: 0.5, line: 0.03, lineW: 0.2, fine: 0.1, band: 0.03, bandMm: 20, streakMm: 30 }), [463, 642], 0.9, 1.0),
+  wall('cross-th34671', 'TH34671 マテリアル（重厚なコンクリート調・グレー）', cloud('#b3b1b0', [920, 930], { cloud: 0.14, cloudMm: 200, grain: 0.08 }), [920, 930], 0.85, 1.0),
+  wall('cross-th34681', 'TH34681 マテリアル（レザー調・スモークブラック）', cloud('#4a4c49', [930, 940], { cloud: 0.22, cloudMm: 220, grain: 0.08, crinkle: 0.15 }), [930, 940], 0.7, 0.8),
+  wall('cross-th34725', 'TH34725 木目調（スーパー耐久性 ラインウッド 柾目・シャドーホワイト）', grain('#e1e1e1', [461, 930], { spacing: 3, warp: 1, line: 0.04, lineW: 0.3, fine: 0.05, band: 0.03, bandMm: 25, streakMm: 300, dark: '#d0d0d0' }), [461, 930], 0.8, 0.6),
+  wall('cross-th34738', 'TH34738 木目調（スーパー耐久性 ウォルナット 柾目・ミディアムブラウン）', grain('#937557', [920, 930], { spacing: 3, warp: 1.5, line: 0.12, lineW: 0.3, fine: 0.12, band: 0.08, bandMm: 30, streakMm: 40, dark: '#7a5f45' }), [920, 930], 0.8, 0.7),
+  wall('cross-th34740', 'TH34740 木目調（スーパー耐久性 ウォルナット 柾目・ダークブラウン）', grain('#4c382e', [920, 930], { spacing: 3, warp: 1.5, line: 0.12, lineW: 0.3, fine: 0.12, band: 0.08, bandMm: 30, streakMm: 40, dark: '#3a2a22' }), [920, 930], 0.8, 0.7),
+  wall('cross-th34754', 'TH34754 木目調（eセコウ ウォルナット 板柾・ダークブラウン）', grain('#71604f', [930, 1250], { spacing: 20, warp: 12, flame: 35, line: 0.35, fine: 0.15, band: 0.2, bandMm: 45, dark: '#4a3c30' }), [930, 1250], 0.8, 0.9),
+  wall('cross-th34773', 'TH34773 木目調（節とひび割れのアンティークパイン）', grain('#957346', [930, 1250], { spacing: 22, warp: 14, flame: 40, line: 0.45, fine: 0.18, band: 0.25, bandMm: 50, knots: 0.8, dark: '#5e4426' }), [930, 1250], 0.8, 1.0),
+  wall('cross-th34781', 'TH34781 木目調（古木の板を並べたヴィンテージ・ダークブラウン）', grain('#6f5e53', [920, 1240], { spacing: 9, warp: 6, line: 0.3, fine: 0.16, band: 0.18, bandMm: 115, streakMm: 60, knots: 0.5, dark: '#4a3e36' }), [920, 1240], 0.85, 1.0),
+  // 2026-10-23 追加（3 回目・17 品番。旧ファインは今の品番で。サンゲツ公式の柄画像と見比べ、色は柄画像の平均）
+  wall('cross-hf3101', 'HF3101 ストーン（ハードウォール・ライトグレー）', cloud('#c7c3c1', [920, 640], { cloud: 0.06, cloudMm: 150, grain: 0.05 }), [920, 640], 0.85, 0.7),
+  wall('cross-hf3102', 'HF3102 ストーン（ハードウォール・グレー）', cloud('#b6b5b3', [920, 640], { cloud: 0.06, cloudMm: 150, grain: 0.05 }), [920, 640], 0.85, 0.7),
+  wall('cross-hf3119', 'HF3119 ストーン（ハードウォール・縦に流れるムラのオフホワイト）', cloud('#d9d4cc', [461, 641], { cloud: 0.06, cloudMm: 90, grain: 0.04 }), [461, 641], 0.85, 0.6),
+  wall('cross-hf3121', 'HF3121 ストーン（ハードウォール・ほぼ無地のグレー）', cloud('#9c9b9a', [920, 640], { cloud: 0.05, cloudMm: 150, grain: 0.05 }), [920, 640], 0.85, 0.6),
+  wall('cross-hf3020', 'HF3020 木目調（ハードウォール ラインウッド 柾目・ブラック）', grain('#373638', [460, 930], { spacing: 1.6, warp: 0.6, line: 0.25, lineW: 0.25, fine: 0.15, band: 0.1, bandMm: 15, streakMm: 200, dark: '#262527' }), [460, 930], 0.8, 0.7),
+  wall('cross-re55622', 'RE55622 リザーブ MOTTLED RUST（錆のまだら・グレー）', cloud('#62605d', [920, 638], { cloud: 0.18, cloudMm: 110, grain: 0.07, crinkle: 0.3 }), [920, 638], 0.8, 1.0),
+  wall('cross-sp2549', 'SP2549 塗り調ライトグレー', sand('#d2cec9', [463, 314], { grain: 0.03, mottle: 0.015, mottleMm: 100, size: 2 }), [463, 314], 0.9, 1.0),
+  wall('cross-sp2565', 'SP2565 コンクリート調ブラック（SP2563 の別色）', sand('#7a7875', [460, 320], { grain: 0.24, mottle: 0.05, mottleMm: 120, size: 2 }), [460, 320], 0.9, 1.2),
+  wall('cross-fe78165', 'FE78165 ストーン（透明感のある大理石調・グレージュ。旧 FE76668）', sand('#b2a89b', [930, 1250], { grain: 0.03, mottle: 0.07, mottleMm: 220, size: 3, veins: 0.1 }), [930, 1250], 0.6, 0.3),
+  wall('cross-fe78138', 'FE78138 コンクリート（ウレタンコート・グレー。旧 FE76660）', cloud('#a7a39c', [920, 640], { cloud: 0.07, cloudMm: 160, grain: 0.05 }), [920, 640], 0.75, 0.7),
+  wall('cross-fe78152', 'FE78152 コンクリート（大きなムラ・グレー。旧 FE76655）', cloud('#8f8984', [925, 928], { cloud: 0.3, cloudMm: 140, grain: 0.07 }), [925, 928], 0.85, 1.0),
+  wall('cross-re55455', 'RE55455 リザーブ スーパー耐久性（塗り壁調・グレージュ。旧 FE76410）', cloud('#8e887d', [920, 641], { cloud: 0.08, cloudMm: 150, grain: 0.05 }), [920, 641], 0.85, 0.7),
+  wall('cross-th34464', 'TH34464 フィルム汚れ防止 バリアタイプ（塗り壁調・ライトグレー）', cloud('#ded9d3', [925, 321], { cloud: 0.04, cloudMm: 120, grain: 0.05, crinkle: 0.2 }), [925, 321], 0.7, 0.8),
+  wall('cross-th34465', 'TH34465 フィルム汚れ防止 バリアタイプ（塗り壁調・グレージュ）', cloud('#b4a89e', [925, 321], { cloud: 0.05, cloudMm: 120, grain: 0.06, crinkle: 0.2 }), [925, 321], 0.7, 0.8),
+  wall('cross-th34466', 'TH34466 フィルム汚れ防止 バリアタイプ（塗り壁調・ダークブラウングレー）', cloud('#6b615b', [925, 321], { cloud: 0.06, cloudMm: 120, grain: 0.07, crinkle: 0.2 }), [925, 321], 0.7, 0.8),
+  wall('cross-th34468', 'TH34468 フィルム汚れ防止 バリアタイプ（タイルのエンボス・ライトグレー）', stepTiles('#c2bfb9', [308, 314], [[0, 125, 200], [125, 308, 95]], { mottle: 0.04, seam: 0.9 }), [308, 314], 0.7, 1.0),
+  wall('cross-th34523', 'TH34523 フィルム汚れ防止 バリアタイプ（塗り壁調・ブラック）', sand('#303136', [462, 310], { grain: 0.18, mottle: 0.04, mottleMm: 100, size: 2.5 }), [462, 310], 0.7, 1.0),
   wall('cross-th34082', 'TH34082 塗り壁調ライトグレー', trowel('#b9b8b4', [925, 641]), [925, 641], 0.9, 1.0),
   wall('cross-th34083', 'TH34083 塗り壁調グレー', trowel('#8e8d8a', [925, 641]), [925, 641], 0.9, 1.0),
   // TH34084（25-28 フェイス・Naturescape Shades of Air、TH34082・TH34083 と同じスタッコ柄のダークグレー。プリントとパールの濃淡）。リピート タテ 64.1・ヨコ 92.5cm、色は公式の柄画像・見本（#6b6767・#6f6a67）から
@@ -1186,13 +1364,13 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th32208', 'TH34307 マット（ニュアンスカラー・ベージュ。旧 TH32208）', plaster('#dad0c7', 600, { mottle: 0.012, grain: 0.02 }), [600, 600], 0.9, 0.3),
   // FINE コンクリート・ストーン。施工例ではざらっとしたダークブラウングレーのアクセント
   // FE78140（旧 FE76661 の後継・26-29 ファイン）: 目地や P コンのない無地のコンクリート調、ウレタンコート。リピート タテ 64・ヨコ 92cm。色は公式の柄画像・見本（#5c5952・#504f4b）と施工例の写真から
-  wall('cross-fe78140', 'FE78140 コンクリート（無地・ダーク）', cloud('#55534e', [920, 640], { cloud: 0.3, cloudMm: 140, grain: 0.08, crinkle: 0.9 }), [920, 640], 0.75, 1.0),
+  wall('cross-fe78140', 'FE78140 コンクリート（無地・ダーク。リザーブ RE55616 も同じ柄）', cloud('#55534e', [920, 640], { cloud: 0.3, cloudMm: 140, grain: 0.08, crinkle: 0.9 }), [920, 640], 0.75, 1.0),
   wall('cross-th34606', 'TH34606 MATERIA FODINA（金属光沢の塗り調・ネイビーグレー）', cloud('#3c3e44', [920, 641], { cloud: 0.5, cloudMm: 200, grain: 0.07, scratch: 2.2, crinkle: 0.15 }), [920, 641], 0.5, 0.8),
   wall('cross-th34672', 'TH34672 コンクリート打ち放し調（P コン付き）', rawConcrete('#a59d96', [930, 1250]), [930, 1250], 0.85, 1.2),
   // FINE コンクリート・ストーン。30cm 角の型枠跡のダークグレーのコンクリート（施工例の写真に合わせた）
   // FE76650 の色違い（サンゲツ FINE コンクリート・ストーン）。販売店では「ライトグレー」。型枠跡の四角い目地は FE76650 と同じ
   wall('cross-fe76649', 'FE78149 コンクリート調（30cm 角の型枠跡・ライトグレー。旧 FE76649）', concretePanels('#b5b5b2', [925, 613], [925 / 3, 613 / 2], { holes: false, toneVar: 0.2, seam: 0.94 }), [925, 613], 0.85, 1.2),
-  wall('cross-fe76650', 'FE78150 コンクリート調（30cm 角の型枠跡・ダークグレー。旧 FE76650）', concretePanels('#6b6b69', [925, 613], [925 / 3, 613 / 2], { holes: false, toneVar: 0.3, seam: 0.9 }), [925, 613], 0.85, 1.2),
+  wall('cross-fe76650', 'FE78150 コンクリート調（30cm 角の型枠跡・ダークグレー。旧 FE76650。リザーブ RE55636 も同じ柄）', concretePanels('#6b6b69', [925, 613], [925 / 3, 613 / 2], { holes: false, toneVar: 0.3, seam: 0.9 }), [925, 613], 0.85, 1.2),
   wall('panel-sazana-greyishwalnut', 'TOTO サザナ 壁パネル グレイッシュウォルナット', woodPaper('#b8ada3', [900, 900], { contrast: 0.1, seam: true }), [900, 900], 0.4, 0.6),
   wall('panel-bath-woodgray', 'ユニットバス壁パネル（グレー木目）', woodPaper('#9b938c', [900, 900], { contrast: 0.08 }), [900, 900], 0.35, 0.6),
 

@@ -3,7 +3,7 @@
 import { WEB } from './env';
 import { FURNITURE_TYPES, STOPPER_COLORS, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
-import { CALM_COLORS, CALM_HEX, CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, RAFFIS_COLORS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
+import { CALM_COLORS, CALM_HEX, CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, WALLPAPER_CATEGORIES, RAFFIS_COLORS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
 import type { SaveStatus } from './store';
 import type { Floor, Furniture, JambPart, Opening, Plan, Room, Side } from './types';
 import type { TimeOfDay, ViewMode, WalkTarget } from './viewer';
@@ -18,6 +18,15 @@ const SUMIKA_EXHAUST_COLORS: [string, string][] = [
   ['#645a4f', 'ブラックブラウン（BB）'],
   ['#7a7a79', 'グレー（GR）'],
   ['#3a3d3f', 'ブラック（BK）'],
+];
+
+/** スイッチ・コンセントのプレートの色（施工会社の標準はコスモワイド スクエアのホワイト。ほかは一般的な色） */
+const PLATE_COLORS: [string, string][] = [
+  ['#f7f7f5', 'ホワイト'],
+  ['#e7e1d3', 'ベージュ'],
+  ['#8f908e', 'グレー'],
+  ['#2a2a2b', 'ブラック'],
+  ['#d6d8d8', 'ホワイトシルバー'],
 ];
 
 const SCREEN_COLORS: [string, string][] = [
@@ -54,11 +63,15 @@ export interface PanelState {
   time: TimeOfDay;
   cutaway: boolean;
   labels: boolean;
+  /** 置き家具を表示する */
+  showFurniture?: boolean;
   lightsOn: boolean;
   highQuality: boolean;
   colorCheck?: boolean;
   /** ウォークスルーで見回すドラッグの向きを逆にする */
   invertLook: boolean;
+  /** ウォークスルーで壁・ドア・造作の家具をすり抜ける */
+  passWalls?: boolean;
   /** ウォークスルーの目の高さを決める身長（cm） */
   stature: number;
   /** ウォークスルーで立っている部屋 */
@@ -77,10 +90,12 @@ export interface PanelActions {
   setTime(time: TimeOfDay): void;
   setCutaway(on: boolean): void;
   setLabels(on: boolean): void;
+  setFurnitureVisible(on: boolean): void;
   setLightsOn(on: boolean): void;
   setHighQuality(on: boolean): void;
   setColorCheck(on: boolean): void;
   setInvertLook(on: boolean): void;
+  setPassWalls(on: boolean): void;
   setStature(cm: number): void;
   addImageMaterial(file: File): void;
   setFloorView(view: number | 'all'): void;
@@ -167,6 +182,8 @@ function materialSelect(category: MaterialCategory, value: string, attrs: string
 
 export class Panel {
   private state!: PanelState;
+  /** 「クロスを試す」の絞り込み（撥水・汚れ防止。カテゴリをまたいで） */
+  private wpFilter: '' | '撥水' | '汚れ防止' = '';
 
   constructor(
     private el: HTMLElement,
@@ -181,7 +198,9 @@ export class Panel {
     const scroll = this.el.scrollTop;
     // ウォークスルー中は、立っている部屋の情報だけを出す
     const lists = state.mode === 'walk' ? [this.walkSection()] : WEB ? [this.roomsSection()] : [this.roomsSection(), this.addSection()];
-    this.el.innerHTML = [this.header(), this.viewSection(), this.selectionSection(), ...lists, this.warningsSection(), this.helpSection()].join('');
+    // ウォークスルーの「クロスを試す」などは、表示（図面出力のボタン）のすぐ下
+    const tries = state.mode === 'walk' ? this.tryFinishes() : '';
+    this.el.innerHTML = [this.header(), this.viewSection(), tries ? `<section class="walk-room">${tries}</section>` : '', this.selectionSection(), ...lists, this.warningsSection(), this.helpSection()].join('');
     this.el.scrollTop = scroll;
   }
 
@@ -206,25 +225,27 @@ export class Panel {
     const floors = s.plan.floors;
     const floorSeg =
       floors.length > 1
-        ? seg('floor-view', [...floors.map((f, i): [string, string] => [String(i), f.name]), ['all', '外観']], s.mode === 'walk' ? String(this.walkFloorIndex()) : String(s.floorView))
+        ? seg('floor-view', [...floors.map((f, i): [string, string] => [String(i), f.name]), ...(s.mode === 'walk' ? [] : [['all', '外観'] as [string, string]])], s.mode === 'walk' ? String(this.walkFloorIndex()) : String(s.floorView))
         : '';
     return `
       <section>
         <h2>表示</h2>
-        ${WEB ? seg('web-floor', floors.map((f, i): [string, string] => [String(i), f.name]), String(this.walkFloorIndex())) : floorSeg}
         ${WEB ? '' : seg('mode', [['orbit', '俯瞰'], ['walk', 'ウォークスルー']], s.mode)}
-        ${WEB ? '' : seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
-        <div class="row">
+        ${WEB ? seg('web-floor', floors.map((f, i): [string, string] => [String(i), f.name]), String(this.walkFloorIndex())) : floorSeg}
+        ${WEB || s.mode !== 'walk' ? '' : seg('time', [['day', '昼'], ['evening', '夕方'], ['night', '夜（照明）']], s.time)}
+        ${s.mode === 'walk' ? '' : `<div class="row">
           <label><input type="checkbox" data-change="cutaway" ${s.cutaway ? 'checked' : ''}> 壁を低く切る</label>
           <label><input type="checkbox" data-change="labels" ${s.labels ? 'checked' : ''}> 部屋名</label>
-        </div>
+        </div>`}
         <div class="row">
-          ${WEB ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
+          ${WEB || s.mode !== 'walk' ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
+          <label title="ソファ・ベッド・テーブル・いすなどの置き家具を出す・消す（造作の棚・カウンター・照明・スイッチ・コンセントは消えません）"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示</label>
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
-          <label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>
+          ${s.mode === 'walk' ? `<label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>` : ''}
         </div>
         <div class="row">
           <label title="ウォークスルーでドラッグしたときに見回す向きを逆にします"><input type="checkbox" data-change="invert" ${s.invertLook ? 'checked' : ''}> 見回す向きを逆にする</label>
+          ${s.mode === 'walk' ? `<label title="外すと、壁・閉まったドア・造作の家具にぶつかって止まります（置き家具は通り抜けます）"><input type="checkbox" data-change="passwalls" ${s.passWalls ? 'checked' : ''}> 壁をすり抜ける</label>` : ''}
         </div>
         <div class="row">
           <label class="num stature" title="ウォークスルーの目の高さを、この身長の人に合わせます">身長 <input type="number" min="80" max="220" step="1" data-change="stature" value="${s.stature}"> cm</label>
@@ -392,7 +413,6 @@ export class Panel {
         <h2>今いる場所 <small>${esc(floor.name)}</small></h2>
         <h3>${esc(r.name)}</h3>
         <dl class="finish">${row('床', r.floor)}${row('壁', r.wall)}${accents}${row('天井', r.ceiling)}</dl>
-        ${this.tryFinishes()}
         ${items ? `<h3>家具・設備</h3><ul class="walk-items">${items}</ul>` : ''}
         <p class="hint">画面の中央に見えている物の名前と品番は、画面の下に出ます。</p>
       </section>`;
@@ -431,11 +451,34 @@ export class Panel {
       current = p.kind === 'wall' ? (r.edges?.[String(p.edge)] ?? p.materialId) : p.kind === 'floor' ? r.floor : r.ceiling;
     }
     const candidates = p.kind === 'floor' ? CANDIDATE_FLOORS : CANDIDATE_WALLPAPERS;
-    const options = candidates.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
+    let options: string;
+    let filters = '';
+    if (p.kind === 'floor') {
+      options = candidates.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
+    } else {
+      // カテゴリごと（明るい色から暗い色の順）。機能のしるしと、家のどこかで使っているかのしるしを付ける
+      const used = usedMaterials(this.state.plan);
+      const f = this.wpFilter;
+      options = WALLPAPER_CATEGORIES.map((c) => {
+        const items = c.items.filter((x) => !f || x.funcs.includes(f));
+        if (!items.length) return '';
+        const opts = items
+          .map((x) => {
+            const marks = x.funcs.length ? ` ［${x.funcs.join('・')}］` : '';
+            return `<option value="${x.id}" ${x.id === current ? 'selected' : ''}>${esc(materialLabel(x.id))}${marks}${used.has(x.id) ? ' ★使用中' : ''}</option>`;
+          })
+          .join('');
+        return `<optgroup label="${esc(c.name)}">${opts}</optgroup>`;
+      }).join('');
+      const chip = (v: '' | '撥水' | '汚れ防止', l: string) => `<button data-action="wp-filter" data-value="${v}" class="${f === v ? 'on' : ''}">${l}</button>`;
+      filters = `<div class="row">${chip('', 'すべて')}${chip('撥水', '撥水あり')}${chip('汚れ防止', '汚れ防止あり')}</div>`;
+    }
     const swatch = current && candidates.includes(current) ? `<img class="swatch" src="${swatchUrl(current)}" alt="">` : `<span class="swatch none"></span>`;
     return `
       <h3>${p.kind === 'floor' ? '床を試す' : 'クロスを試す'} <small>${esc(title)}</small></h3>
+      ${filters}
       <div class="mat-row">${swatch}<select data-walk-finish="1"><option value="">（選ぶ）</option>${options}</select></div>
+      ${p.kind === 'floor' ? '' : '<p class="hint">［ ］は機能（公式の機能のマーク。抗菌・防かびはほぼ全部にあるので省略）、★ は家のどこかで使っている品番。SP で始まる品番は何面でも無料、それ以外は 8 面まで無料・9 面目から 1 面 3,000 円。</p>'}
       <p class="hint">クリックした面だけ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
   }
 
@@ -454,6 +497,15 @@ export class Panel {
       return `
       <h3>${roll ? 'ロールスクリーン' : '縦型ブラインド'}を試す <small>${esc(f.name ?? '')}</small></h3>
       <p class="hint">${roll ? 'クリックで下ろす・巻き上げる。' : 'クリックで羽根が回って開く・閉じる。'}商品は未定なので、色は一般的な色から選べます（商品が決まったら、その商品の色に変えます）。選ぶとこの${roll ? 'スクリーン' : 'ブラインド'}だけ変わります（ファイルにも保存）。</p>
+      <h3>色</h3><ul class="chips">${colors}</ul>
+      <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
+    }
+    if (f.type === 'switch' || f.type === 'outlet') {
+      const dot = (c: string) => `<span class="swatch" style="display:inline-block;width:14px;height:14px;border:1px solid #999;background:${c};vertical-align:-2px;margin-right:4px"></span>`;
+      const colors = PLATE_COLORS.map(([c, l]) => chip('rs-color', c, l, f.color.toLowerCase() === c, dot(c))).join('');
+      return `
+      <h3>${f.type === 'switch' ? 'スイッチ' : 'コンセント'}の色を試す <small>${esc(f.name ?? '')}</small></h3>
+      <p class="hint">プレートの色を選べます（施工会社の標準はコスモワイド スクエアのホワイト。ほかの色は差額があるので要確認）。選ぶとこの${f.type === 'switch' ? 'スイッチ' : 'コンセント'}だけ変わります（ファイルにも保存）。</p>
       <h3>色</h3><ul class="chips">${colors}</ul>
       <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
     }
@@ -535,6 +587,9 @@ export class Panel {
       case 'mode': return a.setMode(v as ViewMode);
       case 'time': return a.setTime(v as TimeOfDay);
       case 'floor-view': return a.setFloorView(v === 'all' ? 'all' : Number(v));
+      case 'wp-filter':
+        this.wpFilter = v as '' | '撥水' | '汚れ防止';
+        return this.render(this.state);
       case 'undo': return a.undo();
       case 'redo': return a.redo();
       case 'screenshot': return a.screenshot();
@@ -613,10 +668,12 @@ export class Panel {
     if (d.change === 'plan') return a.switchPlan(t.value);
     if (d.change === 'cutaway') return a.setCutaway((t as HTMLInputElement).checked);
     if (d.change === 'labels') return a.setLabels((t as HTMLInputElement).checked);
+    if (d.change === 'furniture') return a.setFurnitureVisible((t as HTMLInputElement).checked);
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
     if (d.change === 'colorcheck') return a.setColorCheck((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
+    if (d.change === 'passwalls') return a.setPassWalls((t as HTMLInputElement).checked);
     if (d.change === 'walk-room') {
       // 選んだらすぐキーで歩けるよう、欄から外す
       t.blur();
@@ -701,4 +758,27 @@ export class Panel {
 function doorFrameOf(floor: Plan['floors'][number], f: Furniture): Opening | undefined {
   if (f.type !== 'swing-door') return undefined;
   return floor.openings.find((o) => o.type === 'door' && Math.hypot(o.at[0] - f.x, o.at[1] - f.y) < 150);
+}
+
+/** 家の中で使っている素材（部屋の床・壁・天井・1 面ごと・アクセント・ゾーン、開口部まわり、壁の切れ目、家具の面材） */
+function usedMaterials(plan: Plan): Set<string> {
+  const out = new Set<string>();
+  const add = (id?: string) => id && out.add(id);
+  for (const f of plan.floors) {
+    for (const r of f.rooms) {
+      add(r.floor);
+      add(r.wall);
+      add(r.ceiling);
+      for (const v of Object.values(r.edges ?? {})) add(v);
+      for (const v of Object.values(r.accent ?? {})) add(v as string);
+      for (const z of r.zones ?? []) add(z.material);
+    }
+    for (const o of f.openings) {
+      add(o.jamb);
+      for (const v of Object.values(o.jambFaces ?? {})) add(v);
+    }
+    for (const v of Object.values(f.jambs ?? {})) add(v);
+    for (const x of f.furniture) add(x.material);
+  }
+  return out;
 }

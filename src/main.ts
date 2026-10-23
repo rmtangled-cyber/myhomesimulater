@@ -48,6 +48,7 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   // Web 版（スマホ）は軽くするため、陰影の後処理を切っておく
   highQuality: !WEB,
   invertLook: loadFlag('invertLook'),
+  passWalls: loadFlag('passWalls'),
   stature: loadNumber('stature', 160),
   walkRoomId: null,
   picked: null,
@@ -91,7 +92,7 @@ function onWalkInfo(info: WalkInfo | null) {
 }
 
 /** 色を試せる室内ドア（開き戸・引き戸・ミラーシートの戸。全面ミラーの戸は除く） */
-const TRY_DOOR_TYPES = ['swing-door', 'sliding-door', 'mirror-sheet-door', 'bifold-door', 'fire-roll-screen', 'roll-screen', 'vertical-blind', 'sumika-exhaust'];
+const TRY_DOOR_TYPES = ['swing-door', 'sliding-door', 'mirror-sheet-door', 'bifold-door', 'fire-roll-screen', 'roll-screen', 'vertical-blind', 'sumika-exhaust', 'switch', 'outlet'];
 function isTryDoor(id: string): boolean {
   const f = findFurniture(store.plan, id)?.item;
   return !!f && TRY_DOOR_TYPES.includes(f.type);
@@ -130,7 +131,8 @@ const viewer = new Viewer(document.getElementById('viewport')!, {
     const c = (store.plan.circuits ?? []).find((x) => x.switches.some((s) => s.id === switchId && (s.button ?? 0) === button));
     const on = c ? viewer.toggleCircuit(c.id) : false;
     ui.pressed = { switchId, button, circuitId: c?.id ?? null, on };
-    ui.picked = null;
+    // 押したスイッチのプレートの色も試せるように
+    ui.picked = { kind: 'door', furnitureId: switchId };
     render();
   },
   onSelectFurniture: (id) => select(id ? { kind: 'furniture', id } : null),
@@ -174,6 +176,10 @@ const panel = new Panel(document.getElementById('panel')!, {
     viewer.setCutaway(on);
     ui.cutaway = on;
   },
+  setFurnitureVisible: (on) => {
+    viewer.setFurnitureVisible(on);
+    ui.showFurniture = on;
+  },
   setLabels: (on) => {
     viewer.setLabels(on);
     ui.labels = on;
@@ -194,6 +200,11 @@ const panel = new Panel(document.getElementById('panel')!, {
     viewer.setInvertLook(on);
     ui.invertLook = on;
     saveFlag('invertLook', on);
+  },
+  setPassWalls: (on) => {
+    viewer.setCollision(!on);
+    ui.passWalls = on;
+    saveFlag('passWalls', on);
   },
   setStature: (cm) => {
     viewer.setStature(cm);
@@ -371,6 +382,7 @@ function render() {
 }
 
 viewer.setInvertLook(ui.invertLook);
+viewer.setCollision(!ui.passWalls);
 viewer.setHighQuality(ui.highQuality);
 viewer.setStature(ui.stature);
 viewer.setTime(ui.time);

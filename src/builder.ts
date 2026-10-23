@@ -258,6 +258,7 @@ function buildRoof(plan: Plan, roof: Roof, built: BuiltFloor, warnings: string[]
   const fill: number[] = [];
   const fuv: number[] = [];
   const n = poly.length;
+  const upper = plan.floors[roof.floor + 1]?.rooms ?? [];
   for (let i = 0; i < n; i++) {
     const a = poly[i];
     const b = poly[(i + 1) % n];
@@ -266,6 +267,9 @@ function buildRoof(plan: Plan, roof: Roof, built: BuiltFloor, warnings: string[]
     // 外側（反時計回りの外形なので右手側）へ壁の厚みの半分ずらした外の面
     const nx = (b[1] - a[1]) / len;
     const ny = -(b[0] - a[0]) / len;
+    // 上の階の壁に突き当たる辺（辺の外が上の階の部屋）には作らない（上の階の部屋の中に外壁の帯が出る。3 階の階段）
+    const probe: Point = [(a[0] + b[0]) / 2 + nx * (t / 2 + 30), (a[1] + b[1]) / 2 + ny * (t / 2 + 30)];
+    if (upper.some((r) => pointInPolygon(probe, r.polygon))) continue;
     const o = t / 2 + 1;
     const p0: Point = [a[0] + nx * o, a[1] + ny * o];
     const p1: Point = [b[0] + nx * o, b[1] + ny * o];

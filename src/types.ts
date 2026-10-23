@@ -113,6 +113,12 @@ export interface Furniture {
   hinged?: boolean;
   /** monitor-arm・mic-arm: ディスプレイ・マイクを左右へずらす量（mm。正面から見て右が +） */
   armX?: number;
+  /** 吊り引き戸: 裏の面（背面）にもミラーシート（全身鏡くらい）を貼る */
+  backMirror?: boolean;
+  /** 素材を貼った箱の木目の向き。'x' なら横（幅の方向） */
+  grain?: 'x';
+  /** 置き家具として扱う（「家具を表示」を外すと消える）。種類で決まらない box など */
+  loose?: boolean;
   /** 引き戸: 開けたときに動く長さ（既定は戸の幅 − 60）。戸袋が短いとき */
   travel?: number;
   /** resin-shelf: 棚板の枚数（横に何枚に分けるか）。省略時は幅 800 ごと */
@@ -142,6 +148,18 @@ export interface Furniture {
   doorSeries?: 'raffis' | 'calm';
   /** コンセントに有線 LAN のポート（モジュラージャック）を付ける */
   lan?: boolean;
+  /** vanity-top: シンクの穴 [幅, 奥行き, 天板の真ん中から手前への距離] */
+  sink?: [number, number, number];
+  /** box: 正面の板を上の辺を軸にして跳ね上げて開く（クリックで開け閉め） */
+  flap?: 'up';
+  /** ih-cooktop（variant: grill）: トッププレートの手前の端から、下の台の前面（グリルの扉）までの距離 */
+  frontGap?: number;
+  /** wall-shelf: 棚板 1 枚ずつの上面の高さ（家具の下端から mm、下から順に）。省略時は h を棚板の枚数で等分 */
+  levels?: number[];
+  /** コンセント: 横向き（プレートを 90° 回して、差し込み口を左右に並べる） */
+  sideways?: boolean;
+  /** 形の種類の中の作り分け（hanging-clothes の tops・slacks・dress・coat・women・men、hat の fedora・cap、bag の handbag・tote・backpack など） */
+  variant?: string;
   /** ケージなどに上から掛ける布の面（家具の向きで: top・back（背面）・left（正面から見て右手…ではなく家具の −x 側）・right） */
   coverSides?: ('top' | 'back' | 'left' | 'right')[];
   /** 照明の明るさ（全光束 lm）。製品の定格光束。省略時は器具の種類ごとの目安 */

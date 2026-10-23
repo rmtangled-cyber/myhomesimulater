@@ -457,8 +457,8 @@
           }
         },
         {
-          "id": "1f-garage",
-          "name": "車庫",
+          "id": "1f-garage-cove",
+          "name": "折り上げ天井（車庫の北の壁の上）",
           "polygon": [
             [
               4550,
@@ -467,6 +467,35 @@
             [
               8190,
               1365
+            ],
+            [
+              8190,
+              1565
+            ],
+            [
+              4550,
+              1565
+            ]
+          ],
+          "floor": "floor-concrete",
+          "wall": "cross-light-gray",
+          "ceiling": "cross-black",
+          "level": -560,
+          "ceilingHeight": 3110,
+          "noBaseboard": true,
+          "noLabel": true
+        },
+        {
+          "id": "1f-garage",
+          "name": "車庫",
+          "polygon": [
+            [
+              4550,
+              1565
+            ],
+            [
+              8190,
+              1565
             ],
             [
               8190,
@@ -720,6 +749,17 @@
           "width": 1820,
           "height": 2990,
           "sill": 0
+        },
+        {
+          "id": "1f-garage-cove-open",
+          "type": "opening",
+          "at": [
+            6370,
+            1565
+          ],
+          "width": 3640,
+          "height": 3550,
+          "sill": -560
         }
       ],
       "furniture": [
@@ -764,7 +804,7 @@
         {
           "id": "mirror-1",
           "type": "mirror-sliding-door",
-          "name": "ミラー引き戸（フルハイトドア fit・片引きの引込み戸。シューズクロークの側の壁を 50 薄くした戸袋に入る。彫り込みの引手）",
+          "name": "ミラー引き戸（フルハイトドア fit・片引きの引込み戸。シューズクロークの側の壁を 50 薄くした戸袋に入る。彫り込みの引手。シューズクロークの側の面に、WIC の戸と同じミラーシート）",
           "x": 1785,
           "y": 5287.5,
           "w": 680,
@@ -775,7 +815,8 @@
           "z": 0,
           "flip": true,
           "pocket": true,
-          "travel": 565
+          "travel": 565,
+          "backMirror": true
         },
         {
           "id": "shoe-shelf-back",
@@ -794,16 +835,16 @@
         {
           "id": "shoe-shelf-side",
           "type": "resin-shelf",
-          "name": "樹脂棚板 D300（横・ハンガーパイプの南から。棚板は 1 枚の長い板）",
+          "name": "樹脂棚板 D300（横・ハンガーパイプの南から。棚板は 1 枚の長い板。土間から天井近くまで 12 段・185 ごと。一番下の棚板の下は土間から 185 あけて掃除しやすく）",
           "x": 210,
           "y": 5848.75,
           "w": 932.5,
           "d": 300,
-          "h": 1500,
+          "h": 2220,
           "rotation": 270,
           "color": "#3d3e40",
-          "z": 350,
-          "count": 8,
+          "z": -150,
+          "count": 12,
           "boards": 1
         },
         {
@@ -952,7 +993,8 @@
           "h": 9,
           "rotation": 0,
           "color": "#5d5e5f",
-          "z": 0
+          "z": 0,
+          "loose": true
         },
         {
           "id": "wash-diatom-mat-2",
@@ -965,7 +1007,8 @@
           "h": 9,
           "rotation": 0,
           "color": "#5d5e5f",
-          "z": 0
+          "z": 0,
+          "loose": true
         },
         {
           "id": "washer-1",
@@ -994,8 +1037,8 @@
         },
         {
           "id": "powder-counter",
-          "type": "box",
-          "name": "洗面トップ（AICA JI-10346K）",
+          "type": "vanity-top",
+          "name": "洗面トップ（AICA JI-10346K・シンクの穴とアンダーボウル）",
           "x": 455,
           "y": 2812.5,
           "w": 790,
@@ -1004,30 +1047,22 @@
           "rotation": 0,
           "color": "#8f8a85",
           "z": 700,
-          "material": "aica-ji10346k"
-        },
-        {
-          "id": "powder-basin",
-          "type": "basin",
-          "name": "洗面ボウル（アンダー）",
-          "x": 455,
-          "y": 2842.5,
-          "w": 420,
-          "d": 300,
-          "h": 10,
-          "rotation": 0,
-          "color": "#f6f6f4",
-          "z": 850
+          "material": "aica-ji10346k",
+          "sink": [
+            420,
+            300,
+            30
+          ]
         },
         {
           "id": "powder-faucet",
           "type": "faucet",
-          "name": "水栓",
+          "name": "水栓（高さを抑えた）",
           "x": 455,
-          "y": 2702.5,
+          "y": 2660,
           "w": 24,
           "d": 160,
-          "h": 300,
+          "h": 220,
           "rotation": 0,
           "color": "#1c1c1d",
           "z": 850
@@ -1129,21 +1164,21 @@
         {
           "id": "shoe-shelf-east",
           "type": "resin-shelf",
-          "name": "樹脂棚板 D450（玄関側）",
+          "name": "樹脂棚板 D450（玄関側・3 段。一番下の段の下にゴルフバッグ 2 つ。棚板の上面 FL+1250・1545・1840）",
           "x": 1535,
           "y": 6007.25,
           "w": 615.5,
           "d": 450,
-          "h": 1990,
+          "h": 885,
           "rotation": 90,
           "color": "#3d3e40",
-          "z": -150,
+          "z": 955,
           "count": 3
         },
         {
           "id": "wic-shelf",
           "type": "wall-shelf",
-          "name": "可動棚 D270（仕切り板にレール）",
+          "name": "可動棚 D270（仕切り板にレール・6 段。下から内寸 230・230・380・580・380、6 段目は上に棚板なし。棚板の上面 FL+250・500・900・1500・1900）",
           "x": 4805,
           "y": 300,
           "w": 480,
@@ -1151,7 +1186,14 @@
           "h": 2150,
           "rotation": 90,
           "color": "#4a4b4d",
-          "count": 7
+          "count": 5,
+          "levels": [
+            250,
+            500,
+            900,
+            1500,
+            1900
+          ]
         },
         {
           "id": "wic-divider",
@@ -1248,7 +1290,7 @@
           "type": "post-box",
           "name": "宅配ボックス（Nasta Box+POST・壁を貫通して、道路側から入れて玄関前の通路（ポーチ）から取り出す。くもり窓の所。前入後出のタイプにする要確認・L・マットブラック×ブラック）",
           "x": 3050,
-          "y": 6738,
+          "y": 6768,
           "w": 360,
           "d": 380,
           "h": 600,
@@ -1323,19 +1365,6 @@
           "z": -560
         },
         {
-          "id": "outdoor-tap",
-          "type": "faucet",
-          "name": "外水栓",
-          "x": 8400,
-          "y": 6750,
-          "w": 60,
-          "d": 150,
-          "h": 800,
-          "rotation": 270,
-          "color": "#1c1c1d",
-          "z": -560
-        },
-        {
           "id": "wash-iron-bar",
           "type": "iron-bar",
           "name": "タオル干し アイアンバー（L字）",
@@ -1362,22 +1391,9 @@
           "z": 850
         },
         {
-          "id": "bath-slide-bar",
-          "type": "slide-bar",
-          "name": "スライドバー",
-          "x": 90,
-          "y": 1500,
-          "w": 40,
-          "d": 60,
-          "h": 900,
-          "rotation": 270,
-          "color": "#d6d8da",
-          "z": 1000
-        },
-        {
           "id": "bath-shower",
           "type": "hand-shower",
-          "name": "コンフォートウエーブシャワー（TOTO）",
+          "name": "コンフォートウエーブシャワー（TOTO・上のシャワーフックに掛けた状態）",
           "x": 90,
           "y": 1500,
           "w": 110,
@@ -1468,14 +1484,15 @@
         {
           "id": "bath-door",
           "type": "framed-glass-door",
-          "name": "浴室ドア（黒枠・くもりガラス 開き戸）",
+          "name": "浴室ドア（黒枠・くもりガラス 開き戸・浴室側へ開く・吊元は南）",
           "x": 1820,
           "y": 1520,
           "w": 750,
           "d": 40,
           "h": 2000,
           "rotation": 90,
-          "color": "#1c1c1d"
+          "color": "#1c1c1d",
+          "flip": true
         },
         {
           "id": "genkan-float-step",
@@ -1520,7 +1537,7 @@
           "color": "#1f1f20",
           "flip": true,
           "pocket": true,
-          "material": "raffis-tellwalnut",
+          "material": "raffis-gray",
           "handle": "nickel"
         },
         {
@@ -1746,24 +1763,8 @@
         {
           "id": "std-1f-wic-dl-1",
           "type": "downlight",
-          "name": "ダウンライト WIC（DAIKO DDL-6132AB）（標準）",
-          "x": 5660,
-          "y": 700,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 440,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-1f-wic-dl-2",
-          "type": "downlight",
-          "name": "ダウンライト WIC（DAIKO DDL-6132AB）（標準）",
-          "x": 6694,
+          "name": "ダウンライト WIC（DAIKO DDL-6132AB・2 つを 1 つにして真ん中へ移動）（標準）",
+          "x": 6370,
           "y": 700,
           "w": 100,
           "d": 100,
@@ -1999,15 +2000,15 @@
         {
           "id": "std-1f-out-wash",
           "type": "outlet",
-          "name": "コンセント 洗面脱衣室 2 口（標準）",
-          "x": 3576,
-          "y": 810,
+          "name": "コンセント 洗面脱衣室 2 口（スイッチの下から、スマートサニタリーU の下の棚の上・左奥へ移動）（標準）",
+          "x": 2510,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
+          "rotation": 0,
           "color": "#f7f7f5",
-          "z": 990
+          "z": 540
         },
         {
           "id": "std-1f-out-wic",
@@ -2079,14 +2080,14 @@
         {
           "id": "std-1f-out-wp",
           "type": "outlet",
-          "name": "EV・PHEV 充電用コンセント（200V・防水。車庫の北西の隅・北の壁。標準の外の防水コンセント WK4602BK を移動して充電用に変更・機種と差額は要確認）",
+          "name": "EV・PHEV 充電用コンセント（Panasonic WK4322S ホワイトシルバー・200V 20A・屋外用・露出／埋込両用。車庫の北西の隅・北の壁。標準の外の防水コンセント WK4602BK から変更・差額は要確認）（標準）",
           "x": 4800,
           "y": 1445,
           "w": 120,
           "d": 40,
           "h": 180,
           "rotation": 0,
-          "color": "#d9d9d6",
+          "color": "#d6d8d8",
           "z": 440
         },
         {
@@ -2106,13 +2107,13 @@
         {
           "id": "std-1f-bath-remote",
           "type": "remote-panel",
-          "name": "給湯器のリモコン（浴室）（標準）",
-          "x": 64,
-          "y": 1100,
+          "name": "給湯器のリモコン（浴室・扉のある東の壁、扉の北）（標準）",
+          "x": 1756,
+          "y": 900,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 90,
           "color": "#f7f7f5",
           "z": 1040
         },
@@ -2128,19 +2129,6 @@
           "rotation": 0,
           "color": "#eeeeec",
           "z": 2138
-        },
-        {
-          "id": "std-1f-panel",
-          "type": "box",
-          "name": "分電盤（洗面脱衣室の西の壁）（標準）",
-          "x": 1930,
-          "y": 1950,
-          "w": 100,
-          "d": 400,
-          "h": 450,
-          "rotation": 0,
-          "color": "#f2f2f0",
-          "z": 1650
         },
         {
           "id": "bracket-1",
@@ -2259,6 +2247,797 @@
           "rotation": 0,
           "color": "#f4f4f4",
           "z": 1238
+        },
+        {
+          "id": "wic-clothes-tops",
+          "type": "hanging-clothes",
+          "name": "シャツ・T シャツ 10 枚（上のハンガーパイプ）",
+          "x": 5700,
+          "y": 300,
+          "w": 1100,
+          "d": 450,
+          "h": 840,
+          "rotation": 0,
+          "color": "#8a8f96",
+          "z": 1992,
+          "count": 10,
+          "variant": "tops"
+        },
+        {
+          "id": "wic-clothes-slacks",
+          "type": "hanging-clothes",
+          "name": "ズボン 10 着（スラックスハンガー・下のハンガーパイプ）",
+          "x": 6950,
+          "y": 300,
+          "w": 1100,
+          "d": 340,
+          "h": 640,
+          "rotation": 0,
+          "color": "#4a4a48",
+          "z": 912,
+          "count": 10,
+          "variant": "slacks"
+        },
+        {
+          "id": "wic-clothes-dresses",
+          "type": "hanging-clothes",
+          "name": "ワンピース 5 着（東のハンガーパイプ・ルンバの上）",
+          "x": 7890,
+          "y": 925,
+          "w": 600,
+          "d": 470,
+          "h": 1180,
+          "rotation": 90,
+          "color": "#7a2e3a",
+          "z": 1992,
+          "count": 5,
+          "variant": "dress"
+        },
+        {
+          "id": "stairs-under-outlet",
+          "type": "outlet",
+          "name": "コンセント 1 口（グレー・1 口用の小さなプレート・階段下・床下点検口より車庫寄り・追加）",
+          "x": 3400,
+          "y": 2566.5,
+          "w": 70,
+          "d": 8,
+          "h": 70,
+          "rotation": 0,
+          "color": "#8f908e",
+          "z": 190,
+          "count": 1
+        },
+        {
+          "id": "shoes-coats",
+          "type": "hanging-clothes",
+          "name": "コート 3 着（コート掛け）",
+          "x": 360,
+          "y": 4832.5,
+          "w": 600,
+          "d": 500,
+          "h": 1130,
+          "rotation": 90,
+          "color": "#3a3a3c",
+          "z": 1700,
+          "count": 3,
+          "variant": "coat"
+        },
+        {
+          "id": "golf-bag-1",
+          "type": "golf-bag",
+          "name": "ゴルフバッグ（ブラック）",
+          "x": 1535,
+          "y": 5850,
+          "w": 260,
+          "d": 260,
+          "h": 1250,
+          "rotation": 90,
+          "color": "#1d1f24",
+          "z": -150
+        },
+        {
+          "id": "golf-bag-2",
+          "type": "golf-bag",
+          "name": "ゴルフバッグ（レッド）",
+          "x": 1535,
+          "y": 6160,
+          "w": 260,
+          "d": 260,
+          "h": 1250,
+          "rotation": 90,
+          "color": "#a3242b",
+          "z": -150
+        },
+        {
+          "id": "wash-toothbrush-sterilizer",
+          "type": "toothbrush-sterilizer",
+          "name": "歯ブラシ除菌器（Iseebiz XDQ-0010 ブラック・壁内収納の一番下の棚板の上の段の奥の壁にテープで貼る・歯ブラシ 5 本）",
+          "x": 3703,
+          "y": 460,
+          "w": 183,
+          "d": 58,
+          "h": 80,
+          "rotation": 90,
+          "color": "#1b1b1c",
+          "z": 1346,
+          "count": 5
+        },
+        {
+          "id": "wic-hat-box-1",
+          "type": "hat-box",
+          "name": "帽子収納ケース（VAESIDA・黒・44×24×22cm。可動棚の下から 1 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 440,
+          "d": 240,
+          "h": 220,
+          "rotation": 90,
+          "color": "#1e1e20",
+          "z": 0
+        },
+        {
+          "id": "wic-hat-box-2",
+          "type": "hat-box",
+          "name": "帽子収納ケース（VAESIDA・黒・44×24×22cm。可動棚の下から 2 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 440,
+          "d": 240,
+          "h": 220,
+          "rotation": 90,
+          "color": "#1e1e20",
+          "z": 250
+        },
+        {
+          "id": "wic-hat-box-6",
+          "type": "hat-box",
+          "name": "帽子収納ケース（VAESIDA・黒・44×24×22cm。可動棚の下から 6 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 440,
+          "d": 240,
+          "h": 220,
+          "rotation": 90,
+          "color": "#1e1e20",
+          "z": 1900
+        },
+        {
+          "id": "wic-cap-case-3",
+          "type": "cap-case",
+          "name": "キャップケース 2 つ積み（SCAVATA・透明・34.3×26.7×18.8cm。可動棚の下から 3 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 343,
+          "d": 267,
+          "h": 188,
+          "rotation": 90,
+          "color": "#e9eef1",
+          "z": 500,
+          "count": 2
+        },
+        {
+          "id": "wic-cap-case-5",
+          "type": "cap-case",
+          "name": "キャップケース 2 つ積み（SCAVATA・透明・34.3×26.7×18.8cm。可動棚の下から 5 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 343,
+          "d": 267,
+          "h": 188,
+          "rotation": 90,
+          "color": "#e9eef1",
+          "z": 1500,
+          "count": 2
+        },
+        {
+          "id": "wic-perfume",
+          "type": "perfume-tray",
+          "name": "香水棚（アクリルのひな壇と香水 7 本・可動棚の下から 4 段目）",
+          "x": 4805,
+          "y": 300,
+          "w": 260,
+          "d": 200,
+          "h": 200,
+          "rotation": 0,
+          "color": "#e8e4dc",
+          "z": 900,
+          "count": 5
+        },
+        {
+          "id": "garage-cove-light",
+          "type": "line-light",
+          "name": "間接照明（車庫の北の壁の上・折り上げ天井の中）（追加）",
+          "x": 6370,
+          "y": 1465,
+          "w": 3500,
+          "d": 40,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2440,
+          "lumen": 1400
+        },
+        {
+          "id": "outdoor-tap-box",
+          "type": "box",
+          "name": "散水栓ボックスの蓋（立水栓はなし・地面に埋める）",
+          "x": 8400,
+          "y": 6750,
+          "w": 200,
+          "d": 300,
+          "h": 15,
+          "rotation": 0,
+          "color": "#3b3c3e",
+          "z": -560
+        },
+        {
+          "id": "garage-camera-outlet",
+          "type": "outlet",
+          "name": "コンセント（車庫の防犯カメラ用・カメラの西。隠せるか要確認）（追加）",
+          "x": 7780,
+          "y": 1429,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 2150
+        },
+        {
+          "id": "porch-camera-outlet",
+          "type": "outlet",
+          "name": "コンセント（ポーチの防犯カメラ用・カメラの南。隠せるか要確認）（追加）",
+          "x": 1884,
+          "y": 6097.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5",
+          "z": 2150
+        },
+        {
+          "id": "shoes-side-1",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 1 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 35,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-2",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 2 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 220,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-3",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 3 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 405,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-4",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 4 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 590,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-5",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 5 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 775,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-6",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 6 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 960,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-7",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 7 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 1145,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-8",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 8 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 1330,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-9",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 9 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 1515,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-10",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 10 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 1700,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-11",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 11 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 1885,
+          "count": 4
+        },
+        {
+          "id": "shoes-side-12",
+          "type": "shoe-row",
+          "name": "靴 4 足（D300 の棚の下から 12 段目）",
+          "x": 210,
+          "y": 5848.75,
+          "w": 900,
+          "d": 280,
+          "h": 110,
+          "rotation": 270,
+          "color": "#333333",
+          "z": 2070,
+          "count": 4
+        },
+        {
+          "id": "sic-backpack",
+          "type": "bag",
+          "name": "大きなリュック（寝かせて・D450 の奥の棚の一番下の段）",
+          "x": 400,
+          "y": 6540,
+          "w": 350,
+          "d": 550,
+          "h": 230,
+          "rotation": 90,
+          "color": "#2b2d31",
+          "z": 250,
+          "variant": "backpack-flat"
+        },
+        {
+          "id": "sic-tennis-bag-1",
+          "type": "racket-bag",
+          "name": "テニスのラケットバッグ 1（D450 の奥の棚の下から 2 段目）",
+          "x": 520,
+          "y": 6540,
+          "w": 760,
+          "d": 330,
+          "h": 130,
+          "rotation": 0,
+          "color": "#1e1e20",
+          "z": 650,
+          "variant": "tennis"
+        },
+        {
+          "id": "sic-badminton-bag-1",
+          "type": "racket-bag",
+          "name": "バドミントンのラケットバッグ 1（D450 の奥の棚の下から 3 段目）",
+          "x": 520,
+          "y": 6540,
+          "w": 700,
+          "d": 260,
+          "h": 90,
+          "rotation": 0,
+          "color": "#1f2a44",
+          "z": 1050,
+          "variant": "badminton"
+        },
+        {
+          "id": "sic-tennis-bag-2",
+          "type": "racket-bag",
+          "name": "テニスのラケットバッグ 2（D450 の奥の棚の下から 2 段目）",
+          "x": 1300,
+          "y": 6540,
+          "w": 760,
+          "d": 330,
+          "h": 130,
+          "rotation": 0,
+          "color": "#2b2d33",
+          "z": 650,
+          "variant": "tennis"
+        },
+        {
+          "id": "sic-badminton-bag-2",
+          "type": "racket-bag",
+          "name": "バドミントンのラケットバッグ 2（D450 の奥の棚の下から 3 段目）",
+          "x": 1300,
+          "y": 6540,
+          "w": 700,
+          "d": 260,
+          "h": 90,
+          "rotation": 0,
+          "color": "#3a3a3c",
+          "z": 1050,
+          "variant": "badminton"
+        },
+        {
+          "id": "sic-glove-1",
+          "type": "baseball-glove",
+          "name": "野球のグローブ 1（D450 の玄関側の棚の一番下の段）",
+          "x": 1535,
+          "y": 5850,
+          "w": 260,
+          "d": 300,
+          "h": 120,
+          "rotation": 90,
+          "color": "#8a5a2b",
+          "z": 1250
+        },
+        {
+          "id": "sic-glove-2",
+          "type": "baseball-glove",
+          "name": "野球のグローブ 2（D450 の玄関側の棚の一番下の段）",
+          "x": 1535,
+          "y": 6160,
+          "w": 260,
+          "d": 300,
+          "h": 120,
+          "rotation": 90,
+          "color": "#2a2320",
+          "z": 1250
+        },
+        {
+          "id": "sic-suitcase",
+          "type": "suitcase",
+          "name": "スーツケース（1 週間の旅行用・約 70L・コート掛けと D300 の棚の間の土間）",
+          "x": 300,
+          "y": 5160,
+          "w": 460,
+          "d": 280,
+          "h": 700,
+          "rotation": 180,
+          "color": "#2f3a4a",
+          "z": -150
+        },
+        {
+          "id": "wash-roll-screen",
+          "type": "roll-screen",
+          "name": "突っ張り式ロールスクリーン（造作棚と洗濯機の上の空間を隠す・壁から壁まで・下端は洗濯機の上 FL+1120。商品は未定）",
+          "x": 2730,
+          "y": 1960,
+          "w": 1700,
+          "d": 40,
+          "h": 1280,
+          "rotation": 180,
+          "color": "#4a4b4d",
+          "z": 1120
+        },
+        {
+          "id": "bath-hook-upper",
+          "type": "shower-hook",
+          "name": "シャワーフック（上）",
+          "x": 90,
+          "y": 1500,
+          "w": 40,
+          "d": 60,
+          "h": 60,
+          "rotation": 270,
+          "color": "#d6d8da",
+          "z": 1590
+        },
+        {
+          "id": "bath-hook-lower",
+          "type": "shower-hook",
+          "name": "シャワーフック（下・座って使う高さ）",
+          "x": 90,
+          "y": 1500,
+          "w": 40,
+          "d": 60,
+          "h": 60,
+          "rotation": 270,
+          "color": "#d6d8da",
+          "z": 1000
+        },
+        {
+          "id": "bath-mirror",
+          "type": "round-mirror",
+          "name": "マグネット バスルームミラー 丸型 23cm ブラック（山崎実業 tower 10176・W23×D1.4×H23cm）",
+          "x": 67,
+          "y": 1150,
+          "w": 230,
+          "d": 14,
+          "h": 230,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 1050,
+          "loose": true
+        },
+        {
+          "id": "bath-dispensers",
+          "type": "magnet-dispenser",
+          "name": "マグネットディスペンサー 3 本（robasst・500ml・下から出る。色は未定・仮にブラック）",
+          "x": 330,
+          "y": 2177.5,
+          "w": 80,
+          "d": 75,
+          "h": 210,
+          "rotation": 180,
+          "color": "#1e1e1f",
+          "z": 900,
+          "count": 3
+        },
+        {
+          "id": "wic-tape-light",
+          "type": "line-light",
+          "name": "テープライト（枕棚の下）（追加）",
+          "x": 6340,
+          "y": 390,
+          "w": 2880,
+          "d": 20,
+          "h": 10,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2045
+        },
+        {
+          "id": "wic-tape-light-east",
+          "type": "line-light",
+          "name": "テープライト（東の枕棚の下）（追加）",
+          "x": 7800,
+          "y": 857,
+          "w": 895,
+          "d": 20,
+          "h": 10,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 2045
+        },
+        {
+          "id": "powder-towel-hook",
+          "type": "towel-hook",
+          "name": "タオルフック（MOLONG ステンレス L 字フック ブラック・階段側の壁・洗面台の手前）",
+          "x": 818,
+          "y": 3200,
+          "w": 50,
+          "d": 63,
+          "h": 56,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": 1100
+        },
+        {
+          "id": "powder-wire-basket-1",
+          "type": "wire-basket",
+          "name": "ワイヤーボックス 1（ミニ洗面台の下の棚・商品は未定）",
+          "x": 185,
+          "y": 2800,
+          "w": 240,
+          "d": 360,
+          "h": 200,
+          "rotation": 0,
+          "color": "#2a2a2b",
+          "z": 410
+        },
+        {
+          "id": "powder-wire-basket-2",
+          "type": "wire-basket",
+          "name": "ワイヤーボックス 2（ミニ洗面台の下の棚・商品は未定）",
+          "x": 455,
+          "y": 2800,
+          "w": 240,
+          "d": 360,
+          "h": 200,
+          "rotation": 0,
+          "color": "#2a2a2b",
+          "z": 410
+        },
+        {
+          "id": "powder-wire-basket-3",
+          "type": "wire-basket",
+          "name": "ワイヤーボックス 3（ミニ洗面台の下の棚・商品は未定）",
+          "x": 725,
+          "y": 2800,
+          "w": 240,
+          "d": 360,
+          "h": 200,
+          "rotation": 0,
+          "color": "#2a2a2b",
+          "z": 410
+        },
+        {
+          "id": "wash-storage-outlet",
+          "type": "outlet",
+          "name": "コンセント（洗面脱衣室の壁内収納の中・歯ブラシ除菌器の横）（追加）",
+          "x": 3728,
+          "y": 290,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 1360
+        },
+        {
+          "id": "wash-towels-1",
+          "type": "towel-stack",
+          "name": "たたんだタオル 5 枚（造作棚の上から 3 段目）",
+          "x": 2160,
+          "y": 2230,
+          "w": 340,
+          "d": 250,
+          "h": 45,
+          "rotation": 180,
+          "color": "#e9e7e2",
+          "z": 1020.0,
+          "count": 5
+        },
+        {
+          "id": "wash-towels-2",
+          "type": "towel-stack",
+          "name": "たたんだタオル 5 枚（造作棚の上から 3 段目）",
+          "x": 2630,
+          "y": 2230,
+          "w": 340,
+          "d": 250,
+          "h": 45,
+          "rotation": 180,
+          "color": "#c9cdd1",
+          "z": 1020.0,
+          "count": 5
+        },
+        {
+          "id": "wash-cica-mask-1",
+          "type": "cosmetic-tub",
+          "name": "VT シカデイリースージングマスク 30 枚入り 1（造作棚の上から 2 段目）",
+          "x": 2060,
+          "y": 2250,
+          "w": 120,
+          "d": 120,
+          "h": 95,
+          "rotation": 180,
+          "color": "#f2f2ef",
+          "z": 1446.7
+        },
+        {
+          "id": "wash-cica-mask-2",
+          "type": "cosmetic-tub",
+          "name": "VT シカデイリースージングマスク 30 枚入り 2（造作棚の上から 2 段目）",
+          "x": 2200,
+          "y": 2250,
+          "w": 120,
+          "d": 120,
+          "h": 95,
+          "rotation": 180,
+          "color": "#f2f2ef",
+          "z": 1446.7
+        },
+        {
+          "id": "wash-body-milk",
+          "type": "pump-bottle",
+          "name": "ボディミルク（ニベア・ポンプ・造作棚の上から 2 段目）",
+          "x": 2400,
+          "y": 2250,
+          "w": 75,
+          "d": 55,
+          "h": 200,
+          "rotation": 180,
+          "color": "#f3f4f6",
+          "z": 1446.7
+        },
+        {
+          "id": "solar-light-west",
+          "type": "solar-ground-light",
+          "name": "ソーラーの埋め込みライト（西・1 セット）",
+          "x": -450,
+          "y": 4000,
+          "w": 2400,
+          "d": 300,
+          "h": 300,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": -560,
+          "count": 4
+        },
+        {
+          "id": "solar-light-east",
+          "type": "solar-ground-light",
+          "name": "ソーラーの埋め込みライト（東・1 セット）",
+          "x": 8650,
+          "y": 4100,
+          "w": 2400,
+          "d": 300,
+          "h": 300,
+          "rotation": 270,
+          "color": "#1c1c1d",
+          "z": -560,
+          "count": 4
+        },
+        {
+          "id": "wic-ironing-board",
+          "type": "hand-ironing-board",
+          "name": "ハンディアイロン台（コジット 襟・袖ラクラク・全長 25cm・下のハンガーパイプに掛ける）",
+          "x": 6200,
+          "y": 300,
+          "w": 80,
+          "d": 42,
+          "h": 250,
+          "rotation": 0,
+          "color": "#c9ccd0",
+          "z": 912
         }
       ],
       "jambs": {
@@ -2301,6 +3080,9 @@
           "ceiling": "cross-sp2540",
           "accent": {
             "west": "cross-fe76650"
+          },
+          "edges": {
+            "3": "cross-th34084"
           }
         },
         {
@@ -2721,7 +3503,7 @@
           "fronts": [
             [],
             [
-              200,
+              -200,
               360,
               260
             ],
@@ -2760,7 +3542,7 @@
         {
           "id": "kitchen-hob",
           "type": "ih-cooktop",
-          "name": "IH クッキングヒーター（3 口・機種は未定。見積もりのハーマン ガスコンロ W600 から変更）",
+          "name": "IH クッキングヒーター（3 口・下にグリル・機種は未定）",
           "x": 7785,
           "y": 3043,
           "w": 600,
@@ -2768,12 +3550,14 @@
           "h": 8,
           "rotation": 90,
           "color": "#101112",
-          "z": 900
+          "z": 900,
+          "variant": "grill",
+          "frontGap": 50
         },
         {
           "id": "kitchen-hood",
           "type": "range-hood",
-          "name": "レンジフード（デザインフード FED テクスチャーブラック 5FEDL952TBKY・幅 900・下端 FL+1700）",
+          "name": "レンジフード（ARIAFINA Federica FEDL-952・薄さ 35mm・LED 昼白色。クリックで照明がつく）",
           "x": 7830,
           "y": 3043,
           "w": 900,
@@ -2886,9 +3670,9 @@
           "type": "box",
           "name": "アイランドの南の端の側板（天板と同じテノール アイアンブラック。天板と「コ」の字につながる）",
           "x": 6197,
-          "y": 4400,
+          "y": 4400.5,
           "w": 892,
-          "d": 22,
+          "d": 23,
           "h": 880,
           "rotation": 0,
           "color": "#2e2f31",
@@ -2899,9 +3683,9 @@
           "type": "box",
           "name": "アイランドの北の端の側板（天板と同じテノール アイアンブラック。天板と「コ」の字につながる）",
           "x": 6197,
-          "y": 2580,
+          "y": 2579.5,
           "w": 892,
-          "d": 22,
+          "d": 23,
           "h": 880,
           "rotation": 0,
           "color": "#2e2f31",
@@ -3347,15 +4131,16 @@
         {
           "id": "bed-headboard-fascia",
           "type": "box",
-          "name": "造作のヘッドボードの前の幕板（今のベッドの棚を隠す）",
+          "name": "造作のヘッドボードの前の幕板（今のベッドの棚を隠す・クリックで跳ね上げて開く）",
           "x": 311,
           "y": 1251.25,
           "w": 2382.5,
           "d": 20,
           "h": 410,
-          "rotation": 90,
+          "rotation": 270,
           "color": "#4b4846",
-          "z": 530
+          "z": 530,
+          "flap": "up"
         },
         {
           "id": "bed-1-north",
@@ -3382,21 +4167,6 @@
           "rotation": 270,
           "color": "#dccab0",
           "material": "wood-oak-light"
-        },
-        {
-          "id": "std-2f-bed-cl",
-          "type": "ceiling-light",
-          "name": "シーリングライト 寝室（DAIKO DCL-42121）（標準）",
-          "x": 1820,
-          "y": 1250,
-          "w": 560,
-          "d": 560,
-          "h": 90,
-          "rotation": 0,
-          "color": "#f6f6f4",
-          "z": 2400,
-          "lumen": 3699,
-          "kelvin": 3500
         },
         {
           "id": "std-2f-wic-dl",
@@ -3743,28 +4513,28 @@
         {
           "id": "std-2f-out-bed-1",
           "type": "outlet",
-          "name": "コンセント 寝室 2 口（標準は北の壁 → 枕元（ヘッドボードの上・北）へ移動）（標準）",
-          "x": 64,
+          "name": "コンセント 寝室 2 口（ヘッドボードの天板の下・前の幕板の奥へ移動）（標準）",
+          "x": 164,
           "y": 200,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 90,
           "color": "#f7f7f5",
-          "z": 990
+          "z": 780
         },
         {
           "id": "std-2f-out-bed-2",
           "type": "outlet",
-          "name": "コンセント 寝室 2 口・テレビ端子（標準は西の壁の南 → ヘッドボードと重なるので枕元（南）へ移動）（標準）",
-          "x": 64,
+          "name": "コンセント 寝室 2 口・テレビ端子（ヘッドボードの天板の下・前の幕板の奥へ移動）（標準）",
+          "x": 164,
           "y": 2300,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 90,
           "color": "#f7f7f5",
-          "z": 990
+          "z": 780
         },
         {
           "id": "std-2f-out-bed-ac",
@@ -3809,7 +4579,7 @@
         {
           "id": "std-2f-out-mw-1",
           "type": "outlet",
-          "name": "コンセント キッチン 専用 2 口・アース付（電子レンジなど）（標準）",
+          "name": "コンセント キッチン 専用 2 口・アース付（電子レンジなど）・横向き・プレートの下端を天板から 100 上（FL+1000）に付ける（標準）",
           "x": 8126,
           "y": 5033,
           "w": 70,
@@ -3817,12 +4587,13 @@
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140
+          "z": 975,
+          "sideways": true
         },
         {
           "id": "std-2f-out-mw-2",
           "type": "outlet",
-          "name": "コンセント キッチン 専用 2 口・アース付（標準）",
+          "name": "コンセント キッチン 専用 2 口・アース付・横向き・プレートの下端を天板から 100 上（FL+1000）に付ける（標準）",
           "x": 8126,
           "y": 5910,
           "w": 70,
@@ -3830,7 +4601,8 @@
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 1140
+          "z": 975,
+          "sideways": true
         },
         {
           "id": "std-2f-out-tv",
@@ -3900,7 +4672,7 @@
         {
           "id": "2f-wic-upper-shelf",
           "type": "box",
-          "name": "枕棚（WIC・北の壁）",
+          "name": "枕棚（WIC・北の壁。一般的な高さ FL+1800）",
           "x": 4436.25,
           "y": 235,
           "w": 1472.5,
@@ -3908,12 +4680,12 @@
           "h": 20,
           "rotation": 0,
           "color": "#4a4b4d",
-          "z": 2050
+          "z": 1800
         },
         {
           "id": "2f-wic-pipe",
           "type": "box",
-          "name": "ハンガーパイプ（WIC・北の壁）",
+          "name": "ハンガーパイプ（WIC・北の壁。一般的な高さ FL+1700）",
           "x": 4436.25,
           "y": 300,
           "w": 1452.5,
@@ -3921,7 +4693,7 @@
           "h": 25,
           "rotation": 0,
           "color": "#b8b8b8",
-          "z": 1980
+          "z": 1687.5
         },
         {
           "id": "2f-stairs-edge-fill",
@@ -4113,7 +4885,7 @@
         {
           "id": "2f-wic-upper-shelf-s",
           "type": "box",
-          "name": "枕棚（WIC・南の壁）",
+          "name": "枕棚（WIC・南の壁。一般的な高さ FL+1800）",
           "x": 4436.25,
           "y": 1357.5,
           "w": 1472.5,
@@ -4121,12 +4893,12 @@
           "h": 20,
           "rotation": 0,
           "color": "#4a4b4d",
-          "z": 2050
+          "z": 1800
         },
         {
           "id": "2f-wic-pipe-s",
           "type": "box",
-          "name": "ハンガーパイプ（WIC・南の壁）",
+          "name": "ハンガーパイプ（WIC・南の壁。一般的な高さ FL+1700）",
           "x": 4436.25,
           "y": 1292.5,
           "w": 1452.5,
@@ -4134,7 +4906,7 @@
           "h": 25,
           "rotation": 0,
           "color": "#b8b8b8",
-          "z": 1980
+          "z": 1687.5
         },
         {
           "id": "rail-dining",
@@ -4215,6 +4987,215 @@
           "rotation": 270,
           "color": "#4a4b4d",
           "z": 200
+        },
+        {
+          "id": "pantry-breaker",
+          "type": "breaker-panel",
+          "name": "分電盤（冷蔵庫の右・西の壁）",
+          "x": 5342.5,
+          "y": 480,
+          "w": 450,
+          "d": 100,
+          "h": 375,
+          "rotation": 270,
+          "color": "#f1f1ee",
+          "z": 1600
+        },
+        {
+          "id": "pantry-router-shelf",
+          "type": "box",
+          "name": "造作棚（ルーター置き・分電盤の下）",
+          "x": 5417.5,
+          "y": 480,
+          "w": 250,
+          "d": 450,
+          "h": 20,
+          "rotation": 0,
+          "color": "#e9e7e2",
+          "z": 1100
+        },
+        {
+          "id": "pantry-router",
+          "type": "wifi-router",
+          "name": "Wi-Fi ルーター",
+          "x": 5430,
+          "y": 480,
+          "w": 60,
+          "d": 180,
+          "h": 200,
+          "rotation": 270,
+          "color": "#f2f2f0",
+          "z": 1120
+        },
+        {
+          "id": "wic2-clothes-women",
+          "type": "hanging-clothes",
+          "name": "女性ものの服 5 着（北のハンガーパイプ）",
+          "x": 4436,
+          "y": 300,
+          "w": 900,
+          "d": 470,
+          "h": 1180,
+          "rotation": 0,
+          "color": "#7a2e3a",
+          "z": 1700,
+          "count": 5,
+          "variant": "women"
+        },
+        {
+          "id": "wic2-clothes-men",
+          "type": "hanging-clothes",
+          "name": "男性ものの服 5 着（南のハンガーパイプ）",
+          "x": 4436,
+          "y": 1292.5,
+          "w": 900,
+          "d": 480,
+          "h": 840,
+          "rotation": 0,
+          "color": "#2d3340",
+          "z": 1700,
+          "count": 5,
+          "variant": "men"
+        },
+        {
+          "id": "kitchen-kettle",
+          "type": "electric-kettle",
+          "name": "電気ケトル（BALMUDA The Pot KPT01JP-BK ブラック・0.6L）",
+          "x": 7990,
+          "y": 4250,
+          "w": 269,
+          "d": 142,
+          "h": 194,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 900
+        },
+        {
+          "id": "kitchen-rice-cooker",
+          "type": "rice-cooker",
+          "name": "炊飯器（ブラック・メーカー未定）",
+          "x": 7940,
+          "y": 4650,
+          "w": 250,
+          "d": 320,
+          "h": 210,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 900
+        },
+        {
+          "id": "kitchen-microwave",
+          "type": "microwave",
+          "name": "電子レンジ（ブラック・メーカー未定。横向きのコンセント 2 か所の間）",
+          "x": 7905,
+          "y": 5470,
+          "w": 480,
+          "d": 390,
+          "h": 300,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 900
+        },
+        {
+          "id": "bed-headboard-light",
+          "type": "line-light",
+          "name": "間接照明（ヘッドボードの壁側に埋め込み・上はアクリル板）（追加）",
+          "x": 110,
+          "y": 1251.25,
+          "w": 2382.5,
+          "d": 100,
+          "h": 10,
+          "rotation": 90,
+          "color": "#f4f4f4",
+          "z": 940,
+          "flip": true
+        },
+        {
+          "id": "2f-wic-upper-shelf-e",
+          "type": "box",
+          "name": "枕棚（WIC・奥（東）の壁。一般的な高さ FL+1800）",
+          "x": 4997.5,
+          "y": 796.25,
+          "w": 350,
+          "d": 772.5,
+          "h": 20,
+          "rotation": 0,
+          "color": "#4a4b4d",
+          "z": 1800
+        },
+        {
+          "id": "2f-wic-pipe-e",
+          "type": "box",
+          "name": "ハンガーパイプ（WIC・奥（東）の壁。一般的な高さ FL+1700）",
+          "x": 4932.5,
+          "y": 796.25,
+          "w": 25,
+          "d": 520,
+          "h": 25,
+          "rotation": 0,
+          "color": "#b8b8b8",
+          "z": 1687.5
+        },
+        {
+          "id": "kitchen-trash-1",
+          "type": "trash-bin",
+          "name": "ゴミ箱 1（シンク下のフリースペース・商品は未定）",
+          "x": 6405,
+          "y": 2970,
+          "w": 420,
+          "d": 430,
+          "h": 600,
+          "rotation": 270,
+          "color": "#3a3b3d"
+        },
+        {
+          "id": "kitchen-trash-2",
+          "type": "trash-bin",
+          "name": "ゴミ箱 2（シンク下のフリースペース・商品は未定）",
+          "x": 6405,
+          "y": 3410,
+          "w": 420,
+          "d": 430,
+          "h": 600,
+          "rotation": 270,
+          "color": "#d9d8d4"
+        },
+        {
+          "id": "kitchen-exhaust-cover",
+          "type": "exhaust-cover",
+          "name": "排気口カバー（IH の奥・商品は未定）",
+          "x": 8085,
+          "y": 3043,
+          "w": 600,
+          "d": 85,
+          "h": 45,
+          "rotation": 90,
+          "color": "#1c1c1d",
+          "z": 900
+        },
+        {
+          "id": "storsw-roomba",
+          "type": "robot-vacuum-base",
+          "name": "ルンバの基地（クリーンベース＋本体・2 階の納戸の西の壁のコンセントの前・機種は未定）",
+          "x": 255,
+          "y": 6380,
+          "w": 310,
+          "d": 390,
+          "h": 480,
+          "rotation": 270,
+          "color": "#1e1f20"
+        },
+        {
+          "id": "storsw-mop",
+          "type": "mop",
+          "name": "タップモッパー（協和工業・ホワイト・2 階の納戸の南の壁に立てかける）",
+          "x": 650,
+          "y": 6705,
+          "w": 330,
+          "d": 110,
+          "h": 1200,
+          "rotation": 180,
+          "color": "#f2f2f0"
         }
       ]
     },
@@ -4702,18 +5683,6 @@
           "material": "wood-rosewood-dark"
         },
         {
-          "id": "bed-2",
-          "type": "bed",
-          "name": "ベッド",
-          "x": 7110,
-          "y": 5170,
-          "w": 1000,
-          "d": 2000,
-          "h": 450,
-          "rotation": 90,
-          "color": "#e8e4dc"
-        },
-        {
           "id": "toilet3",
           "type": "toilet",
           "name": "トイレ（TOTO ネオレスト NJ2）",
@@ -4749,7 +5718,7 @@
           "h": 1970,
           "rotation": 90,
           "color": "#cfccc5",
-          "flip": true,
+          "flip": false,
           "swing": -1,
           "material": "raffis-gray",
           "handle": "nickel"
@@ -5191,7 +6160,7 @@
           "type": "pc-desk-lexia",
           "name": "パソコンデスク（YM WORLD レクシア 00-146 ブラウン・幅 900）",
           "x": 7905,
-          "y": 6420,
+          "y": 5170,
           "w": 900,
           "d": 450,
           "h": 720,
@@ -5203,7 +6172,7 @@
           "type": "office-chair-mesh",
           "name": "オフィスチェア（singlelife 19-001・メッシュ・肘なし・ブラック）",
           "x": 7380,
-          "y": 6420,
+          "y": 5170,
           "w": 550,
           "d": 585,
           "h": 930,
@@ -5369,6 +6338,36 @@
           "z": 690
         },
         {
+          "id": "study-s-wood-1",
+          "type": "box",
+          "name": "木の板（南の壁の貼り分けの境・床から 625 の所。厚さ 50・高さ 100・部屋の幅いっぱい）",
+          "x": 6825,
+          "y": 4465,
+          "w": 2610,
+          "d": 50,
+          "h": 100,
+          "rotation": 0,
+          "color": "#8a6a4a",
+          "material": "cross-th34706",
+          "z": 575,
+          "grain": "x"
+        },
+        {
+          "id": "study-s-wood-2",
+          "type": "box",
+          "name": "木の板（南の壁の貼り分けの境・床から 1875 の所。厚さ 50・高さ 100・部屋の幅いっぱい）",
+          "x": 6825,
+          "y": 4465,
+          "w": 2610,
+          "d": 50,
+          "h": 100,
+          "rotation": 0,
+          "color": "#8a6a4a",
+          "material": "cross-th34706",
+          "z": 1825,
+          "grain": "x"
+        },
+        {
           "id": "piano-bench-1",
           "type": "piano-bench",
           "name": "ピアノ椅子（背もたれなし・四角。ピアノの下にしまった状態）",
@@ -5512,6 +6511,57 @@
           "rotation": 90,
           "color": "#c9c9c6",
           "z": 1700
+        },
+        {
+          "id": "kids-bike",
+          "type": "exercise-bike",
+          "name": "エアロバイク（南の縦長の窓（防火ロールスクリーンの Fix 窓）の方を向く）",
+          "x": 7700,
+          "y": 6420,
+          "w": 500,
+          "d": 1000,
+          "h": 1300,
+          "rotation": 0,
+          "color": "#2a2b2e"
+        },
+        {
+          "id": "toilet3-wash-counter",
+          "type": "box",
+          "name": "ミニ手洗いのカウンター（壁付け・南の壁）",
+          "x": 3100,
+          "y": 2332.5,
+          "w": 450,
+          "d": 220,
+          "h": 30,
+          "rotation": 0,
+          "color": "#e9e8e4",
+          "z": 770
+        },
+        {
+          "id": "toilet3-wash-bowl",
+          "type": "basin",
+          "name": "ミニ手洗いのボウル（置き型）",
+          "x": 3080,
+          "y": 2320,
+          "w": 300,
+          "d": 200,
+          "h": 110,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 800
+        },
+        {
+          "id": "toilet3-wash-faucet",
+          "type": "faucet",
+          "name": "ミニ手洗いの水栓",
+          "x": 3080,
+          "y": 2425,
+          "w": 24,
+          "d": 130,
+          "h": 200,
+          "rotation": 180,
+          "color": "#1c1c1d",
+          "z": 800
         }
       ],
       "jambs": {
@@ -5562,7 +6612,8 @@
       "name": "WIC の照明",
       "lights": [
         "std-1f-wic-dl-1",
-        "std-1f-wic-dl-2"
+        "wic-tape-light",
+        "wic-tape-light-east"
       ],
       "switches": [
         {
@@ -5661,7 +6712,7 @@
       "id": "c-2f-bed",
       "name": "寝室の照明",
       "lights": [
-        "std-2f-bed-cl"
+        "bed-headboard-light"
       ],
       "switches": [
         {
