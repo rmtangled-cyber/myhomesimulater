@@ -4,8 +4,8 @@ import { centroid } from './geometry';
 import { PlanStore, type SaveStatus } from './store';
 import type { Furniture, Plan, Room } from './types';
 import { describeTarget, Panel, type PanelState, type Selection } from './ui';
-import { exportPlan } from './planExport';
-import { electricalHtml } from './electricalPlan';
+import { electricalHtml, floorPlanHtml } from './electricalPlan';
+import { crossScheduleHtml } from './crossSchedule';
 import { Viewer, type WalkInfo } from './viewer';
 import { WEB, WEB_START_ROOMS, WEB_FLOOR } from './env';
 
@@ -279,7 +279,18 @@ const panel = new Panel(document.getElementById('panel')!, {
     select({ kind: 'furniture', id: f.id });
   },
   removeFurniture,
-  exportPlan: () => exportPlan(store.plan, `${store.name}-図面-${new Date().toISOString().slice(0, 10)}.png`),
+  // 平面図は電灯コンセント図と同じ書き方（A3・1/60）で別のタブに開く（そこから印刷・PDF に保存）
+  exportPlan: () => {
+    const html = floorPlanHtml(store.plan, { date: new Date().toLocaleDateString('sv-SE') });
+    window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
+  },
+  // クロスの貼り分け表も別のタブで開く
+  exportCrossSchedule: () => {
+    const built = viewer.getBuilt();
+    if (!built) return;
+    const html = crossScheduleHtml(store.plan, built, new Date().toLocaleDateString('sv-SE'));
+    window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
+  },
   // 電灯コンセント図は別のタブで開く（そこから印刷・PDF に保存）
   exportElectrical: () => {
     const html = electricalHtml(store.plan, { date: new Date().toLocaleDateString('sv-SE') });

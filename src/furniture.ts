@@ -1902,6 +1902,15 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w - 24, h * 0.45, 2, 0, h * 0.45, d / 2 + 1, new THREE.MeshStandardMaterial({ color: '#202224', roughness: 0.3 }))],
   },
   {
+    type: 'foot-light',
+    label: 'フットライト（足元灯・壁埋込）',
+    hint: '壁付け。横長のプレート（w が幅、h が高さ）の下半分が光り、床を照らす。「床からの高さ」はプレートの下端（Panasonic SLBJ71002 は 162×60）',
+    defaults: { w: 162, d: 8, h: 60, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w - 30, h * 0.35, 2, 0, 6, d / 2 + 1, glow(WARM, 1.6))],
+    // 足元を照らす弱い光（明るさセンサーで暗い時だけつく）
+    lights: ({ d }) => spot(0, 10, d / 2 + 20, [0, -1, 1.2], 1.5, 60, false, 1.5),
+  },
+  {
     type: 'line-light',
     label: '間接照明（ライン）',
     hint: '幅の長さで光る。天井や壁際に置き、「床からの高さ」で取付高さを決める',
@@ -2363,6 +2372,46 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         box(w * 0.5, 30, 2, 0, h * 0.75, d / 2 + 1, new THREE.MeshStandardMaterial({ color: '#d9dcd9', roughness: 0.2 })),
         box(40, 12, 6, w / 2 - 40, h * 0.4, d / 2 + 3, line),
       ];
+    },
+  },
+  {
+    type: 'onu',
+    label: '光回線終端装置（ONU）',
+    hint: '棚の上に置く。縦置きの小さな箱（w が幅、d が奥行き、h が高さ）。光コンセントから光コードでつなぎ、LAN ケーブルでルーターへ',
+    defaults: { w: 45, d: 160, h: 190, color: '#f4f4f2' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.45;
+      const led = new THREE.MeshStandardMaterial({ color: '#7fd17f', emissive: '#4fd16f', emissiveIntensity: 1, roughness: 0.4 });
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat), box(w + 20, 8, d * 0.5, 0, 0, 0, mat)];
+      for (let i = 0; i < 4; i++) out.push(box(3, 3, 2, w / 2 - 10, h * 0.85 - i * 10, d / 2 + 1, led));
+      return out;
+    },
+  },
+  {
+    type: 'lan-outlet',
+    label: 'LAN 端子（壁・モジュラージャック）',
+    hint: '壁付け。count が口の数（2 口ずつ縦に並べ、4 口なら 2 連のプレート）。ルーターの近くに置く物は、ルーターから短い LAN ケーブルでつなぎ、壁内の LAN ケーブルで各部屋へ',
+    defaults: { w: 140, d: 8, h: 120, color: '#f7f7f5' },
+    build: ({ w, d, h, count }, mat) => {
+      const jack = new THREE.MeshStandardMaterial({ color: '#3a3a3a', roughness: 0.6 });
+      const n = Math.max(1, count ?? 4);
+      const cols = Math.ceil(n / 2);
+      const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      for (let i = 0; i < n; i++) {
+        const cx = (Math.floor(i / 2) - (cols - 1) / 2) * (w / cols);
+        out.push(box(16, 14, 2, cx, h / 2 + (i % 2 === 0 ? 14 : -28), d / 2 + 1, jack));
+      }
+      return out;
+    },
+  },
+  {
+    type: 'fiber-outlet',
+    label: '光コンセント',
+    hint: '壁付け。光回線の引き込み口（外から空配管で光ファイバーを通す）。ONU へ光コードでつなぐ',
+    defaults: { w: 70, d: 12, h: 120, color: '#f7f7f5' },
+    build: ({ w, d, h }, mat) => {
+      const port = new THREE.MeshStandardMaterial({ color: '#2b5fa8', roughness: 0.5 });
+      return [box(w, h, d, 0, 0, 0, mat), box(14, 10, 4, 0, h * 0.55, d / 2 + 2, port)];
     },
   },
   {

@@ -16,6 +16,8 @@ import { pointInPolygon } from './geometry';
 import type { Plan, Room } from './types';
 
 const MM = 0.001;
+/** 開口部をふさぐ扉の家具の種類 */
+const DOOR_TYPES = new Set(['swing-door', 'sliding-door', 'mirror-sliding-door', 'mirror-sheet-door', 'framed-glass-door', 'entry-door', 'bifold-door']);
 /** 範囲を決められる照明の数の上限（超えた分は範囲なし＝今までどおり） */
 const LR_MAX = 64;
 /** 部屋の数の上限（全部の階の合計。ビットは 16 ずつ 4 つの数に入れる） */
@@ -177,6 +179,8 @@ export class LightRegions {
     for (let k = 0; k < list.length && (spread || k === 0); k++) {
       for (const o of floor.openings) {
         if (o.type !== 'opening' || o.slideRoom || o.slideTo || !near(list[k], o.at)) continue;
+        // 扉のある開口（玄関ドアなど）は、閉めると光が通らないので、窓の光も広げない（ポーチ・車庫まで光が届いて車庫の天井が光っていた。2026-10-25）
+        if (spread && floor.furniture.some((f) => DOOR_TYPES.has(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width)) continue;
         for (const other of floor.rooms) if (!list.includes(other) && near(other, o.at)) list.push(other);
       }
     }

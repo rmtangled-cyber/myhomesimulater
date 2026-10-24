@@ -51,6 +51,8 @@ export interface Room {
   edges?: Record<string, string>;
   /** 巾木を付けない（浴室・車庫・ポーチなど） */
   noBaseboard?: boolean;
+  /** クロス表に入れない部屋（浴室は TOTO のセット・PS はクロスを貼らない・ポーチの軒天は外装） */
+  noCross?: boolean;
 }
 
 export type OpeningType = 'window' | 'door' | 'opening';
@@ -150,6 +152,9 @@ export interface Furniture {
   doorSeries?: 'raffis' | 'calm';
   /** コンセントに有線 LAN のポート（モジュラージャック）を付ける */
   lan?: boolean;
+  /** LAN の口がルーターのどのポートにつながるか（1〜）と、その用途（電気図・接続図に書く） */
+  lanPort?: number;
+  lanLabel?: string;
   /** vanity-top: シンクの穴 [幅, 奥行き, 天板の真ん中から手前への距離] */
   sink?: [number, number, number];
   /** box: 正面の板を上の辺を軸にして跳ね上げて開く（クリックで開け閉め） */
@@ -233,6 +238,11 @@ export interface Plan {
   floors: Floor[];
   /** 照明の回路（どのスイッチでどの照明がつくか）。2 か所以上のスイッチがある回路は 3 路スイッチ */
   circuits?: Circuit[];
+  /**
+   * クロス表の数え方。roomGroups: 1 つの部屋として書く部屋（同じ向き・同じ品番の壁と天井を 1 面にまとめる）。
+   * merges: 1 面として数える面の組（面のキー。キーはクロス表の HTML の data-key。「@x<6430」のように付けると、その面を座標で分けた片側）
+   */
+  crossSchedule?: { roomGroups?: { name: string; rooms: string[] }[]; merges?: string[][] };
   /** 屋根（片流れ）。壁の上にかぶせ、低い側の軒先に雨どいを付ける */
   roofs?: Roof[];
   /** 基礎の高さ（GL から、ふつう 400）。1 階の外壁の下に基礎と土台水切りを描く */

@@ -335,6 +335,11 @@ export class Viewer {
 
   // ---------- 間取りの反映 ----------
 
+  /** 今の 3D（クロス表などで面を測るのに使う） */
+  getBuilt(): BuiltPlan | null {
+    return this.built;
+  }
+
   setPlan(plan: Plan): string[] {
     this.lastPlan = plan;
     const first = !this.built;
@@ -723,7 +728,8 @@ export class Viewer {
       const fx = (l.userData.fixtures as { id: string; lm: number }[] | undefined) ?? [];
       const total = fx.reduce((s, f) => s + f.lm, 0);
       const onLm = fx.filter((f) => this.lightOn(f.id)).reduce((s, f) => s + f.lm, 0);
-      const frac = fx.length ? onLm / total : this.lit ? 1 : 0;
+      // 照明器具のない部屋（車庫など）は、ウォークスルーでは跳ね返りの光を足さない（部屋の真ん中の天井が光の玉のように光っていた。2026-10-25）
+      const frac = fx.length ? onLm / total : this.lit && !walk ? 1 : 0;
       // 昼・夕方は窓から入る光（ウォークスルーのときだけ。俯瞰は家全体を均一に明るく見せる）
       const sky = walk ? (this.effTime === 'day' ? DAYLIGHT : this.effTime === 'evening' ? DAYLIGHT * 0.35 : 0) * ((l.userData.day as number) ?? 0) : 0;
       const art = ((l.userData.base as number) ?? 30) * scale * frac;

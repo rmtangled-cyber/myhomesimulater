@@ -5,7 +5,7 @@
 // 右に凡例と標準取付高さ表、下に表題欄。施工会社の標準から動かした物・増やした物・変えた物には印を付ける。
 // 施主の名前・住所や施工会社のロゴは入れない。DOM を使わない（Node のスクリプトからも呼べる）
 
-import { deriveWalls, dist, openingsOnSegment, signedArea, centroid } from './geometry';
+import { deriveWalls, dist, openingsOnSegment, signedArea, centroid, pointInPolygon } from './geometry';
 import type { Floor, Furniture, Plan, Point } from './types';
 
 /** 図面の縮尺（1/60）。紙の上の長さは mm */
@@ -28,14 +28,15 @@ const FONT = "'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif";
 const DOWNLIGHTS = new Set(['downlight']);
 const CEILING = new Set(['ceiling-light']);
 const BRACKETS = new Set(['wall-light', 'down-bracket', 'aj-wall-lamp']);
+const FOOTLIGHTS = new Set(['foot-light']);
 const PENDANTS = new Set(['star-pendant', 'pendant-light']);
 const LINES = new Set(['line-light', 'halo-light']);
 const RAILS = new Set(['lighting-rail']);
 const OUTLETS = new Set(['outlet']);
 const FLOOR_OUTLETS = new Set(['floor-outlet']);
 const SWITCHES = new Set(['switch']);
-const PANELS = new Set(['remote-panel', 'intercom', 'breaker-panel', 'wifi-router']);
-const ELECTRIC = new Set([...DOWNLIGHTS, ...CEILING, ...BRACKETS, ...PENDANTS, ...LINES, ...RAILS, ...OUTLETS, ...FLOOR_OUTLETS, ...SWITCHES, ...PANELS]);
+const PANELS = new Set(['remote-panel', 'intercom', 'breaker-panel', 'wifi-router', 'onu', 'fiber-outlet', 'lan-outlet']);
+const ELECTRIC = new Set([...DOWNLIGHTS, ...CEILING, ...BRACKETS, ...FOOTLIGHTS, ...PENDANTS, ...LINES, ...RAILS, ...OUTLETS, ...FLOOR_OUTLETS, ...SWITCHES, ...PANELS]);
 /** 家具の外形を薄く描かない物（道路まわり・戸・小物） */
 const SKIP_OUTLINE = new Set(['road', 'sidewalk', 'crosswalk', 'utility-pole', 'swing-door', 'sliding-door', 'mirror-sliding-door', 'mirror-sheet-door', 'framed-glass-door', 'entry-door', 'bifold-door', 'roll-screen', 'vertical-blind', 'rod-screen', 'fire-roll-screen']);
 
@@ -67,6 +68,8 @@ function front(f: Furniture): Point {
 /** 施工会社の標準からの変更の印（null は標準のまま） */
 export function changeTag(f: Furniture): '移動' | '追加' | '変更' | null {
   const std = f.id.startsWith('std-');
+  // 標準の物を外して別の id で置き直した物（分電盤など）は、名前に「標準の〜から移動」と書く
+  if (!std && /標準の.*移動/.test(f.name)) return '移動';
   if (!std) return /代わり|変更/.test(f.name) && !/（追加）/.test(f.name) ? '変更' : '追加';
   if (/移動/.test(f.name)) return '移動';
   if (/変更|代わり/.test(f.name)) return '変更';
@@ -89,7 +92,7 @@ export function electricalSvg(plan: Plan, floorIndex: number, opts: ElectricalOp
   out.push(...outlines(floor));
   out.push(...wiring(plan, floorIndex));
   out.push(...lanRoute(plan, floorIndex));
-  out.push(...symbols(plan, floorIndex));
+  out.push(...symbols(plan, floorIndex), ...equipmentCallout(plan, floorIndex));
   out.push(...legend(floor));
   out.push(...titleBlock(plan, floor, opts));
   out.push('</svg>');
@@ -168,7 +171,7 @@ function dimRow(cuts: number[], at: number, dir: 'h' | 'v'): string[] {
 }
 
 /** 壁（開口部で抜く）と窓 */
-function walls(plan: Plan, floor: Floor): string[] {
+function walls(plan: Plan, floor: Floor, faintNames = true): string[] {
   const out: string[] = [];
   const t = plan.wallThickness;
   // 部屋の外形（薄い床の色と、部屋の名前）
@@ -199,7 +202,7 @@ function walls(plan: Plan, floor: Floor): string[] {
     }
   }
   // 部屋の名前（薄く）
-  for (const r of floor.rooms) {
+  for (const r of faintNames ? floor.rooms : []) {
     const area = Math.abs(signedArea(r.polygon)) / 1e6;
     if (area < 1.2 || r.noLabel || r.void) continue;
     const [cx, cy] = centroid(r.polygon);
@@ -228,7 +231,7 @@ function outlines(floor: Floor): string[] {
 /** 記号を置く紙の上の位置（壁付けの物は壁から少し部屋の側へ） */
 function spot(f: Furniture): Point {
   const [x, y] = P(f.x, f.y);
-  if (OUTLETS.has(f.type) || SWITCHES.has(f.type) || PANELS.has(f.type) || BRACKETS.has(f.type)) {
+  if (OUTLETS.has(f.type) || SWITCHES.has(f.type) || PANELS.has(f.type) || BRACKETS.has(f.type) || FOOTLIGHTS.has(f.type)) {
     const [fx, fy] = front(f);
     // ルーターは分電盤の下に置くことが多いので、図では少し横にずらして重ならないようにする
     const k = f.type === 'wifi-router' ? 5 : 0;
@@ -291,7 +294,9 @@ function wiring(plan: Plan, floorIndex: number): string[] {
 function lanRoute(plan: Plan, floorIndex: number): string[] {
   const out: string[] = [];
   let router: { f: Furniture; floor: number } | null = null;
-  plan.floors.forEach((fl, i) => fl.furniture.forEach((f) => f.type === 'wifi-router' && (router = { f, floor: i })));
+  // 配線の元: ルーターの近くの壁の LAN 端子（なければルーター）
+  plan.floors.forEach((fl, i) => fl.furniture.forEach((f) => f.type === 'wifi-router' && !router && (router = { f, floor: i })));
+  plan.floors.forEach((fl, i) => fl.furniture.forEach((f) => f.type === 'lan-outlet' && (router = { f, floor: i })));
   if (!router) return out;
   const r = router as { f: Furniture; floor: number };
   const lans = plan.floors[floorIndex].furniture.filter(hasLan);
@@ -310,13 +315,69 @@ function lanRoute(plan: Plan, floorIndex: number): string[] {
   return out;
 }
 
+/** 1 か所に集まる設備（分電盤・光コンセント・ONU・ルーター・LAN 端子）。記号が重なるので、引き出し線の先の囲みにまとめて書く */
+const EQUIPMENT = new Set(['breaker-panel', 'fiber-outlet', 'onu', 'wifi-router', 'lan-outlet']);
+
+/** 囲みにまとめる物: 設備と、その近く（900 以内）のリモコン・インターホン */
+function calloutItems(floor: Floor): Furniture[] {
+  const eq = floor.furniture.filter((f) => EQUIPMENT.has(f.type));
+  const near = floor.furniture.filter((f) => f.type === 'remote-panel' && eq.some((e) => Math.hypot(e.x - f.x, e.y - f.y) < 900));
+  return [...eq, ...near];
+}
+
+function equipmentCallout(plan: Plan, floorIndex: number): string[] {
+  const out: string[] = [];
+  const items = calloutItems(plan.floors[floorIndex]);
+  if (!items.length) return out;
+  const order = ['breaker-panel', 'remote-panel', 'fiber-outlet', 'onu', 'wifi-router', 'lan-outlet'];
+  items.sort((a, b) => order.indexOf(a.type) - order.indexOf(b.type));
+  const pts = items.map((f) => P(f.x, f.y));
+  const cx = pts.reduce((s, p) => s + p[0], 0) / pts.length;
+  const cy = pts.reduce((s, p) => s + p[1], 0) / pts.length;
+  // 実際の位置に小さな点と、まとめた囲み（部屋の中・東へ）への引き出し線
+  for (const [x, y] of pts) out.push(circle(x, y, 0.6, BLUE, BLUE, 0.1));
+  const rowH = 3.6;
+  const bw = 60;
+  // 囲みは建物の北の外（寸法線より上）に置き、部屋の中の記号を隠さない
+  const ys = plan.floors[floorIndex].rooms.flatMap((r) => r.polygon.map((q) => q[1]));
+  const bh = items.length * rowH + 2;
+  const bx = cx - 6;
+  const by = P(0, Math.min(...ys))[1] - 22 - bh;
+  out.push(lineS([cx, cy], [cx, by + bh], BLUE, 0.25));
+  out.push(rect(bx, by, bw, bh, '#ffffff', BLUE, 0.3));
+  items.forEach((f, i) => {
+    const y = by + 1 + rowH * (i + 0.5);
+    const sx = bx + 4;
+    const label =
+      f.type === 'breaker-panel' ? '分電盤' :
+      f.type === 'fiber-outlet' ? '光コンセント（屋外から空配管）' :
+      f.type === 'onu' ? 'NTT ONU' :
+      f.type === 'wifi-router' ? 'Wi-Fi ルーター' :
+      f.type === 'remote-panel' ? f.name.replace(/（.*$/, '') :
+      `LAN 端子 ${f.count ?? 4} 口（①〜④ へ Cat6A）`;
+    const sym =
+      f.type === 'breaker-panel' ? rect(sx - 2.5, y - 1.2, 5, 2.4, 'url(#hatch3)', '#222', 0.25) :
+      f.type === 'fiber-outlet' ? rect(sx - 2.2, y - 1.3, 4.4, 2.6, '#fff', BLUE, 0.3) + text(sx, y, '光', 1.4, BLUE) :
+      f.type === 'onu' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'ONU', 1.3, BLUE) :
+      f.type === 'wifi-router' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'Wi-Fi', 1.2, BLUE) :
+      f.type === 'remote-panel' ? (/インターホン/.test(f.name) ? circle(sx, y, 1.3, '#fff', RED, 0.3) + text(sx, y, 't', 1.5, RED) : rect(sx - 1.3, y - 1.3, 2.6, 2.6, '#fff', RED, 0.3) + text(sx, y, /給湯/.test(f.name) ? 'R' : '交', 1.4, RED)) :
+      rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'LAN', 1.3, BLUE);
+    out.push(sym, text(sx + 4, y, label, 1.9, f.type === 'breaker-panel' ? '#222' : f.type === 'remote-panel' ? RED : BLUE, 'start'));
+    const tag = changeTag(f);
+    if (tag && f.type !== 'wifi-router' && f.type !== 'onu') out.push(`<rect x="${n2(bx + bw - 6.5)}" y="${n2(y - 1.2)}" width="5.2" height="2.4" rx="0.5" fill="${tag === '移動' ? BLUE : ORANGE}"/>`, text(bx + bw - 3.9, y, tag, 1.6, '#fff', 'middle', 'font-weight="bold"'));
+  });
+  out.push(`<defs><pattern id="hatch3" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>`);
+  return out;
+}
+
 /** 照明・コンセント・スイッチなどの記号 */
 function symbols(plan: Plan, floorIndex: number): string[] {
   const out: string[] = [];
   const floor = plan.floors[floorIndex];
   const three = threeWay(plan);
+  const inCallout = new Set(calloutItems(floor).map((f) => f.id));
   for (const f of floor.furniture) {
-    if (!ELECTRIC.has(f.type)) continue;
+    if (!ELECTRIC.has(f.type) || inCallout.has(f.id)) continue;
     const [x, y] = spot(f);
     const [fx, fy] = front(f);
     // 記号の横の文字を置く向き（壁に沿う方向）
@@ -329,6 +390,9 @@ function symbols(plan: Plan, floorIndex: number): string[] {
       out.push(circle(x, y, 2.2, CYAN, '#222', 0.2), text(x, y, 'CL', 1.9, '#222'));
     } else if (BRACKETS.has(f.type)) {
       out.push(circle(x, y, 1.8, CYAN, '#222', 0.2), lineS([x - fx * 1.8 + side[0] * 1.8, y - fy * 1.8 + side[1] * 1.8], [x - fx * 1.8 - side[0] * 1.8, y - fy * 1.8 - side[1] * 1.8], '#222', 0.3));
+    } else if (FOOTLIGHTS.has(f.type)) {
+      // 足元灯: 壁に沿う横長の四角（下半分が光る）
+      out.push(`<rect x="${n2(x - 2.2)}" y="${n2(y - 1.1)}" width="4.4" height="2.2" fill="${CYAN}" stroke="#222" stroke-width="0.2" transform="rotate(${Math.abs(side[1]) > 0.5 ? 90 : 0} ${n2(x)} ${n2(y)})"/>`, text(x + fx * 3.2, y + fy * 3.2, 'FL', 1.6, '#222'));
     } else if (PENDANTS.has(f.type)) {
       out.push(circle(x, y, 1.9, CYAN, '#222', 0.2), text(x, y, 'P', 1.9, '#222'));
     } else if (LINES.has(f.type)) {
@@ -350,7 +414,7 @@ function symbols(plan: Plan, floorIndex: number): string[] {
     } else if (OUTLETS.has(f.type)) {
       const ac = /エアコン/.test(f.name);
       const earth = /アース/.test(f.name);
-      const tv = /テレビ|TV/.test(f.name);
+      const tv = /テレビ|TV/.test(f.name) && !/テレビ端子はなし/.test(f.name);
       const wp = (f.z ?? 0) < 0 || /屋外|防水|外の/.test(f.name);
       const n = f.count ?? 2;
       out.push(circle(x, y, 1.9, ac ? PINK : GREEN, '#222', 0.2));
@@ -369,7 +433,11 @@ function symbols(plan: Plan, floorIndex: number): string[] {
         out.push(rect(x + side[0] * k - 1.8, y + side[1] * k - 1.8, 3.6, 3.6, '#fff', RED, 0.3), text(x + side[0] * k, y + side[1] * k, 'TV', 1.7, RED));
         k += 4;
       }
-      if (hasLan(f)) out.push(rect(x + side[0] * k - 2.2, y + side[1] * k - 1.6, 4.4, 3.2, '#fff', BLUE, 0.3), text(x + side[0] * k, y + side[1] * k, 'LAN', 1.6, BLUE));
+      if (hasLan(f)) {
+        const label = f.lanPort ? `LAN${'①②③④⑤⑥⑦⑧'[f.lanPort - 1] ?? f.lanPort}` : 'LAN';
+        out.push(rect(x + side[0] * k - 2.8, y + side[1] * k - 1.6, 5.6, 3.2, '#fff', BLUE, 0.3), text(x + side[0] * k, y + side[1] * k, label, 1.6, BLUE));
+        if (f.lanLabel) out.push(text(x + side[0] * k + fx * 3, y + side[1] * k + fy * 3, f.lanLabel, 1.6, BLUE));
+      }
       // 標準の高さ（一般 FL+250・エアコン 天井−500）と違う物は高さを書く
       const center = Math.round((f.z ?? 0) + f.h / 2);
       if (!ac && Math.abs(center - 250) > 30) out.push(text(x - fx * 0 - side[0] * 3.6, y - side[1] * 3.6 + 2.6, `FL+${center}`, 1.6, '#444'));
@@ -385,6 +453,21 @@ function symbols(plan: Plan, floorIndex: number): string[] {
       const center = Math.round((f.z ?? 0) + f.h / 2);
       if (Math.abs(center - 1200) > 40) out.push(text(x + fx * 3.2, y + fy * 3.2, `FL+${center}`, 1.6, '#444'));
     } else if (PANELS.has(f.type)) {
+      if (f.type === 'lan-outlet') {
+        out.push(rect(x - 3.6, y - 1.6, 7.2, 3.2, '#fff', BLUE, 0.3), text(x, y, `LAN×${f.count ?? 4}`, 1.6, BLUE));
+        out.push(text(x + fx * 3.6, y + fy * 3.6, 'LAN 端子①〜④（ルーターから）', 1.7, BLUE));
+        const tag = changeTag(f);
+        if (tag) out.push(`<rect x="${n2(x + side[0] * 6 - 2.6)}" y="${n2(y + side[1] * 6 - 1.25)}" width="5.2" height="2.5" rx="0.5" fill="${ORANGE}"/>`, text(x + side[0] * 6, y + side[1] * 6, tag, 1.7, '#fff', 'middle', 'font-weight="bold"'));
+        continue;
+      }
+      if (f.type === 'onu' || f.type === 'fiber-outlet') {
+        const onu = f.type === 'onu';
+        out.push(rect(x - 2.6, y - 1.5, 5.2, 3, '#fff', BLUE, 0.3), text(x, y, onu ? 'ONU' : '光', 1.6, BLUE));
+        out.push(text(x + fx * 3.4 + (onu ? 0 : 0), y + fy * 3.4, onu ? 'NTT ONU' : '光コンセント', 1.7, BLUE));
+        const tag = changeTag(f);
+        if (tag && !onu) out.push(`<rect x="${n2(x + side[0] * 4.5 - 2.6)}" y="${n2(y + side[1] * 4.5 - 1.25)}" width="5.2" height="2.5" rx="0.5" fill="${ORANGE}"/>`, text(x + side[0] * 4.5, y + side[1] * 4.5, tag, 1.7, '#fff', 'middle', 'font-weight="bold"'));
+        continue;
+      }
       const s = f.type === 'breaker-panel' ? '分電盤' : f.type === 'wifi-router' ? 'ルーター' : /給湯/.test(f.name) ? 'R' : /熱交換|換気/.test(f.name) ? '交' : /インターホン|インターフォン/.test(f.name) ? 't' : '';
       if (f.type === 'breaker-panel' || f.type === 'wifi-router') {
         out.push(rect(x - 3, y - 1.6, 6, 3.2, f.type === 'breaker-panel' ? 'url(#hatch)' : '#fff', f.type === 'wifi-router' ? BLUE : '#222', 0.25));
@@ -395,7 +478,7 @@ function symbols(plan: Plan, floorIndex: number): string[] {
     }
     // 標準からの変更の印
     const tag = changeTag(f);
-    if (tag && f.type !== 'wifi-router') {
+    if (tag && f.type !== 'wifi-router' && f.type !== 'onu') {
       const color = tag === '移動' ? BLUE : ORANGE;
       const tx = x - fx * 0 + side[0] * -3.6 + fx * 3.6;
       const ty = y + side[1] * -3.6 + fy * 3.6 - 0.2;
@@ -418,6 +501,7 @@ function legend(floor: Floor): string[] {
     ['シーリングライト', (x, y) => circle(x, y, 1.9, CYAN) + text(x, y, 'CL', 1.6)],
     ['ブラケット', (x, y) => circle(x, y, 1.6, CYAN) + lineS([x - 1.6, y + 1.6], [x + 1.6, y + 1.6], '#222', 0.3)],
     ['ペンダントライト', (x, y) => circle(x, y, 1.6, CYAN) + text(x, y, 'P', 1.6)],
+    ['フットライト（足元灯・壁埋込）', (x, y) => rect(x - 2.2, y - 1.1, 4.4, 2.2, CYAN) + text(x + 4, y, 'FL', 1.4)],
     ['間接照明（ライン）', (x, y) => lineS([x - 2.5, y], [x + 2.5, y], CYAN, 0.9)],
     ['ライティングレール（S スポット・P ペンダント）', (x, y) => lineS([x - 3, y], [x + 3, y], '#222', 0.8) + circle(x, y, 1.1, CYAN, '#222', 0.15)],
     ['コンセント 2 口', (x, y) => circle(x, y, 1.6, GREEN) + lineS([x - 0.5, y - 1], [x - 0.5, y + 1], '#222', 0.25) + lineS([x + 0.5, y - 1], [x + 0.5, y + 1], '#222', 0.25)],
@@ -430,7 +514,8 @@ function legend(floor: Floor): string[] {
     ['給湯器リモコン／熱交換器リモコン', (x, y) => rect(x - 1.4, y - 1.4, 2.8, 2.8, '#fff', RED, 0.3) + text(x, y, 'R', 1.5, RED)],
     ['インターホン（親機）', (x, y) => circle(x, y, 1.4, '#fff', RED, 0.3) + text(x, y, 't', 1.5, RED)],
     ['分電盤', (x, y) => rect(x - 2.5, y - 1.3, 5, 2.6, 'url(#hatch2)', '#222', 0.25)],
-    ['Wi-Fi ルーター・LAN 配管', (x, y) => rect(x - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.25) + lineS([x + 2.5, y], [x + 6, y], BLUE, 0.3, 'stroke-dasharray="1.2 0.8"')],
+    ['Wi-Fi ルーター・LAN 配管（壁内 Cat6A）', (x, y) => rect(x - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.25) + lineS([x + 2.5, y], [x + 6, y], BLUE, 0.3, 'stroke-dasharray="1.2 0.8"')],
+    ['光コンセント・ONU', (x, y) => rect(x - 2.2, y - 1.3, 4.4, 2.6, '#fff', BLUE, 0.3) + text(x, y, '光', 1.4, BLUE)],
     ['スイッチと照明の回路', (x, y) => lineS([x - 3, y], [x + 3, y], RED, 0.3)],
   ];
   out.push(`<defs><pattern id="hatch2" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>`);
@@ -489,7 +574,7 @@ function legend(floor: Floor): string[] {
 }
 
 /** 下の表題欄（施主名・住所・会社の情報は入れない） */
-function titleBlock(plan: Plan, floor: Floor, opts: ElectricalOptions): string[] {
+function titleBlock(plan: Plan, floor: Floor, opts: ElectricalOptions, kind: 'electrical' | 'plan' = 'electrical'): string[] {
   const out: string[] = [];
   const y0 = 252;
   const h = PAPER_H - 9.2 - y0;
@@ -498,18 +583,155 @@ function titleBlock(plan: Plan, floor: Floor, opts: ElectricalOptions): string[]
   for (const c of cols.slice(1, -1)) out.push(lineS([c, y0], [c, y0 + h], '#222', 0.2));
   out.push(text(12, y0 + 4, '工事名', 2.2, '#222', 'start'), text(70, y0 + 13, plan.name, 3, '#222'));
   out.push(text(133, y0 + 4, '備考', 2.2, '#222', 'start'));
-  out.push(text(136, y0 + 12, '施工会社の電灯コンセント図（R8.09.21）をもとに、', 2.2, '#333', 'start'));
-  out.push(text(136, y0 + 16.5, '移動・追加・変更と LAN の配管を書き込んだ要望図', 2.2, '#333', 'start'));
-  out.push(text(136, y0 + 21, '（マイホームシミュレーターの間取りから作成）', 2.2, '#333', 'start'));
+  const notes =
+    kind === 'plan'
+      ? ['施工会社の平面詳細図（1/60）の寸法で作った間取りに、', '家具・設備の配置を書き込んだ検討用の平面図', '（マイホームシミュレーターの間取りから作成）']
+      : ['施工会社の電灯コンセント図（R8.09.21）をもとに、', '移動・追加・変更と LAN の配管を書き込んだ要望図', '（マイホームシミュレーターの間取りから作成）'];
+  notes.forEach((t, i) => out.push(text(136, y0 + 12 + i * 4.5, t, 2.2, '#333', 'start')));
   out.push(text(253, y0 + 4, '日付', 2.2, '#222', 'start'), text(290, y0 + 14, opts.date, 3, '#222'));
-  out.push(text(333, y0 + 4, '図面名', 2.2, '#222', 'start'), text(372, y0 + 12, `${floor.name}　電灯コンセント図`, 3, '#222'), text(372, y0 + 19, '（要望・変更案）　S：1/60', 2.4, '#333'));
+  out.push(text(333, y0 + 4, '図面名', 2.2, '#222', 'start'), text(372, y0 + 12, `${floor.name}　${kind === 'plan' ? '平面図' : '電灯コンセント図'}`, 3, '#222'), text(372, y0 + 19, kind === 'plan' ? '（家具配置・検討用）　S：1/60' : '（要望・変更案）　S：1/60', 2.4, '#333'));
   return out;
 }
 
 /** 全部の階の電灯コンセント図を、A3 横で 1 階ずつ印刷できる HTML にする（ブラウザの「印刷 → PDF に保存」で PDF にできる） */
 export function electricalHtml(plan: Plan, opts: ElectricalOptions): string {
-  const pages = plan.floors.map((_, i) => `<section>${electricalSvg(plan, i, opts)}</section>`).join('\n');
+  const pages = [...plan.floors.map((_, i) => electricalSvg(plan, i, opts)), networkSvg(plan, opts)].map((svg) => `<section>${svg}</section>`).join('\n');
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${esc(plan.name)} 電灯コンセント図</title>
+<style>@page{size:A3 landscape;margin:0}html,body{margin:0;background:#888}section{width:420mm;height:297mm;margin:8mm auto;background:#fff;page-break-after:always;break-after:page}section svg{display:block;width:420mm;height:297mm}
+@media print{html,body{background:#fff}section{margin:0}}</style></head><body>${pages}</body></html>`;
+}
+
+/**
+ * LAN の接続図（系統図）: 屋外の光回線 → 光コンセント → ONU → ルーター → LAN ポート ①〜 → 壁内の Cat6A → 各部屋の LAN 端子。
+ * ユーザーの描いた接続図（2026-10-25）の形。LAN の口（lanPort のあるコンセント）とルーター・ONU の置き場所は間取りから読む
+ */
+export function networkSvg(plan: Plan, opts: ElectricalOptions): string {
+  const out: string[] = [];
+  out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${PAPER_W} ${PAPER_H}" width="${PAPER_W}mm" height="${PAPER_H}mm">`);
+  out.push(rect(0, 0, PAPER_W, PAPER_H, '#ffffff', 'none', 0));
+  out.push(rect(8, 8, PAPER_W - 16, PAPER_H - 16, 'none', '#222', 0.5), rect(9.2, 9.2, PAPER_W - 18.4, PAPER_H - 18.4, 'none', '#222', 0.15));
+  // どの階・部屋にあるか
+  const where = (id: string) => {
+    for (const [i, fl] of plan.floors.entries()) {
+      const f = fl.furniture.find((x) => x.id === id);
+      if (!f) continue;
+      const room = fl.rooms.find((r) => !r.void && pointInPolygon([f.x, f.y], r.polygon)) ?? fl.rooms.find((r) => pointInPolygon([f.x, f.y], r.polygon));
+      // 壁付けの物は壁の芯の少し内側で調べる
+      const [fx, fy] = front(f);
+      const inner = fl.rooms.find((r) => pointInPolygon([f.x + fx * 100, f.y + fy * 100], r.polygon));
+      return { f, floor: i, room: (inner ?? room)?.name ?? '' };
+    }
+    return null;
+  };
+  const all = plan.floors.flatMap((fl) => fl.furniture);
+  const router = all.find((f) => f.type === 'wifi-router');
+  const onu = all.find((f) => f.type === 'onu');
+  const fiber = all.find((f) => f.type === 'fiber-outlet');
+  const ports = all.filter((f) => hasLan(f) && f.lanPort).sort((a, b) => (a.lanPort ?? 0) - (b.lanPort ?? 0));
+  const rw = router ? where(router.id) : null;
+  const FILL = '#e6f1fb';
+  const EDGE = '#b9d3ea';
+  const INK = '#1d4f86';
+  const node = (cx: number, cy: number, w: number, h: number, label: string, size = 3.4) => rect(cx - w / 2, cy - h / 2, w, h, FILL, EDGE, 0.35).replace('<rect', '<rect rx="2.5"') + text(cx, cy, label, size, INK, 'middle', 'font-weight="bold"');
+  const tag = (cx: number, cy: number, label: string) => {
+    const w = Math.max(14, label.length * 2.6 + 6);
+    return rect(cx - w / 2, cy - 2.6, w, 5.2, '#f4f8fd', EDGE, 0.3).replace('<rect', '<rect rx="2.6"') + text(cx, cy, label, 2.3, INK, 'middle', 'font-weight="bold"');
+  };
+  const arrow = (x: number, y0: number, y1: number) => lineS([x, y0], [x, y1], '#9fb7cc', 0.3, 'marker-end="url(#narrow)"');
+  out.push(`<defs><marker id="narrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#9fb7cc"/></marker></defs>`);
+  out.push(text(24, 22, 'LAN 接続図（光回線 → ONU → ルーター → 各部屋の LAN 端子）', 4.2, '#222', 'start', 'font-weight="bold"'));
+  const X0 = 60;
+  // 屋外の光回線と、引き込みの空配管
+  out.push(node(X0, 36, 52, 10, '屋外：光回線 1 本'), arrow(X0, 41, 64), tag(X0, 51, '空配管 1 ルートに光ファイバーを通す'));
+  // ルーターの部屋の枠
+  const n = Math.max(1, ports.length);
+  const colW = Math.min(88, (PAPER_W - 40) / n);
+  const left = (PAPER_W - colW * n) / 2;
+  const colX = (i: number) => left + colW * (i + 0.5);
+  const boxTop = 62;
+  const boxBottom = 182;
+  out.push(rect(left - 4, boxTop, colW * n + 8, boxBottom - boxTop, '#f7f7f7', '#e2e2e2', 0.3).replace('<rect', '<rect rx="4"'));
+  out.push(text(PAPER_W / 2, boxTop + 6, rw ? `${rw.floor + 1}F ${rw.room}` : 'ルーターの置き場所', 3, '#333'));
+  out.push(node(X0, 80, 56, 11, fiber ? '光コンセント：1 か所' : '光コンセント（未配置）'), arrow(X0, 85.5, 102), tag(X0, 93, '光コード'));
+  out.push(node(X0, 108, 40, 11, onu ? 'NTT ONU' : 'NTT ONU（未配置）'), arrow(X0, 113.5, 130), tag(X0, 121, 'LAN ケーブル'));
+  out.push(node(X0, 136, 58, 11, router ? (/ソフトバンク/.test(router.name) ? 'ソフトバンクルーター' : 'ルーター') : 'ルーター（未配置）'));
+  ports.forEach((f, i) => {
+    const x = colX(i);
+    const no = '①②③④⑤⑥⑦⑧'[(f.lanPort ?? 1) - 1] ?? String(f.lanPort);
+    const w = where(f.id);
+    // ルーターからポートへの線
+    const sx = X0 - 20 + i * 10;
+    out.push(`<polyline points="${n2(sx)},141.5 ${n2(sx)},${n2(146 + i * 2)} ${n2(x)},${n2(146 + i * 2)} ${n2(x)},158" fill="none" stroke="#9fb7cc" stroke-width="0.3" marker-end="url(#narrow)"/>`);
+    out.push(tag(x, 154, `LAN ポート${no}`), node(x, 168, colW - 10, 11, `LAN 端子${no}：${f.lanLabel ?? ''}`, 3.2));
+    out.push(arrow(x, 173.5, 210), tag(x, 192, '壁内：Cat6A 1 本'));
+    // 行き先の部屋
+    const tv = /テレビ/.test(f.lanLabel ?? '');
+    const h = tv ? 62 : 36;
+    out.push(rect(x - colW / 2 + 3, 204, colW - 6, h, '#f7f7f7', '#e2e2e2', 0.3).replace('<rect', '<rect rx="4"'));
+    out.push(text(x, 210, w ? `${w.floor + 1}F ${w.room}` : '', 2.8, '#333'));
+    out.push(node(x, 224, colW - 14, 11, tv ? 'テレビ用コンセント位置に LAN 端子：1 口' : '壁の LAN 端子：1 口', tv ? 2.7 : 3.2));
+    if (tv) out.push(arrow(x, 229.5, 249), tag(x, 238, 'LAN ケーブル'), node(x, 256, 32, 10, 'テレビ'));
+  });
+  out.push(text(24, PAPER_H - 16, `※ 間取りの LAN 端子（lanPort）・ONU・ルーターの置き場所から作成。${opts.date}`, 2.2, '#666', 'start'));
+  out.push('</svg>');
+  return out.join('\n');
+}
+
+/** 平面図（1 階分）: 電灯コンセント図と同じ図枠・通り芯・寸法に、部屋の名前と広さ、家具・設備の外形を描く */
+export function floorPlanSvg(plan: Plan, floorIndex: number, opts: ElectricalOptions): string {
+  const floor = plan.floors[floorIndex];
+  const out: string[] = [];
+  out.push(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${PAPER_W} ${PAPER_H}" width="${PAPER_W}mm" height="${PAPER_H}mm">`);
+  out.push(rect(0, 0, PAPER_W, PAPER_H, '#ffffff', 'none', 0));
+  out.push(rect(8, 8, PAPER_W - 16, PAPER_H - 16, 'none', '#222', 0.5), rect(9.2, 9.2, PAPER_W - 18.4, PAPER_H - 18.4, 'none', '#222', 0.15));
+  out.push(...gridAndDims(plan, floor, houseBounds(plan), floorBounds(floor)));
+  out.push(...walls(plan, floor, false));
+  // 家具・設備の外形（小さな物と照明・コンセントは描かない）
+  for (const f of floor.furniture) {
+    if (ELECTRIC.has(f.type) || SKIP_OUTLINE.has(f.type) || f.w * f.d < 20000 || (f.z ?? 0) > 1900) continue;
+    const a = (f.rotation * Math.PI) / 180;
+    const ux: Point = [Math.cos(a), Math.sin(a)];
+    const uz: Point = [-Math.sin(a), Math.cos(a)];
+    const c = (sx: number, sz: number) => P(f.x + (ux[0] * sx * f.w + uz[0] * sz * f.d) / 2, f.y + (ux[1] * sx * f.w + uz[1] * sz * f.d) / 2);
+    const q = [c(-1, -1), c(1, -1), c(1, 1), c(-1, 1)];
+    const high = (f.z ?? 0) > 300;
+    out.push(`<polygon points="${q.map((p) => p.map(n2).join(',')).join(' ')}" fill="none" stroke="${high ? '#9aa3a8' : '#6b7378'}" stroke-width="0.15" ${high ? 'stroke-dasharray="0.8 0.5"' : ''}/>`);
+  }
+  // 部屋の名前と広さ（帖）
+  const rows: [string, number][] = [];
+  for (const r of floor.rooms) {
+    const area = Math.abs(signedArea(r.polygon)) / 1e6;
+    if (r.void || r.noLabel || area < 0.6) continue;
+    rows.push([r.name, area]);
+    const [cx, cy] = centroid(r.polygon);
+    const [x, y] = P(cx, cy);
+    out.push(text(x, y - 1.4, r.name, area < 2 ? 1.9 : 2.5, '#222', 'middle', 'font-weight="bold"'), text(x, y + 1.8, `${(area / 1.62).toFixed(1)}帖`, 1.9, '#555'));
+  }
+  // 右の部屋の広さの表
+  const x0 = 262;
+  let y = 70;
+  out.push(text(x0, y - 4, '部屋の広さ', 2.6, '#222', 'start'));
+  out.push(rect(x0, y - 1.5, 140, rows.length * 4 + 2, 'none', '#444', 0.2));
+  rows.forEach(([name, area], i) => {
+    const yy = y + 1 + i * 4;
+    if (i) out.push(lineS([x0, yy - 2], [x0 + 140, yy - 2], '#ddd', 0.12));
+    out.push(text(x0 + 3, yy, name, 2, '#222', 'start'), text(x0 + 110, yy, `${(area / 1.62).toFixed(1)}帖`, 2, '#222', 'end'), text(x0 + 137, yy, `${area.toFixed(2)} m²`, 2, '#555', 'end'));
+  });
+  y += rows.length * 4 + 6;
+  out.push(text(x0, y, '※ 広さは部屋の線（壁の中心）で囲んだ面積。1 帖 = 1.62 m² で計算', 1.9, '#555', 'start'));
+  y += 3.6;
+  out.push(text(x0, y, '※ 実線は床に置く家具・設備、点線は吊り戸棚・棚板など高い所の物', 1.9, '#555', 'start'));
+  y += 9;
+  out.push(rect(x0, y, 76, 9, 'none', '#222', 0.3), text(x0 + 3, y + 4.5, `${floor.name.replace('階', '')}階　平面図　S：1/60`, 3.6, '#222', 'start', 'letter-spacing="0.3"'));
+  out.push(...titleBlock(plan, floor, opts, 'plan'));
+  out.push('</svg>');
+  return out.join('\n');
+}
+
+/** 全部の階の平面図を、A3 横で 1 階ずつ印刷できる HTML にする */
+export function floorPlanHtml(plan: Plan, opts: ElectricalOptions): string {
+  const pages = plan.floors.map((_, i) => `<section>${floorPlanSvg(plan, i, opts)}</section>`).join('\n');
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${esc(plan.name)} 平面図</title>
 <style>@page{size:A3 landscape;margin:0}html,body{margin:0;background:#888}section{width:420mm;height:297mm;margin:8mm auto;background:#fff;page-break-after:always;break-after:page}section svg{display:block;width:420mm;height:297mm}
 @media print{html,body{background:#fff}section{margin:0}}</style></head><body>${pages}</body></html>`;
 }

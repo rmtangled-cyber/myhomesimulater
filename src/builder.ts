@@ -422,6 +422,7 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
       ids.add(x.id);
     }
     const built = buildFloor(plan, floor, index, clip, warnings, furniture);
+    dropCoveredJambs(built.group);
     built.group.position.y = floor.elevation;
     root.add(built.group);
     for (const roof of plan.roofs ?? []) if (roof.floor === index) buildRoof(plan, roof, built, warnings);
@@ -435,6 +436,84 @@ export function buildPlan(plan: Plan, clip: THREE.Plane[]): BuiltPlan {
   });
   if (bounds.isEmpty()) bounds.set(new THREE.Vector3(), new THREE.Vector3(10000, 2400, 10000));
   return { root, floors, furniture, warnings, bounds };
+}
+
+/**
+ * 開口部の側面（jamb）のうち、部屋の壁の仕上げと同じ面に重なっている三角形を消す。
+ * 部屋の壁の仕上げは角で壁の厚みの分まで回り込むので、開口部が壁の角の近くで終わると、開口部の側面と同じ所に 2 枚のクロスが重なり、
+ * 品番が違うとちらついていた（1 階 シューズクロークの入口・玄関との間の開口など。2026-10-25）。部屋の壁（クリックで選んだクロス）を残す
+ */
+function dropCoveredJambs(group: THREE.Group) {
+  const meshes = group.children.filter((o): o is THREE.Mesh => (o as THREE.Mesh).isMesh && !!o.userData.info);
+  // 部屋の壁の三角形を、面の向き（軸と符号）と位置で分ける
+  const walls = new Map<string, number[][]>();
+  const keyOf = (n: THREE.Vector3, p: THREE.Vector3) => {
+    const ax = Math.abs(n.x) > 0.999 ? 0 : Math.abs(n.y) > 0.999 ? 1 : Math.abs(n.z) > 0.999 ? 2 : -1;
+    if (ax < 0) return null;
+    const c = [p.x, p.y, p.z][ax];
+    return { ax, base: `${ax}${Math.sign([n.x, n.y, n.z][ax])}`, c };
+  };
+  const tri = (pos: THREE.BufferAttribute | THREE.InterleavedBufferAttribute, i: number) => [0, 1, 2].map((k) => new THREE.Vector3().fromBufferAttribute(pos, i + k));
+  const normal = (t: THREE.Vector3[]) => new THREE.Vector3().subVectors(t[1], t[0]).cross(new THREE.Vector3().subVectors(t[2], t[0])).normalize();
+  for (const m of meshes) {
+    if (m.userData.info.kind !== 'wall') continue;
+    const pos = m.geometry.getAttribute('position');
+    for (let i = 0; i < pos.count; i += 3) {
+      const t = tri(pos, i);
+      const k = keyOf(normal(t), t[0]);
+      if (!k) continue;
+      const key = `${k.base}|${Math.round(k.c)}`;
+      const list = walls.get(key) ?? [];
+      list.push(t.flatMap((v) => [v.x, v.y, v.z]));
+      walls.set(key, list);
+    }
+  }
+  const inside = (q: THREE.Vector3, w: number[]) => {
+    const a = new THREE.Vector3(w[0], w[1], w[2]);
+    const v0 = new THREE.Vector3(w[6], w[7], w[8]).sub(a);
+    const v1 = new THREE.Vector3(w[3], w[4], w[5]).sub(a);
+    const v2 = q.clone().sub(a);
+    const d00 = v0.dot(v0), d01 = v0.dot(v1), d02 = v0.dot(v2), d11 = v1.dot(v1), d12 = v1.dot(v2);
+    const inv = 1 / (d00 * d11 - d01 * d01);
+    const u = (d11 * d02 - d01 * d12) * inv;
+    const v = (d00 * d12 - d01 * d02) * inv;
+    return u > -0.001 && v > -0.001 && u + v < 1.001;
+  };
+  for (const m of meshes) {
+    if (m.userData.info.kind !== 'jamb') continue;
+    const pos = m.geometry.getAttribute('position');
+    const uv = m.geometry.getAttribute('uv');
+    const keepP: number[] = [];
+    const keepUv: number[] = [];
+    let dropped = 0;
+    for (let i = 0; i < pos.count; i += 3) {
+      const t = tri(pos, i);
+      const k = keyOf(normal(t), t[0]);
+      const c = t[0].clone().add(t[1]).add(t[2]).multiplyScalar(1 / 3);
+      let covered = false;
+      if (k) for (let d = -2; d <= 2 && !covered; d++) covered = (walls.get(`${k.base}|${Math.round(k.c) + d}`) ?? []).some((w) => Math.abs([w[0], w[1], w[2]][k.ax] - k.c) < 2 && inside(c, w));
+      if (covered) {
+        dropped++;
+        continue;
+      }
+      for (let j = 0; j < 3; j++) {
+        keepP.push(pos.getX(i + j), pos.getY(i + j), pos.getZ(i + j));
+        keepUv.push(uv.getX(i + j), uv.getY(i + j));
+      }
+    }
+    if (!dropped) continue;
+    if (!keepP.length) {
+      m.removeFromParent();
+      m.geometry.dispose();
+      continue;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.Float32BufferAttribute(keepP, 3));
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(keepUv, 2));
+    g.computeVertexNormals();
+    m.geometry.dispose();
+    m.geometry = g;
+  }
 }
 
 function buildFloor(

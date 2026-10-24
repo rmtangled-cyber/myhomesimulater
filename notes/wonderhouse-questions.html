@@ -1,0 +1,239 @@
+<title>ワンダーハウス確認リスト</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=BIZ+UDPMincho:wght@700&display=swap">
+<style>
+/* 打ち合わせに持っていく確認書: 分類ごとの番号付きリスト。番号は打ち合わせで「◯番」と呼ぶため */
+:root {
+  --bg: #f7f8f7;
+  --paper: #ffffff;
+  --ink: #1f2427;
+  --muted: #5d676c;
+  --line: #dde2e2;
+  --accent: #2f5d7c;
+  --chip-add: #a24f12;
+  --chip-add-bg: #fbeee3;
+  --chip-move: #23628a;
+  --chip-move-bg: #e4f0f7;
+  --chip-ask: #4d5a60;
+  --chip-ask-bg: #edf0f0;
+  --chip-down: #2c6b3c;
+  --chip-down-bg: #e3f2e6;
+  --f-body: 'BIZ UDPGothic', 'Yu Gothic', 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  --f-head: 'BIZ UDPMincho', 'Yu Mincho', 'Hiragino Mincho ProN', serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191b; --paper: #1d2326; --ink: #e6eaeb; --muted: #9aa6ab; --line: #30393d; --accent: #8cbbd9;
+    --chip-add: #f1b07c; --chip-add-bg: #3a2a1d; --chip-move: #9ccbe8; --chip-move-bg: #1c3140;
+    --chip-ask: #c3cdd1; --chip-ask-bg: #2a3236; --chip-down: #9ed4aa; --chip-down-bg: #1e3324;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191b; --paper: #1d2326; --ink: #e6eaeb; --muted: #9aa6ab; --line: #30393d; --accent: #8cbbd9;
+  --chip-add: #f1b07c; --chip-add-bg: #3a2a1d; --chip-move: #9ccbe8; --chip-move-bg: #1c3140;
+  --chip-ask: #c3cdd1; --chip-ask-bg: #2a3236; --chip-down: #9ed4aa; --chip-down-bg: #1e3324;
+  color-scheme: dark;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.75;
+  padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 10px; border-bottom: 2px solid var(--ink); padding-bottom: 18px; }
+.eyebrow { font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
+h1 { font-family: var(--f-head); font-size: clamp(26px, 5vw, 34px); line-height: 1.3; margin: 0; text-wrap: balance; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--muted); font-size: 13px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; color: var(--muted); align-items: center; }
+.attach { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; font-size: 14px; }
+.attach b { display: block; margin-bottom: 4px; }
+.attach ul { margin: 0; padding-left: 1.2em; }
+section { display: grid; gap: 10px; }
+h2 { font-family: var(--f-head); font-size: 20px; margin: 0; padding-bottom: 6px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+h2 small { font-family: var(--f-body); font-size: 12px; color: var(--muted); font-weight: 400; }
+ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+li { display: grid; grid-template-columns: 3.2em 1fr; gap: 4px 10px; padding: 12px 0; border-bottom: 1px dashed var(--line); }
+li:last-child { border-bottom: none; }
+.no { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); font-size: 15px; padding-top: 1px; }
+.body { min-width: 0; display: grid; gap: 4px; }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.head strong { font-size: 15.5px; }
+.detail { color: var(--ink); font-size: 14px; }
+.ask { color: var(--muted); font-size: 13.5px; }
+.ask::before { content: "確認: "; font-weight: 700; color: var(--accent); }
+.chip { font-size: 11.5px; padding: 0 8px; border-radius: 10px; line-height: 1.7; white-space: nowrap; letter-spacing: 0.04em; }
+.c-add { color: var(--chip-add); background: var(--chip-add-bg); }
+.c-move { color: var(--chip-move); background: var(--chip-move-bg); }
+.c-ask { color: var(--chip-ask); background: var(--chip-ask-bg); }
+.c-down { color: var(--chip-down); background: var(--chip-down-bg); }
+.date { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+footer { color: var(--muted); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 480px) { li { grid-template-columns: 2.4em 1fr; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">新築工事・打ち合わせ用</div>
+  <h1>ワンダーハウス確認リスト</h1>
+  <div class="meta"><span>2026年10月25日 時点</span><span>全 41 項目</span><span>寸法は mm、FL は床からの高さ</span></div>
+  <div class="legend">
+    <span class="chip c-add">追加</span>標準にない物を増やす
+    <span class="chip c-move">移動・変更</span>標準の物を動かす・替える
+    <span class="chip c-down">減額</span>標準から外す
+    <span class="chip c-ask">質問</span>仕様や納まりの確認
+  </div>
+</header>
+
+<div class="attach">
+  <b>別紙（データでお渡しします）</b>
+  <ul>
+    <li>電灯コンセント図（1〜3階）: いただいた電灯コンセント図の書き方で、移動・追加・変更の印と LAN の配管を書き込んだもの。最後のページが LAN の接続図</li>
+    <li>クロス貼り分け表: 部屋・面ごとの品番、範囲（通り芯）、面積と、SP 以外の面数の目安</li>
+  </ul>
+</div>
+
+<section>
+  <h2>照明・スイッチ <small>1〜12</small></h2>
+  <ol>
+    <li><span class="no">1</span><div class="body"><div class="head"><strong>1階ホール（西）のダウンライトを外して間接照明に</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">標準のダウンライト（DDL-6034ABG）を外し、その分をミニ洗面台横の間接照明（ライン）か、丸ミラー裏の間接照明のどちらか1つにしたい。</div>
+      <div class="ask">「変更」として扱えるか、差額</div></div></li>
+    <li><span class="no">2</span><div class="body"><div class="head"><strong>1階ホールのアート横のダウンライトを玄関ベンチ下の間接照明に</strong><span class="chip c-move">移動・変更</span></div>
+      <div class="detail">アートと階段の間の標準のダウンライト（DDL-5704AB・人感センサー）を外し、玄関のフロートベンチ下の間接照明（ライン）にしたい。</div>
+      <div class="ask">「移動」（無料）か「追加」（有料）か</div></div></li>
+    <li><span class="no">3</span><div class="body"><div class="head"><strong>玄関〜ホール〜洗面室のセンサー連動</strong><span class="chip c-ask">質問</span></div>
+      <div class="detail">家に入ったら玄関・ホールの照明がつき、そのまま洗面室（ミニ洗面台）で手を洗う間もついたままにしたい。2 のダウンライトを外すので、代わりのセンサーの位置も相談したい。</div>
+      <div class="ask">センサーを玄関・ホール・洗面の前で連動（親器・子器）できるか、点灯時間はどこまで長くできるか</div></div></li>
+    <li><span class="no">4</span><div class="body"><div class="head"><strong>階段の照明もセンサーにするか</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">上り下りの途中で消えないか、3路スイッチと一緒に使えるか</div></div></li>
+    <li><span class="no">5</span><div class="body"><div class="head"><strong>センサーにした場合の電気代・差額</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">待機電力と、センサー付きの器具・スイッチの差額</div></div></li>
+    <li><span class="no">6</span><div class="body"><div class="head"><strong>2階トイレ: ペンダントライト用の引掛シーリング</strong><span class="chip c-move">変更</span><span class="chip c-add">追加</span></div>
+      <div class="detail">標準のダウンライトをやめて、南西の隅にペンダントライト（施主支給）用の引掛シーリングを付けたい。ふかし壁の中の縦の間接照明は追加。</div>
+      <div class="ask">移動扱いになるか、差額</div></div></li>
+    <li><span class="no">7</span><div class="body"><div class="head"><strong>2階リビング: ダウンライト4つ → 引掛シーリング1つ</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">標準のダウンライト4つ（DDL-6134AB）をやめて、リビングの真ん中に引掛シーリングを1つ。シーリングライトは施主支給（仮に 900×500 の楕円形）。</div>
+      <div class="ask">「変更」として扱えるか、差額</div></div></li>
+    <li><span class="no">8</span><div class="body"><div class="head"><strong>1階 WIC・寝室・洗面脱衣室の照明とコンセント</strong><span class="chip c-move">移動・変更</span><span class="chip c-add">追加</span></div>
+      <div class="detail">1階 WIC のダウンライトを2つ → 1つ（真ん中へ移動）にし、枕棚の下（北・東）にテープライトを追加。寝室のシーリングライトをなくし、ヘッドボードの間接照明を追加。寝室の枕元のコンセント2か所をヘッドボードの天板の下へ移動。洗面脱衣室のスイッチ下のコンセントを洗面カウンター下の棚の上・左奥へ移動し、壁内収納の中にコンセントを追加。</div>
+      <div class="ask">それぞれの差額</div></div></li>
+    <li><span class="no">9</span><div class="body"><div class="head"><strong>シューズクロークのダウンライトを人感センサーに</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">DDL-6134AB を人感センサーで自動点灯にできるか</div></div></li>
+    <li><span class="no">10</span><div class="body"><div class="head"><strong>2階パントリーのセンサー付きダウンライトにスイッチ</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">入口の西・冷蔵庫側の壁（FL+1200）にスイッチを付けたい。標準ではキッチンのスイッチで操作していた。冷蔵庫の扉とは干渉しない位置。</div>
+      <div class="ask">追加か移動か、差額</div></div></li>
+    <li><span class="no">11</span><div class="body"><div class="head"><strong>玄関〜WIC の廊下に足元灯2つ</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">東の壁に Panasonic SLBJ71002（ブラック・明るさセンサー付き・壁埋込）を2つ、床から 100 くらい。</div>
+      <div class="ask">施主支給にできるか、差額</div></div></li>
+    <li><span class="no">12</span><div class="body"><div class="head"><strong>車庫の北の壁の上に折り上げ天井と間接照明</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">幅 200・150 上げる折り上げ天井の中に、間接照明（ライン）。</div>
+      <div class="ask">費用と、スイッチをどこに付けるか（車庫にはスイッチがない）</div></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>コンセント・分電盤・LAN <small>13〜21</small></h2>
+  <ol>
+    <li><span class="no">13</span><div class="body"><div class="head"><strong>分電盤とリモコン類をパントリーへ、その下に造作棚</strong><span class="chip c-move">移動</span><span class="chip c-add">追加</span></div>
+      <div class="detail">2階パントリー（キッチンの北の納戸）の西の壁、冷蔵庫の右（北）に分電盤。その下（中心 FL+1400）にインターホン親機・給湯器リモコン・熱交換器リモコンをキッチン側の壁から移し、さらにその下（FL+900）に ONU・ルーターを置く造作棚（奥行 250・幅 450）。</div>
+      <div class="ask">分電盤をこの位置に付けられるか、棚の費用</div></div></li>
+    <li><span class="no">14</span><div class="body"><div class="head"><strong>光回線と LAN の配線</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">屋外からパントリーまで空配管1ルート（光ファイバーを通す）と、パントリーに光コンセント1か所。造作棚の上に ONU・ルーター用の2口コンセントと LAN 端子4口（①〜④）。そこから壁内に Cat6A を1本ずつ: ① 3階 北東の書斎、② 3階 南西の書斎、③ 3階 子供部屋、④ 2階 リビングのテレビの所。接続図は電灯コンセント図の最後のページ。</div>
+      <div class="ask">空配管ではなくケーブルまで入れてもらえるか、費用</div></div></li>
+    <li><span class="no">15</span><div class="body"><div class="head"><strong>3階のコンセントの追加・移動</strong><span class="chip c-add">追加</span><span class="chip c-move">移動</span></div>
+      <div class="detail">北東の書斎: 南の壁の東寄りに2口を追加。南西の書斎: 東の壁の真ん中よりやや南に2口を追加。西の壁の北寄りの標準の2口を、南の壁の東寄り（東の壁から 150）へ移動して LAN 付きに。子供部屋: 東の壁の2口を LAN 付きに。</div>
+      <div class="ask">追加と LAN 付きにする差額</div></div></li>
+    <li><span class="no">16</span><div class="body"><div class="head"><strong>3階のテレビ端子はなしに</strong><span class="chip c-down">減額</span></div>
+      <div class="detail">北東の書斎・南西の書斎・子供部屋の3部屋とも、3階にテレビは置かないのでテレビ端子はいらない。</div>
+      <div class="ask">なくすと減額になるか</div></div></li>
+    <li><span class="no">17</span><div class="body"><div class="head"><strong>2階ダイニングにフロアコンセント</strong><span class="chip c-move">移動</span></div>
+      <div class="detail">LDK の東の壁・北の窓の近く（キッチンの横）の標準の2口をやめ、ダイニングテーブルの下の床（シンク寄り）に Panasonic DUM7001MH（住宅用フロアコンラウンド・アース付1口・グレーメタリック）。</div>
+      <div class="ask">移動扱いになるか、差額、床下の配線ができるか</div></div></li>
+    <li><span class="no">18</span><div class="body"><div class="head"><strong>キッチン背面のコンセント2か所を横向きに</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">電子レンジ用など、今の位置のまま横向きにし、プレートの下端を天板から 100 上（FL+1000）に。</div></div></li>
+    <li><span class="no">19</span><div class="body"><div class="head"><strong>1階の階段下に1口コンセント</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">北の壁、床下点検口より車庫寄り、FL+250。プレートはグレー。</div>
+      <div class="ask">差額</div></div></li>
+    <li><span class="no">20</span><div class="body"><div class="head"><strong>車庫の EV・PHEV 充電用コンセント</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">北西の隅に Panasonic WK4322S（ホワイトシルバー・200V 20A・露出／埋込両用）。</div>
+      <div class="ask">標準の WK4602BK からの差額</div></div></li>
+    <li><span class="no">21</span><div class="body"><div class="head"><strong>防犯カメラ2台（車庫・ポーチ）の近くにコンセント</strong><span class="chip c-add">追加</span></div>
+      <div class="ask">コンセントやコードを見えないように隠せるか（カメラの裏に入れる・露出しない配線など）</div></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>内装・クロス・建具 <small>22〜30</small></h2>
+  <ol>
+    <li><span class="no">22</span><div class="body"><div class="head"><strong>キッチン背面の壁を AICA セラールに</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">2階キッチンの背面の壁（東・下がり天井の範囲 約 3.6m）をクロスではなく AICA セラール FJGA901ZD（パラディソ／ダーク・ソフトマット・935×2455・3mm、設計価格 29,100円/枚）に。洗面脱衣室の小物置きの奥（1,700×120）も同じ品番。</div>
+      <div class="ask">差額と、目地（推奨 DGR ダークグレー）・端の見切り（推奨 化粧出隅 ZKH901H91）の納まり</div></div></li>
+    <li><span class="no">23</span><div class="body"><div class="head"><strong>クロスの面の数え方</strong><span class="chip c-ask">質問</span></div>
+      <div class="detail">SP 以外は8面まで無料・9面目から1面 3,000円と聞いている。こちらの貼り分け表では SP 以外の面が 42面（追加 34面 × 3,000円 = 102,000円の目安）。</div>
+      <div class="ask">1〜3階でつながった階段の壁や、部屋を分けている所（下がり天井・折り上げ天井など）の数え方</div></div></li>
+    <li><span class="no">24</span><div class="body"><div class="head"><strong>目地のある柄のクロスの貼り方</strong><span class="chip c-ask">質問</span></div>
+      <div class="detail">3階 北東の書斎の TH34672（コンクリート打ち放し調）は、横の目地（625 ごと）を床にそろえて貼ってほしい（パネル1枚は幅 465 × 高さ 625）。</div>
+      <div class="ask">柄の継ぎ目をどこにそろえて貼るのか</div></div></li>
+    <li><span class="no">25</span><div class="body"><div class="head"><strong>シューズクロークのミラー引き戸の戸袋</strong><span class="chip c-ask">質問</span></div>
+      <div class="detail">玄関との間の引込み戸（戸の幅 680）は、北にホール（西）からの入口があるため戸袋の壁が 625 しかない。全部開けても開口 620 のうち 55 くらい戸が残る。</div>
+      <div class="ask">このままでよいか、戸を細くするか</div></div></li>
+    <li><span class="no">26</span><div class="body"><div class="head"><strong>寝室ヘッドボードの幕板を跳ね上げ扉に</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">前の幕板を、上の辺を軸にした跳ね上げの扉にできるか（中のコンセントを使う）</div></div></li>
+    <li><span class="no">27</span><div class="body"><div class="head"><strong>2階 WIC の枕棚とハンガーパイプ</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">一般的な高さ（枕棚 FL+1800・パイプ FL+1700）にして、奥（東）の壁にも枕棚とパイプを付けたい。</div></div></li>
+    <li><span class="no">28</span><div class="body"><div class="head"><strong>3階トイレの扉の吊元を反対に</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">外へ開くまま、吊元を今と反対にしたい。</div></div></li>
+    <li><span class="no">29</span><div class="body"><div class="head"><strong>玄関ドアのフリーストップ型ドアストッパー</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">YKK AP ヴェナート D30 に、好きな角度で開いたまま止められるストッパーを付けられるか（標準で付く物・オプション・差額）</div></div></li>
+    <li><span class="no">30</span><div class="body"><div class="head"><strong>洗面脱衣室の窓</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">カーテン・ロールスクリーンをどう付けるか。くもりガラス（型板ガラス）にするべきか</div></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>設備・水まわり <small>31〜38</small></h2>
+  <ol>
+    <li><span class="no">31</span><div class="body"><div class="head"><strong>IH にした場合のガス</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">ガスコンロをやめて IH にするとオール電化になるので、ガスの契約と工事はいらなくなるか</div></div></li>
+    <li><span class="no">32</span><div class="body"><div class="head"><strong>レンジフードと IH</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">レンジフードは ARIAFINA Federica FEDL-952 にしたい。IH はグリル付き。</div>
+      <div class="ask">差額</div></div></li>
+    <li><span class="no">33</span><div class="body"><div class="head"><strong>水道管の太さ</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">20mm か 25mm か</div></div></li>
+    <li><span class="no">34</span><div class="body"><div class="head"><strong>水道メーターの蓋の見た目</strong><span class="chip c-ask">質問</span></div></div></li>
+    <li><span class="no">35</span><div class="body"><div class="head"><strong>浴室（サザナ）: リモコン・扉・シャワーフック</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">給湯器のリモコンを扉のある壁（扉の北）に。扉は浴室側へ開くまま、吊元を南（今と反対）に。スライドバーはなしで、シャワーフックを上下2つに。</div>
+      <div class="ask">差額</div></div></li>
+    <li><span class="no">36</span><div class="body"><div class="head"><strong>サザナのワイド浴槽の寸法</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">実際の寸法（長さ×幅）を図面でいただきたい。資料に 1450×852 や 1600×912 などの値があり、どれか分からない</div></div></li>
+    <li><span class="no">37</span><div class="body"><div class="head"><strong>3階トイレにミニ手洗い</strong><span class="chip c-add">追加</span></div>
+      <div class="detail">南の壁に、壁付けのカウンター＋置き型の小さなボウル＋壁付け水栓。</div>
+      <div class="ask">給排水の配管ができるか、費用</div></div></li>
+    <li><span class="no">38</span><div class="body"><div class="head"><strong>3階 北東の書斎のエアコン</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">ダイキン S226ATRS-W（RX シリーズ・6畳・2.2kW）にしたい。</div>
+      <div class="ask">施主支給で取り付けだけお願いできるか、そちらで入れてもらうか（差額）</div></div></li>
+  </ol>
+</section>
+
+<section>
+  <h2>建物・外構 <small>39〜41</small></h2>
+  <ol>
+    <li><span class="no">39</span><div class="body"><div class="head"><strong>3階の北側（北側斜線）の天井</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">結局どのくらい天井が下がるのか（こちらでは3階トイレの北の半分を仮に 2100 にしている）</div></div></li>
+    <li><span class="no">40</span><div class="body"><div class="head"><strong>1階から見た階段の裏</strong><span class="chip c-ask">質問</span></div>
+      <div class="ask">1階の階段を上がり切ったあたりで、階段の裏（段の裏側）は見えるのか、天井でふさがるのか</div></div></li>
+    <li><span class="no">41</span><div class="body"><div class="head"><strong>外の立水栓をなくして散水栓ボックスに</strong><span class="chip c-move">変更</span></div>
+      <div class="detail">家の外の立水栓はなしにして、地面の散水栓ボックス（蓋だけ見える）にしたい。</div>
+      <div class="ask">立水栓を付けない場合の納まりと見た目</div></div></li>
+  </ol>
+</section>
+
+<footer>この一覧は、3D の間取りシミュレーターで検討した内容から作成しています。寸法と位置は、いただいた図面（平面詳細図・電灯コンセント図）にもとづいています。</footer>
+</div>
