@@ -152,9 +152,13 @@ export class LightRegions {
     return floor?.rooms.find((r) => !r.void && pointInPolygon([x, y], r.polygon))?.id ?? floor?.rooms.find((r) => pointInPolygon([x, y], r.polygon))?.id;
   }
 
-  /** 照明のある部屋と、戸のない開口で直接つながった隣の部屋の印 */
-  bits(floorIndex: number, roomId: string): THREE.Vector4 | undefined {
-    const key = `${floorIndex}|${roomId}`;
+  /**
+   * 照明のある部屋と、戸のない開口で直接つながった隣の部屋の印。
+   * spread（窓から入る昼の光）は、戸のない開口でたどれる部屋すべて（ひと続きの空間）に届く。
+   * 直接の隣だけにすると、窓のある小さな部屋（1 階のホール（北）など）とその先の部屋の境で明るさがくっきり切れた（2026-10-25）
+   */
+  bits(floorIndex: number, roomId: string, spread = false): THREE.Vector4 | undefined {
+    const key = `${floorIndex}|${roomId}|${spread ? 1 : 0}`;
     const hit = this.bitsCache.get(key);
     if (hit) return hit;
     const floor = this.plan?.floors[floorIndex];
@@ -170,9 +174,11 @@ export class LightRegions {
         return Math.hypot(a[0] + dx * t - p[0], a[1] + dy * t - p[1]) < 2;
       });
     const list: Room[] = [self];
-    for (const o of floor.openings) {
-      if (o.type !== 'opening' || o.slideRoom || o.slideTo || !near(self, o.at)) continue;
-      for (const other of floor.rooms) if (!list.includes(other) && near(other, o.at)) list.push(other);
+    for (let k = 0; k < list.length && (spread || k === 0); k++) {
+      for (const o of floor.openings) {
+        if (o.type !== 'opening' || o.slideRoom || o.slideTo || !near(list[k], o.at)) continue;
+        for (const other of floor.rooms) if (!list.includes(other) && near(other, o.at)) list.push(other);
+      }
     }
     const v = [0, 0, 0, 0];
     for (const r of list) {
@@ -211,12 +217,12 @@ export class LightRegions {
       ...lights.filter((l) => (l as THREE.RectAreaLight).isRectAreaLight),
     ];
     // 並びが前のフレームと同じなら入れ直さない
-    const key = all.map((l) => l.id).join(',');
+    const key = all.map((l) => `${l.id}${l.userData.lrSpread ? 's' : ''}`).join(',');
     if (key === this.lastKey) return;
     this.lastKey = key;
     for (let k = 0; k < LR_MAX; k++) {
       const l = all[k];
-      const b = l && l.userData.lrRoom !== undefined ? this.bits(l.userData.lrFloor as number, l.userData.lrRoom as string) : undefined;
+      const b = l && l.userData.lrRoom !== undefined ? this.bits(l.userData.lrFloor as number, l.userData.lrRoom as string, !!l.userData.lrSpread) : undefined;
       uniforms.lrBits.value[k].set(b?.x ?? 0, b?.y ?? 0, b?.z ?? 0, b?.w ?? 0);
     }
   }

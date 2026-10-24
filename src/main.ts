@@ -5,6 +5,7 @@ import { PlanStore, type SaveStatus } from './store';
 import type { Furniture, Plan, Room } from './types';
 import { describeTarget, Panel, type PanelState, type Selection } from './ui';
 import { exportPlan } from './planExport';
+import { electricalHtml } from './electricalPlan';
 import { Viewer, type WalkInfo } from './viewer';
 import { WEB, WEB_START_ROOMS, WEB_FLOOR } from './env';
 
@@ -46,7 +47,8 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   labels: true,
   lightsOn: false,
   // Web 版（スマホ）は軽くするため、陰影の後処理を切っておく
-  highQuality: !WEB,
+  // 高画質（陰影）は重いので最初はオフ（2026-10-24）
+  highQuality: false,
   invertLook: loadFlag('invertLook'),
   passWalls: loadFlag('passWalls'),
   stature: loadNumber('stature', 160),
@@ -278,6 +280,11 @@ const panel = new Panel(document.getElementById('panel')!, {
   },
   removeFurniture,
   exportPlan: () => exportPlan(store.plan, `${store.name}-図面-${new Date().toISOString().slice(0, 10)}.png`),
+  // 電灯コンセント図は別のタブで開く（そこから印刷・PDF に保存）
+  exportElectrical: () => {
+    const html = electricalHtml(store.plan, { date: new Date().toLocaleDateString('sv-SE') });
+    window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
+  },
   screenshot: () => viewer.screenshot(`${store.name}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`),
   undo: () => store.undo(),
   redo: () => store.redo(),
@@ -373,6 +380,32 @@ for (const b of touchPad.querySelectorAll<HTMLButtonElement>('button')) {
   b.addEventListener('contextmenu', (e) => e.preventDefault());
 }
 document.getElementById('viewport')!.append(touchPad);
+
+// 右（スマホでは下）のパネルを閉じて 3D を広く見るボタン。閉じたかどうかはこの端末に覚えておく
+const panelToggle = document.createElement('button');
+panelToggle.className = 'panel-toggle';
+const setPanelHidden = (hidden: boolean) => {
+  document.getElementById('app')!.classList.toggle('panel-hidden', hidden);
+  panelToggle.textContent = hidden ? '☰ メニュー' : '✕';
+  panelToggle.title = hidden ? 'メニューを開く' : 'メニューを閉じて 3D を広く見る';
+  try {
+    localStorage.setItem('panelHidden', hidden ? '1' : '');
+  } catch {
+    // 保存できない（プライベートモードなど）ときは覚えない
+  }
+};
+panelToggle.addEventListener('click', (e) => {
+  e.stopPropagation();
+  setPanelHidden(!document.getElementById('app')!.classList.contains('panel-hidden'));
+});
+document.getElementById('viewport')!.append(panelToggle);
+let panelHidden = false;
+try {
+  panelHidden = localStorage.getItem('panelHidden') === '1';
+} catch {
+  // 読めないときは開いたまま
+}
+setPanelHidden(panelHidden);
 const showTouchPad = WEB || matchMedia('(pointer: coarse)').matches;
 
 function render() {

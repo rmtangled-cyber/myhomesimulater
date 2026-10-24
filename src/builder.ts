@@ -1115,7 +1115,9 @@ function buildFloor(
  * 壁の箱。両側の面は mb（外壁の素材）。開口部まわり・壁の切れ目の厚みの面は、真ん中で分けて side(u, ±1) の側の仕上げに入れる。
  * drawStart / drawEnd: 端面を描くか（開口部に面する端・壁の切れ目だけ。壁どうしの角の端面は隣の壁と重なってちらつくので描かない）
  */
-function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = [], needSoffit: (u: number, s: 1 | -1, v: number) => boolean = () => false) {
+const noSoffit = () => false;
+
+function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = [], needSoffit: (u: number, s: 1 | -1, v: number) => boolean = noSoffit) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -1136,12 +1138,14 @@ function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: st
     side(mid, 1, o).quad(f.at(r.u0, r.v1, h), along, nHalfNeg, [r.u0, 0], [du, h]);
     side(mid, -1, o).quad(f.at(r.u0, r.v1, 0), along, nHalfNeg, [r.u0, h], [du, h]);
   }
-  // 天井の高さまである開口部の上の壁の下面は、その側の天井でふさがるので描かない。
-  // ただし天井がない側（階段の吹き抜けなど）や天井がもっと高い側は、描かないと壁の中が見えるので描く
+  // 開口部の上の壁の下面は、その側の部屋の天井と同じ高さならふさがるので描かない（その側の部屋で判断する）。
+  // 天井がない側（階段の吹き抜けなど）や天井がもっと高い側は、描かないと壁の中が見えるので描く。
+  // 階の天井高だけで決めていたときは、下がり天井の部屋（3 階トイレの北の半分）で天井と下面が重なってちらついた（2026-10-25）
   if (r.v0 > bottom) {
     const o = openingAt(mid);
-    if (r.v0 < ceiling - 1 || needSoffit(mid, -1, r.v0)) side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
-    if (r.v0 < ceiling - 1 || needSoffit(mid, 1, r.v0)) side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
+    const need = (s: 1 | -1) => (needSoffit === noSoffit ? r.v0 < ceiling - 1 : needSoffit(mid, s, r.v0));
+    if (need(-1)) side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
+    if (need(1)) side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
   }
   // 端面（開口部の側面・壁の切れ目）。隣の壁の位置（端から 30 内側）で両側の仕上げを調べる
   if (drawStart) {

@@ -20,13 +20,22 @@ import { WEB } from './env';
  */
 export const LOOSE_FURNITURE_TYPES = new Set([
   'sofa', 'sofa-l', 'dining-table', 'dining-table-frame', 'ceramic-ext-table', 'low-table', 'chair', 'dining-chair', 'curve-back-chair', 'stool',
-  'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack',
+  'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'cpu-stand-l',
   'rug', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
   'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
   'hat-box', 'cap-case', 'magnet-dispenser', 'racket-bag', 'baseball-glove', 'suitcase',
   'mop', 'hand-ironing-board', 'towel-hook', 'wire-basket', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'trash-bin', 'solar-ground-light', 'exhaust-cover',
+]);
+
+/**
+ * 小さい物（家電以外の小物・服・靴など）。軽さを優先して、形を簡単にし（角の丸み・曲面の細かさを減らす）、影を落とさない
+ */
+export const SMALL_ITEM_TYPES = new Set([
+  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'hat-box', 'cap-case', 'racket-bag', 'baseball-glove', 'suitcase',
+  'magnet-dispenser', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'wire-basket', 'towel-hook', 'mop', 'hand-ironing-board', 'trash-bin',
+  'exhaust-cover', 'solar-ground-light', 'xmas-tree', 'shower-hook',
 ]);
 
 /** クリックで自分の照明をつけ消しする家具（時間帯や回路に関係なく、クリックしたときだけつく） */
@@ -117,9 +126,8 @@ function spot(x: number, y: number, z: number, dir: [number, number, number], in
 /** 真横から見た外形（[奥行き z, 高さ y] の点）を、x の向きに厚み t の板にする（掛けた服・ハンガーなど） */
 function sideSheet(pts: [number, number][], t: number, mat: THREE.Material): THREE.Mesh {
   const shape = new THREE.Shape(pts.map(([z, y]) => new THREE.Vector2(z, y)));
-  const bevel = Math.min(6, t / 4);
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: t - 2 * bevel, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 2 });
-  geo.translate(0, 0, -(t - 2 * bevel) / 2);
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false });
+  geo.translate(0, 0, -t / 2);
   // 形の x（奥行き）を z へ、押し出しの z を x へ
   geo.rotateY(Math.PI / 2);
   const m = new THREE.Mesh(geo, mat);
@@ -911,8 +919,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '開き戸（扉）',
     hint: '開口部（ドア）の中心に置く（閉めた状態）。取手の側は「左右反転」で変える',
     defaults: { w: 720, d: 36, h: 2000, color: '#efeeea' },
-    build: ({ w, d, h, flip, swing, handle, doorSeries, stopper, stopperColor }, mat) => {
+    build: ({ w, d, h, flip, swing, handle, doorSeries, stopper, stopperColor, openAngle }, mat) => {
       const s = flip ? -1 : 1;
+      const open = THREE.MathUtils.degToRad(openAngle ?? 90);
       const parts: THREE.Object3D[] = [box(w, h - 10, d, 0, 0, 0, mat)];
       // ドアストッパー: 床の丸い部品（直径 36.4）は、開いた（90°）ときの扉の先から 60 の所。シリンダー式は扉の下に箱（W36・H40・D35）
       const extra: THREE.Object3D[] = [];
@@ -920,8 +929,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       const hz = Math.sign(swing ?? 1) * (d / 2);
       if (stopper) {
         const sm = new THREE.MeshStandardMaterial({ color: STOPPER_COLORS[stopperColor ?? 'BE']?.[1] ?? '#1f1f1f', roughness: 0.4, metalness: 0.3 });
-        const a = -s * (swing ?? 1) * (Math.PI / 2);
-        // 扉の厚みの真ん中・扉の先から 60 の点を、吊元のまわりに 90° 回した所
+        const a = -s * (swing ?? 1) * open;
+        // 扉の厚みの真ん中・扉の先から 60 の点を、吊元のまわりに開く角度だけ回した所
         const dx = s * (w - 60);
         const disc = new THREE.Mesh(new THREE.CylinderGeometry(18.2, 18.2, 4, 24), sm);
         disc.position.set(-s * (w / 2) + dx * Math.cos(a) - hz * Math.sin(a), 2, hz - dx * Math.sin(a) - hz * Math.cos(a));
@@ -936,12 +945,12 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           parts.push(box(18, 18, 45, s * (w / 2 - 60), 990, z * (d / 2 + 22), steel), box(120, 18, 18, s * (w / 2 - 110), 990, z * (d / 2 + 40), steel));
           parts.push(box(22, 22, 6, s * (w / 2 - 60), 900, z * (d / 2 + 10), steel));
         }
-        return [swingLeaf(parts, -s * (w / 2), -s * (swing ?? 1) * (Math.PI / 2), hz), ...extra];
+        return [swingLeaf(parts, -s * (w / 2), -s * (swing ?? 1) * open, hz), ...extra];
       }
       const black = handleMat(handle);
       // レバーハンドル（両面）
       for (const z of [1, -1]) parts.push(box(16, 16, 40, s * (w / 2 - 70), 950, z * (d / 2 + 20), black), box(130, 14, 14, s * (w / 2 - 120), 950, z * (d / 2 + 38), black));
-      return [swingLeaf(parts, -s * (w / 2), -s * (swing ?? 1) * (Math.PI / 2), hz), ...extra];
+      return [swingLeaf(parts, -s * (w / 2), -s * (swing ?? 1) * open, hz), ...extra];
     },
   },
   {
@@ -1503,6 +1512,27 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'cpu-stand-l',
+    label: 'L 字デスク・PC スタンド（Bauhutte BHD-820H ラージ）',
+    hint: '幅 390・奥行 820・高さ 570〜780（h で天板の高さ）。天板の下にパソコンを入れる所（幅 295）。左右はパンチングボード、下にキャスター。デスクの横に、奥行の向きをデスクと同じにして置く',
+    defaults: { w: 390, d: 820, h: 700, color: '#1a1a1b' },
+    build: ({ w, d, h }, mat) => {
+      const steel = new THREE.MeshStandardMaterial({ color: '#151516', roughness: 0.6, metalness: 0.35 });
+      const t = 18;
+      const out: THREE.Object3D[] = [box(w, t, d, 0, h - t, 0, mat)];
+      // 左右のパンチングボード（キャスターの上から天板の下まで）と底板・後ろの落下防止バー
+      for (const sx of [-1, 1]) out.push(box(20, h - t - 60, d - 40, sx * (w / 2 - 25), 60, 0, steel));
+      out.push(box(w - 70, 15, d - 40, 0, 60, 0, steel), box(w - 70, 15, 15, 0, 120, -d / 2 + 30, steel));
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+        const c = new THREE.Mesh(new THREE.CylinderGeometry(22, 22, 40, 10), steel);
+        c.rotation.z = Math.PI / 2;
+        c.position.set(sx * (w / 2 - 35), 22, sz * (d / 2 - 50));
+        out.push(c);
+      }
+      return out;
+    },
+  },
+  {
     type: 'extension-desk',
     label: 'エクステンションデスク（Bauhutte BHC-1200H）',
     hint: '幅 1200・奥行 250・高さ 590〜800（h で天板の高さ）。天板の下にパンチングの棚（ケーブル・電源タップ）、中段と下段の棚。黒い脚',
@@ -1773,11 +1803,13 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: 'シーリングライト',
     hint: '天井付け。「床からの高さ」を天井高にする。施工会社の標準は DAIKO DCL-42121（丸い薄型・3,699lm・6 畳まで・調光調色）',
     defaults: { w: 560, d: 560, h: 90, color: '#f6f6f4' },
-    build: ({ w, h }, mat) => {
+    build: ({ w, d, h }, mat) => {
       const body = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2 - 20, h, 48), mat);
       body.position.y = -h / 2;
       const lens = new THREE.Mesh(new THREE.CylinderGeometry(w / 2 - 22, w / 2 - 22, 4, 48), glow(WARM, 2));
       lens.position.y = -h - 2;
+      // w と d が違えば楕円（STARIY の 90×50cm など）
+      body.scale.z = lens.scale.z = d / w;
       return [body, lens];
     },
     // 部屋全体に広がる光（真下の光度は 全光束 / π くらい）。省略時は 6 畳用（3,700lm）
@@ -1824,6 +1856,22 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       turn.position.y = h / 2;
       turn.rotation.z = Math.PI / 2;
       return [turn];
+    },
+  },
+  {
+    type: 'floor-outlet',
+    label: 'フロアコンセント（床・丸）',
+    hint: '床に埋め込む丸いコンセント（Panasonic フロアコンラウンドなど）。w がプレートの直径。ふたを閉じた姿',
+    defaults: { w: 110, d: 110, h: 4, color: '#8e8f91' },
+    build: ({ w, h }, mat) => {
+      const plate = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h, 24), mat);
+      plate.position.y = h / 2;
+      // ふたの合わせ目（細い溝）
+      const slot = new THREE.MeshStandardMaterial({ color: '#3a3a3a', roughness: 0.7 });
+      const lid = new THREE.Mesh(new THREE.RingGeometry(w * 0.34, w * 0.36, 24), slot);
+      lid.rotation.x = -Math.PI / 2;
+      lid.position.y = h + 0.5;
+      return [plate, lid];
     },
   },
   {
@@ -2088,38 +2136,12 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           const len = kind === 'coat' ? 1060 : 760;
           const shade = cloth.clone();
           shade.color.multiplyScalar(0.72);
-          // 袖（肩から下がる丸い筒。少し前へ曲がり、先に袖口）
-          const sleeveLen = len * 0.58;
+          // 袖（肩から下がる箱）と首まわり。細かい飾りは付けない（軽さ優先）
           for (const sz of [-1, 1]) {
-            const sleeve = new THREE.Mesh(new THREE.CapsuleGeometry(sh.t / 2 + 14, sleeveLen, 6, 14), cloth);
-            sleeve.scale.z = 1.15;
-            sleeve.position.set(6, -150 - sleeveLen / 2, sz * (half - 50));
-            sleeve.rotation.z = -0.06;
-            sleeve.castShadow = true;
-            const cuff = new THREE.Mesh(new THREE.CylinderGeometry(sh.t / 2 + 17, sh.t / 2 + 17, 60, 16), shade);
-            cuff.position.set(6 + Math.sin(0.06) * sleeveLen * 0.5, -150 - sleeveLen + 20, sz * (half - 50));
-            cuff.scale.z = 1.15;
-            g.add(sleeve, cuff);
+            const sleeve = box(sh.t + 26, len * 0.58, 90, 6, -150 - len * 0.58, sz * (half - 50), cloth);
+            g.add(sleeve);
           }
-          // 襟・ボタン・ポケットのふた（並びの両端から見ても服に見えるよう、両面に付ける）
-          const nb = kind === 'coat' ? 4 : 2;
-          for (const fx of [-1, 1]) {
-            for (const sz of [-1, 1]) {
-              const lapel = box(4, 280, 70, fx * (sh.t / 2 + 3), -380, sz * 48, shade);
-              lapel.rotation.x = sz * 0.32;
-              g.add(lapel, box(4, 22, 130, fx * (sh.t / 2 + 3), -len * 0.62, sz * 130, shade));
-            }
-            // 袖の付け根から下の縫い目（袖と身頃の境）、前の合わせ、首まわりの襟
-            for (const sz of [-1, 1]) g.add(box(3, len * 0.55, 6, fx * (sh.t / 2 + 2), -150 - len * 0.55, sz * (half - 88), shade));
-            g.add(box(3, len - 400, 5, fx * (sh.t / 2 + 2), -len, 6, shade));
-            g.add(box(12, 70, 190, fx * (sh.t / 2 + 4), -165, 0, shade));
-            for (let k = 0; k < nb; k++) {
-              const b = new THREE.Mesh(new THREE.CylinderGeometry(10, 10, 6, 12), hangerMat);
-              b.rotation.z = Math.PI / 2;
-              b.position.set(fx * (sh.t / 2 + 4), -420 - k * 150, 34);
-              g.add(b);
-            }
-          }
+          g.add(box(sh.t + 20, 70, 190, 0, -165, 0, shade));
         }
         // ハンガー: パイプに掛けるフックと肩の三角（スラックス・スカートは横の棒）
         const hook = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 50, 8), nickel);
@@ -2164,7 +2186,6 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         { upper: '#7a5a3c', sole: '#3a2a1c', h: 80, kind: 'loafer' },
       ];
       const len = Math.min(d - 20, 270);
-      const inside = new THREE.MeshStandardMaterial({ color: '#141414', roughness: 0.9 });
       const out: THREE.Object3D[] = [];
       for (let i = 0; i < n; i++) {
         const st = styles[(i * 5 + seed) % styles.length];
@@ -2174,35 +2195,11 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         for (const s of [-1, 1]) {
           const x = cx + s * 50;
           const sw = 88;
-          if (st.kind === 'pumps') {
-            // パンプス: かかと（ヒール）が高く、つま先へ下がる中敷き、浅いつま先と、かかとの低い囲い
-            const heelUp = st.h - 20;
-            const slope = Math.atan2(heelUp, len * 0.7);
-            const insole = box(sw - 14, 6, len * 0.75, x, 0, 0, sole);
-            insole.position.set(x, heelUp / 2 + 4, -len * 0.1);
-            insole.rotation.x = slope;
-            out.push(insole, box(24, heelUp, 24, x, 0, -len / 2 + 18, sole), box(sw - 14, 6, len * 0.3, x, 0, len * 0.35, sole));
-            const toe = new THREE.Mesh(new RoundedBoxGeometry(sw - 10, 36, len * 0.42, 3, 16), upper);
-            toe.position.set(x, 18, len * 0.28);
-            const counter = box(sw - 12, 40, 10, x, heelUp - 6, -len / 2 + 8, upper);
-            out.push(toe, counter);
-          } else {
-            const soleH = st.kind === 'sneaker' ? 28 : 16;
-            out.push(box(sw, soleH, len, x, 0, 0, sole));
-            // つま先（低く丸い）とかかと（高い）。上から見るとつま先が細くなる
-            const toeH = (st.h - soleH) * 0.5;
-            const toe = new THREE.Mesh(new RoundedBoxGeometry(sw - 8, toeH, len * 0.6, 3, Math.min(28, toeH / 2 - 1)), upper);
-            toe.position.set(x, soleH - 2 + toeH / 2, len * 0.18);
-            toe.scale.x = 0.92;
-            const heelH = st.h - soleH;
-            const heel = new THREE.Mesh(new RoundedBoxGeometry(sw - 4, heelH, len * 0.5, 3, Math.min(18, heelH / 2 - 1)), upper);
-            heel.position.set(x, soleH - 2 + heelH / 2, -len * 0.22);
-            toe.castShadow = heel.castShadow = true;
-            out.push(toe, heel);
-            // 履き口（くぼみ）
-            out.push(box(sw - 30, 4, len * 0.32, x, st.h - 3, -len * 0.2, inside));
-            if (st.kind === 'sneaker') for (let k = 0; k < 4; k++) out.push(box(sw - 34, 3, 6, x, soleH + toeH * 0.9 + k * 6, len * 0.02 - k * 18, sole)); // 靴ひも
-          }
+          // 底と甲の 2 つの箱だけ（軽さ優先）。パンプスは薄く、かかとを高く
+          const soleH = st.kind === 'pumps' ? 10 : st.kind === 'sneaker' ? 26 : 16;
+          out.push(box(sw, soleH, len, x, 0, 0, sole));
+          if (st.kind === 'pumps') out.push(box(sw - 10, 34, len * 0.45, x, soleH, len * 0.25, upper), box(sw - 10, st.h - soleH, len * 0.25, x, soleH, -len * 0.35, upper));
+          else out.push(box(sw - 6, st.h - soleH, len * 0.9, x, soleH, -len * 0.03, upper));
         }
       }
       return out;
@@ -2330,8 +2327,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       // クラブ: アイアンのシャフトとヘッド、ウッドのヘッドカバー
       const shaft = new THREE.MeshStandardMaterial({ color: '#b9bcbf', roughness: 0.25, metalness: 0.9 });
       const covers = ['#b8322c', '#f0efe9', '#26364f'];
-      for (let i = 0; i < 9; i++) {
-        const a = (i / 9) * Math.PI * 2;
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
         const x = Math.cos(a) * r * 0.6;
         const z = Math.sin(a) * r * 0.6;
         const top = bodyH + 140 + (i % 3) * 40;
@@ -2701,7 +2698,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       s.lineTo(-w / 2, hw);
       s.closePath();
       const bevel = Math.min(25, h / 3);
-      const geo = new THREE.ExtrudeGeometry(s, { depth: h - bevel * 2, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel * 0.8, bevelSegments: 3, curveSegments: 24 });
+      const geo = new THREE.ExtrudeGeometry(s, { depth: h - bevel * 2, bevelEnabled: false, curveSegments: 8 });
       geo.rotateX(-Math.PI / 2);
       geo.translate(0, bevel, 0);
       const body = new THREE.Mesh(geo, mat);
@@ -2827,20 +2824,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     build: ({ w, d, h }, mat) => {
       mat.roughness = 0.4;
       mat.metalness = 0.6;
-      const out: THREE.Object3D[] = [box(w, 4, d, 0, 0, 0, mat)];
-      const wire = 4;
-      // 縁と縦の線（側面）、横の線を数本
-      for (const y of [h - wire, h * 0.66, h * 0.33]) {
-        out.push(box(w, wire, wire, 0, y, d / 2, mat), box(w, wire, wire, 0, y, -d / 2, mat), box(wire, wire, d, w / 2, y, 0, mat), box(wire, wire, d, -w / 2, y, 0, mat));
-      }
-      for (let i = 0; i <= 6; i++) {
-        const x = -w / 2 + (w * i) / 6;
-        out.push(box(wire, h, wire, x, 0, d / 2, mat), box(wire, h, wire, x, 0, -d / 2, mat));
-      }
-      for (let i = 1; i < 8; i++) {
-        const z = -d / 2 + (d * i) / 8;
-        out.push(box(wire, h, wire, w / 2, 0, z, mat), box(wire, h, wire, -w / 2, 0, z, mat));
-      }
+      // 細い線で編んだ見た目の代わりに、底と 4 枚の側板だけ（軽さ優先）
+      const out: THREE.Object3D[] = [box(w, 4, d, 0, 0, 0, mat), box(w, h, 4, 0, 0, d / 2 - 2, mat), box(w, h, 4, 0, 0, -d / 2 + 2, mat), box(4, h, d, w / 2 - 2, 0, 0, mat), box(4, h, d, -w / 2 + 2, 0, 0, mat)];
       return out;
     },
   },
@@ -3491,6 +3476,38 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'holdin-paper-holder',
+    label: 'ペーパーホルダー（収納付き・エア・リゾーム HOLDIN）',
+    hint: '壁付け。上は棚の天板、片方の端にふた付きの収納、天板の下にペーパー。count 1 = シングル（幅 325）、2 = ダブル（幅 463）。奥行 115・高さ 145。収納は右の端（「左右反転」で左）',
+    defaults: { w: 325, d: 115, h: 145, color: '#1d1d1f' },
+    build: ({ w, d, h, count, flip }, mat) => {
+      mat.roughness = 0.55;
+      const s = flip ? -1 : 1;
+      const boxW = 90;
+      const t = 3;
+      const out: THREE.Object3D[] = [
+        // 天板・背板と、端の収納（ふた付きの箱）
+        box(w - boxW, t, d, -s * (boxW / 2), h - t, 0, mat),
+        box(w - boxW, 40, t, -s * (boxW / 2), h - 40, -d / 2 + t / 2, mat),
+        box(boxW, h, d, s * (w / 2 - boxW / 2), 0, 0, mat),
+      ];
+      // ペーパー（天板の下に吊る）と左右の受け
+      const n = Math.max(1, count ?? 1);
+      const span = w - boxW;
+      const rollW = 114;
+      const paperMat = new THREE.MeshStandardMaterial({ color: '#fbfbf9', roughness: 0.9 });
+      for (let i = 0; i < n; i++) {
+        const cx = -s * (boxW / 2) + (i - (n - 1) / 2) * (span / n);
+        const p = new THREE.Mesh(new THREE.CylinderGeometry(55, 55, rollW, 16), paperMat);
+        p.rotation.z = Math.PI / 2;
+        p.position.set(cx, h - t - 60, 5);
+        out.push(p);
+      }
+      out.push(box(t, 50, d - 20, -s * (w / 2 - t / 2), h - 50, 5, mat));
+      return out;
+    },
+  },
+  {
     type: 'ceiling-vent',
     label: '換気口（sumika などの全館換気）',
     hint: '天井付けなら「床からの高さ」を天井高に。「左右反転」にすると床に置くガラリ（sumika の吸気口・排気口は床に付く）',
@@ -3917,6 +3934,7 @@ export function buildFurniture(f: Furniture): THREE.Group {
       }
     });
   }
+  if (SMALL_ITEM_TYPES.has(f.type)) lowPoly(g);
   mergeStatic(g);
   g.position.set(f.x, f.z ?? 0, f.y);
   // 平面図で時計回り = 上から見て時計回り = three.js の y 軸まわりで負の回転
@@ -3929,10 +3947,42 @@ export function buildFurniture(f: Furniture): THREE.Group {
 }
 
 /**
+ * 小さい物を軽い形にする: 角の丸い箱はただの箱に、球・円柱・輪は分割を少なくし、影を落とさない（のっぺりしてよい。2026-10-24 ユーザー指定）
+ */
+function lowPoly(g: THREE.Group) {
+  g.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    m.castShadow = false;
+    const geo = m.geometry;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = (geo as unknown as { parameters: any }).parameters;
+    let next: THREE.BufferGeometry | null = null;
+    if (geo instanceof RoundedBoxGeometry) next = new THREE.BoxGeometry(p.width, p.height, p.depth);
+    else if (geo instanceof THREE.SphereGeometry) next = new THREE.SphereGeometry(p.radius, Math.min(p.widthSegments, 10), Math.min(p.heightSegments, 5), p.phiStart, p.phiLength, p.thetaStart, p.thetaLength);
+    else if (geo instanceof THREE.ConeGeometry) next = new THREE.ConeGeometry(p.radius, p.height, Math.min(p.radialSegments, 8), 1, p.openEnded);
+    else if (geo instanceof THREE.CylinderGeometry) next = new THREE.CylinderGeometry(p.radiusTop, p.radiusBottom, p.height, Math.min(p.radialSegments, 8), 1, p.openEnded, p.thetaStart, p.thetaLength);
+    else if (geo instanceof THREE.CapsuleGeometry) next = new THREE.CapsuleGeometry(p.radius, p.height ?? p.length, 1, 6);
+    else if (geo instanceof THREE.TorusGeometry) next = new THREE.TorusGeometry(p.radius, p.tube, 3, Math.min(p.tubularSegments, 10), p.arc);
+    if (next) {
+      geo.dispose();
+      m.geometry = next;
+    }
+  });
+}
+
+/**
  * 家具の中の動かない部品（扉・引出し・スイッチのボタン・鏡・「家具を表示」で消す置き物以外）を、材質の見た目が同じものどうし
  * 1 つの形にまとめる。靴や服のように小さな部品の多い家具で、描く回数と影の計算が減って軽くなる
  */
 function mergeStatic(g: THREE.Group) {
+  // 扉のある家具（玄関ドア・建具など）はまとめない。枠が 1 つの形になると、当たり判定でも開口全体をふさぐ 1 つの箱になり、
+  // 扉を開けても通れなくなる（2026-10-24 玄関から出られなかった）
+  let hasDoor = false;
+  g.traverse((o) => {
+    if (o.userData.door) hasDoor = true;
+  });
+  if (hasDoor) return;
   g.updateMatrixWorld(true);
   const groups = new Map<string, THREE.Mesh[]>();
   const keyOf = (m: THREE.MeshStandardMaterial) =>

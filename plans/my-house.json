@@ -2942,7 +2942,7 @@
           "h": 45,
           "rotation": 180,
           "color": "#e9e7e2",
-          "z": 1020.0,
+          "z": 1020,
           "count": 5
         },
         {
@@ -2956,7 +2956,7 @@
           "h": 45,
           "rotation": 180,
           "color": "#c9cdd1",
-          "z": 1020.0,
+          "z": 1020,
           "count": 5
         },
         {
@@ -3082,7 +3082,10 @@
             "west": "cross-fe76650"
           },
           "edges": {
-            "3": "cross-th34084"
+            "0": "cross-sp2541",
+            "1": "cross-sp2541",
+            "2": "cross-sp2541",
+            "3": "cross-fe78140"
           }
         },
         {
@@ -3110,9 +3113,10 @@
           "wall": "cross-white",
           "ceiling": "cross-sp2540",
           "edges": {
-            "0": "cross-sp2540",
-            "1": "cross-sp2540",
-            "2": "cross-sp2540"
+            "0": "cross-sp2541",
+            "1": "cross-sp2541",
+            "2": "cross-sp2541",
+            "3": "cross-sp2541"
           }
         },
         {
@@ -3163,7 +3167,7 @@
           ],
           "floor": "floor-lassissa-mortar",
           "wall": "cross-sp2540",
-          "ceiling": "cross-th34082",
+          "ceiling": "cross-sp2540",
           "accent": {
             "north": "cross-th34606"
           },
@@ -3171,7 +3175,7 @@
             "0": "cross-th34082",
             "1": "cross-th34082",
             "2": "cross-th34082",
-            "3": "cross-th34082"
+            "3": "cross-th34191"
           }
         },
         {
@@ -3249,7 +3253,13 @@
           ],
           "floor": "floor-lassissa-greigeelm",
           "wall": "cross-white",
-          "ceiling": "cross-sp2540"
+          "ceiling": "cross-sp2540",
+          "edges": {
+            "0": "cross-sp2540",
+            "1": "cross-sp2540",
+            "2": "cross-sp2540",
+            "3": "cross-sp2540"
+          }
         },
         {
           "id": "2f-ldk",
@@ -3302,7 +3312,7 @@
           "zones": [
             {
               "id": "kitchen-back-accent",
-              "name": "キッチン背面（下がり天井の範囲）",
+              "name": "キッチン背面（下がり天井の範囲）AICA セラール FJGA901ZD",
               "edge": 1,
               "start": [
                 8190,
@@ -3312,7 +3322,7 @@
                 8190,
                 6211
               ],
-              "material": "cross-fe76649"
+              "material": "aica-fj901zd"
             }
           ]
         }
@@ -3339,7 +3349,11 @@
           "width": 650,
           "height": 2400,
           "sill": 0,
-          "jamb": "cross-sp2540"
+          "jamb": "cross-sp2540",
+          "jambFaces": {
+            "a|2f-bedroom": "cross-sp2541",
+            "a|2f-wic": "cross-sp2541"
+          }
         },
         {
           "id": "2f-storage-n-opening",
@@ -3997,7 +4011,7 @@
           "h": 2400,
           "rotation": 0,
           "color": "#3a3e48",
-          "material": "cross-th34084"
+          "material": "cross-th34191"
         },
         {
           "id": "toilet2-niche-shelf-1",
@@ -4242,70 +4256,6 @@
           "color": "#f4f4f4",
           "z": 2400,
           "lumen": 440,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-living-dl-1",
-          "type": "downlight",
-          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
-          "x": 3073,
-          "y": 4886,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-living-dl-2",
-          "type": "downlight",
-          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
-          "x": 4265,
-          "y": 4886,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-living-dl-3",
-          "type": "downlight",
-          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
-          "x": 3066,
-          "y": 6043,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 780,
-          "beam": 90,
-          "kelvin": 3500
-        },
-        {
-          "id": "std-2f-living-dl-4",
-          "type": "downlight",
-          "name": "ダウンライト リビング（DAIKO DDL-6134AB）（標準）",
-          "x": 4258,
-          "y": 6043,
-          "w": 100,
-          "d": 100,
-          "h": 20,
-          "rotation": 0,
-          "color": "#f4f4f4",
-          "z": 2400,
-          "lumen": 780,
           "beam": 90,
           "kelvin": 3500
         },
@@ -4565,16 +4515,15 @@
         },
         {
           "id": "std-2f-out-kitchen-ne",
-          "type": "outlet",
-          "name": "コンセント 2 口（標準）",
-          "x": 8126,
-          "y": 2150,
-          "w": 70,
-          "d": 8,
-          "h": 120,
-          "rotation": 90,
-          "color": "#f7f7f5",
-          "z": 190
+          "type": "floor-outlet",
+          "name": "コンセント 2 口（標準）→ ダイニングテーブルの下の床へ移動（シンク寄り）。Panasonic DUM7001MH 住宅用フロアコンラウンド・アース付 1 口・グレーメタリック（プレートの大きさは仮 φ110）",
+          "x": 6135,
+          "y": 4800,
+          "w": 110,
+          "d": 110,
+          "h": 4,
+          "rotation": 0,
+          "color": "#8e8f91"
         },
         {
           "id": "std-2f-out-mw-1",
@@ -4586,7 +4535,7 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 975,
           "sideways": true
         },
@@ -4600,7 +4549,7 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 975,
           "sideways": true
         },
@@ -4628,7 +4577,8 @@
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 190
+          "z": 190,
+          "lan": true
         },
         {
           "id": "std-2f-out-ldk-sw",
@@ -4946,7 +4896,7 @@
           "d": 40,
           "h": 495,
           "rotation": 0,
-          "color": "#4a4b4d",
+          "color": "#c9c9c6",
           "z": 1500
         },
         {
@@ -5196,6 +5146,21 @@
           "h": 1200,
           "rotation": 180,
           "color": "#f2f2f0"
+        },
+        {
+          "id": "ldk-ceiling-light",
+          "type": "ceiling-light",
+          "name": "シーリングライト（リビング・仮に STARIY ブラック 90×50cm 6〜10 畳・調光調色・引掛シーリング。標準のダウンライト 4 つの代わり）",
+          "x": 3665.5,
+          "y": 5464.5,
+          "w": 900,
+          "d": 500,
+          "h": 110,
+          "rotation": 0,
+          "color": "#1c1c1d",
+          "z": 2400,
+          "lumen": 4000,
+          "kelvin": 3500
         }
       ]
     },
@@ -5230,8 +5195,13 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541",
-          "ceilingHeight": 2100
+          "ceiling": "cross-sp2565",
+          "ceilingHeight": 2100,
+          "edges": {
+            "0": "cross-sp2565",
+            "1": "cross-sp2541",
+            "3": "cross-sp2565"
+          }
         },
         {
           "id": "3f-toilet",
@@ -5256,7 +5226,12 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-sp2541"
+          "ceiling": "cross-sp2565",
+          "edges": {
+            "1": "cross-sp2541",
+            "2": "cross-sp2541",
+            "3": "cross-sp2565"
+          }
         },
         {
           "id": "3f-stairs",
@@ -5319,8 +5294,7 @@
           "ceiling": "cross-hf3122",
           "edges": {
             "0": "cross-sp2541",
-            "1": "cross-sp2541",
-            "3": "cross-sp2541"
+            "1": "cross-sp2541"
           }
         },
         {
@@ -5346,12 +5320,12 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-fe76649",
+          "ceiling": "cross-fe76650",
           "edges": {
-            "0": "cross-fe76649",
-            "1": "cross-fe76649",
-            "2": "cross-fe76649",
-            "3": "cross-fe76649"
+            "0": "cross-fe76650",
+            "1": "cross-fe76650",
+            "2": "cross-fe76650",
+            "3": "cross-fe76650"
           }
         },
         {
@@ -5646,30 +5620,6 @@
       ],
       "furniture": [
         {
-          "id": "desk-1",
-          "type": "desk",
-          "name": "デスク",
-          "x": 2560,
-          "y": 6930,
-          "w": 1270,
-          "d": 600,
-          "h": 720,
-          "rotation": 180,
-          "color": "#c9a26f"
-        },
-        {
-          "id": "chair-5",
-          "type": "chair",
-          "name": "デスクチェア",
-          "x": 2560,
-          "y": 6400,
-          "w": 450,
-          "d": 500,
-          "h": 800,
-          "rotation": 0,
-          "color": "#3a3b3d"
-        },
-        {
           "id": "piano-1",
           "type": "digital-piano",
           "name": "電子ピアノ（Roland OBRP107 ダークローズウッド）",
@@ -5726,7 +5676,7 @@
         {
           "id": "3f-room1-door-leaf",
           "type": "swing-door",
-          "name": "書斎（南西）の開き戸（北の吊元・室内へ開く）",
+          "name": "書斎（南西）の開き戸（北の吊元・室内へ開く。吊元が北の壁の隅に近いので 85° で止める）",
           "x": 4550,
           "y": 3850,
           "w": 764,
@@ -5737,7 +5687,8 @@
           "material": "raffis-gray",
           "handle": "nickel",
           "stopper": "secret",
-          "stopperColor": "YY"
+          "stopperColor": "BE",
+          "openAngle": 85
         },
         {
           "id": "3f-room2-door-leaf",
@@ -5773,16 +5724,17 @@
         },
         {
           "id": "toilet3-paper",
-          "type": "paper-holder",
-          "name": "トイレットペーパーホルダー",
+          "type": "holdin-paper-holder",
+          "name": "トイレットペーパーホルダー（エア・リゾーム HOLDIN air-to-14・収納付き・シングル・ブラック。タイプと色は仮）",
           "x": 2560,
-          "y": 1715,
-          "w": 150,
-          "d": 125,
-          "h": 110,
+          "y": 1714,
+          "w": 325,
+          "d": 115,
+          "h": 145,
           "rotation": 0,
-          "color": "#c9ccd0",
-          "z": 650
+          "color": "#1d1d1f",
+          "z": 650,
+          "count": 1
         },
         {
           "id": "toilet3-vent",
@@ -5938,7 +5890,7 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 1140
         },
         {
@@ -6004,7 +5956,7 @@
           "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 190,
           "lan": true
         },
@@ -6032,20 +5984,47 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 190
         },
         {
           "id": "std-3f-out-room1",
           "type": "outlet",
-          "name": "コンセント 書斎（南西）2 口（標準）",
-          "x": 1884,
-          "y": 4171,
+          "name": "コンセント 書斎（南西）2 口・LAN 付き（標準の西の壁の北 → 南の壁の東寄り（東の壁から 150）へ移動・LAN 付きに変更は要確認）",
+          "x": 4336,
+          "y": 7216,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
-          "color": "#f7f7f5",
+          "rotation": 180,
+          "color": "#2a2a2b",
+          "z": 190,
+          "lan": true
+        },
+        {
+          "id": "3f-out-room2-s",
+          "type": "outlet",
+          "name": "コンセント 書斎（北東）2 口（追加・南の壁の東寄り）",
+          "x": 7950,
+          "y": 4486,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#2a2a2b",
+          "z": 190
+        },
+        {
+          "id": "3f-out-room1-e",
+          "type": "outlet",
+          "name": "コンセント 書斎（南西）2 口（追加・東の壁の真ん中よりやや南）",
+          "x": 4486,
+          "y": 5850,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#2a2a2b",
           "z": 190
         },
         {
@@ -6072,13 +6051,13 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 190
         },
         {
           "id": "std-3f-out-room3",
           "type": "outlet",
-          "name": "コンセント 洋室3 2 口（標準）",
+          "name": "コンセント 洋室3（子供部屋）2 口・LAN 付き（標準・LAN 付きに変更は要確認）",
           "x": 8126,
           "y": 5623,
           "w": 70,
@@ -6086,7 +6065,8 @@
           "h": 120,
           "rotation": 90,
           "color": "#f7f7f5",
-          "z": 190
+          "z": 190,
+          "lan": true
         },
         {
           "id": "std-3f-out-room3-ac",
@@ -6562,6 +6542,54 @@
           "rotation": 180,
           "color": "#1c1c1d",
           "z": 800
+        },
+        {
+          "id": "study-s-ext",
+          "type": "extension-desk",
+          "name": "エクステンションデスク（Bauhutte BHC-1200H ブラック・幅 1200。ゲーミングデスクの奥（東）、デスクより 100 高く組み立て）",
+          "x": 4361,
+          "y": 6226,
+          "w": 1200,
+          "d": 250,
+          "h": 800,
+          "rotation": 90,
+          "color": "#1a1a1b"
+        },
+        {
+          "id": "study-s-desk",
+          "type": "gaming-desk",
+          "name": "ゲーミングデスク（Bauhutte BHD-1200M ブラック・幅 1200。北東の書斎と同じ。東向きに座る。右（南）に PC スタンドを付けて南の壁まで詰める）",
+          "x": 3936,
+          "y": 6226,
+          "w": 1200,
+          "d": 600,
+          "h": 700,
+          "rotation": 90,
+          "color": "#1a1a1b"
+        },
+        {
+          "id": "study-s-chair",
+          "type": "gaming-chair",
+          "name": "ゲーミングチェア（北東の書斎と同じ大きさ・AKRacing Pro-X V2。色は仮にブラック）",
+          "x": 3256,
+          "y": 6226,
+          "w": 700,
+          "d": 700,
+          "h": 1300,
+          "rotation": 270,
+          "color": "#1d1d1f"
+        },
+        {
+          "id": "study-s-cpu",
+          "type": "cpu-stand-l",
+          "name": "L 字デスク・PC スタンド（Bauhutte BHD-820H ラージ・ブラック。デスクの右（南）・南の壁際。天板はデスクと同じ高さ）",
+          "x": 4076,
+          "y": 7021,
+          "w": 390,
+          "d": 820,
+          "h": 700,
+          "rotation": 90,
+          "color": "#1a1a1b"
         }
       ],
       "jambs": {
@@ -6800,10 +6828,7 @@
       "id": "c-2f-living",
       "name": "リビングの照明",
       "lights": [
-        "std-2f-living-dl-1",
-        "std-2f-living-dl-2",
-        "std-2f-living-dl-3",
-        "std-2f-living-dl-4"
+        "ldk-ceiling-light"
       ],
       "switches": [
         {

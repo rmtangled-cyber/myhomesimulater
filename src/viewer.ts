@@ -8,7 +8,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { pointInPolygon } from './geometry';
+import { openingsOnSegment, pointInPolygon, signedArea } from './geometry';
 import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
 import type { Circuit, Plan } from './types';
 import { WEB } from './env';
@@ -20,6 +20,81 @@ import { Collision } from './collision';
 if (!WEB) installLightRegions();
 
 export type ViewMode = 'orbit' | 'walk';
+
+/** 部屋の中の照明器具の光の強さ（器具の値に掛ける）と、部屋の跳ね返りの光に掛ける値。夜に照明をつけた LDK が昼より少し暗いくらいになるように合わせた */
+const FIXTURE_SPOT = 0.05;
+const FIXTURE_AREA = 0.1;
+const FIXTURE_POINT = 0.07;
+const BOUNCE = 0.07;
+
+/** 開口部をふさぐ扉の家具の種類（窓の光を隣の部屋へ分けるかどうかの判定に使う） */
+const DOOR_TYPES = new Set(['swing-door', 'sliding-door', 'mirror-sliding-door', 'mirror-sheet-door', 'framed-glass-door', 'entry-door', 'bifold-door']);
+
+/** 窓の光の強さ（窓の面積が床の面積の 20% の部屋で 1 のとき。decay 1 なので、窓から 3m で 0.8 くらい = 前の家じゅう一律の空の光） */
+const DAYLIGHT = 5.2;
+
+/**
+ * 部屋ごとの、窓から入る昼の光。量は 窓の面積 ÷ 床の面積 を 0.2 で割った値（上限 1。窓の光はひと続きの空間に広がるので、窓のある小さな部屋だけ白く飛ばないように。2026-10-25 に 1.5 から下げた）。
+ * 光を置く所は窓の少し外（窓が複数あれば面積で重み付けした平均・高さは窓の真ん中）で、窓から部屋の奥へ差し込む向きになる。
+ * 窓のない部屋は、戸のない開口（type: opening）でつながった隣の部屋の 35% をもらい、光はその開口の所に置く
+ */
+function roomDaylight(plan: Plan): Map<string, { day: number; at: [number, number, number] | null }> {
+  const out = new Map<string, { day: number; at: [number, number, number] | null }>();
+  const t = plan.wallThickness;
+  for (const floor of plan.floors) {
+    const own = new Map<string, { day: number; at: [number, number, number] | null }>();
+    const links = new Map<string, { id: string; at: [number, number, number] }[]>();
+    for (const room of floor.rooms) {
+      const area = Math.abs(signedArea(room.polygon)) / 1e6;
+      let win = 0;
+      const sum = [0, 0, 0];
+      const n = room.polygon.length;
+      for (let i = 0; i < n; i++) {
+        const a = room.polygon[i];
+        const b = room.polygon[(i + 1) % n];
+        const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (len < 1) continue;
+        // 辺の法線（部屋の外向きを、少し外の点が部屋に入るかで決める）
+        let nx = -(b[1] - a[1]) / len;
+        let ny = (b[0] - a[0]) / len;
+        const mx = (a[0] + b[0]) / 2;
+        const my = (a[1] + b[1]) / 2;
+        if (pointInPolygon([mx + nx * 200, my + ny * 200], room.polygon)) {
+          nx = -nx;
+          ny = -ny;
+        }
+        for (const s of openingsOnSegment(floor.openings, a, b, t / 2 + 1)) {
+          const o = s.opening;
+          const lvl = room.level ?? 0;
+          if (o.type === 'window') {
+            const wa = ((s.u1 - s.u0) * o.height) / 1e6;
+            win += wa;
+            sum[0] += (o.at[0] + nx * 600) * wa;
+            sum[1] += (o.at[1] + ny * 600) * wa;
+            sum[2] += (o.sill + o.height / 2 - lvl) * wa;
+          }
+          // 戸のない開口だけ（引込み戸の開口・扉のある開口は、戸を閉めると光が入らないので除く）
+          const hasDoor = o.slideRoom || o.slideTo || floor.furniture.some((f) => DOOR_TYPES.has(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width);
+          if (o.type === 'opening' && !hasDoor) {
+            const other = floor.rooms.find((r) => r !== room && pointInPolygon([o.at[0] + nx * (t / 2 + 50), o.at[1] + ny * (t / 2 + 50)], r.polygon));
+            if (other) links.set(room.id, [...(links.get(room.id) ?? []), { id: other.id, at: [o.at[0] + nx * 300, o.at[1] + ny * 300, Math.min(o.height, 2400) / 2] }]);
+          }
+        }
+      }
+      own.set(room.id, { day: area > 0 ? Math.min(1, win / area / 0.2) : 0, at: win > 0 ? [sum[0] / win, sum[1] / win, sum[2] / win] : null });
+    }
+    for (const room of floor.rooms) {
+      const mine = own.get(room.id)!;
+      let best = mine;
+      for (const l of links.get(room.id) ?? []) {
+        const d = (own.get(l.id)?.day ?? 0) * 0.35;
+        if (d > best.day) best = { day: d, at: l.at };
+      }
+      out.set(room.id, best);
+    }
+  }
+  return out;
+}
 export type TimeOfDay = 'day' | 'evening' | 'night';
 
 /** ウォークスルーで画面の中央に見えている物 */
@@ -29,6 +104,18 @@ export interface WalkInfo {
   /** 今立っている部屋 */
   roomId: string | null;
   target: WalkTarget | null;
+}
+
+/** 扉・引出しを、開き具合 d.t（0〜1）の位置・向きにする */
+function poseDoor(o: THREE.Object3D, d: DoorState) {
+  const e = d.t * d.t * (3 - 2 * d.t);
+  if (d.type === 'roll') o.scale.y = (d.roll ?? 0.02) + (1 - (d.roll ?? 0.02)) * e;
+  else if (d.type === 'slide' && d.dy !== undefined) o.position.y = (d.y0 ?? 0) + d.dy * e;
+  else if (d.type === 'slide' && d.dz !== undefined) o.position.z = (d.z0 ?? 0) + d.dz * e;
+  else if (d.type === 'slide') o.position.x = (d.x0 ?? 0) + (d.dx ?? 0) * e;
+  else if (d.type === 'flap') o.rotation.x = (d.angle ?? 0) * e;
+  else o.rotation.y = (d.angle ?? 0) * e;
+  if (d.type === 'fold') for (const c of o.children) if (c.userData.foldInner) c.rotation.y = -2 * (d.angle ?? 0) * e;
 }
 
 /** 開け閉めできる扉の状態（家具の部品の userData.door） */
@@ -187,8 +274,12 @@ export class Viewer {
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(new RenderPass(this.scene, this.camera));
     this.gtao = new GTAOPass(this.scene, this.camera, 1, 1);
-    this.gtao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 2, thickness: 1, scale: 1.2 });
+    this.gtao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 2, thickness: 1, scale: 1.2, samples: 8 });
+    this.gtao.updatePdMaterial({ samples: 8, rings: 2, radius: 4 });
     this.gtao.blendIntensity = 1;
+    // 陰影は画面の半分の解像度で計算する（画面と同じ解像度・サンプル 16 では、2 階 LDK で 1 回の描画に約 250ms かかって重かった。2026-10-24）
+    const aoFullSize = this.gtao.setSize.bind(this.gtao);
+    this.gtao.setSize = (w: number, h: number) => aoFullSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
     // 陰影（AO）の計算では、クリックを受けるだけの見えない板（opacity 0）も隠す。
     // 隠さないと、ロールスクリーンを巻き上げても見えない板の足元の床が暗い帯になる
     const ao = this.gtao as unknown as { _overrideVisibility: () => void; _visibilityCache: THREE.Object3D[] };
@@ -226,10 +317,12 @@ export class Viewer {
     if (WEB) {
       this.webFill.intensity = 0.9;
       this.scene.add(this.webFill);
-      // 触っている間（とその後 2 秒）は描き続ける
-      const poke = () => (this.lastActive = performance.now());
-      for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'touchstart', 'touchmove', 'wheel', 'keydown', 'keyup', 'resize']) window.addEventListener(ev, poke, { passive: true });
     }
+    // 止まっている間は描き直さない（PC 版も。2026-10-24 クロスを選ぶパネルのスクロールまで重かった）。
+    // 3D を触っている間・キーを押した・パネルをクリックした後 2 秒は描き続ける（パネルのスクロールでは描かない）
+    const poke = () => (this.lastActive = performance.now());
+    for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'touchstart', 'touchmove', 'wheel']) this.renderer.domElement.addEventListener(ev, poke, { passive: true });
+    for (const ev of ['keydown', 'keyup', 'resize', 'click', 'change']) window.addEventListener(ev, poke, { passive: true });
     this.selection.visible = false;
 
     this.setupPointer();
@@ -245,6 +338,17 @@ export class Viewer {
   setPlan(plan: Plan): string[] {
     this.lastPlan = plan;
     const first = !this.built;
+    // 扉・引出し・ロールスクリーンの開け閉めを覚えておき、作り直したあとも同じにする（クロスを張り替えるたびに扉が閉まっていた。2026-10-25）
+    const opened = new Map<string, boolean[]>();
+    for (const [id, g] of this.built?.furniture ?? []) {
+      const list: boolean[] = [];
+      g.traverse((o) => {
+        const d = o.userData.door as DoorState | undefined;
+        if (d) list.push(!!d.open);
+      });
+      if (list.length) opened.set(id, list);
+    }
+    this.movingDoors.clear();
     if (this.built) {
       this.world.remove(this.built.root);
       disposeTree(this.built.root);
@@ -282,6 +386,16 @@ export class Viewer {
     if (typeof this.floorView === 'number') this.floorView = Math.min(this.floorView, plan.floors.length - 1);
     // 照明の位置計算などで使うので、追加した直後にワールド座標を確定させる
     this.world.updateMatrixWorld(true);
+    for (const [id, list] of opened) {
+      let k = 0;
+      this.built.furniture.get(id)?.traverse((o) => {
+        const d = o.userData.door as DoorState | undefined;
+        if (!d || k >= list.length) return;
+        d.open = list[k++];
+        d.t = d.open ? 1 : 0;
+        poseDoor(o, d);
+      });
+    }
     this.collision.setPlan(plan, this.built.furniture, this.looseIds);
     // 作り直したあと（画像の素材の読み込みも待って）しばらくは描き続ける
     this.lastActive = performance.now() + 3000;
@@ -297,6 +411,7 @@ export class Viewer {
   private rebuildRoomLights(plan: Plan) {
     this.roomLights.clear();
     this.lightRegions.markDirty();
+    const daylight = roomDaylight(plan);
     this.built!.floors.forEach((floor, index) => {
       // 照明器具を置いた部屋は、その器具だけで照らす
       const fixtures = plan.floors[index].furniture.filter((f) => this.built!.furniture.get(f.id)?.getObjectByProperty('isLight', true));
@@ -321,6 +436,12 @@ export class Viewer {
         light.userData.floorIndex = index;
         light.userData.lrFloor = index;
         light.userData.lrRoom = room?.id;
+        // 窓から入る昼の光の量（0〜1.5。窓のない部屋は 0 か、戸のない開口でつながった隣の部屋から少し）
+        const dl = room ? daylight.get(room.id) : undefined;
+        light.userData.day = dl?.day ?? 0;
+        // 昼は窓の所（窓の光）、照明だけのときは部屋の真ん中（跳ね返りの光）に置く
+        light.userData.nightPos = light.position.clone();
+        light.userData.dayPos = dl?.at ? new THREE.Vector3(dl.at[0] * MM, floor.group.position.y * MM + ((room?.level ?? 0) + dl.at[2]) * MM, dl.at[1] * MM) : light.position.clone();
         this.roomLights.add(light);
       }
     });
@@ -577,6 +698,7 @@ export class Viewer {
   /** 照明器具の光と光る部分、部屋の跳ね返りの光を、回路・時間帯・今いる階に合わせる */
   private applyLights() {
     if (!this.built) return;
+    this.lastActive = performance.now();
     const walk = this.mode === 'walk';
     for (const [id, g] of this.built.furniture) {
       const on = this.lightOn(id);
@@ -584,21 +706,44 @@ export class Viewer {
       const near = !walk || (this.furnitureFloor.get(id) ?? 0) === this.walkFloor;
       g.traverse((o) => {
         if (o.userData.fixture) o.visible = on && near;
+        // 部屋の中の照明器具の光は、器具の値の一部だけにする（そのままだと夜に照明をつけると画面の 4 分の 1 が白く飛んだ。2026-10-25）
+        const light = o as THREE.Light;
+        if (light.isLight && o.userData.lrRoom !== undefined) {
+          if (o.userData.full === undefined) o.userData.full = light.intensity;
+          light.intensity = (o.userData.full as number) * ((light as THREE.SpotLight).isSpotLight ? FIXTURE_SPOT : (light as THREE.RectAreaLight).isRectAreaLight ? FIXTURE_AREA : FIXTURE_POINT);
+        }
         const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (m?.userData?.glow !== undefined) m.emissiveIntensity = on ? m.userData.glow : 0;
       });
     }
     // 跳ね返りの光（2026-10-22 に夜を半分に弱めた。前は 1 で、照明をつけると実物より明るすぎた）
-    const scale = this.effTime === 'night' ? 0.5 : 1 / 3;
+    const scale = (this.effTime === 'night' ? 0.5 : 1 / 3) * BOUNCE;
     this.roomLights.visible = true;
     for (const l of this.roomLights.children as THREE.PointLight[]) {
       const fx = (l.userData.fixtures as { id: string; lm: number }[] | undefined) ?? [];
       const total = fx.reduce((s, f) => s + f.lm, 0);
       const onLm = fx.filter((f) => this.lightOn(f.id)).reduce((s, f) => s + f.lm, 0);
       const frac = fx.length ? onLm / total : this.lit ? 1 : 0;
-      l.intensity = ((l.userData.base as number) ?? 30) * scale * frac;
+      // 昼・夕方は窓から入る光（ウォークスルーのときだけ。俯瞰は家全体を均一に明るく見せる）
+      const sky = walk ? (this.effTime === 'day' ? DAYLIGHT : this.effTime === 'evening' ? DAYLIGHT * 0.35 : 0) * ((l.userData.day as number) ?? 0) : 0;
+      const art = ((l.userData.base as number) ?? 30) * scale * frac;
+      if (sky > 0) {
+        // 窓の光は窓の少し外に置き、窓から離れるほどゆるやかに弱める（decay 1・7m まで）。
+        // 距離で弱まらない光にすると、部屋の境で明るさが段差のように切れて見えた（2026-10-25）
+        l.decay = 1;
+        l.distance = 7;
+        l.userData.lrSpread = true;
+        l.intensity = sky + art * 0.05;
+        l.position.copy(l.userData.dayPos as THREE.Vector3);
+      } else {
+        l.decay = 2;
+        l.distance = 6;
+        l.userData.lrSpread = false;
+        l.intensity = art;
+        l.position.copy(l.userData.nightPos as THREE.Vector3);
+      }
       const i = l.userData.floorIndex as number;
-      l.visible = frac > 0 && (walk ? i === this.walkFloor : true);
+      l.visible = l.intensity > 0 && (walk ? i === this.walkFloor : true);
     }
     this.prepareLights();
   }
@@ -650,8 +795,11 @@ export class Viewer {
     this.hemi.groundColor.set(t === 'night' ? '#3a3328' : t === 'evening' ? '#cfc6b6' : '#d4d3d0');
     // 部屋の跳ね返りの光も、昼はほぼ白（夕方・夜は電球色）
     for (const l of this.roomLights.children as THREE.PointLight[]) l.color.set(t === 'day' ? '#fff4ea' : '#ffd6a0');
-    this.hemi.intensity = t === 'night' ? 0.15 : t === 'evening' ? 0.7 : 0.8;
-    this.scene.environmentIntensity = t === 'night' ? 0.04 : t === 'evening' ? 0.3 : 0.45;
+    // ウォークスルーでは、家じゅう一律に当たる空の光と映り込みを弱め、部屋ごとの窓の光（applyLights）で明るさを出す。
+    // 前は昼 0.8・0.45 で、窓のない WIC・シューズクローク・廊下まで LDK と同じ明るさだった（2026-10-24）。俯瞰と Web 版は今までどおり
+    const dim = this.mode === 'walk' && !WEB;
+    this.hemi.intensity = t === 'night' ? 0.15 : t === 'evening' ? (dim ? 0.35 : 0.7) : dim ? 0.5 : 0.8;
+    this.scene.environmentIntensity = t === 'night' ? 0.04 : t === 'evening' ? (dim ? 0.12 : 0.3) : dim ? 0.15 : 0.45;
     this.applyLights();
     this.scene.background = new THREE.Color(t === 'night' ? '#121826' : t === 'evening' ? '#e9b48f' : '#cfe0ee');
     this.renderer.toneMappingExposure = 1;
@@ -880,14 +1028,7 @@ export class Viewer {
       const d = o.userData.door as DoorState;
       const goal = d.open ? 1 : 0;
       d.t += Math.sign(goal - d.t) * Math.min(Math.abs(goal - d.t), dt * 2.5);
-      const e = d.t * d.t * (3 - 2 * d.t);
-      if (d.type === 'roll') o.scale.y = (d.roll ?? 0.02) + (1 - (d.roll ?? 0.02)) * e;
-      else if (d.type === 'slide' && d.dy !== undefined) o.position.y = (d.y0 ?? 0) + d.dy * e;
-      else if (d.type === 'slide' && d.dz !== undefined) o.position.z = (d.z0 ?? 0) + d.dz * e;
-      else if (d.type === 'slide') o.position.x = (d.x0 ?? 0) + (d.dx ?? 0) * e;
-      else if (d.type === 'flap') o.rotation.x = (d.angle ?? 0) * e;
-      else o.rotation.y = (d.angle ?? 0) * e;
-      if (d.type === 'fold') for (const c of o.children) if (c.userData.foldInner) c.rotation.y = -2 * (d.angle ?? 0) * e;
+      poseDoor(o, d);
       if (d.t === goal) this.movingDoors.delete(o);
     }
     // 扉が動いたら当たり判定の箱も動かす
@@ -935,8 +1076,8 @@ export class Viewer {
     if (!WEB) this.lightRegions.update(this.scene);
     // 照明のシェーダーを裏で組み立てている間は描かない（描くとその場で組み立てが始まって画面が固まる）
     if (this.compiling) return;
-    // Web 版は、止まっている間は描き直さない（カメラが動いた・扉が動いている・触ってから 2 秒の間だけ描く）
-    if (WEB) {
+    // 止まっている間は描き直さない（カメラが動いた・扉が動いている・触ってから 2 秒の間だけ描く）
+    {
       const c = this.camera;
       const cam = `${c.position.toArray().join(',')}|${c.quaternion.toArray().join(',')}|${c.fov}|${c.aspect}`;
       const busy = cam !== this.lastCam || this.movingDoors.size > 0 || performance.now() - this.lastActive < 2000;

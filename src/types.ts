@@ -136,6 +136,8 @@ export interface Furniture {
   stopper?: 'secret' | 'cylinder';
   /** ドアストッパーの色（商品コードの頭 2 文字: YY・AC・AD・MM・DD・RA・BD・BE） */
   stopperColor?: string;
+  /** 開き戸の開く角度（度・省略時 90）。吊元が壁の隅に近く、90° 開くと扉やドアストッパーが壁にめり込むときに小さくする */
+  openAngle?: number;
   /** 片引き戸（壁を削った戸袋に引き込む）。レールや床のガイドは枠・戸袋の中で見えない */
   pocket?: boolean;
   /** 開き戸の開く向き。1 = 正面（+z）の側へ開く（省略時）、-1 = 背面の側へ開く */

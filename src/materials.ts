@@ -1170,7 +1170,7 @@ export const CANDIDATE_FLOORS = ['floor-lassissa-mortar', 'floor-lassissa-marble
 // 品番のアルファベット順（FE → HF → SP → TH）に並べて出す
 export const CANDIDATE_WALLPAPERS = [
   'cross-sp2539', 'cross-sp2540', 'cross-sp2541', 'cross-th34082', 'cross-th34083', 'cross-th34084', 'cross-th34282', 'cross-th34283', 'cross-fe78140', 'cross-th34705', 'cross-th34706', 'cross-hf3068', 'cross-hf3005', 'cross-hf3045', 'cross-hf3004', 'cross-hf3113', 'cross-th34788', 'cross-th34789', 'cross-th34790', 'cross-th34776', 'cross-th34774', 'cross-th34736',
-  'cross-sp2563', 'cross-sp2562', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650', 'cross-fe76649',
+  'cross-sp2563', 'cross-sp2562', 'cross-sp2553', 'cross-sp2533', 'cross-hf3122', 'cross-th34102', 'cross-th34190', 'cross-th34606', 'cross-th34672', 'cross-fe76650', 'cross-fe76649',
   'cross-th34604', 'cross-th34191', 'cross-th34213', 'cross-th34645', 'cross-th34072', 'cross-th34081', 'cross-th34149', 'cross-th34150',
   'cross-hf3101', 'cross-hf3102', 'cross-hf3119', 'cross-hf3121', 'cross-hf3020', 'cross-re55622', 'cross-sp2549', 'cross-sp2565', 'cross-fe78165', 'cross-fe78138', 'cross-fe78152', 'cross-re55455', 'cross-th34464', 'cross-th34465', 'cross-th34466', 'cross-th34468', 'cross-th34523',
   'cross-th34187', 'cross-th34188', 'cross-th34193', 'cross-th34194', 'cross-th34141', 'cross-th34172', 'cross-th34554', 'cross-th34613', 'cross-th34634', 'cross-th34653', 'cross-th34654', 'cross-th34657', 'cross-th34658', 'cross-th34659', 'cross-th34660', 'cross-th34661', 'cross-th34662', 'cross-th34663', 'cross-th34664', 'cross-th34665', 'cross-th34668', 'cross-th34669', 'cross-th34671', 'cross-th34681', 'cross-th34725', 'cross-th34738', 'cross-th34740', 'cross-th34754', 'cross-th34773', 'cross-th34781',
@@ -1181,7 +1181,7 @@ export const CANDIDATE_WALLPAPERS = [
  * funcs はサンゲツ公式の商品ページの機能のマーク（撥水・汚れ防止・表面強化・消臭。抗菌・防かびはほぼ全部にあるので省いた）
  */
 export const WALLPAPER_CATEGORIES: { name: string; items: { id: string; funcs: string[] }[] }[] = [
-  { name: 'SP（無料）', items: [{ id: 'cross-sp2539', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2540', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2549', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2563', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2541', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2565', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2562', funcs: ['撥水', '表面強化'] }] },
+  { name: 'SP（無料）', items: [{ id: 'cross-sp2539', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2540', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2549', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2563', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2541', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2565', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2562', funcs: ['撥水', '表面強化'] }, { id: 'cross-sp2553', funcs: [] }, { id: 'cross-sp2533', funcs: [] }] },
   { name: '石目・ストーン', items: [{ id: 'cross-th34193', funcs: ['消臭'] }, { id: 'cross-hf3119', funcs: ['表面強化'] }, { id: 'cross-th34102', funcs: ['撥水', '表面強化'] }, { id: 'cross-hf3101', funcs: ['表面強化'] }, { id: 'cross-hf3102', funcs: ['表面強化'] }, { id: 'cross-th34669', funcs: [] }, { id: 'cross-th34554', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-fe78165', funcs: [] }, { id: 'cross-th34194', funcs: ['消臭'] }, { id: 'cross-hf3121', funcs: ['表面強化'] }, { id: 'cross-th34191', funcs: ['撥水'] }, { id: 'cross-th34634', funcs: [] }] },
   { name: '塗り壁（コテ跡・スタッコ）', items: [{ id: 'cross-th34213', funcs: ['撥水'] }, { id: 'cross-th34188', funcs: ['表面強化', '消臭'] }, { id: 'cross-th34072', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34187', funcs: ['表面強化', '消臭'] }, { id: 'cross-th34082', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34081', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-th34083', funcs: ['撥水', '表面強化', '消臭'] }, { id: 'cross-hf3122', funcs: ['表面強化'] }, { id: 'cross-th34084', funcs: ['撥水', '表面強化', '消臭'] }] },
   { name: '漆喰・無地', items: [{ id: 'cross-th34660', funcs: ['消臭'] }, { id: 'cross-th34657', funcs: ['消臭'] }, { id: 'cross-th34464', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34661', funcs: ['消臭'] }, { id: 'cross-th34658', funcs: ['消臭'] }, { id: 'cross-th34465', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-re55455', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34662', funcs: ['消臭'] }, { id: 'cross-th34466', funcs: ['汚れ防止', '表面強化'] }, { id: 'cross-th34659', funcs: ['消臭'] }, { id: 'cross-th34523', funcs: ['汚れ防止', '表面強化'] }] },
@@ -1275,6 +1275,10 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // 商品名は「コンクリート調 ライトグレー」。茶色みのない明るいグレー（SP2565 の色違い）
   wall('cross-sp2563', 'SP2563 コンクリート調ライトグレー', sand('#c5c5c2', [460, 320], { grain: 0.18, mottle: 0.02, mottleMm: 120, size: 2 }), [460, 320], 0.9, 1.2),
   wall('cross-sp2562', 'SP2562 織物調ダークグレージュ', linen('#5f5b58', [300, 300], { pitch: 1.3, contrast: 0.6, light: 1.2 }), [300, 300], 0.7, 1.0),
+  // SP2562 の別色（こだわりシリーズ・無地・92cm 巾）。色は施工例の壁（#c1b7a9）と見本（#c3bbb5）の間
+  wall('cross-sp2553', 'SP2553 織物調ライトグレージュ（SP2562 の別色）', linen('#bfb7ae', [300, 300], { pitch: 1.3, contrast: 0.45, light: 1.15 }), [300, 300], 0.7, 1.0),
+  // こだわりシリーズ・無地（SP2530〜2532 の別色）。吹き付けのような細かい凹凸。色は見本（#d0cac1）と施工例の壁（#b9b5a9）の間
+  wall('cross-sp2533', 'SP2533 塗り調グレージュ（吹き付け風の凹凸）', crinkle('#c8c1b6', [600, 600], { size: 4, shade: 1.2 }), [600, 600], 0.92, 1.4),
   wall('cross-hf3122', 'HF3122 モルタル調グレー（ハードウォール）', cloud('#78787a', [920, 640], { cloud: 0.2, cloudMm: 120, grain: 0.11 }), [920, 640], 0.85, 0.9),
   wall('cross-th34102', 'TH34102 石目調ライトグレー（パール）', sand('#cacccc', [462, 320], { grain: 0.07, mottle: 0.03, mottleMm: 140, pearl: 0.04, veins: 0.06 }), [462, 320], 0.8, 0.9),
   // 公式の柄画像（2026-10-22 に見比べ）: 神代杉の柾目。暖かみのあるスモーキーなグレーブラウン（平均 RGB 96・86・83）に、細い縦の筋が密に並ぶ。むらは少なく、ゆるい濃淡の縦の帯
@@ -1379,7 +1383,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // AICA の化粧板（2026-10-19 アイカ公式の柄画像（4×8 版の全体）と見比べて作り直した。tile は版の大きさ）
   { id: 'aica-tj10235k', name: 'AICA TJ-10235K セルサス アールグレイマーブル／グレー（版の長手をカウンターの長さの方向に）', categories: [], tile: [2450, 1230], roughness: 0.75, bump: 0.1, draw: flowStone('#77746f', [2450, 1230], { a: 1, b: 1, warp: 0.05, band: 0.3, light: '#a7a49e', vein: 0.9, speckle: 0.16 }) },
   { id: 'aica-tj10240k', name: 'AICA TJ-10240K セルサス アンジェロプレーン／ダーク', categories: [], tile: [1230, 2450], roughness: 0.8, bump: 0.3, draw: cloud('#444545', [1230, 2450], { cloud: 0.85, cloudMm: 380, grain: 0.04 }) },
-  { id: 'aica-fj901zd', name: 'AICA FJ-901ZD セラール パラディソ／ダーク', categories: [], tile: [935, 2455], roughness: 0.55, bump: 0.4, draw: sand('#56534f', [935, 2455], { grain: 0.3, size: 6, mottle: 0.22, mottleMm: 200 }) },
+  { id: 'aica-fj901zd', name: 'AICA セラール FJGA901ZD（FJ-901ZD）パラディソ／ダーク ソフトマット 935×2455', categories: [], tile: [935, 2455], roughness: 0.55, bump: 0.4, draw: sand('#56534f', [935, 2455], { grain: 0.3, size: 6, mottle: 0.22, mottleMm: 200 }) },
   { id: 'aica-ji10346k', name: 'AICA JI-10346K アイカラビアン プレインセメント／ディープグレー', categories: [], tile: [1230, 2450], roughness: 0.7, bump: 0.2, draw: cloud('#9a9693', [1230, 2450], { cloud: 0.14, cloudMm: 260, grain: 0.03 }) },
   { id: 'aica-tj10237k', name: 'AICA TJ-10237K セルサス メタルオキシサビ／ダーク', categories: [], tile: [1230, 2450], roughness: 0.8, bump: 0.3, draw: cloud('#3a3c3b', [1230, 2450], { cloud: 0.38, cloudMm: 180, grain: 0.05, scratch: 0.6 }) },
   // トクラス コラージア（見積もりで選んだ色）
