@@ -1395,6 +1395,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'wood-oak-light', name: '木目調（ナチュラルオーク・今のベッド）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0.4, draw: woodPaper('#dccab0', [900, 900], { contrast: 0.08 }) },
   { id: 'baseboard-gray', name: '巾木（ダークグレー）', categories: [], tile: [900, 900], roughness: 0.6, bump: 0, draw: plaster('#6b6a67', 900, { mottle: 0.02 }) },
   // LIXIL ライン幅木（クッション付）ブラック（仕様書の巾木「ブラック」）
+  { id: 'baseboard-white', name: '巾木（LIXIL ライン幅木 ホワイト）', categories: [], tile: [900, 900], roughness: 0.55, bump: 0, draw: plaster('#eeede9', 900, { mottle: 0.01 }) },
   { id: 'baseboard-black', name: '巾木（LIXIL ライン幅木 ブラック）', categories: [], tile: [900, 900], roughness: 0.55, bump: 0, draw: plaster('#262625', 900, { mottle: 0.015 }) },
   { id: 'concrete-counter', name: 'コンクリート調（カウンター）', categories: [], tile: [1200, 1200], roughness: 0.7, bump: 0.8, draw: stone('#b4b1ac', 1200, { contrast: 0.08, pores: 6 }) },
 

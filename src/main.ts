@@ -3,7 +3,7 @@ import { getFurnitureType } from './furniture';
 import { centroid } from './geometry';
 import { PlanStore, type SaveStatus } from './store';
 import type { Furniture, Plan, Room } from './types';
-import { describeTarget, Panel, type PanelState, type Selection } from './ui';
+import { describeTarget, describeTargetSize, Panel, type PanelState, type Selection } from './ui';
 import { electricalHtml, floorPlanHtml } from './electricalPlan';
 import { crossScheduleHtml } from './crossSchedule';
 import { Viewer, type WalkInfo } from './viewer';
@@ -83,8 +83,17 @@ document.getElementById('viewport')!.append(hud);
 function onWalkInfo(info: WalkInfo | null) {
   hud.hidden = !info;
   const text = info?.target && store.plan ? describeTarget(store.plan, info.target) : '';
+  const size = info?.target && store.plan ? describeTargetSize(store.plan, info.target) : '';
   const label = hud.querySelector<HTMLElement>('.walk-target')!;
-  label.textContent = text;
+  // 1 行目に名前と品番、2 行目に大きさと取り付けの高さ
+  label.replaceChildren(
+    ...[text, size].filter(Boolean).map((s, i) => {
+      const line = document.createElement('div');
+      line.textContent = s;
+      if (i) line.className = 'size';
+      return line;
+    }),
+  );
   label.hidden = !text;
   const roomId = info?.roomId ?? null;
   if (roomId !== ui.walkRoomId) {

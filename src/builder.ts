@@ -818,7 +818,8 @@ function buildFloor(
   const ceilings: THREE.Mesh[] = [];
   const caps: THREE.Mesh[] = [];
   const labels: CSS2DObject[] = [];
-  const baseboard = new MeshBuilder();
+  // 巾木は素材ごと（部屋の baseboard。省略時は黒）
+  const baseboards = new Map<string, MeshBuilder>();
   // 片引き戸の戸袋（壁の線・戸袋の範囲・削る側）。戸袋の長さは戸の幅（開口部 + 80）
   const pocketDefs = floor.openings.flatMap((o) => {
     const room = o.slideRoom && o.slideTo ? rooms.find((r) => r.id === o.slideRoom) : undefined;
@@ -1138,6 +1139,9 @@ function buildFloor(
         for (const [s0, s1] of segs) mb.quad(f.at(s0, r.v0, 0), f.D.clone().multiplyScalar(s1 - s0), Y.clone().multiplyScalar(r.v1 - r.v0), [s0, r.v0], [s1 - s0, r.v1 - r.v0]);
         // 巾木（床に接する所だけ。高さ 60・出 8）
         if (!room.noBaseboard && !room.void && Math.abs(r.v0 - level) < 1) {
+          const bbId = room.baseboard ?? 'baseboard-black';
+          if (!baseboards.has(bbId)) baseboards.set(bbId, new MeshBuilder());
+          const baseboard = baseboards.get(bbId)!;
           const du = f.D.clone().multiplyScalar(r.u1 - r.u0);
           baseboard.quad(f.at(r.u0, level, inward * BASEBOARD_T), du, Y.clone().multiplyScalar(BASEBOARD_H), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_H]);
           baseboard.quad(f.at(r.u0, level + BASEBOARD_H, 0), du, f.N.clone().multiplyScalar(inward * BASEBOARD_T), [r.u0, 0], [r.u1 - r.u0, BASEBOARD_T]);
@@ -1170,8 +1174,9 @@ function buildFloor(
     labels.push(label);
   }
 
-  if (!baseboard.empty) {
-    const mat = getMaterial('baseboard-black', { clip });
+  for (const [id, baseboard] of baseboards) {
+    if (baseboard.empty) continue;
+    const mat = getMaterial(id, { clip });
     mat.side = THREE.DoubleSide;
     const mesh = new THREE.Mesh(baseboard.geometry(), mat);
     mesh.receiveShadow = true;
@@ -1189,7 +1194,8 @@ function buildFloor(
     const ex = o.at[0] - v[0] * (o.width / 2 - FRAME / 2);
     const ez = o.at[1] - v[1] * (o.width / 2 - FRAME / 2);
     const door = floor.furniture.find((f) => ['sliding-door', 'mirror-sliding-door', 'mirror-sheet-door'].includes(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width);
-    const mat = door?.material ? getMaterial(door.material, { clip }) : new THREE.MeshStandardMaterial({ color: door?.color ?? '#cfccc5', roughness: 0.6, clippingPlanes: clip });
+    const frameId = o.slideFrame ?? door?.material;
+    const mat = frameId ? getMaterial(frameId, { clip }) : new THREE.MeshStandardMaterial({ color: door?.color ?? '#cfccc5', roughness: 0.6, clippingPlanes: clip });
     const along = Math.abs(v[0]) > 0.5 ? 'x' : 'z';
     const sx = along === 'x' ? FRAME : t + 2;
     const sz = along === 'x' ? t + 2 : FRAME;
@@ -1282,7 +1288,7 @@ const WINDOW_SHIFT = 35;
 // 開口部ごとに clone して使う元の材質
 const frameWhite = new THREE.MeshStandardMaterial({ color: '#f2f1ee', roughness: 0.5 });
 const frameBlack = new THREE.MeshStandardMaterial({ color: '#262627', roughness: 0.5 });
-const sashMat = new THREE.MeshStandardMaterial({ color: '#3a3b3d', roughness: 0.4, metalness: 0.3 });
+const sashBase = new THREE.MeshStandardMaterial({ color: '#3a3b3d', roughness: 0.4, metalness: 0.3 });
 const glassMat = new THREE.MeshPhysicalMaterial({
   color: '#cfe3ea',
   roughness: 0.05,
@@ -1335,6 +1341,8 @@ function buildOpening(o: Floor['openings'][number], wall: WallSegment, t: number
   } else if (o.type === 'window') {
     const fw = 40;
     const depth = 70;
+    // サッシの色（sashColor。白など）。省略時はダークグレー
+    const sashMat = o.sashColor ? new THREE.MeshStandardMaterial({ color: o.sashColor, roughness: 0.45, metalness: 0.1 }) : sashBase;
     add(fw, Hh, depth, -W / 2 + fw / 2, Hh / 2, sashMat);
     add(fw, Hh, depth, W / 2 - fw / 2, Hh / 2, sashMat);
     add(W, fw, depth, 0, Hh - fw / 2, sashMat);

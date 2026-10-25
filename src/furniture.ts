@@ -543,13 +543,15 @@ export const FURNITURE_TYPES: FurnitureType[] = [
   {
     type: 'rod-screen',
     label: 'ロッド手すり・格子',
-    hint: '幅に沿って細い棒が並ぶ。奥行きは棒の太さ',
+    hint: '幅に沿って細い棒が並ぶ。奥行きは棒の太さ。levels に棒ごとの下端の高さ（階段の踏板の上など）',
     defaults: { w: 2700, d: 25, h: 2400, color: '#1c1c1d' },
-    build: ({ w, d, h, count }, mat) => {
+    build: ({ w, d, h, count, levels }, mat) => {
       const n = Math.max(2, count ?? Math.round(w / 300) + 1);
       return Array.from({ length: n }, (_, i) => {
-        const m = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, h, 12), mat);
-        m.position.set(-w / 2 + (w * i) / (n - 1), h / 2, 0);
+        // levels があれば、棒ごとの下端の高さ（階段の踏板の上から立てる）
+        const bottom = levels?.[i] ?? 0;
+        const m = new THREE.Mesh(new THREE.CylinderGeometry(d / 2, d / 2, h - bottom, 12), mat);
+        m.position.set(-w / 2 + (w * i) / (n - 1), bottom + (h - bottom) / 2, 0);
         m.castShadow = true;
         return m;
       });
@@ -3477,16 +3479,17 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '背面を壁に付ける。一番下は棚板なしで床に洗濯かごを直接置き、前に開き戸。扉のすぐ上が洗濯物の投入口（あいている）。その上に「棚板の枚数」だけ棚板',
     defaults: { w: 1030, d: 450, h: 2300, color: '#4a3a30' },
     build: ({ w, d, h, count }, mat) => {
-      const doorH = 620;
-      const firstShelf = 1000;
+      // 下から: FL+0〜100 は足元のすき間、100〜600 が扉、600〜800 は扉なし（洗濯物の投入口）、FL+800 が 1 枚目の棚板。
+      // 天板はなく、両側の板は高さ h（天井）まで（2026-10-25 ユーザー指定）
+      const doorH = 600;
+      const firstShelf = 800;
       const out: THREE.Object3D[] = [
         box(20, h, d, -w / 2 + 10, 0, 0, mat),
         box(20, h, d, w / 2 - 10, 0, 0, mat),
-        box(w, 20, d, 0, h - 20, 0, mat),
         box(w - 40, h, 8, 0, 0, -d / 2 + 4, mat),
       ];
       const n = Math.max(1, count ?? 3);
-      for (let i = 0; i < n; i++) out.push(box(w - 40, 20, d - 10, 0, firstShelf + ((h - 20 - firstShelf) * i) / n, 5, mat));
+      for (let i = 0; i < n; i++) out.push(box(w - 40, 20, d - 10, 0, firstShelf + ((h - firstShelf) * i) / n, 5, mat));
       // 前開きの開き戸（左右 2 枚・観音開き）。上の端に指を掛けるくぼみ。下は床から 100 あける（足元のすき間）。
       // 外側の端を吊元にして手前へ開く。クリックした扉だけ開く（part）
       const dw = (w - 44) / 2;
