@@ -186,6 +186,8 @@ export class Panel {
   private state!: PanelState;
   /** 「クロスを試す」の絞り込み（撥水・汚れ防止。カテゴリをまたいで） */
   private wpFilter: '' | '撥水' | '汚れ防止' = '';
+  /** 最近張り替えたクロス・床材（新しい順・5 つまで）。「クロスを試す」の選択肢の一番上にも出す。この端末に覚えておく */
+  private recent: { wall: string[]; floor: string[] } = loadRecent();
 
   constructor(
     private el: HTMLElement,
@@ -457,8 +459,11 @@ export class Panel {
     const candidates = p.kind === 'floor' ? CANDIDATE_FLOORS : CANDIDATE_WALLPAPERS;
     let options: string;
     let filters = '';
+    // 最近使った物を一番上に（下のカテゴリにも同じ物が出る。選ばれている印は下の方に付ける）
+    const recent = this.recent[p.kind === 'floor' ? 'floor' : 'wall'].filter((id) => candidates.includes(id));
+    const recentGroup = recent.length ? `<optgroup label="最近使った">${recent.map((id) => `<option value="${id}">${esc(materialLabel(id))}</option>`).join('')}</optgroup>` : '';
     if (p.kind === 'floor') {
-      options = candidates.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('');
+      options = recentGroup + (recent.length ? '<optgroup label="すべて">' : '') + candidates.map((id) => `<option value="${id}" ${id === current ? 'selected' : ''}>${esc(materialLabel(id))}</option>`).join('') + (recent.length ? '</optgroup>' : '');
     } else {
       // カテゴリごと（明るい色から暗い色の順）。機能のしるしと、家のどこかで使っているかのしるしを付ける
       const used = usedMaterials(this.state.plan);
@@ -474,6 +479,7 @@ export class Panel {
           .join('');
         return `<optgroup label="${esc(c.name)}">${opts}</optgroup>`;
       }).join('');
+      options = recentGroup + options;
       const chip = (v: '' | '撥水' | '汚れ防止', l: string) => `<button data-action="wp-filter" data-value="${v}" class="${f === v ? 'on' : ''}">${l}</button>`;
       filters = `<div class="row">${chip('', 'すべて')}${chip('撥水', '撥水あり')}${chip('汚れ防止', '汚れ防止あり')}</div>`;
     }
@@ -694,6 +700,9 @@ export class Panel {
     const picked = this.state.picked;
     if (d.walkFinish && t.value && picked) {
       const id = t.value;
+      const kind = picked.kind === 'floor' ? 'floor' : 'wall';
+      this.recent[kind] = [id, ...this.recent[kind].filter((x) => x !== id)].slice(0, 5);
+      saveRecent(this.recent);
       // キー操作で歩けるよう、選んだらフォーカスを外す
       t.blur();
       if (picked.kind === 'zone') {
@@ -787,4 +796,21 @@ function usedMaterials(plan: Plan): Set<string> {
     for (const x of f.furniture) add(x.material);
   }
   return out;
+}
+
+function loadRecent(): { wall: string[]; floor: string[] } {
+  try {
+    const v = JSON.parse(localStorage.getItem('recentFinishes') ?? '{}');
+    return { wall: Array.isArray(v.wall) ? v.wall : [], floor: Array.isArray(v.floor) ? v.floor : [] };
+  } catch {
+    return { wall: [], floor: [] };
+  }
+}
+
+function saveRecent(v: { wall: string[]; floor: string[] }) {
+  try {
+    localStorage.setItem('recentFinishes', JSON.stringify(v));
+  } catch {
+    // 保存できない（プライベートモードなど）ときは、開いている間だけ覚える
+  }
 }

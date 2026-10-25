@@ -5280,6 +5280,36 @@
           "h": 550,
           "rotation": 270,
           "color": "#1d1d1f"
+        },
+        {
+          "type": "foot-light",
+          "w": 162,
+          "d": 8,
+          "h": 60,
+          "color": "#1c1c1d",
+          "lumen": 10,
+          "kelvin": 2700,
+          "z": 70,
+          "id": "bedroom-footlight-1",
+          "name": "フットライト 寝室 1（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。東の壁・WIC の入口と寝室の入口の間、スイッチの下。床から 100 くらい）（追加）",
+          "x": 3576,
+          "y": 1350,
+          "rotation": 90
+        },
+        {
+          "type": "foot-light",
+          "w": 162,
+          "d": 8,
+          "h": 60,
+          "color": "#1c1c1d",
+          "lumen": 10,
+          "kelvin": 2700,
+          "z": 70,
+          "id": "bedroom-footlight-2",
+          "name": "フットライト 寝室 2（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。北の壁・ベッドの足元と WIC の入口の間。床から 100 くらい）（追加）",
+          "x": 2750,
+          "y": 64,
+          "rotation": 0
         }
       ]
     },
