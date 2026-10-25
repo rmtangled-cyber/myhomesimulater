@@ -1178,6 +1178,34 @@ function buildFloor(
     group.add(mesh);
   }
 
+  // ---- 引き戸の縦枠（戸先の側） ----
+  // 引き戸でも、戸が閉まって当たる側（戸先）には縦枠が付く（LIXIL ラフィス 上吊引戸 ライン枠の取付け説明書: 縦枠に戸じゃくり、戸当たりを接着）。
+  // 開口部の戸袋と反対の端に、壁の厚みいっぱいの縦枠（開口の中へ 25）と、真ん中に戸先が入る溝（戸じゃくり）を描く。色は戸に合わせる（2026-10-25）
+  for (const o of floor.openings) {
+    if (!o.slideTo) continue;
+    const v = SIDE_VEC[o.slideTo];
+    const FRAME = 25;
+    // 戸先の側の端から、開口の中へ FRAME の所まで
+    const ex = o.at[0] - v[0] * (o.width / 2 - FRAME / 2);
+    const ez = o.at[1] - v[1] * (o.width / 2 - FRAME / 2);
+    const door = floor.furniture.find((f) => ['sliding-door', 'mirror-sliding-door', 'mirror-sheet-door'].includes(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width);
+    const mat = door?.material ? getMaterial(door.material, { clip }) : new THREE.MeshStandardMaterial({ color: door?.color ?? '#cfccc5', roughness: 0.6, clippingPlanes: clip });
+    const along = Math.abs(v[0]) > 0.5 ? 'x' : 'z';
+    const sx = along === 'x' ? FRAME : t + 2;
+    const sz = along === 'x' ? t + 2 : FRAME;
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(sx, o.height, sz), mat);
+    frame.position.set(ex, o.sill + o.height / 2, ez);
+    frame.castShadow = frame.receiveShadow = true;
+    group.add(frame);
+    // 戸じゃくり（戸先が入る溝。幅 40・深さ 12）
+    const groove = new THREE.Mesh(
+      new THREE.BoxGeometry(along === 'x' ? 2 : 40, o.height - 20, along === 'x' ? 40 : 2),
+      new THREE.MeshStandardMaterial({ color: '#2a2a2a', roughness: 0.8, clippingPlanes: clip }),
+    );
+    groove.position.set(ex + v[0] * (FRAME / 2 + 0.6), o.sill + o.height / 2, ez + v[1] * (FRAME / 2 + 0.6));
+    group.add(groove);
+  }
+
   // ---- 家具 ----
   for (const f of floor.furniture) {
     if (getFurnitureType(f.type).type !== f.type) warnings.push(`${where(`家具「${f.name}」`)}: 種類「${f.type}」が見つかりません（箱で表示）`);
