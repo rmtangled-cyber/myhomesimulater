@@ -353,14 +353,8 @@ export class Panel {
   }
 
   private walkSection(): string {
-    const s = this.state;
-    const jump = WEB
-      ? `<section><h2>部屋へ移動</h2><select data-change="walk-room"><option value="">（部屋を選ぶ）</option>${s.plan.floors[this.walkFloorIndex()].rooms
-          .filter((r) => !r.void && !r.noLabel)
-          .map((r) => `<option value="${esc(r.id)}">${esc(r.name)}</option>`)
-          .join('')}</select></section>`
-      : '';
-    return (WEB ? '' : this.switchSection()) + jump + this.walkRoom();
+    // Web 版の「部屋へ移動」はなくした（2026-10-25 ユーザー指定）
+    return (WEB ? '' : this.switchSection()) + this.walkRoom();
   }
 
   /** ウォークスルーで立っている階（部屋が分からなければ 1 階） */
@@ -686,12 +680,6 @@ export class Panel {
     if (d.change === 'colorcheck') return a.setColorCheck((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
     if (d.change === 'passwalls') return a.setPassWalls((t as HTMLInputElement).checked);
-    if (d.change === 'walk-room') {
-      // 選んだらすぐキーで歩けるよう、欄から外す
-      t.blur();
-      if (t.value) a.walkInto(t.value);
-      return;
-    }
     if (d.change === 'stature') {
       const cm = Math.round(Number(t.value));
       if (cm >= 80 && cm <= 220) a.setStature(cm);
