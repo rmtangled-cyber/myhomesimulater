@@ -79,8 +79,6 @@ export interface Opening {
   frame?: 'white' | 'black' | 'none' | 'calm';
   /** frame: 'calm'（KAMIYA CALM の細い枠と天井の上枠）の色。扉の色に合わせる */
   frameColor?: string;
-  /** 引き戸の縦枠（戸先の側）の色柄（素材 ID）。省略時は戸と同じ */
-  slideFrame?: string;
   /** 窓のサッシ（室内から見える枠）の色。省略時はダークグレー */
   sashColor?: string;
   /** 片引き戸の戸袋。戸がある部屋（slideRoom）の側の壁を、戸を引く向き（slideTo）に開口部の幅だけ slideDepth（既定 40）削る */

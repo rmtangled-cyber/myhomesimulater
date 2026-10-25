@@ -555,20 +555,19 @@ export class Panel {
     const colors = list.map((m) => chip('door-color', m, materialLabel(m).replace('ラフィス ', '').replace('CALM ', ''), f.material === m, `<img class="swatch" style="width:16px;height:16px" src="${swatchUrl(m)}" alt="">`)).join('');
     const handle = f.handle ?? 'black';
     const handles = ([['black', 'アイアンブラック'], ['nickel', 'シャインニッケル'], ['white', 'プレシャスホワイト']] as const).map(([v, l]) => chip('door-handle', v, l, handle === v)).join('');
-    const frame = opening?.frame ?? 'white';
-    // 引き戸は、戸先の側の縦枠の色柄を選ぶ（省略時は戸と同じ）
+    // 引き戸の開口部（戸が閉まる側の縦枠＝戸当たりの色を選ぶ）
     const slideOp = f.type !== 'swing-door' ? floor.openings.find((o) => o.slideTo && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width) : undefined;
-    const frames = slideOp
-      ? [chip('slide-frame', '', '戸と同じ', !slideOp.slideFrame), ...RAFFIS_COLORS.map((m) => chip('slide-frame', m, materialLabel(m).replace('ラフィス ', ''), slideOp.slideFrame === m, `<img class="swatch" style="width:16px;height:16px" src="${swatchUrl(m)}" alt="">`))].join('')
-      : opening
-        ? ([['white', 'ホワイト（標準）'], ['black', 'ブラック（+2,000円）']] as const).map(([v, l]) => chip('door-frame', v, l, frame === v)).join('')
-        : '';
+    // 引き戸の戸当たり（戸が閉まる側の縦枠）も、開き戸の枠と同じく白（標準）か黒（+2,000 円）
+    const frameOp = opening ?? slideOp;
+    const frames = frameOp
+      ? ([['white', 'ホワイト（標準）'], ['black', 'ブラック（+2,000円）']] as const).map(([v, l]) => chip('door-frame', v, l, (frameOp.frame ?? 'white') === v)).join('')
+      : '';
     return `
       <h3>ドアを試す <small>${esc(f.name ?? '')}</small></h3>
       <p class="hint">${calm ? '神谷コーポレーション フルハイトドア CALM（枠の見えないドア）' : 'LIXIL ラフィス'}。${f.material && list.includes(f.material) ? '' : '今は仮の色です。'}選ぶとこのドアだけ変わります（ファイルにも保存）。</p>
       <h3>色柄</h3><ul class="chips">${colors}</ul>
       ${calm ? '<p class="hint">取手は CALM 専用のグレモン錠（ステンレス）だけで、ほかのハンドルは選べません。枠はなく、扉を壁の開口にぴったり合わせています（閉めるとタイト材ですき間がふさがる）。</p>' : `<h3>${f.type === 'swing-door' ? '取手（スクエア M）' : '引手'}</h3><ul class="chips">${handles}</ul>`}
-      ${frames ? `<h3>${slideOp ? '枠（戸が閉まる側の縦枠）' : '枠'}</h3><ul class="chips">${frames}</ul>` : ''}
+      ${frames ? `<h3>${slideOp ? '戸当たり（戸が閉まる側の縦枠）' : '枠'}</h3><ul class="chips">${frames}</ul>` : ''}
       ${f.type === 'swing-door' && !calm ? this.stopperChips(f, chip) : ''}
       <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
   }
@@ -643,17 +642,8 @@ export class Panel {
         if (btn.dataset.action === 'door-handle') return a.updateFurniture(p.furnitureId, (f) => (v === 'black' ? delete f.handle : (f.handle = v as Furniture['handle'])));
         const floor = this.state.plan.floors.find((x) => x.furniture.some((f) => f.id === p.furnitureId));
         const f = floor?.furniture.find((x) => x.id === p.furnitureId);
-        const o = floor && f ? doorFrameOf(floor, f) : undefined;
+        const o = floor && f ? (doorFrameOf(floor, f) ?? floor.openings.find((x) => x.slideTo && Math.hypot(f.x - x.at[0], f.y - x.at[1]) < x.width)) : undefined;
         if (o) a.updateOpening(o.id, (x) => (v === 'black' ? (x.frame = 'black') : delete x.frame));
-        return;
-      }
-      case 'slide-frame': {
-        const p = this.state.picked;
-        if (p?.kind !== 'door') return;
-        const floor = this.state.plan.floors.find((x) => x.furniture.some((f) => f.id === p.furnitureId));
-        const f = floor?.furniture.find((x) => x.id === p.furnitureId);
-        const o = f && floor?.openings.find((x) => x.slideTo && Math.hypot(f.x - x.at[0], f.y - x.at[1]) < x.width);
-        if (o) a.updateOpening(o.id, (x) => (v ? (x.slideFrame = v) : delete x.slideFrame));
         return;
       }
       case 'door-stopper':

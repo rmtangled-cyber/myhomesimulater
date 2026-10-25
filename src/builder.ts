@@ -1185,7 +1185,7 @@ function buildFloor(
 
   // ---- 引き戸の縦枠（戸先の側） ----
   // 引き戸でも、戸が閉まって当たる側（戸先）には縦枠が付く（LIXIL ラフィス 上吊引戸 ライン枠の取付け説明書: 縦枠に戸じゃくり、戸当たりを接着）。
-  // 開口部の戸袋と反対の端に、壁の厚みいっぱいの縦枠（開口の中へ 25）と、真ん中に戸先が入る溝（戸じゃくり）を描く。色は戸に合わせる（2026-10-25）
+  // 開口部の戸袋と反対の端に、壁の厚みいっぱいの縦枠（開口の中へ 25）と、真ん中に戸先が入る溝（戸じゃくり）を描く（2026-10-25）
   for (const o of floor.openings) {
     if (!o.slideTo) continue;
     const v = SIDE_VEC[o.slideTo];
@@ -1194,8 +1194,12 @@ function buildFloor(
     const ex = o.at[0] - v[0] * (o.width / 2 - FRAME / 2);
     const ez = o.at[1] - v[1] * (o.width / 2 - FRAME / 2);
     const door = floor.furniture.find((f) => ['sliding-door', 'mirror-sliding-door', 'mirror-sheet-door'].includes(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width);
-    const frameId = o.slideFrame ?? door?.material;
-    const mat = frameId ? getMaterial(frameId, { clip }) : new THREE.MeshStandardMaterial({ color: door?.color ?? '#cfccc5', roughness: 0.6, clippingPlanes: clip });
+    // ラフィスの引き戸の戸当たり（縦枠）は開き戸と同じく白（標準）か黒（+2,000 円・frame: 'black'）。フルハイトドア fit（ミラー引き戸）は戸の色
+    const mat =
+      door?.type === 'mirror-sliding-door'
+        ? new THREE.MeshStandardMaterial({ color: door.color, roughness: 0.6, clippingPlanes: clip })
+        : (o.frame === 'black' ? frameBlack : frameWhite).clone();
+    mat.clippingPlanes = clip;
     const along = Math.abs(v[0]) > 0.5 ? 'x' : 'z';
     const sx = along === 'x' ? FRAME : t + 2;
     const sz = along === 'x' ? t + 2 : FRAME;
