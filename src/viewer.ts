@@ -1241,6 +1241,10 @@ export class Viewer {
       }
       // 残ったざらつきを、輪郭を残してぼかす（smart denoise）
       const denoiseMat = new DenoiseMaterial({ map: pt.target.texture, blending: THREE.NoBlending });
+      // 元のシェーダーは色に不透明度を掛ける（下描きの不透明度が 0 のとき真っ黒になる）ので、不透明度を使わない形に直す
+      denoiseMat.fragmentShader = denoiseMat.fragmentShader
+        .replace(/(centrPx|walkPx)\.rgb \*= \1\.a;/g, '$1.a = 1.0;')
+        .replace('gl_FragColor.a *= opacity;', 'gl_FragColor.a = 1.0;');
       denoiseMat.uniforms.sigma.value = 4;
       denoiseMat.uniforms.threshold.value = 0.06;
       const denoise = new FullScreenQuad(denoiseMat);
