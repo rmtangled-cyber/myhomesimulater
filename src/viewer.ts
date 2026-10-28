@@ -8,6 +8,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
 import { openingsOnSegment, pointInPolygon, signedArea } from './geometry';
 import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
 import type { Circuit, Plan } from './types';
@@ -1189,6 +1190,79 @@ export class Viewer {
     a.href = this.renderer.domElement.toDataURL('image/png');
     a.download = filename;
     a.click();
+  }
+
+  /**
+   * 今のカメラの絵を、光の跳ね返りまで計算して描く（three-gpu-pathtracer）。samples 回重ねたら PNG の data URL を返す。
+   * 部屋ごとの跳ね返りの光（roomLights）は本物の跳ね返りと二重になるので消し、空は上が青・下が地面の色のグラデーションにする。
+   * 鏡（Reflector）は金属の鏡の素材に置き換える。描いている間はふだんの描画を止める
+   */
+  async pathTrace(samples: number, onProgress?: (done: number) => void): Promise<string> {
+    const { WebGLPathTracer, GradientEquirectTexture, DenoiseMaterial } = await import('three-gpu-pathtracer');
+    this.renderer.setAnimationLoop(null);
+    const scene = this.scene;
+    const saved = {
+      env: scene.environment, bg: scene.background, envI: scene.environmentIntensity,
+      room: this.roomLights.visible, sel: this.selection.visible, exposure: this.renderer.toneMappingExposure,
+    };
+    const mirrorMat = new THREE.MeshStandardMaterial({ color: '#ffffff', metalness: 1, roughness: 0.02 });
+    const mirrors: [THREE.Mesh, THREE.Material | THREE.Material[]][] = [];
+    scene.traverse((o) => {
+      const m = o as THREE.Mesh & { isReflector?: boolean };
+      if (m.isReflector) {
+        mirrors.push([m, m.material]);
+        m.material = mirrorMat;
+      }
+    });
+    const sky = new GradientEquirectTexture(512);
+    sky.topColor.set('#8fb6e3');
+    sky.bottomColor.set('#cfcabd');
+    sky.update();
+    scene.environment = sky;
+    scene.background = sky;
+    scene.environmentIntensity = this.effTime === 'day' ? 1 : this.effTime === 'evening' ? 0.3 : 0.02;
+    this.roomLights.visible = false;
+    this.selection.visible = false;
+    // 部屋の中は窓からの光だけなので、写真の露出のように明るく撮る
+    this.renderer.toneMappingExposure = this.effTime === 'day' ? 2.4 : 1.6;
+    const pt = new WebGLPathTracer(this.renderer);
+    pt.minSamples = 0;
+    pt.renderDelay = 0;
+    pt.fadeDuration = 0;
+    pt.rasterizeScene = false;
+    pt.bounces = 6;
+    pt.filterGlossyFactor = 0.5;
+    try {
+      pt.setScene(scene, this.camera);
+      while (pt.samples < samples) {
+        pt.renderSample();
+        onProgress?.(Math.floor(pt.samples));
+        await new Promise((r) => requestAnimationFrame(r));
+      }
+      // 残ったざらつきを、輪郭を残してぼかす（smart denoise）
+      const denoiseMat = new DenoiseMaterial({ map: pt.target.texture, blending: THREE.NoBlending });
+      denoiseMat.uniforms.sigma.value = 4;
+      denoiseMat.uniforms.threshold.value = 0.06;
+      const denoise = new FullScreenQuad(denoiseMat);
+      this.renderer.setRenderTarget(null);
+      denoise.render(this.renderer);
+      const url = this.renderer.domElement.toDataURL('image/png');
+      denoise.material.dispose();
+      denoise.dispose();
+      return url;
+    } finally {
+      pt.dispose();
+      sky.dispose();
+      mirrorMat.dispose();
+      for (const [m, mat] of mirrors) m.material = mat;
+      scene.environment = saved.env;
+      scene.background = saved.bg;
+      scene.environmentIntensity = saved.envI;
+      this.roomLights.visible = saved.room;
+      this.selection.visible = saved.sel;
+      this.renderer.toneMappingExposure = saved.exposure;
+      this.renderer.setAnimationLoop(() => this.tick());
+    }
   }
 }
 

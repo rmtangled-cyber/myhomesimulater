@@ -114,6 +114,7 @@ export interface PanelActions {
   duplicateFurniture(id: string): void;
   removeFurniture(id: string): void;
   screenshot(): void;
+  pathTraceShot(): void;
   exportPlan(): void;
   exportElectrical(): void;
   exportCrossSchedule(): void;
@@ -275,6 +276,7 @@ export class Panel {
           <button data-action="undo" title="Ctrl+Z">↶ 元に戻す</button>
           <button data-action="redo" title="Ctrl+Shift+Z">↷ やり直す</button>
           ${WEB ? '' : `<button data-action="screenshot">📷 画像を保存</button>
+          <button data-action="path-trace" title="今の画面を、光の跳ね返りまで計算して高画質で描き、PNG で保存します（1〜数分かかります）">✨ 高画質で撮る</button>
           <button data-action="export-plan" title="今の間取りの平面図（各階・A3・1/60）を別のタブに開きます">📐 図面出力</button>
           <button data-action="export-cross" title="今の 3D のクロスを面ごとに集計した貼り分け表（範囲・面積・追加料金の目安）を別のタブに開きます">🧾 クロス表</button>
           <button data-action="export-electrical" title="施工会社の電灯コンセント図の書き方で、各階の電気図（移動・追加の印と LAN 配管つき）を別のタブに開きます">⚡ 電気図</button>`}
@@ -616,6 +618,7 @@ export class Panel {
       case 'undo': return a.undo();
       case 'redo': return a.redo();
       case 'screenshot': return a.screenshot();
+      case 'path-trace': return a.pathTraceShot();
       case 'export-plan': return a.exportPlan();
       case 'export-electrical': return a.exportElectrical();
       case 'export-cross': return a.exportCrossSchedule();

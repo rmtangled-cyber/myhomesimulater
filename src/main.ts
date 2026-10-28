@@ -306,6 +306,26 @@ const panel = new Panel(document.getElementById('panel')!, {
     window.open(URL.createObjectURL(new Blob([html], { type: 'text/html' })), '_blank');
   },
   screenshot: () => viewer.screenshot(`${store.name}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`),
+  // 光の跳ね返りまで計算した静止画（パストレース）。描いている間は進み具合を画面の上に出す
+  pathTraceShot: async () => {
+    const samples = 256;
+    const note = document.createElement('div');
+    note.className = 'path-trace-note';
+    note.textContent = '高画質で描いています…';
+    document.body.appendChild(note);
+    try {
+      const url = await viewer.pathTrace(samples, (n) => (note.textContent = `高画質で描いています… ${Math.round((n / samples) * 100)}%`));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${store.name}-hq-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`;
+      a.click();
+    } catch (e) {
+      console.error(e);
+      alert('高画質で描けませんでした');
+    } finally {
+      note.remove();
+    }
+  },
   undo: () => store.undo(),
   redo: () => store.redo(),
 });
