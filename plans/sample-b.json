@@ -3,7 +3,7 @@
   "grid": 910,
   "wallThickness": 120,
   "claddingThickness": 43,
-  "exterior": "exterior-siding-white",
+  "exterior": "exterior-plaster-white",
   "groundLevel": -500,
   "foundationHeight": 400,
   "floors": [
@@ -259,8 +259,39 @@
             ]
           ],
           "floor": "floor-white-ash",
-          "wall": "cross-white",
-          "ceiling": "cross-white"
+          "wall": "cross-offwhite",
+          "ceiling": "cross-white",
+          "zones": [
+            {
+              "id": "b1-tv-wall",
+              "name": "テレビの壁（グレージュ）",
+              "edge": 0,
+              "start": [
+                4550,
+                2730
+              ],
+              "end": [
+                7280,
+                2730
+              ],
+              "material": "cross-greige"
+            },
+            {
+              "id": "b1-kitchen-tile",
+              "name": "キッチンの背面（白いタイル）",
+              "edge": 0,
+              "start": [
+                910,
+                2730
+              ],
+              "end": [
+                3640,
+                2730
+              ],
+              "bottom": 910,
+              "material": "wall-tile-white"
+            }
+          ]
         },
         {
           "id": "b1-stairs",
@@ -585,14 +616,14 @@
         {
           "id": "b1-entry-door",
           "type": "entry-door",
-          "name": "玄関ドア（片開き・ホワイト）",
+          "name": "玄関ドア（片開き・木目のブラウン）",
           "x": 6370,
           "y": 0,
           "w": 1000,
           "d": 60,
           "h": 2330,
           "rotation": 180,
-          "color": "#ecebe6",
+          "color": "#6b4e35",
           "z": -150,
           "count": 1
         },
@@ -915,14 +946,15 @@
         {
           "id": "b1-island",
           "type": "island-kitchen",
-          "name": "アイランドキッチン（ホワイト・W2550）",
+          "name": "アイランドキッチン（白い天板・オークの腰壁・W2550）",
           "x": 2230,
           "y": 4540,
           "w": 2550,
           "d": 900,
           "h": 850,
           "rotation": 0,
-          "color": "#f2f1ee"
+          "color": "#f2f1ee",
+          "material": "floor-oak"
         },
         {
           "id": "b1-dining-table",
@@ -938,63 +970,63 @@
         },
         {
           "id": "b1-dining-chair-1",
-          "type": "dining-chair",
-          "name": "ダイニングチェア",
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（アイボリー・曲げた背もたれ）",
           "x": 1420,
           "y": 5560,
-          "w": 450,
-          "d": 520,
-          "h": 780,
+          "w": 520,
+          "d": 600,
+          "h": 720,
           "rotation": 180,
-          "color": "#e9e2d6"
+          "color": "#e6dfd2"
         },
         {
           "id": "b1-dining-chair-2",
-          "type": "dining-chair",
-          "name": "ダイニングチェア",
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（アイボリー・曲げた背もたれ）",
           "x": 2220,
           "y": 5560,
-          "w": 450,
-          "d": 520,
-          "h": 780,
+          "w": 520,
+          "d": 600,
+          "h": 720,
           "rotation": 180,
-          "color": "#e9e2d6"
+          "color": "#e6dfd2"
         },
         {
           "id": "b1-dining-chair-3",
-          "type": "dining-chair",
-          "name": "ダイニングチェア",
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（アイボリー・曲げた背もたれ）",
           "x": 1420,
           "y": 6740,
-          "w": 450,
-          "d": 520,
-          "h": 780,
+          "w": 520,
+          "d": 600,
+          "h": 720,
           "rotation": 0,
-          "color": "#e9e2d6"
+          "color": "#e6dfd2"
         },
         {
           "id": "b1-dining-chair-4",
-          "type": "dining-chair",
-          "name": "ダイニングチェア",
+          "type": "curve-back-chair",
+          "name": "ダイニングチェア（アイボリー・曲げた背もたれ）",
           "x": 2220,
           "y": 6740,
-          "w": 450,
-          "d": 520,
-          "h": 780,
+          "w": 520,
+          "d": 600,
+          "h": 720,
           "rotation": 0,
-          "color": "#e9e2d6"
+          "color": "#e6dfd2"
         },
         {
           "id": "b1-tv-board",
           "type": "tv-board",
-          "name": "テレビボード（ホワイト・フロート）",
+          "name": "テレビボード（オーク・フロート）",
           "x": 5915,
           "y": 2990,
           "w": 1800,
           "d": 400,
           "h": 350,
           "rotation": 0,
-          "color": "#efede8",
+          "color": "#cdb08a",
           "z": 200
         },
         {
@@ -1037,26 +1069,26 @@
         {
           "id": "b1-rug",
           "type": "rug",
-          "name": "ラグ（アイボリー）",
+          "name": "ラグ（ベージュ）",
           "x": 5650,
           "y": 4050,
           "w": 2400,
           "d": 2000,
           "h": 10,
           "rotation": 0,
-          "color": "#e8e1d4"
+          "color": "#d9cbb5"
         },
         {
           "id": "b1-plant-1",
-          "type": "plant",
-          "name": "観葉植物",
+          "type": "silk-jasmine",
+          "name": "観葉植物（シルクジャスミン）",
           "x": 4050,
-          "y": 6900,
-          "w": 450,
-          "d": 450,
-          "h": 1500,
+          "y": 6850,
+          "w": 700,
+          "d": 700,
+          "h": 1650,
           "rotation": 0,
-          "color": "#5f7a46"
+          "color": "#2f5a2a"
         },
         {
           "id": "b1-plant-2",
@@ -1341,6 +1373,208 @@
           "lumen": 500,
           "beam": 90,
           "kelvin": 3000
+        },
+        {
+          "id": "b1-canopy",
+          "type": "box",
+          "name": "玄関の庇（白い塗り壁）",
+          "x": 6370,
+          "y": -553,
+          "w": 2000,
+          "d": 900,
+          "h": 150,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "z": 2400,
+          "material": "exterior-plaster-white"
+        },
+        {
+          "id": "b1-canopy-soffit",
+          "type": "box",
+          "name": "庇の軒天（木目）",
+          "x": 6370,
+          "y": -553,
+          "w": 1990,
+          "d": 890,
+          "h": 10,
+          "rotation": 0,
+          "color": "#b88a57",
+          "z": 2390,
+          "material": "exterior-wood"
+        },
+        {
+          "id": "b1-wood-accent",
+          "type": "box",
+          "name": "玄関の横の板張り（木目）",
+          "x": 7566.5,
+          "y": -113,
+          "w": 1333,
+          "d": 20,
+          "h": 2900,
+          "rotation": 0,
+          "color": "#b88a57",
+          "z": -100,
+          "material": "exterior-wood"
+        },
+        {
+          "id": "b1-porch",
+          "type": "box",
+          "name": "玄関ポーチ（タイル）",
+          "x": 6370,
+          "y": -753,
+          "w": 2400,
+          "d": 1300,
+          "h": 350,
+          "rotation": 0,
+          "color": "#b9b4ab",
+          "z": -500,
+          "material": "floor-tile-stone"
+        },
+        {
+          "id": "b1-porch-step",
+          "type": "box",
+          "name": "ポーチの段（タイル）",
+          "x": 6370,
+          "y": -1578,
+          "w": 2400,
+          "d": 350,
+          "h": 175,
+          "rotation": 0,
+          "color": "#b9b4ab",
+          "z": -500,
+          "material": "floor-tile-stone"
+        },
+        {
+          "id": "b1-entry-light",
+          "type": "down-bracket",
+          "name": "玄関の照明（下向きのブラケット）",
+          "x": 5650,
+          "y": -153,
+          "w": 100,
+          "d": 100,
+          "h": 100,
+          "rotation": 180,
+          "color": "#1c1c1d",
+          "z": 1900
+        },
+        {
+          "id": "b1-intercom",
+          "type": "intercom",
+          "name": "インターホン",
+          "x": 5650,
+          "y": -118,
+          "w": 100,
+          "d": 30,
+          "h": 160,
+          "rotation": 180,
+          "color": "#1e1f20",
+          "z": 1400
+        },
+        {
+          "id": "b1-post-box",
+          "type": "post-box",
+          "name": "埋込ポスト",
+          "x": 5300,
+          "y": -133,
+          "w": 360,
+          "d": 60,
+          "h": 600,
+          "rotation": 180,
+          "color": "#1e1f20",
+          "z": 850
+        },
+        {
+          "id": "b1-front-plant",
+          "type": "silk-jasmine",
+          "name": "シンボルツリー（鉢植え）",
+          "x": 4900,
+          "y": -703,
+          "w": 750,
+          "d": 750,
+          "h": 1800,
+          "rotation": 0,
+          "color": "#2f5a2a",
+          "z": -500
+        },
+        {
+          "id": "b1-deck",
+          "type": "box",
+          "name": "ウッドデッキ",
+          "x": 2730,
+          "y": 8283,
+          "w": 5460,
+          "d": 1800,
+          "h": 450,
+          "rotation": 0,
+          "color": "#b88a57",
+          "z": -500,
+          "material": "exterior-wood",
+          "loose": false
+        },
+        {
+          "id": "b1-deck-chair-1",
+          "type": "chair",
+          "name": "デッキのいす",
+          "x": 1500,
+          "y": 8300,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 90,
+          "color": "#e9e2d6",
+          "z": -50
+        },
+        {
+          "id": "b1-deck-table",
+          "type": "low-table",
+          "name": "デッキのテーブル",
+          "x": 2200,
+          "y": 8300,
+          "w": 600,
+          "d": 600,
+          "h": 450,
+          "rotation": 0,
+          "color": "#d8c3a2",
+          "z": -50
+        },
+        {
+          "id": "b1-deck-plant",
+          "type": "plant",
+          "name": "鉢植え",
+          "x": 4900,
+          "y": 8700,
+          "w": 450,
+          "d": 450,
+          "h": 1200,
+          "rotation": 0,
+          "color": "#5f7a46",
+          "z": -50
+        },
+        {
+          "id": "b1-art",
+          "type": "art",
+          "name": "アート（ベージュの抽象画）",
+          "x": 75,
+          "y": 5250,
+          "w": 600,
+          "d": 30,
+          "h": 800,
+          "rotation": 270,
+          "color": "#d9cfc0",
+          "z": 1250
+        },
+        {
+          "id": "b1-tv-line-light",
+          "type": "line-light",
+          "name": "テレビボードの下の間接照明",
+          "x": 5915,
+          "y": 2990,
+          "w": 1700,
+          "d": 30,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 190
         }
       ]
     },

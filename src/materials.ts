@@ -1410,6 +1410,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   { id: 'foundation-concrete', name: '基礎（コンクリート・刷毛引き）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 1.5, draw: stone('#9b9b97', 1200, { contrast: 0.06, pores: 10 }) },
   { id: 'exterior-lightgray', name: '外壁（ライトグレー）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.85, bump: 1, draw: stone('#b6b9b9', 1200, { contrast: 0.04, pores: 3 }) },
   { id: 'exterior-plaster-beige', name: '塗り壁（ベージュ）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 2.5, draw: stone('#ddd2bd', 1200, { contrast: 0.06, pores: 4 }) },
+  { id: 'exterior-plaster-white', name: '塗り壁（ホワイト）', categories: ['exterior'], tile: [1200, 1200], roughness: 0.95, bump: 2, draw: stone('#ecebe6', 1200, { contrast: 0.05, pores: 4 }) },
+  { id: 'exterior-wood', name: '外装の木目（板張り・ナチュラル）', categories: ['exterior'], tile: [900, 900], roughness: 0.7, bump: 1.5, draw: flooring(['#b88a57', '#ae7f4c', '#c29464'], 120, [900, 900]) },
 ];
 
 let materials: MaterialDef[] = [...BUILTIN_MATERIALS];
