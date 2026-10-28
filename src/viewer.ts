@@ -1224,7 +1224,7 @@ export class Viewer {
     this.roomLights.visible = false;
     this.selection.visible = false;
     // 部屋の中は窓からの光だけなので、写真の露出のように明るく撮る
-    this.renderer.toneMappingExposure = this.effTime === 'day' ? 2.4 : 1.6;
+    this.renderer.toneMappingExposure = this.effTime === 'day' ? 3 : 1.6;
     const pt = new WebGLPathTracer(this.renderer);
     pt.minSamples = 0;
     pt.renderDelay = 0;
@@ -1245,8 +1245,8 @@ export class Viewer {
       denoiseMat.fragmentShader = denoiseMat.fragmentShader
         .replace(/(centrPx|walkPx)\.rgb \*= \1\.a;/g, '$1.a = 1.0;')
         .replace('gl_FragColor.a *= opacity;', 'gl_FragColor.a = 1.0;');
-      denoiseMat.uniforms.sigma.value = 4;
-      denoiseMat.uniforms.threshold.value = 0.06;
+      denoiseMat.uniforms.sigma.value = 2;
+      denoiseMat.uniforms.threshold.value = 0.04;
       const denoise = new FullScreenQuad(denoiseMat);
       this.renderer.setRenderTarget(null);
       denoise.render(this.renderer);
