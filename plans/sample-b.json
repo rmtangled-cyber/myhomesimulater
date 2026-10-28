@@ -1,0 +1,2610 @@
+{
+  "name": "サンプルB（総2階 4LDK・ホワイト）",
+  "grid": 910,
+  "wallThickness": 120,
+  "claddingThickness": 43,
+  "exterior": "exterior-siding-white",
+  "groundLevel": -500,
+  "foundationHeight": 400,
+  "floors": [
+    {
+      "id": "1f",
+      "name": "1階",
+      "elevation": 0,
+      "height": 2900,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "b1-bath",
+          "name": "浴室",
+          "polygon": [
+            [
+              0,
+              0
+            ],
+            [
+              1820,
+              0
+            ],
+            [
+              1820,
+              1820
+            ],
+            [
+              0,
+              1820
+            ]
+          ],
+          "floor": "floor-sazana-raggray",
+          "wall": "panel-bath-woodgray",
+          "ceiling": "cross-white",
+          "ceilingHeight": 2150,
+          "noBaseboard": true,
+          "noCross": true
+        },
+        {
+          "id": "b1-laundry",
+          "name": "脱衣・ランドリー",
+          "polygon": [
+            [
+              1820,
+              0
+            ],
+            [
+              3640,
+              0
+            ],
+            [
+              3640,
+              1820
+            ],
+            [
+              1820,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-wash",
+          "name": "洗面ホール",
+          "polygon": [
+            [
+              0,
+              1820
+            ],
+            [
+              3640,
+              1820
+            ],
+            [
+              3640,
+              2730
+            ],
+            [
+              0,
+              2730
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-pantry",
+          "name": "パントリー",
+          "polygon": [
+            [
+              3640,
+              0
+            ],
+            [
+              4550,
+              0
+            ],
+            [
+              4550,
+              2730
+            ],
+            [
+              3640,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-sic",
+          "name": "シューズクローク",
+          "polygon": [
+            [
+              4550,
+              0
+            ],
+            [
+              5460,
+              0
+            ],
+            [
+              5460,
+              1820
+            ],
+            [
+              4550,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "b1-genkan",
+          "name": "玄関",
+          "polygon": [
+            [
+              5460,
+              0
+            ],
+            [
+              7280,
+              0
+            ],
+            [
+              7280,
+              1820
+            ],
+            [
+              5460,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-stone",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "level": -150,
+          "ceilingHeight": 2550
+        },
+        {
+          "id": "b1-toilet",
+          "name": "トイレ",
+          "polygon": [
+            [
+              7280,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              1820
+            ],
+            [
+              7280,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-hall",
+          "name": "ホール",
+          "polygon": [
+            [
+              4550,
+              1820
+            ],
+            [
+              8190,
+              1820
+            ],
+            [
+              8190,
+              2730
+            ],
+            [
+              4550,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-ldk",
+          "name": "LDK",
+          "polygon": [
+            [
+              0,
+              2730
+            ],
+            [
+              8190,
+              2730
+            ],
+            [
+              8190,
+              3640
+            ],
+            [
+              7280,
+              3640
+            ],
+            [
+              7280,
+              5460
+            ],
+            [
+              5460,
+              5460
+            ],
+            [
+              5460,
+              7280
+            ],
+            [
+              0,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b1-stairs",
+          "name": "階段",
+          "polygon": [
+            [
+              7280,
+              3640
+            ],
+            [
+              8190,
+              3640
+            ],
+            [
+              8190,
+              7280
+            ],
+            [
+              7280,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": ""
+        },
+        {
+          "id": "b1-void",
+          "name": "吹き抜け（リビング）",
+          "polygon": [
+            [
+              5460,
+              5460
+            ],
+            [
+              7280,
+              5460
+            ],
+            [
+              7280,
+              7280
+            ],
+            [
+              5460,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "",
+          "noLabel": true
+        }
+      ],
+      "openings": [
+        {
+          "id": "b1-main-door",
+          "type": "opening",
+          "at": [
+            6370,
+            0
+          ],
+          "width": 1000,
+          "height": 2330,
+          "sill": -150
+        },
+        {
+          "id": "b1-bath-door",
+          "type": "opening",
+          "at": [
+            1820,
+            1300
+          ],
+          "width": 750,
+          "height": 2000,
+          "sill": 0
+        },
+        {
+          "id": "b1-laundry-door",
+          "type": "opening",
+          "at": [
+            2300,
+            1820
+          ],
+          "width": 760,
+          "height": 2400,
+          "sill": 0,
+          "slideRoom": "b1-laundry",
+          "slideTo": "east"
+        },
+        {
+          "id": "b1-wash-kitchen",
+          "type": "opening",
+          "at": [
+            455,
+            2730
+          ],
+          "width": 790,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-pantry-kitchen",
+          "type": "opening",
+          "at": [
+            4095,
+            2730
+          ],
+          "width": 790,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-pantry-sic",
+          "type": "opening",
+          "at": [
+            4550,
+            910
+          ],
+          "width": 790,
+          "height": 2550,
+          "sill": -150
+        },
+        {
+          "id": "b1-sic-genkan",
+          "type": "opening",
+          "at": [
+            5460,
+            910
+          ],
+          "width": 1600,
+          "height": 2550,
+          "sill": -150
+        },
+        {
+          "id": "b1-hall-genkan",
+          "type": "opening",
+          "at": [
+            6370,
+            1820
+          ],
+          "width": 1820,
+          "height": 2550,
+          "sill": -150
+        },
+        {
+          "id": "b1-toilet-door",
+          "type": "door",
+          "at": [
+            7735,
+            1820
+          ],
+          "width": 700,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-ldk-door",
+          "type": "door",
+          "at": [
+            7735,
+            2730
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-ldk-stairs",
+          "type": "opening",
+          "at": [
+            7280,
+            4550
+          ],
+          "width": 1820,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-stairs-void",
+          "type": "opening",
+          "at": [
+            7280,
+            6370
+          ],
+          "width": 1820,
+          "height": 2900,
+          "sill": 0
+        },
+        {
+          "id": "b1-ldk-void-n",
+          "type": "opening",
+          "at": [
+            6370,
+            5460
+          ],
+          "width": 1820,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-ldk-void-w",
+          "type": "opening",
+          "at": [
+            5460,
+            6370
+          ],
+          "width": 1820,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b1-w-bath",
+          "type": "window",
+          "at": [
+            0,
+            910
+          ],
+          "width": 780,
+          "height": 500,
+          "sill": 1500,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-laundry",
+          "type": "window",
+          "at": [
+            2730,
+            0
+          ],
+          "width": 780,
+          "height": 500,
+          "sill": 1700,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-sic",
+          "type": "window",
+          "at": [
+            5005,
+            0
+          ],
+          "width": 300,
+          "height": 1100,
+          "sill": 750,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-toilet",
+          "type": "window",
+          "at": [
+            8190,
+            910
+          ],
+          "width": 300,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-kitchen",
+          "type": "window",
+          "at": [
+            0,
+            3900
+          ],
+          "width": 780,
+          "height": 1100,
+          "sill": 1000,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-dining",
+          "type": "window",
+          "at": [
+            1365,
+            7280
+          ],
+          "width": 1690,
+          "height": 2200,
+          "sill": 0,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-living",
+          "type": "window",
+          "at": [
+            4095,
+            7280
+          ],
+          "width": 2550,
+          "height": 2200,
+          "sill": 0,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b1-w-void",
+          "type": "window",
+          "at": [
+            6370,
+            7280
+          ],
+          "width": 1690,
+          "height": 2200,
+          "sill": 0,
+          "sashColor": "#f2f1ee",
+          "style": "fix"
+        },
+        {
+          "id": "b1-w-dining-w",
+          "type": "window",
+          "at": [
+            0,
+            6370
+          ],
+          "width": 780,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        }
+      ],
+      "furniture": [
+        {
+          "id": "b1-entry-door",
+          "type": "entry-door",
+          "name": "玄関ドア（片開き・ホワイト）",
+          "x": 6370,
+          "y": 0,
+          "w": 1000,
+          "d": 60,
+          "h": 2330,
+          "rotation": 180,
+          "color": "#ecebe6",
+          "z": -150,
+          "count": 1
+        },
+        {
+          "id": "b1-shoe-cabinet",
+          "type": "storage",
+          "name": "下駄箱（フロート・ホワイト）",
+          "x": 7020,
+          "y": 910,
+          "w": 1500,
+          "d": 400,
+          "h": 900,
+          "rotation": 90,
+          "color": "#efede8",
+          "z": 300
+        },
+        {
+          "id": "b1-sic-shelf",
+          "type": "open-shelf",
+          "name": "シューズクロークの可動棚",
+          "x": 5005,
+          "y": 235,
+          "w": 790,
+          "d": 350,
+          "h": 2100,
+          "rotation": 0,
+          "color": "#f2f1ee",
+          "z": -150,
+          "count": 7
+        },
+        {
+          "id": "b1-pantry-shelf",
+          "type": "open-shelf",
+          "name": "パントリーの可動棚",
+          "x": 3850,
+          "y": 1365,
+          "w": 2500,
+          "d": 300,
+          "h": 2100,
+          "rotation": 270,
+          "color": "#f2f1ee",
+          "count": 6
+        },
+        {
+          "id": "b1-bathtub",
+          "type": "bathtub",
+          "name": "浴槽",
+          "x": 910,
+          "y": 435,
+          "w": 1600,
+          "d": 750,
+          "h": 550,
+          "rotation": 0,
+          "color": "#f4f4f2"
+        },
+        {
+          "id": "b1-bath-door-leaf",
+          "type": "framed-glass-door",
+          "name": "浴室ドア（白枠・くもりガラス）",
+          "x": 1820,
+          "y": 1300,
+          "w": 750,
+          "d": 40,
+          "h": 2000,
+          "rotation": 90,
+          "color": "#f2f1ee"
+        },
+        {
+          "id": "b1-washer",
+          "type": "washer",
+          "name": "洗濯機（ドラム式）",
+          "x": 3260,
+          "y": 385,
+          "w": 600,
+          "d": 650,
+          "h": 1000,
+          "rotation": 0,
+          "color": "#f2f2f0"
+        },
+        {
+          "id": "b1-laundry-counter",
+          "type": "box",
+          "name": "ランドリーカウンター（たたむ所）",
+          "x": 2330,
+          "y": 335,
+          "w": 1000,
+          "d": 550,
+          "h": 40,
+          "rotation": 0,
+          "color": "#f4f3f0",
+          "z": 850
+        },
+        {
+          "id": "b1-laundry-bar",
+          "type": "box",
+          "name": "室内干しのバー",
+          "x": 2730,
+          "y": 1300,
+          "w": 1600,
+          "d": 25,
+          "h": 25,
+          "rotation": 0,
+          "color": "#d8d8d6",
+          "z": 2100
+        },
+        {
+          "id": "b1-laundry-door-leaf",
+          "type": "sliding-door",
+          "name": "ランドリーの引き戸（片引き戸）",
+          "x": 2300,
+          "y": 1780,
+          "w": 760,
+          "d": 36,
+          "h": 2400,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "pocket": true,
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b1-vanity",
+          "type": "box",
+          "name": "洗面カウンター（ホワイト・2 ボウル）",
+          "x": 910,
+          "y": 2130,
+          "w": 1700,
+          "d": 500,
+          "h": 40,
+          "rotation": 0,
+          "color": "#f6f5f2",
+          "z": 820
+        },
+        {
+          "id": "b1-vanity-shelf",
+          "type": "box",
+          "name": "洗面カウンターの下の棚",
+          "x": 910,
+          "y": 2130,
+          "w": 1700,
+          "d": 480,
+          "h": 20,
+          "rotation": 0,
+          "color": "#e9e1d3",
+          "z": 250,
+          "loose": false
+        },
+        {
+          "id": "b1-basin-1",
+          "type": "basin",
+          "name": "洗面ボウル（置き型）",
+          "x": 480,
+          "y": 2160,
+          "w": 420,
+          "d": 320,
+          "h": 130,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 860
+        },
+        {
+          "id": "b1-basin-2",
+          "type": "basin",
+          "name": "洗面ボウル（置き型）",
+          "x": 1340,
+          "y": 2160,
+          "w": 420,
+          "d": 320,
+          "h": 130,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 860
+        },
+        {
+          "id": "b1-faucet-1",
+          "type": "wall-faucet",
+          "name": "壁付け水栓（ゴールド）",
+          "x": 480,
+          "y": 1980,
+          "w": 50,
+          "d": 200,
+          "h": 50,
+          "rotation": 0,
+          "color": "#c9a96a",
+          "z": 1080
+        },
+        {
+          "id": "b1-faucet-2",
+          "type": "wall-faucet",
+          "name": "壁付け水栓（ゴールド）",
+          "x": 1340,
+          "y": 1980,
+          "w": 50,
+          "d": 200,
+          "h": 50,
+          "rotation": 0,
+          "color": "#c9a96a",
+          "z": 1080
+        },
+        {
+          "id": "b1-mirror-1",
+          "type": "round-mirror",
+          "name": "丸いミラー",
+          "x": 480,
+          "y": 1890,
+          "w": 600,
+          "d": 20,
+          "h": 600,
+          "rotation": 0,
+          "color": "#c9a96a",
+          "z": 1200
+        },
+        {
+          "id": "b1-mirror-2",
+          "type": "round-mirror",
+          "name": "丸いミラー",
+          "x": 1340,
+          "y": 1890,
+          "w": 600,
+          "d": 20,
+          "h": 600,
+          "rotation": 0,
+          "color": "#c9a96a",
+          "z": 1200
+        },
+        {
+          "id": "b1-toilet-bowl",
+          "type": "toilet",
+          "name": "トイレ（タンクレス）",
+          "x": 7735,
+          "y": 410,
+          "w": 400,
+          "d": 700,
+          "h": 515,
+          "rotation": 0,
+          "color": "#f7f7f5"
+        },
+        {
+          "id": "b1-toilet-door-leaf",
+          "type": "swing-door",
+          "name": "トイレの開き戸（ホールへ開く）",
+          "x": 7735,
+          "y": 1820,
+          "w": 684,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b1-ldk-door-leaf",
+          "type": "swing-door",
+          "name": "リビングドア（LDK へ開く）",
+          "x": 7735,
+          "y": 2730,
+          "w": 764,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b1-fridge",
+          "type": "fridge",
+          "name": "冷蔵庫（ホワイト）",
+          "x": 1450,
+          "y": 3115,
+          "w": 600,
+          "d": 649,
+          "h": 1850,
+          "rotation": 0,
+          "color": "#f1f0ec"
+        },
+        {
+          "id": "b1-cupboard",
+          "type": "kitchen-cabinet",
+          "name": "カップボード（ホワイト）",
+          "x": 2680,
+          "y": 3015,
+          "w": 1800,
+          "d": 450,
+          "h": 880,
+          "rotation": 0,
+          "color": "#f1efea",
+          "modules": [
+            900,
+            900
+          ]
+        },
+        {
+          "id": "b1-cupboard-top",
+          "type": "box",
+          "name": "カップボードの天板",
+          "x": 2680,
+          "y": 3015,
+          "w": 1800,
+          "d": 450,
+          "h": 30,
+          "rotation": 0,
+          "color": "#f6f5f2",
+          "z": 880
+        },
+        {
+          "id": "b1-microwave",
+          "type": "microwave",
+          "name": "電子レンジ",
+          "x": 2200,
+          "y": 3010,
+          "w": 480,
+          "d": 390,
+          "h": 300,
+          "rotation": 0,
+          "color": "#f1f0ec",
+          "z": 910
+        },
+        {
+          "id": "b1-island",
+          "type": "island-kitchen",
+          "name": "アイランドキッチン（ホワイト・W2550）",
+          "x": 2230,
+          "y": 4540,
+          "w": 2550,
+          "d": 900,
+          "h": 850,
+          "rotation": 0,
+          "color": "#f2f1ee"
+        },
+        {
+          "id": "b1-dining-table",
+          "type": "dining-table",
+          "name": "ダイニングテーブル（オーク）",
+          "x": 1820,
+          "y": 6150,
+          "w": 1600,
+          "d": 850,
+          "h": 720,
+          "rotation": 0,
+          "color": "#d8c3a2"
+        },
+        {
+          "id": "b1-dining-chair-1",
+          "type": "dining-chair",
+          "name": "ダイニングチェア",
+          "x": 1420,
+          "y": 5560,
+          "w": 450,
+          "d": 520,
+          "h": 780,
+          "rotation": 180,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b1-dining-chair-2",
+          "type": "dining-chair",
+          "name": "ダイニングチェア",
+          "x": 2220,
+          "y": 5560,
+          "w": 450,
+          "d": 520,
+          "h": 780,
+          "rotation": 180,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b1-dining-chair-3",
+          "type": "dining-chair",
+          "name": "ダイニングチェア",
+          "x": 1420,
+          "y": 6740,
+          "w": 450,
+          "d": 520,
+          "h": 780,
+          "rotation": 0,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b1-dining-chair-4",
+          "type": "dining-chair",
+          "name": "ダイニングチェア",
+          "x": 2220,
+          "y": 6740,
+          "w": 450,
+          "d": 520,
+          "h": 780,
+          "rotation": 0,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b1-tv-board",
+          "type": "tv-board",
+          "name": "テレビボード（ホワイト・フロート）",
+          "x": 5915,
+          "y": 2990,
+          "w": 1800,
+          "d": 400,
+          "h": 350,
+          "rotation": 0,
+          "color": "#efede8",
+          "z": 200
+        },
+        {
+          "id": "b1-tv",
+          "type": "box",
+          "name": "テレビ（55 型）",
+          "x": 5915,
+          "y": 2830,
+          "w": 1230,
+          "d": 40,
+          "h": 710,
+          "rotation": 0,
+          "color": "#151515",
+          "z": 950
+        },
+        {
+          "id": "b1-sofa",
+          "type": "sofa",
+          "name": "ソファ（アイボリーのブークレ）",
+          "x": 5650,
+          "y": 4750,
+          "w": 2100,
+          "d": 900,
+          "h": 760,
+          "rotation": 180,
+          "color": "#ece6dc"
+        },
+        {
+          "id": "b1-low-table",
+          "type": "low-table",
+          "name": "ローテーブル（オーク）",
+          "x": 5650,
+          "y": 3800,
+          "w": 1000,
+          "d": 500,
+          "h": 380,
+          "rotation": 0,
+          "color": "#d8c3a2"
+        },
+        {
+          "id": "b1-rug",
+          "type": "rug",
+          "name": "ラグ（アイボリー）",
+          "x": 5650,
+          "y": 4050,
+          "w": 2400,
+          "d": 2000,
+          "h": 10,
+          "rotation": 0,
+          "color": "#e8e1d4"
+        },
+        {
+          "id": "b1-plant-1",
+          "type": "plant",
+          "name": "観葉植物",
+          "x": 4050,
+          "y": 6900,
+          "w": 450,
+          "d": 450,
+          "h": 1500,
+          "rotation": 0,
+          "color": "#5f7a46"
+        },
+        {
+          "id": "b1-plant-2",
+          "type": "plant",
+          "name": "観葉植物",
+          "x": 7000,
+          "y": 6950,
+          "w": 450,
+          "d": 450,
+          "h": 1700,
+          "rotation": 0,
+          "color": "#5f7a46"
+        },
+        {
+          "id": "b1-stairs-flight",
+          "type": "stairs",
+          "name": "階段（リビング階段・オークの踏板・白いささら桁）",
+          "x": 7735,
+          "y": 5118.75,
+          "w": 850,
+          "d": 3412.5,
+          "h": 2900,
+          "rotation": 0,
+          "color": "#d8c6a8"
+        },
+        {
+          "id": "b1-aircon",
+          "type": "aircon",
+          "name": "エアコン（リビング）",
+          "x": 4300,
+          "y": 2915,
+          "w": 798,
+          "d": 250,
+          "h": 295,
+          "rotation": 0,
+          "color": "#f4f4f2",
+          "z": 2050
+        },
+        {
+          "id": "b1-pendant-1",
+          "type": "pendant-light",
+          "name": "ペンダントライト（アイランドの上）",
+          "x": 1630,
+          "y": 4540,
+          "w": 250,
+          "d": 250,
+          "h": 900,
+          "rotation": 0,
+          "color": "#e7e2d8",
+          "z": 1700
+        },
+        {
+          "id": "b1-pendant-2",
+          "type": "pendant-light",
+          "name": "ペンダントライト（アイランドの上）",
+          "x": 2830,
+          "y": 4540,
+          "w": 250,
+          "d": 250,
+          "h": 900,
+          "rotation": 0,
+          "color": "#e7e2d8",
+          "z": 1700
+        },
+        {
+          "id": "b1-pendant-dining",
+          "type": "pendant-light",
+          "name": "ペンダントライト（ダイニング）",
+          "x": 1820,
+          "y": 6150,
+          "w": 450,
+          "d": 450,
+          "h": 900,
+          "rotation": 0,
+          "color": "#e7e2d8",
+          "z": 1550
+        },
+        {
+          "id": "b1-dl-ldk-1",
+          "type": "downlight",
+          "name": "ダウンライト（キッチン）",
+          "x": 2230,
+          "y": 3500,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-ldk-2",
+          "type": "downlight",
+          "name": "ダウンライト（リビング）",
+          "x": 4550,
+          "y": 3800,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-ldk-3",
+          "type": "downlight",
+          "name": "ダウンライト（リビング）",
+          "x": 4550,
+          "y": 5000,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-ldk-4",
+          "type": "downlight",
+          "name": "ダウンライト（リビング）",
+          "x": 6370,
+          "y": 3800,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-ldk-5",
+          "type": "downlight",
+          "name": "ダウンライト（リビング）",
+          "x": 6370,
+          "y": 5000,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-hall",
+          "type": "downlight",
+          "name": "ダウンライト（ホール）",
+          "x": 5460,
+          "y": 2275,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-genkan",
+          "type": "downlight",
+          "name": "ダウンライト（玄関）",
+          "x": 6370,
+          "y": 910,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-sic",
+          "type": "downlight",
+          "name": "ダウンライト（SIC）",
+          "x": 5005,
+          "y": 910,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-pantry",
+          "type": "downlight",
+          "name": "ダウンライト（パントリー）",
+          "x": 4095,
+          "y": 1365,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-wash",
+          "type": "downlight",
+          "name": "ダウンライト（洗面ホール）",
+          "x": 1820,
+          "y": 2275,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-laundry",
+          "type": "downlight",
+          "name": "ダウンライト（ランドリー）",
+          "x": 2730,
+          "y": 910,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-toilet",
+          "type": "downlight",
+          "name": "ダウンライト（トイレ）",
+          "x": 7735,
+          "y": 1100,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b1-dl-bath",
+          "type": "downlight",
+          "name": "浴室の照明",
+          "x": 910,
+          "y": 1300,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2150,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        }
+      ]
+    },
+    {
+      "id": "2f",
+      "name": "2階",
+      "elevation": 2900,
+      "height": 2800,
+      "ceilingHeight": 2400,
+      "rooms": [
+        {
+          "id": "b2-kid-a",
+          "name": "子供部屋A",
+          "polygon": [
+            [
+              0,
+              0
+            ],
+            [
+              2730,
+              0
+            ],
+            [
+              2730,
+              2730
+            ],
+            [
+              0,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-kid-a-closet",
+          "name": "収納",
+          "polygon": [
+            [
+              0,
+              2730
+            ],
+            [
+              1820,
+              2730
+            ],
+            [
+              1820,
+              3640
+            ],
+            [
+              0,
+              3640
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-kid-b",
+          "name": "子供部屋B",
+          "polygon": [
+            [
+              2730,
+              0
+            ],
+            [
+              5460,
+              0
+            ],
+            [
+              5460,
+              1820
+            ],
+            [
+              4550,
+              1820
+            ],
+            [
+              4550,
+              2730
+            ],
+            [
+              2730,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-kid-b-closet",
+          "name": "収納",
+          "polygon": [
+            [
+              4550,
+              1820
+            ],
+            [
+              5460,
+              1820
+            ],
+            [
+              5460,
+              2730
+            ],
+            [
+              4550,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "noLabel": true
+        },
+        {
+          "id": "b2-toilet",
+          "name": "トイレ",
+          "polygon": [
+            [
+              5460,
+              0
+            ],
+            [
+              6370,
+              0
+            ],
+            [
+              6370,
+              1820
+            ],
+            [
+              5460,
+              1820
+            ]
+          ],
+          "floor": "floor-tile-white",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-fcl",
+          "name": "ファミリークローゼット",
+          "polygon": [
+            [
+              6370,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              2730
+            ],
+            [
+              6370,
+              2730
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-hall",
+          "name": "ホール",
+          "polygon": [
+            [
+              1820,
+              2730
+            ],
+            [
+              5460,
+              2730
+            ],
+            [
+              5460,
+              1820
+            ],
+            [
+              6370,
+              1820
+            ],
+            [
+              6370,
+              2730
+            ],
+            [
+              8190,
+              2730
+            ],
+            [
+              8190,
+              3640
+            ],
+            [
+              1820,
+              3640
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-study",
+          "name": "スタディ",
+          "polygon": [
+            [
+              5460,
+              3640
+            ],
+            [
+              7280,
+              3640
+            ],
+            [
+              7280,
+              5460
+            ],
+            [
+              5460,
+              5460
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-wic",
+          "name": "WIC",
+          "polygon": [
+            [
+              0,
+              3640
+            ],
+            [
+              2730,
+              3640
+            ],
+            [
+              2730,
+              4550
+            ],
+            [
+              0,
+              4550
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-master",
+          "name": "主寝室",
+          "polygon": [
+            [
+              0,
+              4550
+            ],
+            [
+              2730,
+              4550
+            ],
+            [
+              2730,
+              3640
+            ],
+            [
+              3640,
+              3640
+            ],
+            [
+              3640,
+              7280
+            ],
+            [
+              0,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "accent": {
+            "west": "cross-greige"
+          }
+        },
+        {
+          "id": "b2-room4",
+          "name": "洋室",
+          "polygon": [
+            [
+              3640,
+              3640
+            ],
+            [
+              5460,
+              3640
+            ],
+            [
+              5460,
+              7280
+            ],
+            [
+              3640,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white"
+        },
+        {
+          "id": "b2-void",
+          "name": "吹き抜け",
+          "polygon": [
+            [
+              5460,
+              5460
+            ],
+            [
+              7280,
+              5460
+            ],
+            [
+              7280,
+              7280
+            ],
+            [
+              5460,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "void": true
+        },
+        {
+          "id": "b2-stairs",
+          "name": "階段",
+          "polygon": [
+            [
+              7280,
+              3640
+            ],
+            [
+              8190,
+              3640
+            ],
+            [
+              8190,
+              7280
+            ],
+            [
+              7280,
+              7280
+            ]
+          ],
+          "floor": "floor-white-ash",
+          "wall": "cross-white",
+          "ceiling": "cross-white",
+          "void": true
+        }
+      ],
+      "openings": [
+        {
+          "id": "b2-kid-a-door",
+          "type": "door",
+          "at": [
+            2275,
+            2730
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-kid-a-closet-door",
+          "type": "opening",
+          "at": [
+            910,
+            2730
+          ],
+          "width": 1600,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-kid-b-door",
+          "type": "door",
+          "at": [
+            3185,
+            2730
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-kid-b-closet-door",
+          "type": "opening",
+          "at": [
+            4550,
+            2275
+          ],
+          "width": 800,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-toilet-door",
+          "type": "door",
+          "at": [
+            5915,
+            1820
+          ],
+          "width": 700,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-fcl-door",
+          "type": "opening",
+          "at": [
+            7735,
+            2730
+          ],
+          "width": 790,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-hall-study",
+          "type": "opening",
+          "at": [
+            6370,
+            3640
+          ],
+          "width": 1820,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-hall-stairs",
+          "type": "opening",
+          "at": [
+            7735,
+            3640
+          ],
+          "width": 910,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-study-void",
+          "type": "opening",
+          "at": [
+            6370,
+            5460
+          ],
+          "width": 1820,
+          "height": 1300,
+          "sill": 1100
+        },
+        {
+          "id": "b2-study-stairs",
+          "type": "opening",
+          "at": [
+            7280,
+            4550
+          ],
+          "width": 1820,
+          "height": 1300,
+          "sill": 1100
+        },
+        {
+          "id": "b2-void-stairs",
+          "type": "opening",
+          "at": [
+            7280,
+            6370
+          ],
+          "width": 1820,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-master-door",
+          "type": "door",
+          "at": [
+            3185,
+            3640
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-wic-door",
+          "type": "opening",
+          "at": [
+            1365,
+            4550
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-room4-door",
+          "type": "door",
+          "at": [
+            4095,
+            3640
+          ],
+          "width": 780,
+          "height": 2400,
+          "sill": 0
+        },
+        {
+          "id": "b2-w-kid-a-n",
+          "type": "window",
+          "at": [
+            1365,
+            0
+          ],
+          "width": 1690,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-kid-a-w",
+          "type": "window",
+          "at": [
+            0,
+            1365
+          ],
+          "width": 780,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-kid-b-n",
+          "type": "window",
+          "at": [
+            4095,
+            0
+          ],
+          "width": 1690,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-toilet",
+          "type": "window",
+          "at": [
+            5915,
+            0
+          ],
+          "width": 300,
+          "height": 500,
+          "sill": 1600,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-fcl",
+          "type": "window",
+          "at": [
+            7280,
+            0
+          ],
+          "width": 780,
+          "height": 500,
+          "sill": 1700,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-master-s",
+          "type": "window",
+          "at": [
+            1820,
+            7280
+          ],
+          "width": 1690,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-room4-s",
+          "type": "window",
+          "at": [
+            4550,
+            7280
+          ],
+          "width": 1100,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "b2-w-void",
+          "type": "window",
+          "at": [
+            6370,
+            7280
+          ],
+          "width": 1690,
+          "height": 1600,
+          "sill": 400,
+          "sashColor": "#f2f1ee",
+          "style": "fix"
+        },
+        {
+          "id": "b2-w-stairs",
+          "type": "window",
+          "at": [
+            8190,
+            5000
+          ],
+          "width": 780,
+          "height": 1100,
+          "sill": 900,
+          "sashColor": "#f2f1ee"
+        }
+      ],
+      "furniture": [
+        {
+          "id": "b2-kid-a-bed",
+          "type": "bed",
+          "name": "ベッド（シングル）",
+          "x": 560,
+          "y": 1060,
+          "w": 1000,
+          "d": 2000,
+          "h": 450,
+          "rotation": 0,
+          "color": "#f1ece3"
+        },
+        {
+          "id": "b2-kid-a-desk",
+          "type": "desk",
+          "name": "学習机",
+          "x": 1950,
+          "y": 360,
+          "w": 1000,
+          "d": 600,
+          "h": 720,
+          "rotation": 0,
+          "color": "#d8c3a2"
+        },
+        {
+          "id": "b2-kid-a-chair",
+          "type": "chair",
+          "name": "いす",
+          "x": 1950,
+          "y": 900,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 180,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b2-kid-a-bifold",
+          "type": "bifold-door",
+          "name": "クローゼットの折れ戸",
+          "x": 910,
+          "y": 2730,
+          "w": 1600,
+          "d": 30,
+          "h": 2390,
+          "rotation": 180,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite"
+        },
+        {
+          "id": "b2-kid-a-door-leaf",
+          "type": "swing-door",
+          "name": "子供部屋A の開き戸（室内へ開く）",
+          "x": 2275,
+          "y": 2730,
+          "w": 764,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "swing": -1,
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b2-kid-a-aircon",
+          "type": "aircon",
+          "name": "エアコン（子供部屋A）",
+          "x": 185,
+          "y": 2200,
+          "w": 798,
+          "d": 250,
+          "h": 295,
+          "rotation": 270,
+          "color": "#f4f4f2",
+          "z": 2050
+        },
+        {
+          "id": "b2-kid-b-bed",
+          "type": "bed",
+          "name": "ベッド（シングル）",
+          "x": 3290,
+          "y": 1060,
+          "w": 1000,
+          "d": 2000,
+          "h": 450,
+          "rotation": 0,
+          "color": "#f1ece3"
+        },
+        {
+          "id": "b2-kid-b-desk",
+          "type": "desk",
+          "name": "学習机",
+          "x": 4400,
+          "y": 360,
+          "w": 1000,
+          "d": 600,
+          "h": 720,
+          "rotation": 0,
+          "color": "#d8c3a2"
+        },
+        {
+          "id": "b2-kid-b-chair",
+          "type": "chair",
+          "name": "いす",
+          "x": 4400,
+          "y": 900,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 180,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b2-kid-b-bifold",
+          "type": "bifold-door",
+          "name": "クローゼットの折れ戸",
+          "x": 4550,
+          "y": 2275,
+          "w": 800,
+          "d": 30,
+          "h": 2390,
+          "rotation": 90,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite"
+        },
+        {
+          "id": "b2-kid-b-door-leaf",
+          "type": "swing-door",
+          "name": "子供部屋B の開き戸（室内へ開く）",
+          "x": 3185,
+          "y": 2730,
+          "w": 764,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "swing": -1,
+          "material": "raffis-preciouswhite",
+          "handle": "nickel",
+          "flip": true
+        },
+        {
+          "id": "b2-toilet-bowl",
+          "type": "toilet",
+          "name": "トイレ（タンクレス）",
+          "x": 5915,
+          "y": 410,
+          "w": 400,
+          "d": 700,
+          "h": 515,
+          "rotation": 0,
+          "color": "#f7f7f5"
+        },
+        {
+          "id": "b2-toilet-door-leaf",
+          "type": "swing-door",
+          "name": "トイレの開き戸（ホールへ開く）",
+          "x": 5915,
+          "y": 1820,
+          "w": 684,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b2-fcl-pipe",
+          "type": "box",
+          "name": "ハンガーパイプ",
+          "x": 7830,
+          "y": 1300,
+          "w": 25,
+          "d": 2400,
+          "h": 25,
+          "rotation": 0,
+          "color": "#c9c9c7",
+          "z": 1700
+        },
+        {
+          "id": "b2-fcl-shelf-top",
+          "type": "box",
+          "name": "枕棚",
+          "x": 7905,
+          "y": 1300,
+          "w": 450,
+          "d": 2400,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f2f1ee",
+          "z": 1800
+        },
+        {
+          "id": "b2-fcl-clothes",
+          "type": "hanging-clothes",
+          "name": "家族の服",
+          "x": 7830,
+          "y": 1300,
+          "w": 2300,
+          "d": 450,
+          "h": 1000,
+          "rotation": 90,
+          "color": "#b9b2a7",
+          "z": 1700,
+          "count": 14,
+          "variant": "tops"
+        },
+        {
+          "id": "b2-fcl-shelf",
+          "type": "open-shelf",
+          "name": "可動棚（たたんだ服・タオル）",
+          "x": 6630,
+          "y": 1150,
+          "w": 2000,
+          "d": 400,
+          "h": 2000,
+          "rotation": 270,
+          "color": "#f2f1ee",
+          "count": 5
+        },
+        {
+          "id": "b2-study-counter",
+          "type": "box",
+          "name": "スタディカウンター（吹き抜けの腰壁に沿う・オーク）",
+          "x": 6370,
+          "y": 5150,
+          "w": 1700,
+          "d": 500,
+          "h": 40,
+          "rotation": 0,
+          "color": "#d8c3a2",
+          "z": 700
+        },
+        {
+          "id": "b2-study-stool-1",
+          "type": "chair",
+          "name": "いす",
+          "x": 5950,
+          "y": 4700,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 0,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b2-study-stool-2",
+          "type": "chair",
+          "name": "いす",
+          "x": 6800,
+          "y": 4700,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 0,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b2-wic-pipe",
+          "type": "box",
+          "name": "ハンガーパイプ",
+          "x": 1365,
+          "y": 4000,
+          "w": 2550,
+          "d": 25,
+          "h": 25,
+          "rotation": 0,
+          "color": "#c9c9c7",
+          "z": 1700
+        },
+        {
+          "id": "b2-wic-shelf-top",
+          "type": "box",
+          "name": "枕棚",
+          "x": 1365,
+          "y": 3925,
+          "w": 2550,
+          "d": 450,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f2f1ee",
+          "z": 1800
+        },
+        {
+          "id": "b2-wic-clothes",
+          "type": "hanging-clothes",
+          "name": "服",
+          "x": 1365,
+          "y": 4000,
+          "w": 2300,
+          "d": 450,
+          "h": 1000,
+          "rotation": 0,
+          "color": "#b9b2a7",
+          "z": 1700,
+          "count": 12,
+          "variant": "women"
+        },
+        {
+          "id": "b2-master-bed",
+          "type": "bed",
+          "name": "ベッド（クイーン・アイボリー）",
+          "x": 1060,
+          "y": 5915,
+          "w": 1600,
+          "d": 2000,
+          "h": 450,
+          "rotation": 270,
+          "color": "#f1ece3"
+        },
+        {
+          "id": "b2-master-door-leaf",
+          "type": "swing-door",
+          "name": "主寝室の開き戸（室内へ開く）",
+          "x": 3185,
+          "y": 3640,
+          "w": 764,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite",
+          "handle": "nickel",
+          "flip": true
+        },
+        {
+          "id": "b2-master-aircon",
+          "type": "aircon",
+          "name": "エアコン（主寝室）",
+          "x": 3455,
+          "y": 6000,
+          "w": 798,
+          "d": 250,
+          "h": 295,
+          "rotation": 90,
+          "color": "#f4f4f2",
+          "z": 2050
+        },
+        {
+          "id": "b2-master-plant",
+          "type": "plant",
+          "name": "観葉植物",
+          "x": 3300,
+          "y": 6950,
+          "w": 400,
+          "d": 400,
+          "h": 1200,
+          "rotation": 0,
+          "color": "#5f7a46"
+        },
+        {
+          "id": "b2-room4-door-leaf",
+          "type": "swing-door",
+          "name": "洋室の開き戸（室内へ開く）",
+          "x": 4095,
+          "y": 3640,
+          "w": 764,
+          "d": 36,
+          "h": 2380,
+          "rotation": 0,
+          "color": "#ecebe6",
+          "material": "raffis-preciouswhite",
+          "handle": "nickel"
+        },
+        {
+          "id": "b2-room4-desk",
+          "type": "desk",
+          "name": "デスク",
+          "x": 5100,
+          "y": 4900,
+          "w": 1200,
+          "d": 600,
+          "h": 720,
+          "rotation": 90,
+          "color": "#d8c3a2"
+        },
+        {
+          "id": "b2-room4-chair",
+          "type": "chair",
+          "name": "いす",
+          "x": 4700,
+          "y": 4900,
+          "w": 450,
+          "d": 500,
+          "h": 800,
+          "rotation": 270,
+          "color": "#e9e2d6"
+        },
+        {
+          "id": "b2-room4-sofa",
+          "type": "sofa",
+          "name": "ソファベッド（ゲスト用）",
+          "x": 4125,
+          "y": 6300,
+          "w": 1800,
+          "d": 850,
+          "h": 760,
+          "rotation": 270,
+          "color": "#ddd5c8"
+        },
+        {
+          "id": "b2-room4-aircon",
+          "type": "aircon",
+          "name": "エアコン（洋室）",
+          "x": 3825,
+          "y": 4500,
+          "w": 798,
+          "d": 250,
+          "h": 295,
+          "rotation": 270,
+          "color": "#f4f4f2",
+          "z": 2050
+        },
+        {
+          "id": "b2-cl-kid-a",
+          "type": "ceiling-light",
+          "name": "シーリングライト（子供部屋A）",
+          "x": 1365,
+          "y": 1365,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3700,
+          "kelvin": 3500
+        },
+        {
+          "id": "b2-cl-kid-b",
+          "type": "ceiling-light",
+          "name": "シーリングライト（子供部屋B）",
+          "x": 3640,
+          "y": 1365,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3700,
+          "kelvin": 3500
+        },
+        {
+          "id": "b2-cl-master",
+          "type": "ceiling-light",
+          "name": "シーリングライト（主寝室）",
+          "x": 1820,
+          "y": 5915,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3700,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-cl-room4",
+          "type": "ceiling-light",
+          "name": "シーリングライト（洋室）",
+          "x": 4550,
+          "y": 5460,
+          "w": 560,
+          "d": 560,
+          "h": 90,
+          "rotation": 0,
+          "color": "#f6f6f4",
+          "z": 2400,
+          "lumen": 3700,
+          "kelvin": 3500
+        },
+        {
+          "id": "b2-dl-hall-1",
+          "type": "downlight",
+          "name": "ダウンライト（ホール）",
+          "x": 3640,
+          "y": 3185,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-dl-hall-2",
+          "type": "downlight",
+          "name": "ダウンライト（ホール）",
+          "x": 6370,
+          "y": 3185,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-dl-study",
+          "type": "downlight",
+          "name": "ダウンライト（スタディ）",
+          "x": 6370,
+          "y": 4800,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-dl-fcl",
+          "type": "downlight",
+          "name": "ダウンライト（ファミクロ）",
+          "x": 7280,
+          "y": 1365,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-dl-wic",
+          "type": "downlight",
+          "name": "ダウンライト（WIC）",
+          "x": 1365,
+          "y": 4095,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-dl-toilet",
+          "type": "downlight",
+          "name": "ダウンライト（トイレ）",
+          "x": 5915,
+          "y": 1100,
+          "w": 100,
+          "d": 100,
+          "h": 20,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": 2400,
+          "lumen": 500,
+          "beam": 90,
+          "kelvin": 3000
+        },
+        {
+          "id": "b2-pendant-void",
+          "type": "pendant-light",
+          "name": "ペンダントライト（吹き抜け）",
+          "x": 6370,
+          "y": 6370,
+          "w": 500,
+          "d": 500,
+          "h": 1700,
+          "rotation": 0,
+          "color": "#e7e2d8",
+          "z": 700
+        }
+      ]
+    }
+  ],
+  "roofs": [
+    {
+      "id": "b-roof",
+      "floor": 1,
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          8190,
+          0
+        ],
+        [
+          8190,
+          7280
+        ],
+        [
+          0,
+          7280
+        ]
+      ],
+      "low": "north",
+      "slope": 0.05,
+      "eave": 300,
+      "thickness": 130,
+      "material": "roof-kiwami-jetblack",
+      "downpipes": [
+        [
+          90,
+          -95
+        ],
+        [
+          8100,
+          -95
+        ]
+      ]
+    }
+  ]
+}
