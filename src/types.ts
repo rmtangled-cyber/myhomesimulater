@@ -75,6 +75,8 @@ export interface Opening {
   /** 開口部まわりの面を 1 面ずつ。キーは「面|側の部屋 ID」（面は a = 壁の線の始まりの側の側面、b = 終わりの側の側面、h = 上・下の面。
    *  壁の厚みの真ん中で分けた、その部屋の側の半分）か、面だけ（両側の半分とも）。jamb より優先 */
   jambFaces?: Record<string, string>;
+  /** 開口部の上の下面を、天井と同じ高さの側にも描く（壁の厚みの分もクロスを選べる） */
+  soffitBoth?: boolean;
   /** 室内ドアの枠の色（ラフィスのライン枠。白が標準、黒はオプション） */
   frame?: 'white' | 'black' | 'none' | 'calm';
   /** frame: 'calm'（KAMIYA CALM の細い枠と天井の上枠）の色。扉の色に合わせる */
@@ -85,6 +87,8 @@ export interface Opening {
   slideRoom?: string;
   slideTo?: Side;
   slideDepth?: number;
+  /** 光を通さない（壁を貫通していない埋め込み収納の穴など。照明の光が隣の部屋へ届かないようにする） */
+  blocksLight?: boolean;
   /** 戸袋の長さ（既定は開口部の幅 + 80）。壁が足りないときに短くする */
   slideLength?: number;
 }
@@ -120,6 +124,8 @@ export interface Furniture {
   /** monitor-arm・mic-arm: ディスプレイ・マイクを左右へずらす量（mm。正面から見て右が +） */
   armX?: number;
   /** 吊り引き戸: 裏の面（背面）にもミラーシート（全身鏡くらい）を貼る */
+  /** framed-glass-door: 開く側と反対の面にタオルハンガーを付ける */
+  towelBar?: boolean;
   backMirror?: boolean;
   /** 素材を貼った箱の木目の向き。'x' なら横（幅の方向） */
   grain?: 'x';
@@ -167,8 +173,16 @@ export interface Furniture {
   frontGap?: number;
   /** wall-shelf: 棚板 1 枚ずつの上面の高さ（家具の下端から mm、下から順に）。省略時は h を棚板の枚数で等分 */
   levels?: number[];
-  /** コンセント: 横向き（プレートを 90° 回して、差し込み口を左右に並べる） */
+  /** コンセント・スイッチ: 横向き（プレートを 90° 回す） */
   sideways?: boolean;
+  /** 自分で付けるコンセント式の照明など。電気図に載せない */
+  plugIn?: boolean;
+  /** コンセント: テレビ端子付き */
+  tv?: boolean;
+  /** コンセント: 壁の中・床下にあって見えない（3D に形を作らない） */
+  inWall?: boolean;
+  /** 防犯カメラ: 本体を横へ振る角度（度） */
+  aim?: number;
   /** 形の種類の中の作り分け（hanging-clothes の tops・slacks・dress・coat・women・men、hat の fedora・cap、bag の handbag・tote・backpack など） */
   variant?: string;
   /** ケージなどに上から掛ける布の面（家具の向きで: top・back（背面）・left（正面から見て右手…ではなく家具の −x 側）・right） */
@@ -181,6 +195,10 @@ export interface Furniture {
   kelvin?: number;
   /** 人感センサー付きの照明。スイッチが入っていても、ウォークスルーで近づいた時だけつき、離れると少しして消える */
   sensor?: boolean;
+  /** ほかの照明の人感センサーに連動してつく（そのセンサーの照明の id） */
+  sensorLink?: string;
+  /** LAN の口: 10G で接続する（ハブ経由） */
+  lan10g?: boolean;
   /** L 字ソファのカウチの前への出幅（mm） */
   chaise?: number;
 }
@@ -222,8 +240,19 @@ export interface CustomMaterial {
   bump?: number;
 }
 
+/** 動画の通り道の 1 点。x, y は平面図の座標（mm）、eye は 1 階 FL からの目の高さ（mm）、yaw・pitch は向き（度。yaw 0 = 北、90 = 西） */
+export interface WalkPoint {
+  x: number;
+  y: number;
+  eye: number;
+  yaw: number;
+  pitch: number;
+}
+
 export interface Plan {
   name: string;
+  /** 動画の通り道。speed は歩く速さ（m/秒） */
+  walkVideo?: { points: WalkPoint[]; speed: number };
   /** グリッドの間隔（尺モジュールなら 910） */
   grid: number;
   /** 壁の厚さ（壁芯から両側へ半分ずつ。室内側の面はここまで） */

@@ -762,17 +762,25 @@ function buildFloor(
     }
     const rects = rectsWithHoles(len, wallBottom, wallTop, spans);
     if (clad > 0) addCladding(f, len, rects);
+    // soffitBoth の開口部の下面は、幅の途中の部屋の境でも分ける（部屋ごとにクロスを選べて、天井の有無も別々に見る）
+    const soffitCuts = spans.some((s) => s.opening.soffitBoth)
+      ? rooms.flatMap((x) => x.polygon).map((p) => projectOnLine(p, start, end)).filter((q) => q.off < 1).map((q) => q.u)
+      : [];
     for (const r of rects) {
       const drawStart = r.u0 > 0.5 || !joinStart;
       const drawEnd = r.u1 < len - 0.5 || !joinEnd;
       addWallBox(wallBuilder, (u, s, o) => sideBuilder(f, u, s, o, partOf(u, o)), openingAt, f, r, t, wallBottom, wallTop, drawStart, drawEnd, floor.ceilingHeight, holes, (u, s, v) => {
         // その側の部屋に、この高さで天井があるか（天井がない・もっと高いなら下面を描く）
-        const p = f.at(u, 0, s * (t / 2 + 20));
-        const room = rooms.find((x) => pointInPolygon([p.x, p.z], x.polygon));
-        if (!room) return true;
-        if (!room.ceiling) return true;
-        return (room.level ?? 0) + (room.ceilingHeight ?? floor.ceilingHeight) > v + 1;
-      });
+        const covered = (k: 1 | -1) => {
+          const p = f.at(u, 0, k * (t / 2 + 20));
+          const room = rooms.find((x) => pointInPolygon([p.x, p.z], x.polygon));
+          return !!room?.ceiling && (room.level ?? 0) + (room.ceilingHeight ?? floor.ceilingHeight) <= v + 1;
+        };
+        // soffitBoth の開口部は、下面をいつも 1mm 下に描く（天井と同じ高さの所でも選べて、幅の広い開口部で隣の部屋の天井と重なってちらつかない）。
+        // 両側とも天井がある区間も描く（2 階の階段 1 段目の所で省くと、下面の端の線が壁の厚みの半分だけ段違いになる）
+        if (floor.openings.find((x) => x.id === openingAt(u))?.soffitBoth) return 1;
+        return !covered(s);
+      }, soffitCuts);
     }
   }
   if (!wallBuilder.empty) {
@@ -1051,7 +1059,7 @@ function buildFloor(
           return Math.hypot(w.from[0] - c.x, w.from[1] - c.z) < 3 || Math.hypot(w.to[0] - c.x, w.to[1] - c.z) < 3;
         });
       };
-      const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5).map((sp) => ({
+      const spans = openingsOnSegment(floor.openings, a, b, t / 2 + 5).filter((sp) => Math.abs(projectOnLine(sp.opening.at, room.polygon[i], room.polygon[(i + 1) % n]).off) < 30).map((sp) => ({
         ...sp,
         u0: sp.u0 <= v0 + 3 ? 0 : teeAt(sp.u0, -1) && passage(sp) ? sp.u0 + t / 2 : sp.u0,
         u1: sp.u1 >= v1 - 3 ? len : teeAt(sp.u1, 1) && passage(sp) ? sp.u1 - t / 2 : sp.u1,
@@ -1185,7 +1193,7 @@ function buildFloor(
 
   // ---- 引き戸の縦枠（戸先の側） ----
   // 引き戸でも、戸が閉まって当たる側（戸先）には縦枠が付く（LIXIL ラフィス 上吊引戸 ライン枠の取付け説明書: 縦枠に戸じゃくり、戸当たりを接着）。
-  // 開口部の戸袋と反対の端に、壁の厚みいっぱいの縦枠（開口の中へ 25）と、真ん中に戸先が入る溝（戸じゃくり）を描く（2026-10-25）
+  // 開口部の戸袋と反対の端に、壁の厚みいっぱいの縦枠（開口の中へ 25）と、中央の戸当たりも枠と同じ色なので別の線は描かない（2026-11-01 ユーザー指定）
   for (const o of floor.openings) {
     if (!o.slideTo) continue;
     const v = SIDE_VEC[o.slideTo];
@@ -1207,13 +1215,6 @@ function buildFloor(
     frame.position.set(ex, o.sill + o.height / 2, ez);
     frame.castShadow = frame.receiveShadow = true;
     group.add(frame);
-    // 戸じゃくり（戸先が入る溝。幅 40・深さ 12）
-    const groove = new THREE.Mesh(
-      new THREE.BoxGeometry(along === 'x' ? 2 : 40, o.height - 20, along === 'x' ? 40 : 2),
-      new THREE.MeshStandardMaterial({ color: '#2a2a2a', roughness: 0.8, clippingPlanes: clip }),
-    );
-    groove.position.set(ex + v[0] * (FRAME / 2 + 0.6), o.sill + o.height / 2, ez + v[1] * (FRAME / 2 + 0.6));
-    group.add(groove);
   }
 
   // ---- 家具 ----
@@ -1234,7 +1235,7 @@ function buildFloor(
  */
 const noSoffit = () => false;
 
-function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = [], needSoffit: (u: number, s: 1 | -1, v: number) => boolean = noSoffit) {
+function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: string) => MeshBuilder, openingAt: (u: number) => string | undefined, f: Frame, r: Rect, t: number, bottom: number, top: number, drawStart: boolean, drawEnd: boolean, ceiling: number, holes: Hole[] = [], needSoffit: (u: number, s: 1 | -1, v: number) => boolean | number = noSoffit, soffitCuts: number[] = []) {
   const du = r.u1 - r.u0;
   const dv = r.v1 - r.v0;
   const D = f.D;
@@ -1260,9 +1261,19 @@ function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: st
   // 階の天井高だけで決めていたときは、下がり天井の部屋（3 階トイレの北の半分）で天井と下面が重なってちらついた（2026-10-25）
   if (r.v0 > bottom) {
     const o = openingAt(mid);
-    const need = (s: 1 | -1) => (needSoffit === noSoffit ? r.v0 < ceiling - 1 : needSoffit(mid, s, r.v0));
-    if (need(-1)) side(mid, -1, o).quad(f.at(r.u0, r.v0, -h), along, nHalf, [r.u0, 0], [du, h]);
-    if (need(1)) side(mid, 1, o).quad(f.at(r.u0, r.v0, 0), along, nHalf, [r.u0, h], [du, h]);
+    const need = (u: number, s: 1 | -1) => (needSoffit === noSoffit ? r.v0 < ceiling - 1 : needSoffit(u, s, r.v0));
+    const drop = (n: boolean | number) => (typeof n === 'number' ? n : 0);
+    const cuts = [r.u0, ...soffitCuts.filter((u) => u > r.u0 + 1 && u < r.u1 - 1).sort((p, q) => p - q), r.u1];
+    for (let i = 0; i + 1 < cuts.length; i++) {
+      const [u0, u1] = [cuts[i], cuts[i + 1]];
+      if (u1 - u0 < 1) continue;
+      const m = (u0 + u1) / 2;
+      const span = D.clone().multiplyScalar(u1 - u0);
+      const a = need(m, -1);
+      const b = need(m, 1);
+      if (a) side(m, -1, o).quad(f.at(u0, r.v0 - drop(a), -h), span, nHalf, [u0, 0], [u1 - u0, h]);
+      if (b) side(m, 1, o).quad(f.at(u0, r.v0 - drop(b), 0), span, nHalf, [u0, h], [u1 - u0, h]);
+    }
   }
   // 端面（開口部の側面・壁の切れ目）。隣の壁の位置（端から 30 内側）で両側の仕上げを調べる
   if (drawStart) {

@@ -53,12 +53,19 @@ export class PlanStore {
 
   /** ファイルが外で書き換えられたときに呼ぶ。中身が同じなら何もしない */
   async reloadIfChanged() {
-    const res = await fetch(`/api/plans/${encodeURIComponent(this.name)}`);
-    if (!res.ok) return;
-    let next: Plan;
-    try {
-      next = JSON.parse(await res.text());
-    } catch {
+    // 書き込みの途中を読むと JSON が途中で切れているので、少し待って読み直す
+    let next: Plan | undefined;
+    for (let i = 0; i < 6 && !next; i++) {
+      if (i) await new Promise((r) => setTimeout(r, 500));
+      const res = await fetch(`/api/plans/${encodeURIComponent(this.name)}`);
+      if (!res.ok) return;
+      try {
+        next = JSON.parse(await res.text());
+      } catch {
+        // 次の回で読み直す
+      }
+    }
+    if (!next) {
       this.onStatus('error', 'ファイルの JSON が壊れています（直るまで前の状態を表示します）');
       return;
     }

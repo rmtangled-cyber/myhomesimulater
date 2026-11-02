@@ -70,8 +70,10 @@
 <text x="117.50" y="61.20" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >1,820</text>
 <line x1="147.03" y1="63.80" x2="148.63" y2="62.20" stroke="#444" stroke-width="0.2" />
 <text x="140.25" y="61.20" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >910</text>
+<line x1="203.91" y1="63.80" x2="205.51" y2="62.20" stroke="#444" stroke-width="0.2" />
+<text x="176.27" y="61.20" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3,413</text>
 <line x1="207.70" y1="63.80" x2="209.30" y2="62.20" stroke="#444" stroke-width="0.2" />
-<text x="178.17" y="61.20" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3,640</text>
+<text x="206.60" y="61.20" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >228</text>
 <line x1="72.00" y1="57.00" x2="208.50" y2="57.00" stroke="#444" stroke-width="0.15" />
 <line x1="71.20" y1="57.80" x2="72.80" y2="56.20" stroke="#444" stroke-width="0.2" />
 <line x1="207.70" y1="57.80" x2="209.30" y2="56.20" stroke="#444" stroke-width="0.2" />
@@ -132,7 +134,8 @@
 <polygon points="102.33,147.83 147.83,147.83 147.83,166.79 102.33,166.79" fill="#f1f0ec" stroke="none"/>
 <polygon points="102.33,166.79 142.83,166.79 142.83,185.75 102.33,185.75" fill="#f1f0ec" stroke="none"/>
 <polygon points="142.83,166.79 147.83,166.79 147.83,185.75 142.83,185.75" fill="#f1f0ec" stroke="none"/>
-<polygon points="147.83,72.00 208.50,72.00 208.50,94.75 147.83,94.75" fill="#ffffff" stroke="none"/>
+<polygon points="147.83,72.00 204.71,72.00 204.71,94.75 147.83,94.75" fill="#ffffff" stroke="none"/>
+<polygon points="204.71,72.00 208.50,72.00 208.50,94.75 204.71,94.75" fill="#ffffff" stroke="none"/>
 <polygon points="147.83,94.75 208.50,94.75 208.50,98.08 147.83,98.08" fill="#f1f0ec" stroke="none"/>
 <polygon points="147.83,98.08 208.50,98.08 208.50,185.75 147.83,185.75" fill="#f1f0ec" stroke="none"/>
 <polygon points="72.00,71.00 104.17,71.00 104.17,73.00 72.00,73.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
@@ -140,12 +143,12 @@
 <line x1="104.17" y1="72.33" x2="130.83" y2="72.33" stroke="#222" stroke-width="0.15" />
 <line x1="104.17" y1="71.00" x2="104.17" y2="73.00" stroke="#222" stroke-width="0.18" />
 <line x1="130.83" y1="71.00" x2="130.83" y2="73.00" stroke="#222" stroke-width="0.18" />
-<polygon points="130.83,71.00 134.50,71.00 134.50,73.00 130.83,73.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
-<line x1="134.50" y1="71.67" x2="146.00" y2="71.67" stroke="#222" stroke-width="0.15" />
-<line x1="134.50" y1="72.33" x2="146.00" y2="72.33" stroke="#222" stroke-width="0.15" />
-<line x1="134.50" y1="71.00" x2="134.50" y2="73.00" stroke="#222" stroke-width="0.18" />
-<line x1="146.00" y1="71.00" x2="146.00" y2="73.00" stroke="#222" stroke-width="0.18" />
-<polygon points="146.00,71.00 208.50,71.00 208.50,73.00 146.00,73.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
+<polygon points="130.83,71.00 134.88,71.00 134.88,73.00 130.83,73.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
+<line x1="134.88" y1="71.67" x2="146.38" y2="71.67" stroke="#222" stroke-width="0.15" />
+<line x1="134.88" y1="72.33" x2="146.38" y2="72.33" stroke="#222" stroke-width="0.15" />
+<line x1="134.88" y1="71.00" x2="134.88" y2="73.00" stroke="#222" stroke-width="0.18" />
+<line x1="146.38" y1="71.00" x2="146.38" y2="73.00" stroke="#222" stroke-width="0.18" />
+<polygon points="146.38,71.00 208.50,71.00 208.50,73.00 146.38,73.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="72.00,108.92 102.33,108.92 102.33,110.92 72.00,110.92" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="72.00,112.72 132.67,112.72 132.67,114.72 72.00,114.72" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="72.00,143.05 88.17,143.05 88.17,145.05 72.00,145.05" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
@@ -167,6 +170,7 @@
 <polygon points="148.83,72.00 148.83,82.92 146.83,82.92 146.83,72.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="148.83,93.75 148.83,167.80 146.83,167.80 146.83,93.75" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="148.83,184.75 148.83,185.75 146.83,185.75 146.83,184.75" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
+<polygon points="205.72,72.00 205.72,94.75 203.72,94.75 203.72,72.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="209.50,72.00 209.50,118.50 207.50,118.50 207.50,72.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <polygon points="209.50,162.00 209.50,185.75 207.50,185.75 207.50,162.00" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <text x="87.17" y="95.96" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >浴室</text>
@@ -178,14 +182,14 @@
 <text x="87.17" y="175.60" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >シューズクローク</text>
 <text x="125.08" y="162.31" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >玄関</text>
 <text x="122.58" y="181.27" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ポーチ</text>
-<text x="178.17" y="88.38" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ウォークインクローゼット</text>
+<text x="176.27" y="88.38" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ウォークインクローゼット</text>
 <text x="178.17" y="146.92" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >車庫</text>
 <polygon points="164.04,110.38 192.29,110.38 192.29,176.96 164.04,176.96" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="101.33,184.75 73.00,184.75 73.00,177.25 101.33,177.25" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="149.50,111.17 159.50,111.17 159.50,141.17 149.50,141.17" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.00,177.25 73.00,161.71 78.00,161.71 78.00,177.25" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="120.50,112.71 103.33,112.71 103.33,105.21 120.50,105.21" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="130.67,112.71 120.67,112.71 120.67,101.88 130.67,101.88" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="130.83,112.79 120.50,112.79 120.50,101.79 130.83,101.79" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="119.17,112.71 103.33,112.71 103.33,105.21 119.17,105.21" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="130.42,112.71 120.42,112.71 120.42,101.88 130.42,101.88" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="130.58,112.79 120.25,112.79 120.25,101.79 130.58,101.79" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.83,73.00 100.50,73.00 100.50,85.50 73.83,85.50" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="146.83,146.67 146.83,165.79 139.33,165.79 139.33,146.67" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="211.88,179.50 211.88,166.17 216.88,166.17 216.88,179.50" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
@@ -199,43 +203,42 @@
 <polygon points="211.88,101.92 211.88,88.58 216.88,88.58 216.88,101.92" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.17,176.98 73.17,161.98 77.83,161.98 77.83,176.98" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.17,176.98 73.17,161.98 77.83,161.98 77.83,176.98" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="83.25,178.08 83.25,183.92 74.08,183.92 74.08,178.08" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="67.00,118.67 67.00,158.67 62.00,158.67 62.00,118.67" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="213.67,160.33 213.67,120.33 218.67,120.33 218.67,160.33" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="210.88,180.33 210.88,165.33 217.88,165.33 217.88,180.33" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="210.88,102.75 210.88,87.75 217.88,87.75 217.88,102.75" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="69.62,72.17 69.62,87.17 62.62,87.17 62.62,72.17" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="68.62,159.50 68.62,172.83 63.62,172.83 63.62,159.50" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="69.62,158.67 69.62,173.67 62.62,173.67 62.62,158.67" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <defs><marker id="arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#d4242b"/></marker></defs>
 <line x1="105.60" y1="88.67" x2="87.17" y2="93.67" stroke="#d4242b" stroke-width="0.3" />
 <line x1="129.40" y1="85.50" x2="117.50" y2="92.83" stroke="#d4242b" stroke-width="0.3" />
 <line x1="117.50" y1="92.83" x2="117.50" y2="74.33" stroke="#d4242b" stroke-width="0.3" />
 <line x1="152.00" y1="91.48" x2="178.17" y2="83.67" stroke="#d4242b" stroke-width="0.3" />
-<line x1="178.17" y1="83.67" x2="177.67" y2="78.50" stroke="#d4242b" stroke-width="0.3" />
-<line x1="177.67" y1="78.50" x2="202.00" y2="86.28" stroke="#d4242b" stroke-width="0.3" />
-<line x1="90.43" y1="127.00" x2="91.20" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
+<line x1="90.43" y1="127.00" x2="91.18" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
 <path d="M 90.43 127.00 l -5 3" stroke="#d4242b" stroke-width="0.3" fill="none" marker-end="url(#arrow)"/>
 <text x="83.93" y="131.60" font-size="2.1" fill="#d4242b" text-anchor="end" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2Fへ</text>
-<line x1="83.67" y1="140.78" x2="124.83" y2="190.50" stroke="#d4242b" stroke-width="0.3" />
-<line x1="83.67" y1="140.78" x2="140.25" y2="92.83" stroke="#d4242b" stroke-width="0.3" />
-<line x1="83.67" y1="140.78" x2="74.50" y2="128.88" stroke="#d4242b" stroke-width="0.3" />
-<line x1="74.50" y1="128.88" x2="106.91" y2="150.25" stroke="#d4242b" stroke-width="0.3" />
-<line x1="106.91" y1="150.25" x2="135.17" y2="138.33" stroke="#d4242b" stroke-width="0.3" />
-<line x1="135.17" y1="138.33" x2="143.08" y2="156.17" stroke="#d4242b" stroke-width="0.3" />
-<line x1="86.33" y1="140.78" x2="87.17" y2="164.50" stroke="#d4242b" stroke-width="0.3" />
-<line x1="86.33" y1="140.78" x2="127.00" y2="176.17" stroke="#d4242b" stroke-width="0.3" />
+<line x1="83.00" y1="147.31" x2="124.83" y2="190.50" stroke="#d4242b" stroke-width="0.3" />
+<line x1="124.83" y1="190.50" x2="178.17" y2="96.42" stroke="#d4242b" stroke-width="0.3" />
+<line x1="84.83" y1="147.31" x2="140.25" y2="92.83" stroke="#d4242b" stroke-width="0.3" />
+<line x1="83.00" y1="147.31" x2="74.50" y2="128.88" stroke="#d4242b" stroke-width="0.3" />
+<line x1="74.50" y1="128.88" x2="105.33" y2="140.33" stroke="#d4242b" stroke-width="0.3" />
+<line x1="105.33" y1="140.33" x2="106.91" y2="150.25" stroke="#d4242b" stroke-width="0.3" />
+<line x1="84.83" y1="147.31" x2="87.17" y2="164.50" stroke="#d4242b" stroke-width="0.3" />
+<line x1="83.00" y1="147.31" x2="122.83" y2="181.08" stroke="#d4242b" stroke-width="0.3" />
 <line x1="83.90" y1="125.33" x2="79.58" y2="114.96" stroke="#d4242b" stroke-width="0.3" />
+<circle cx="75.08" cy="147.31" r="1.90" fill="#f28aa6" stroke="#222" stroke-width="0.2"/>
+<line x1="75.08" y1="146.11" x2="75.08" y2="148.51" stroke="#222" stroke-width="0.25" />
+<text x="75.08" y="151.31" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >AC/E</text>
 <circle cx="79.58" cy="114.96" r="4.17" fill="none" stroke="#7fd0e6" stroke-width="0.6"/>
-<rect x="80.58" y="117.11" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="83.18" y="118.36" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<line x1="143.08" y1="147.67" x2="143.08" y2="164.67" stroke="#7fd0e6" stroke-width="0.9" />
-<line x1="143.08" y1="147.67" x2="143.08" y2="164.67" stroke="#222" stroke-width="0.12" />
-<rect x="136.88" y="158.32" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="139.48" y="159.57" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
+<circle cx="144.57" cy="152.83" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="145.77" y1="153.33" x2="143.37" y2="153.33" stroke="#222" stroke-width="0.25" />
+<line x1="145.77" y1="152.33" x2="143.37" y2="152.33" stroke="#222" stroke-width="0.25" />
+<text x="144.57" y="159.03" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+75</text>
 <circle cx="127.75" cy="189.92" r="1.60" fill="#fff" stroke="#d4242b" stroke-width="0.3"/>
 <text x="127.75" y="189.92" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >t</text>
-<rect x="128.75" y="192.07" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="131.35" y="193.32" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="178.17" cy="83.67" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="178.17" cy="83.67" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
-<rect x="179.17" y="85.82" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="181.77" y="87.07" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
 <circle cx="117.50" cy="92.83" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="117.50" cy="92.83" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
 <circle cx="140.25" cy="92.83" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
@@ -243,133 +246,104 @@
 <text x="140.25" y="89.63" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <line x1="74.50" y1="114.71" x2="74.50" y2="143.04" stroke="#7fd0e6" stroke-width="0.9" />
 <line x1="74.50" y1="114.71" x2="74.50" y2="143.04" stroke="#222" stroke-width="0.12" />
-<rect x="68.30" y="131.03" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="70.90" y="132.28" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<circle cx="135.17" cy="138.33" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
-<circle cx="135.17" cy="138.33" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
+<circle cx="105.33" cy="140.33" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
+<circle cx="105.33" cy="140.33" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
+<text x="105.33" y="137.13" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="87.17" cy="164.50" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="87.17" cy="164.50" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
-<circle cx="127.00" cy="176.17" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
-<circle cx="127.00" cy="176.17" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
-<text x="127.00" y="172.97" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
+<text x="87.17" y="161.30" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
+<circle cx="122.83" cy="181.08" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
+<circle cx="122.83" cy="181.08" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
+<text x="122.83" y="177.88" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="87.17" cy="93.67" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="87.17" cy="93.67" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
-<circle cx="91.20" cy="121.29" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
-<line x1="89.40" y1="123.09" x2="89.40" y2="119.49" stroke="#222" stroke-width="0.3" />
-<rect x="92.20" y="116.24" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="94.80" y="117.49" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
+<circle cx="91.18" cy="121.29" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
+<line x1="89.38" y1="123.09" x2="89.38" y2="119.49" stroke="#222" stroke-width="0.3" />
+<text x="94.78" y="121.29" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="105.60" cy="87.92" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="105.60" cy="89.42" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="129.40" cy="85.50" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<rect x="123.20" y="87.65" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="125.80" y="88.90" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
 <circle cx="152.00" cy="91.48" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="90.43" cy="127.00" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <text x="92.33" y="128.65" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3</text>
-<circle cx="82.17" cy="140.78" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="83.67" cy="140.78" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="85.17" cy="140.78" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="85.58" cy="140.78" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="87.08" cy="140.78" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="125.67" cy="110.44" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="125.17" y1="111.64" x2="125.17" y2="109.24" stroke="#222" stroke-width="0.25" />
-<line x1="126.17" y1="111.64" x2="126.17" y2="109.24" stroke="#222" stroke-width="0.25" />
-<text x="125.67" y="106.44" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2E</text>
-<text x="122.07" y="113.04" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1350</text>
-<rect x="119.47" y="105.39" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="122.07" y="106.64" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
+<circle cx="84.50" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<circle cx="83.00" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<circle cx="81.50" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<circle cx="85.58" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<circle cx="84.08" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<circle cx="127.08" cy="110.44" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="126.58" y1="111.64" x2="126.58" y2="109.24" stroke="#222" stroke-width="0.25" />
+<line x1="127.58" y1="111.64" x2="127.58" y2="109.24" stroke="#222" stroke-width="0.25" />
+<text x="127.08" y="106.44" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2E</text>
+<text x="123.48" y="113.04" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1200</text>
 <circle cx="113.83" cy="75.27" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="114.33" y1="74.07" x2="114.33" y2="76.47" stroke="#222" stroke-width="0.25" />
 <line x1="113.33" y1="74.07" x2="113.33" y2="76.47" stroke="#222" stroke-width="0.25" />
 <text x="117.43" y="77.87" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+600</text>
-<rect x="114.83" y="77.42" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="117.43" y="78.67" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
-<circle cx="205.23" cy="90.33" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="206.43" y1="90.83" x2="204.03" y2="90.83" stroke="#222" stroke-width="0.25" />
-<line x1="206.43" y1="89.83" x2="204.03" y2="89.83" stroke="#222" stroke-width="0.25" />
-<circle cx="153.67" cy="75.27" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="153.67" y1="74.07" x2="153.67" y2="76.47" stroke="#222" stroke-width="0.25" />
-<text x="157.27" y="77.87" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2200</text>
+<circle cx="201.44" cy="90.33" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="202.64" y1="90.83" x2="200.24" y2="90.83" stroke="#222" stroke-width="0.25" />
+<line x1="202.64" y1="89.83" x2="200.24" y2="89.83" stroke="#222" stroke-width="0.25" />
+<circle cx="152.60" cy="86.68" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="152.60" y1="85.48" x2="152.60" y2="87.88" stroke="#222" stroke-width="0.25" />
+<text x="152.60" y="90.68" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >WP</text>
+<text x="156.20" y="89.28" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+-240</text>
 <circle cx="75.27" cy="158.00" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="74.07" y1="157.50" x2="76.47" y2="157.50" stroke="#222" stroke-width="0.25" />
 <line x1="74.07" y1="158.50" x2="76.47" y2="158.50" stroke="#222" stroke-width="0.25" />
 <text x="75.27" y="157.00" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+100</text>
-<rect x="76.27" y="152.95" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="78.87" y="154.20" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
 <circle cx="115.33" cy="163.53" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="115.33" y1="164.72" x2="115.33" y2="162.33" stroke="#222" stroke-width="0.25" />
 <text x="111.73" y="166.13" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2000</text>
 <circle cx="152.00" cy="98.28" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="152.50" y1="97.08" x2="152.50" y2="99.48" stroke="#222" stroke-width="0.25" />
 <line x1="151.50" y1="97.08" x2="151.50" y2="99.48" stroke="#222" stroke-width="0.25" />
-<text x="152.00" y="102.28" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >WP</text>
+<text x="152.00" y="105.28" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >EV・PHEV 充電用 200V WP</text>
 <text x="155.60" y="100.88" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+530</text>
-<rect x="153.00" y="100.43" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="155.60" y="101.68" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">変更</text>
-<circle cx="68.02" cy="112.00" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="69.22" y1="112.00" x2="66.82" y2="112.00" stroke="#222" stroke-width="0.25" />
-<text x="64.02" y="112.00" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >WP</text>
-<text x="68.02" y="118.20" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+-300</text>
+<circle cx="87.00" cy="68.02" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="87.00" y1="69.22" x2="87.00" y2="66.82" stroke="#222" stroke-width="0.25" />
+<text x="87.00" y="64.02" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >WP</text>
+<text x="83.40" y="70.62" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+-300</text>
 <rect x="97.47" y="85.40" width="3.20" height="3.20" fill="#fff" stroke="#d4242b" stroke-width="0.3"/>
 <text x="99.07" y="87.00" font-size="1.7" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >R</text>
 <circle cx="106.91" cy="150.25" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <line x1="105.11" y1="152.05" x2="105.11" y2="148.45" stroke="#222" stroke-width="0.3" />
-<rect x="107.91" y="145.20" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="110.51" y="146.45" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="124.83" cy="190.50" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <line x1="123.03" y1="188.70" x2="126.63" y2="188.70" stroke="#222" stroke-width="0.3" />
-<rect x="125.83" y="192.65" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="128.43" y="193.90" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">変更</text>
 <line x1="103.83" y1="74.33" x2="131.17" y2="74.33" stroke="#7fd0e6" stroke-width="0.9" />
 <line x1="103.83" y1="74.33" x2="131.17" y2="74.33" stroke="#222" stroke-width="0.12" />
-<rect x="118.50" y="76.48" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="121.10" y="77.73" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="128.67" cy="116.98" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="128.67" y1="115.78" x2="128.67" y2="118.18" stroke="#222" stroke-width="0.25" />
-<rect x="129.67" y="119.13" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="132.27" y="120.38" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <line x1="149.00" y1="96.42" x2="207.33" y2="96.42" stroke="#7fd0e6" stroke-width="0.9" />
 <line x1="149.00" y1="96.42" x2="207.33" y2="96.42" stroke="#222" stroke-width="0.12" />
-<rect x="179.17" y="98.57" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="181.77" y="99.82" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="201.67" cy="98.02" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="202.17" y1="96.82" x2="202.17" y2="99.22" stroke="#222" stroke-width="0.25" />
 <line x1="201.17" y1="96.82" x2="201.17" y2="99.22" stroke="#222" stroke-width="0.25" />
 <text x="205.27" y="100.62" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2210</text>
-<rect x="202.67" y="100.17" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="205.27" y="101.42" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="105.60" cy="173.63" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="104.40" y1="173.13" x2="106.80" y2="173.13" stroke="#222" stroke-width="0.25" />
 <line x1="104.40" y1="174.13" x2="106.80" y2="174.13" stroke="#222" stroke-width="0.25" />
 <text x="105.60" y="172.63" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2210</text>
-<rect x="106.60" y="168.58" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="109.20" y="169.83" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<line x1="153.67" y1="78.50" x2="201.67" y2="78.50" stroke="#7fd0e6" stroke-width="0.9" />
-<line x1="153.67" y1="78.50" x2="201.67" y2="78.50" stroke="#222" stroke-width="0.12" />
-<rect x="178.67" y="80.65" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="181.27" y="81.90" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<line x1="202.00" y1="78.83" x2="202.00" y2="93.74" stroke="#7fd0e6" stroke-width="0.9" />
-<line x1="202.00" y1="78.83" x2="202.00" y2="93.74" stroke="#222" stroke-width="0.12" />
-<rect x="195.80" y="88.43" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="198.40" y="89.68" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="131.93" cy="76.83" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="133.13" y1="77.33" x2="130.73" y2="77.33" stroke="#222" stroke-width="0.25" />
 <line x1="133.13" y1="76.33" x2="130.73" y2="76.33" stroke="#222" stroke-width="0.25" />
 <text x="131.93" y="83.03" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1420</text>
-<rect x="125.73" y="78.98" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="128.33" y="80.23" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
 <circle cx="83.90" cy="125.33" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <text x="80.70" y="125.33" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1310</text>
-<rect x="77.70" y="127.48" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="80.30" y="128.73" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<rect x="142.37" y="120.90" width="4.4" height="2.2" fill="#7fd0e6" stroke="#222" stroke-width="0.2" transform="rotate(90 144.57 122.00)"/>
-<text x="141.37" y="122.00" font-size="1.6" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL</text>
-<rect x="138.37" y="124.15" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="140.97" y="125.40" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<rect x="142.37" y="131.73" width="4.4" height="2.2" fill="#7fd0e6" stroke="#222" stroke-width="0.2" transform="rotate(90 144.57 132.83)"/>
-<text x="141.37" y="132.83" font-size="1.6" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL</text>
-<rect x="138.37" y="134.98" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="140.97" y="136.23" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
+<circle cx="155.83" cy="75.27" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="156.33" y1="74.07" x2="156.33" y2="76.47" stroke="#222" stroke-width="0.25" />
+<line x1="155.33" y1="74.07" x2="155.33" y2="76.47" stroke="#222" stroke-width="0.25" />
+<text x="159.43" y="77.87" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1980</text>
+<circle cx="130.50" cy="75.27" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="131.00" y1="74.07" x2="131.00" y2="76.47" stroke="#222" stroke-width="0.25" />
+<line x1="130.00" y1="74.07" x2="130.00" y2="76.47" stroke="#222" stroke-width="0.25" />
+<text x="134.10" y="77.87" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+600</text>
+<circle cx="79.58" cy="116.98" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="80.08" y1="115.78" x2="80.08" y2="118.18" stroke="#222" stroke-width="0.25" />
+<line x1="79.08" y1="115.78" x2="79.08" y2="118.18" stroke="#222" stroke-width="0.25" />
+<circle cx="158.33" cy="68.02" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="157.83" y1="69.22" x2="157.83" y2="66.82" stroke="#222" stroke-width="0.25" />
+<line x1="158.83" y1="69.22" x2="158.83" y2="66.82" stroke="#222" stroke-width="0.25" />
+<text x="154.73" y="70.62" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2310</text>
 <defs><pattern id="hatch2" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>
 <text x="262.00" y="66.00" font-size="2.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電気設備凡例</text>
 <rect x="262.00" y="68.50" width="140.00" height="50.00" fill="none" stroke="#444" stroke-width="0.2"/>
@@ -432,48 +406,37 @@
 <line x1="332.00" y1="113.50" x2="402.00" y2="113.50" stroke="#ccc" stroke-width="0.12" />
 <line x1="334.00" y1="116.00" x2="340.00" y2="116.00" stroke="#d4242b" stroke-width="0.3" />
 <text x="346.00" y="116.00" font-size="2.05" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >スイッチと照明の回路</text>
-<text x="262.00" y="125.00" font-size="2.3" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準（施工会社の電灯コンセント図 R8.09.21）からの変更</text>
-<rect x="263.00" y="128.25" width="5.2" height="2.5" rx="0.5" fill="#1f5fbf"/>
-<text x="265.60" y="129.50" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">移動</text>
-<text x="271.00" y="129.50" font-size="2.05" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準の物を動かす（無料の範囲）</text>
-<rect x="263.00" y="132.25" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="265.60" y="133.50" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">追加</text>
-<text x="271.00" y="133.50" font-size="2.05" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準にない物を増やす（有料・差額は要確認）</text>
-<rect x="263.00" y="136.25" width="5.2" height="2.5" rx="0.5" fill="#e07000"/>
-<text x="265.60" y="137.50" font-size="1.7" fill="#fff" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" font-weight="bold">変更</text>
-<text x="271.00" y="137.50" font-size="2.05" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準の物の種類・器具を変える（差額は要確認）</text>
-<text x="262.00" y="141.50" font-size="1.9" fill="#555" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >※ 印のない物は標準の位置のまま。標準から外した器具は描いていない</text>
-<text x="262.00" y="145.10" font-size="1.9" fill="#555" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >※ 高さが標準と違う物は FL+（中心の高さ）を書いた</text>
-<text x="262.00" y="152.10" font-size="2.4" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準取付高さ表</text>
-<rect x="262.00" y="154.10" width="140.00" height="32.00" fill="none" stroke="#444" stroke-width="0.2"/>
-<text x="264.00" y="156.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >コンセント等</text>
-<text x="292.00" y="156.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >一般用</text>
-<text x="380.00" y="156.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋250</text>
-<line x1="284.00" y1="158.10" x2="402.00" y2="158.10" stroke="#ccc" stroke-width="0.12" />
-<text x="292.00" y="160.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >冷蔵庫用</text>
-<text x="380.00" y="160.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1850</text>
-<line x1="284.00" y1="162.10" x2="402.00" y2="162.10" stroke="#ccc" stroke-width="0.12" />
-<text x="292.00" y="164.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電子レンジ用</text>
-<text x="380.00" y="164.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1200</text>
-<line x1="284.00" y1="166.10" x2="402.00" y2="166.10" stroke="#ccc" stroke-width="0.12" />
-<text x="292.00" y="168.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >洗濯機用</text>
-<text x="380.00" y="168.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1350</text>
-<line x1="284.00" y1="170.10" x2="402.00" y2="170.10" stroke="#ccc" stroke-width="0.12" />
-<text x="292.00" y="172.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >インターフォン用</text>
-<text x="380.00" y="172.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1400</text>
-<line x1="284.00" y1="174.10" x2="402.00" y2="174.10" stroke="#ccc" stroke-width="0.12" />
-<text x="292.00" y="176.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >エアコン用</text>
-<text x="380.00" y="176.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >天井 －500</text>
-<line x1="284.00" y1="178.10" x2="402.00" y2="178.10" stroke="#ccc" stroke-width="0.12" />
-<text x="264.00" y="180.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >スイッチ</text>
-<text x="292.00" y="180.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >一般用</text>
-<text x="380.00" y="180.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1200</text>
-<line x1="284.00" y1="182.10" x2="402.00" y2="182.10" stroke="#ccc" stroke-width="0.12" />
-<text x="264.00" y="184.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >その他</text>
-<text x="292.00" y="184.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >リモコン・コントローラー</text>
-<text x="380.00" y="184.10" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1400</text>
-<rect x="262.00" y="191.10" width="76.00" height="9.00" fill="none" stroke="#222" stroke-width="0.3"/>
-<text x="265.00" y="195.60" font-size="3.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" letter-spacing="0.3">1階　電灯コンセント図　S：1/60</text>
+<text x="262.00" y="125.00" font-size="1.9" fill="#555" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >※ 高さが標準と違う物は FL+（中心の高さ）を書いた</text>
+<text x="262.00" y="132.00" font-size="2.4" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >標準取付高さ表</text>
+<rect x="262.00" y="134.00" width="140.00" height="32.00" fill="none" stroke="#444" stroke-width="0.2"/>
+<text x="264.00" y="136.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >コンセント等</text>
+<text x="292.00" y="136.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >一般用</text>
+<text x="380.00" y="136.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋250</text>
+<line x1="284.00" y1="138.00" x2="402.00" y2="138.00" stroke="#ccc" stroke-width="0.12" />
+<text x="292.00" y="140.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >冷蔵庫用</text>
+<text x="380.00" y="140.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1850</text>
+<line x1="284.00" y1="142.00" x2="402.00" y2="142.00" stroke="#ccc" stroke-width="0.12" />
+<text x="292.00" y="144.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電子レンジ用</text>
+<text x="380.00" y="144.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1200</text>
+<line x1="284.00" y1="146.00" x2="402.00" y2="146.00" stroke="#ccc" stroke-width="0.12" />
+<text x="292.00" y="148.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >洗濯機用</text>
+<text x="380.00" y="148.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1350</text>
+<line x1="284.00" y1="150.00" x2="402.00" y2="150.00" stroke="#ccc" stroke-width="0.12" />
+<text x="292.00" y="152.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >インターフォン用</text>
+<text x="380.00" y="152.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1400</text>
+<line x1="284.00" y1="154.00" x2="402.00" y2="154.00" stroke="#ccc" stroke-width="0.12" />
+<text x="292.00" y="156.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >エアコン用</text>
+<text x="380.00" y="156.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >天井 －500</text>
+<line x1="284.00" y1="158.00" x2="402.00" y2="158.00" stroke="#ccc" stroke-width="0.12" />
+<text x="264.00" y="160.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >スイッチ</text>
+<text x="292.00" y="160.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >一般用</text>
+<text x="380.00" y="160.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1200</text>
+<line x1="284.00" y1="162.00" x2="402.00" y2="162.00" stroke="#ccc" stroke-width="0.12" />
+<text x="264.00" y="164.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >その他</text>
+<text x="292.00" y="164.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >リモコン・コントローラー</text>
+<text x="380.00" y="164.00" font-size="2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL ＋1400</text>
+<rect x="262.00" y="171.00" width="76.00" height="9.00" fill="none" stroke="#222" stroke-width="0.3"/>
+<text x="265.00" y="175.50" font-size="3.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" letter-spacing="0.3">1階　電灯コンセント図　S：1/60</text>
 <line x1="9.20" y1="252.00" x2="410.80" y2="252.00" stroke="#222" stroke-width="0.3" />
 <line x1="130.00" y1="252.00" x2="130.00" y2="287.80" stroke="#222" stroke-width="0.2" />
 <line x1="250.00" y1="252.00" x2="250.00" y2="287.80" stroke="#222" stroke-width="0.2" />
@@ -482,10 +445,10 @@
 <text x="70.00" y="265.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >我が家（木造3階建て）</text>
 <text x="133.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >備考</text>
 <text x="136.00" y="264.00" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >施工会社の電灯コンセント図（R8.09.21）をもとに、</text>
-<text x="136.00" y="268.50" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >移動・追加・変更と LAN の配管を書き込んだ要望図</text>
+<text x="136.00" y="268.50" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >要望の位置と LAN の配管を書き込んだ要望図</text>
 <text x="136.00" y="273.00" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（マイホームシミュレーターの間取りから作成）</text>
 <text x="253.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >日付</text>
-<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-10-25</text>
+<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-11-03</text>
 <text x="333.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >図面名</text>
 <text x="372.00" y="264.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >1階　電灯コンセント図</text>
 <text x="372.00" y="271.00" font-size="2.4" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（要望・変更案）　S：1/60</text>

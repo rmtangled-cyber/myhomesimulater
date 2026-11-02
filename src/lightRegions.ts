@@ -20,19 +20,25 @@ const MM = 0.001;
 const DOOR_TYPES = new Set(['swing-door', 'sliding-door', 'mirror-sliding-door', 'mirror-sheet-door', 'framed-glass-door', 'entry-door', 'bifold-door']);
 /** 範囲を決められる照明の数の上限（超えた分は範囲なし＝今までどおり） */
 const LR_MAX = 64;
-/** 部屋の数の上限（全部の階の合計。ビットは 16 ずつ 4 つの数に入れる） */
+/** 部屋の数の上限（全部の階の合計。ビットは 16 ずつ 4 つの数に入れる）。最後の番号は「家の外」に使う */
 const ROOM_MAX = 64;
+const OUTSIDE = ROOM_MAX - 1;
+/** 部屋の外形を分けた長方形の数の上限（L 字などの部屋は長方形を複数使う） */
+const BOX_MAX = 96;
 
 const vec4s = (n: number) => Array.from({ length: n }, () => new THREE.Vector4());
 const uniforms = {
-  /** 部屋の外形の箱（m）: xmin, zmin, xmax, zmax */
-  lrRoomBox: { value: vec4s(ROOM_MAX) },
-  /** 部屋の高さの範囲（m）: ymin, ymax */
-  lrRoomY: { value: vec4s(ROOM_MAX) },
+  /** 部屋の外形の長方形（m）: xmin, zmin, xmax, zmax */
+  lrRoomBox: { value: vec4s(BOX_MAX) },
+  /** 長方形の高さの範囲（m）と部屋の番号: ymin, ymax, 部屋の番号 */
+  lrRoomY: { value: vec4s(BOX_MAX) },
   lrRoomCount: { value: 0 },
   /** 照明ごとの、光が届いてよい部屋の印（部屋の番号 0〜15 は x、16〜31 は y …）。全部 0 なら範囲なし */
   lrBits: { value: vec4s(LR_MAX) },
 };
+
+/** 家の外の照明の印（どの部屋にも届かない） */
+const OUTSIDE_BITS = new THREE.Vector4(0, 0, 0, 2 ** (OUTSIDE & 15));
 
 let installed = false;
 
@@ -43,25 +49,24 @@ export function installLightRegions() {
   const C = THREE.ShaderChunk as unknown as Record<string, string>;
   C.lights_pars_begin =
     `
-uniform vec4 lrRoomBox[ ${ROOM_MAX} ];
-uniform vec4 lrRoomY[ ${ROOM_MAX} ];
+uniform vec4 lrRoomBox[ ${BOX_MAX} ];
+uniform vec4 lrRoomY[ ${BOX_MAX} ];
 uniform int lrRoomCount;
 uniform vec4 lrBits[ ${LR_MAX} ];
 int lrRoom;
 float lrPow;
 void lrFindRoom( vec3 p ) {
-  lrRoom = -1;
-  for ( int j = 0; j < ${ROOM_MAX}; j ++ ) {
+  lrRoom = ${OUTSIDE};
+  for ( int j = 0; j < ${BOX_MAX}; j ++ ) {
     if ( j >= lrRoomCount ) break;
     vec4 b = lrRoomBox[ j ];
     vec4 y = lrRoomY[ j ];
-    if ( p.x >= b.x && p.x <= b.z && p.z >= b.y && p.z <= b.w && p.y >= y.x && p.y <= y.y ) { lrRoom = j; break; }
+    if ( p.x >= b.x && p.x <= b.z && p.z >= b.y && p.z <= b.w && p.y >= y.x && p.y <= y.y ) { lrRoom = int( y.z ); break; }
   }
-  lrPow = lrRoom >= 0 ? exp2( float( lrRoom - ( lrRoom / 16 ) * 16 ) ) : 1.0;
+  lrPow = exp2( float( lrRoom - ( lrRoom / 16 ) * 16 ) );
 }
 float lrBit( vec4 b ) {
   if ( b.x + b.y + b.z + b.w == 0.0 ) return 1.0;
-  if ( lrRoom < 0 ) return 0.0;
   float h = lrRoom < 16 ? b.x : lrRoom < 32 ? b.y : lrRoom < 48 ? b.z : b.w;
   return mod( floor( h / lrPow ), 2.0 );
 }
@@ -103,6 +108,37 @@ float lrBit( vec4 b ) {
   };
 }
 
+/** 扉の家具が開口部の中（壁の線の上で、開口の幅の中）にあるか */
+function inOpening(f: { x: number; y: number }, o: { at: [number, number]; width: number }) {
+  const dx = Math.abs(f.x - o.at[0]);
+  const dy = Math.abs(f.y - o.at[1]);
+  const half = o.width / 2 - 50;
+  return (dx < 150 && dy < half) || (dy < 150 && dx < half);
+}
+
+/** 多角形の部屋を長方形に分ける（外形の箱 1 つだと、L 字の部屋のへこみにある別の部屋まで同じ部屋の扱いになる） */
+function roomRects(polygon: [number, number][]): [number, number, number, number][] {
+  const xs = [...new Set(polygon.map((p) => p[0]))].sort((a, b) => a - b);
+  const ys = [...new Set(polygon.map((p) => p[1]))].sort((a, b) => a - b);
+  const out: [number, number, number, number][] = [];
+  for (let j = 0; j + 1 < ys.length; j++) {
+    const row: [number, number, number, number][] = [];
+    for (let i = 0; i + 1 < xs.length; i++) {
+      if (!pointInPolygon([(xs[i] + xs[i + 1]) / 2, (ys[j] + ys[j + 1]) / 2], polygon)) continue;
+      const last = row[row.length - 1];
+      if (last && last[2] === xs[i]) last[2] = xs[i + 1];
+      else row.push([xs[i], ys[j], xs[i + 1], ys[j + 1]]);
+    }
+    for (const r of row) {
+      // 上の行と同じ幅なら 1 つにまとめる
+      const above = out.find((o) => o[0] === r[0] && o[2] === r[2] && o[3] === r[1]);
+      if (above) above[3] = r[3];
+      else out.push(r);
+    }
+  }
+  return out;
+}
+
 /** 間取りから、部屋の番号と、照明ごとの「光が届いてよい部屋」の印を作る */
 export class LightRegions {
   private plan: Plan | null = null;
@@ -121,26 +157,28 @@ export class LightRegions {
     this.dirty = true;
     // 部屋の箱。上の階を先に並べる（天井のない部屋は上の階の高さまで箱を延ばすので、重なる所は上の階の部屋が勝つ）
     let n = 0;
+    let boxes = 0;
     for (let fi = plan.floors.length - 1; fi >= 0; fi--) {
       const floor = plan.floors[fi];
       const elev = floor.elevation ?? 0;
-      const above = plan.floors[fi + 1]?.height ?? floor.height;
-      const below = plan.floors[fi - 1]?.height ?? 0;
       for (const r of floor.rooms) {
-        if (n >= ROOM_MAX) break;
-        const xs = r.polygon.map((p) => p[0]);
-        const ys = r.polygon.map((p) => p[1]);
+        if (n >= OUTSIDE) break;
         const level = r.level ?? 0;
-        // 天井がない部屋（吹き抜け・階段）は上の階まで、床を張らない部屋（上の階の吹き抜け）は下の階まで
-        const top = r.ceiling === '' ? floor.height + above : level + (r.ceilingHeight ?? floor.ceilingHeight);
-        const bottom = r.void ? -below : level;
-        uniforms.lrRoomBox.value[n].set(Math.min(...xs) * MM, Math.min(...ys) * MM, Math.max(...xs) * MM, Math.max(...ys) * MM);
-        uniforms.lrRoomY.value[n].set((elev + bottom - 30) * MM, (elev + top + 30) * MM, 0, 0);
+        // 天井がない部屋（吹き抜け・階段）は上の階の床まで。階をまたぐ光は bits で吹き抜けの部屋どうしをつなぐ
+        const top = r.ceiling === '' ? floor.height : level + (r.ceilingHeight ?? floor.ceilingHeight);
+        const bottom = level;
+        for (const [x0, y0, x1, y1] of roomRects(r.polygon)) {
+          if (boxes >= BOX_MAX) break;
+          // 壁芯ちょうどの面（窓枠の室内側の面）が境界で点々にならないよう、少し広げる
+          uniforms.lrRoomBox.value[boxes].set((x0 - 3) * MM, (y0 - 3) * MM, (x1 + 3) * MM, (y1 + 3) * MM);
+          uniforms.lrRoomY.value[boxes].set((elev + bottom - 30) * MM, (elev + top + 30) * MM, n, 0);
+          boxes++;
+        }
         this.roomIndex.set(`${fi}|${r.id}`, n);
         n++;
       }
     }
-    uniforms.lrRoomCount.value = n;
+    uniforms.lrRoomCount.value = boxes;
   }
 
   /** 照明を足した・外したとき（部屋の跳ね返りの光を作り直したときなど） */
@@ -165,7 +203,7 @@ export class LightRegions {
     if (hit) return hit;
     const floor = this.plan?.floors[floorIndex];
     const self = floor?.rooms.find((x) => x.id === roomId);
-    if (!floor || !self || !this.roomIndex.has(key)) return undefined;
+    if (!floor || !self || !this.roomIndex.has(`${floorIndex}|${roomId}`)) return undefined;
     const near = (r: Room, p: [number, number]) =>
       r.polygon.some((a, i) => {
         const b = r.polygon[(i + 1) % r.polygon.length];
@@ -178,17 +216,48 @@ export class LightRegions {
     const list: Room[] = [self];
     for (let k = 0; k < list.length && (spread || k === 0); k++) {
       for (const o of floor.openings) {
-        if (o.type !== 'opening' || o.slideRoom || o.slideTo || !near(list[k], o.at)) continue;
-        // 扉のある開口（玄関ドアなど）は、閉めると光が通らないので、窓の光も広げない（ポーチ・車庫まで光が届いて車庫の天井が光っていた。2026-10-25）
-        if (spread && floor.furniture.some((f) => DOOR_TYPES.has(f.type) && Math.hypot(f.x - o.at[0], f.y - o.at[1]) < o.width)) continue;
+        if (o.type !== 'opening' || o.slideRoom || o.slideTo || o.blocksLight || !near(list[k], o.at)) continue;
+        // 扉のある開口（玄関ドアなど）は、閉めると光が通らないので、光を広げない（ポーチ・車庫まで光が届いて車庫の天井が光っていた。2026-10-25）
+        if (floor.furniture.some((f) => DOOR_TYPES.has(f.type) && inOpening(f, o))) continue;
         for (const other of floor.rooms) if (!list.includes(other) && near(other, o.at)) list.push(other);
       }
     }
     const v = [0, 0, 0, 0];
-    for (const r of list) {
-      const i = this.roomIndex.get(`${floorIndex}|${r.id}`);
-      if (i === undefined) continue;
-      v[i >> 4] += 2 ** (i & 15);
+    const mark = (fi: number, id: string) => {
+      const i = this.roomIndex.get(`${fi}|${id}`);
+      if (i !== undefined) v[i >> 4] += 2 ** (i & 15);
+    };
+    for (const r of list) mark(floorIndex, r.id);
+    // 階段の吹き抜けは上下の階とつながっている（床のない部屋と、その真下の天井のない部屋を行き来する）。照明のある部屋からだけたどる
+    const overlaps = (a: Room, b: Room) => {
+      const box = (r: Room) => [Math.min(...r.polygon.map((p) => p[0])), Math.min(...r.polygon.map((p) => p[1])), Math.max(...r.polygon.map((p) => p[0])), Math.max(...r.polygon.map((p) => p[1]))];
+      const [a0, a1, a2, a3] = box(a);
+      const [b0, b1, b2, b3] = box(b);
+      return a0 < b2 && b0 < a2 && a1 < b3 && b1 < a3;
+    };
+    const floors = this.plan!.floors;
+    const seen = new Set<string>(list.map((r) => `${floorIndex}|${r.id}`));
+    for (const r of [self]) {
+      const up = floors[floorIndex + 1];
+      if (r.ceiling === '') {
+        for (const o of up?.rooms ?? []) {
+          const k = `${floorIndex + 1}|${o.id}`;
+          if (o.void && overlaps(r, o) && !seen.has(k)) {
+            seen.add(k);
+            mark(floorIndex + 1, o.id);
+          }
+        }
+      }
+      const down = floors[floorIndex - 1];
+      if (r.void) {
+        for (const o of down?.rooms ?? []) {
+          const k = `${floorIndex - 1}|${o.id}`;
+          if ((o.ceiling === '' || o.void) && overlaps(r, o) && !seen.has(k)) {
+            seen.add(k);
+            mark(floorIndex - 1, o.id);
+          }
+        }
+      }
     }
     const out = new THREE.Vector4(v[0], v[1], v[2], v[3]);
     this.bitsCache.set(key, out);
@@ -226,7 +295,7 @@ export class LightRegions {
     this.lastKey = key;
     for (let k = 0; k < LR_MAX; k++) {
       const l = all[k];
-      const b = l && l.userData.lrRoom !== undefined ? this.bits(l.userData.lrFloor as number, l.userData.lrRoom as string, !!l.userData.lrSpread) : undefined;
+      const b = !l ? undefined : l.userData.lrOutside ? OUTSIDE_BITS : l.userData.lrRoom !== undefined ? this.bits(l.userData.lrFloor as number, l.userData.lrRoom as string, !!l.userData.lrSpread) : undefined;
       uniforms.lrBits.value[k].set(b?.x ?? 0, b?.y ?? 0, b?.z ?? 0, b?.w ?? 0);
     }
   }

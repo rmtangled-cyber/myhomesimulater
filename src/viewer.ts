@@ -11,7 +11,8 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { FullScreenQuad } from 'three/examples/jsm/postprocessing/Pass.js';
 import { openingsOnSegment, pointInPolygon, signedArea } from './geometry';
 import { buildPlan, type BuiltPlan, type SurfaceInfo } from './builder';
-import type { Circuit, Plan } from './types';
+import type { Circuit, Plan, WalkPoint } from './types';
+import { pathTimeline, type PathPose, type PathTimeline } from './walkPath';
 import { WEB } from './env';
 import { installLightRegions, LightRegions } from './lightRegions';
 import { CLICK_LIGHT_TYPES, LOOSE_FURNITURE_TYPES } from './furniture';
@@ -160,6 +161,8 @@ const SENSOR_RANGE = 2.5;
 const SENSOR_HOLD = 10;
 /** 身長から目の高さ（m）を出す。目は頭のてっぺんより 11cm ほど下 */
 export const eyeHeightFor = (statureCm: number) => Math.max(0.5, (statureCm - 11) / 100);
+/** しゃがんだときの床からの目の高さ（m） */
+const CROUCH_EYE = 0.7;
 
 export class Viewer {
   readonly renderer: THREE.WebGLRenderer;
@@ -172,13 +175,19 @@ export class Viewer {
   private clipPlane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 1.2);
   private hemi = new THREE.HemisphereLight('#dfe9f5', '#8a7f6e', 1.2);
   /** Web 版: 部屋ごとの光の代わりに、家全体を少し明るくする光 */
-  private webFill = new THREE.AmbientLight('#fff1e2', 0);
+  private webFill = new THREE.AmbientLight('#fffcf8', 0);
   /**
    * 照明の数が変わると、すべての素材の陰影の計算（シェーダー）を作り直す。そのまま描くと作り終わるまで画面が固まる
    * （夜に切り替えると 10 秒以上「ページは応答していません」になった）ので、裏で少しずつ組み立て（compileAsync）、
    * 終わるまでは前の画面のまま描かない
    */
   private compiling = false;
+  /** 画面の大きさと関係なく描いている間（高画質で撮る・動画の書き出し）。ウィンドウの大きさが変わっても合わせない */
+  private capturing = false;
+  /** 陰影（GTAO）を画面の何分の 1 の解像度で計算するか。動画の書き出しの間だけ 1（半分だと物の縁に黒いにじみと波打ちが出る） */
+  private aoDivisor = 2;
+  /** 通り道の下見 */
+  private clip: { timeline: PathTimeline; time: number; onEnd: () => void } | null = null;
   private lightKey = '';
   private compileNote = document.createElement('div');
   /** Web 版: 止まっている間は描かないため、最後に触った時刻と前のカメラ */
@@ -211,6 +220,7 @@ export class Viewer {
   /** 人感センサー付きの照明と、あと何秒ついているか（ウォークスルーで近づくとつき、離れて SENSOR_HOLD 秒で消える） */
   private sensors = new Map<string, THREE.Vector3>();
   private sensorTimer = new Map<string, number>();
+  private sensorLinks = new Map<string, string>();
   /** 家具がどの階にあるか（ウォークスルーでは今いる階の照明だけを計算して軽くする） */
   private furnitureFloor = new Map<string, number>();
   /** 照明ごとの光が届いてよい範囲（部屋） */
@@ -222,6 +232,9 @@ export class Viewer {
   /** 床からの目の高さ（m）。身長で変える */
   private eyeHeight = eyeHeightFor(160);
   private eyeY = this.eyeHeight;
+  /** しゃがんでいるか（Ctrl で切り替え）と、今どれだけ目の高さを下げているか（m） */
+  private crouching = false;
+  private crouchDrop = 0;
   /** 照明器具を点けるか（夕方・夜は自動で点ける） */
   private lightsOn = false;
   /** ウォークスルーで影の濃淡（アンビエントオクルージョン）を付けるか */
@@ -280,7 +293,7 @@ export class Viewer {
     this.gtao.blendIntensity = 1;
     // 陰影は画面の半分の解像度で計算する（画面と同じ解像度・サンプル 16 では、2 階 LDK で 1 回の描画に約 250ms かかって重かった。2026-10-24）
     const aoFullSize = this.gtao.setSize.bind(this.gtao);
-    this.gtao.setSize = (w: number, h: number) => aoFullSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
+    this.gtao.setSize = (w: number, h: number) => aoFullSize(Math.max(1, Math.round(w / this.aoDivisor)), Math.max(1, Math.round(h / this.aoDivisor)));
     // 陰影（AO）の計算では、クリックを受けるだけの見えない板（opacity 0）も隠す。
     // 隠さないと、ロールスクリーンを巻き上げても見えない板の足元の床が暗い帯になる
     const ao = this.gtao as unknown as { _overrideVisibility: () => void; _visibilityCache: THREE.Object3D[] };
@@ -367,8 +380,12 @@ export class Viewer {
     this.furnitureFloor.clear();
     plan.floors.forEach((f, i) => f.furniture.forEach((x) => this.furnitureFloor.set(x.id, i)));
     this.sensors.clear();
+    this.sensorLinks.clear();
     for (const f of plan.floors)
-      for (const x of f.furniture) if (x.sensor && !WEB) this.sensors.set(x.id, new THREE.Vector3(x.x * MM, (f.elevation + (x.z ?? 0)) * MM, x.y * MM));
+      for (const x of f.furniture) {
+        if (x.sensor && !WEB) this.sensors.set(x.id, new THREE.Vector3(x.x * MM, (f.elevation + (x.z ?? 0)) * MM, x.y * MM));
+        if (x.sensorLink && !WEB) this.sensorLinks.set(x.id, x.sensorLink);
+      }
     this.world.add(this.built.root);
     this.looseIds = new Set(plan.floors.flatMap((f) => f.furniture.filter((x) => x.loose || LOOSE_FURNITURE_TYPES.has(x.type)).map((x) => x.id)));
     this.clickLights = new Set(plan.floors.flatMap((f) => f.furniture.filter((x) => CLICK_LIGHT_TYPES.has(x.type)).map((x) => x.id)));
@@ -384,6 +401,8 @@ export class Viewer {
           if (!(o as THREE.Light).isLight) return;
           o.userData.lrFloor = i;
           o.userData.lrRoom = room;
+          // 部屋の外の照明（表札灯・電柱の街路灯など）は家の外だけを照らす
+          o.userData.lrOutside = !room;
         });
       }),
     );
@@ -433,7 +452,7 @@ export class Viewer {
         const inRoom = room ? fixtures.filter((f) => pointInPolygon([f.x, f.y], room.polygon)) : [];
         const lm = inRoom.reduce((sum, f) => sum + (f.lumen ?? 700), 0);
         const c = box.getCenter(new THREE.Vector3());
-        const light = new THREE.PointLight(this.effTime === 'day' ? '#fff4ea' : '#ffd6a0', inRoom.length ? Math.min(30, (lm / 700) * 5) : 30, 6, 2);
+        const light = new THREE.PointLight(this.effTime === 'day' ? '#fffcf8' : '#ffd6a0', inRoom.length ? Math.min(30, (lm / 700) * 5) : 30, 6, 2);
         light.userData.base = light.intensity;
         light.userData.fixtures = inRoom.map((f) => ({ id: f.id, lm: f.lumen ?? 700 }));
         // 跳ね返りの光は部屋の真ん中の高さ（床から 1.3m）から。天井の近くに置くと天井だけが白く飛ぶ
@@ -505,6 +524,7 @@ export class Viewer {
 
   /** startAt の y は目の高さ（m） */
   setMode(mode: ViewMode, startAt?: THREE.Vector3, yaw = 0) {
+    this.stopPathPreview();
     this.mode = mode;
     this.orbit.enabled = mode === 'orbit';
     if (mode === 'walk') {
@@ -673,7 +693,8 @@ export class Viewer {
     if (this.clickLights.has(id)) return this.clickOn.has(id);
     const c = this.lightCircuit.get(id);
     const on = c ? this.circuitOn(c) : this.lit;
-    if (on && this.mode === 'walk' && this.sensors.has(id)) return (this.sensorTimer.get(id) ?? 0) > 0;
+    const sensorId = this.sensorLinks.get(id) ?? id;
+    if (on && this.mode === 'walk' && this.sensors.has(sensorId)) return (this.sensorTimer.get(sensorId) ?? 0) > 0;
     return on;
   }
 
@@ -681,7 +702,7 @@ export class Viewer {
   private updateSensors(dt: number) {
     if (!this.sensors.size) return;
     const p = this.camera.position;
-    const feet = p.y - this.eyeHeight;
+    const feet = p.y + this.crouchDrop - this.eyeHeight;
     let changed = false;
     for (const [id, s] of this.sensors) {
       const before = (this.sensorTimer.get(id) ?? 0) > 0;
@@ -801,7 +822,7 @@ export class Viewer {
     // 昼は色みのないグレー（前はベージュ #cfc6b6 で、天井だけ茶色く見えた。2026-10-22）
     this.hemi.groundColor.set(t === 'night' ? '#3a3328' : t === 'evening' ? '#cfc6b6' : '#d4d3d0');
     // 部屋の跳ね返りの光も、昼はほぼ白（夕方・夜は電球色）
-    for (const l of this.roomLights.children as THREE.PointLight[]) l.color.set(t === 'day' ? '#fff4ea' : '#ffd6a0');
+    for (const l of this.roomLights.children as THREE.PointLight[]) l.color.set(t === 'day' ? '#fffcf8' : '#ffd6a0');
     // ウォークスルーでは、家じゅう一律に当たる空の光と映り込みを弱め、部屋ごとの窓の光（applyLights）で明るさを出す。
     // 前は昼 0.8・0.45 で、窓のない WIC・シューズクローク・廊下まで LDK と同じ明るさだった（2026-10-24）。俯瞰と Web 版は今までどおり
     const dim = this.mode === 'walk' && !WEB;
@@ -978,7 +999,12 @@ export class Viewer {
     // iPad のキーボードや日本語入力中は code が空になることがあるので、key からも決める
     const KEY_CODES: Record<string, string> = { w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', ArrowUp: 'ArrowUp', ArrowDown: 'ArrowDown', ArrowLeft: 'ArrowLeft', ArrowRight: 'ArrowRight', Shift: 'ShiftLeft' };
     const codeOf = (e: KeyboardEvent) => (e.code && e.code !== 'Unidentified' ? e.code : (KEY_CODES[e.key] ?? KEY_CODES[e.key.toLowerCase()] ?? e.key));
+    // Ctrl を押して離すと、しゃがむ・立つを切り替える。押している間だけにすると、Ctrl+W（前へ歩く）でタブが閉じてしまう。
+    // ほかのキーと一緒に押したとき（Ctrl+Z など）は切り替えない
+    let ctrlAlone = false;
+    const isCtrl = (code: string) => code === 'ControlLeft' || code === 'ControlRight' || code === 'Control';
     window.addEventListener('keydown', (e) => {
+      ctrlAlone = !isTyping() && isCtrl(codeOf(e)) && (!e.repeat || ctrlAlone);
       if (isTyping()) return;
       const code = codeOf(e);
       // スペースキー: ウォークスルーで画面の真ん中（＋）をクリックしたのと同じ（扉の開け閉め・スイッチ・クロスを試す）
@@ -991,8 +1017,18 @@ export class Viewer {
       // 矢印キーで画面がスクロールしないように
       if (this.mode === 'walk' && code.startsWith('Arrow')) e.preventDefault();
     });
-    window.addEventListener('keyup', (e) => this.keys.delete(codeOf(e)));
-    window.addEventListener('blur', () => this.keys.clear());
+    window.addEventListener('keyup', (e) => {
+      const code = codeOf(e);
+      this.keys.delete(code);
+      if (isCtrl(code) && ctrlAlone && this.mode === 'walk') this.crouching = !this.crouching;
+      ctrlAlone = false;
+    });
+    window.addEventListener('pointerdown', () => (ctrlAlone = false));
+    window.addEventListener('wheel', () => (ctrlAlone = false), { passive: true });
+    window.addEventListener('blur', () => {
+      this.keys.clear();
+      ctrlAlone = false;
+    });
   }
 
   /** 画面のボタン（スマホの移動ボタン）で、キーを押している状態にする */
@@ -1047,6 +1083,12 @@ export class Viewer {
     const dt = Math.min(this.timer.getDelta(), 0.1);
     this.animateDoors(dt);
     if (this.mode === 'walk') {
+      if (this.clip) {
+        this.keys.clear();
+        this.clip.time += dt;
+        this.applyPose(this.clip.timeline.at(this.clip.time));
+        if (this.clip.time >= this.clip.timeline.duration) this.stopPathPreview();
+      }
       const speed = (this.keys.has('ShiftLeft') || this.keys.has('ShiftRight') ? 3 : 1.4) * dt;
       const fwd = new THREE.Vector3(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
       const right = new THREE.Vector3(-fwd.z, 0, fwd.x);
@@ -1064,11 +1106,14 @@ export class Viewer {
         move.normalize().multiplyScalar(speed);
         if (this.collideOn) {
           const feet = this.eyeY - this.eyeHeight;
-          this.collision.move(this.camera.position, move.x, move.z, feet, this.eyeY + 0.1);
+          this.collision.move(this.camera.position, move.x, move.z, feet, this.eyeY - this.crouchDrop + 0.1);
         } else this.camera.position.add(move);
         this.followGround(dt);
       }
-      this.camera.position.y = this.eyeY;
+      // しゃがむ（目の高さを床から CROUCH_EYE まで下げる。0.25 秒くらいで動く）
+      const drop = this.crouching && !this.clip ? Math.max(0, this.eyeHeight - CROUCH_EYE) : 0;
+      this.crouchDrop += Math.sign(drop - this.crouchDrop) * Math.min(Math.abs(drop - this.crouchDrop), dt * 3);
+      this.camera.position.y = this.eyeY - this.crouchDrop;
       this.camera.quaternion.setFromEuler(new THREE.Euler(this.pitch, this.yaw, 0, 'YXZ'));
       // 立っている部屋と見ている物は 0.2 秒ごとに調べる（毎フレームだと重い）
       this.walkInfoTimer -= dt;
@@ -1079,6 +1124,8 @@ export class Viewer {
       }
     } else {
       this.orbit.update();
+      this.crouching = false;
+      this.crouchDrop = 0;
     }
     if (!WEB) this.lightRegions.update(this.scene);
     // 照明のシェーダーを裏で組み立てている間は描かない（描くとその場で組み立てが始まって画面が固まる）
@@ -1174,6 +1221,7 @@ export class Viewer {
   }
 
   private resize() {
+    if (this.capturing) return;
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
     this.renderer.setSize(w, h);
@@ -1192,6 +1240,138 @@ export class Viewer {
     a.click();
   }
 
+  /** ウォークスルーの今の位置と向き（動画の通り道の点） */
+  getWalkPoint(): WalkPoint {
+    const p = this.camera.position;
+    return {
+      x: Math.round(p.x / MM),
+      y: Math.round(p.z / MM),
+      eye: Math.round(p.y / MM),
+      yaw: Math.round(THREE.MathUtils.radToDeg(this.yaw) * 10) / 10,
+      pitch: Math.round(THREE.MathUtils.radToDeg(this.pitch) * 10) / 10,
+    };
+  }
+
+  private applyPose(p: PathPose) {
+    this.camera.position.set(p.x, p.y, p.z);
+    this.eyeY = p.y;
+    this.yaw = p.yaw;
+    this.pitch = p.pitch;
+    this.camera.quaternion.setFromEuler(new THREE.Euler(p.pitch, p.yaw, 0, 'YXZ'));
+    this.camera.updateMatrixWorld();
+    // 階をまたいだら、その階の照明に切り替える
+    const feet = p.y - this.eyeHeight;
+    let index = 0;
+    (this.built?.floors ?? []).forEach((f, i) => {
+      if (feet >= f.group.position.y * MM - 0.3) index = i;
+    });
+    if (index !== this.walkFloor) {
+      this.walkFloor = index;
+      this.applyVisibility();
+    }
+  }
+
+  /** 通り道をその場で歩いて見せる（動画と同じ動き） */
+  previewPath(points: WalkPoint[], speed: number, onEnd: () => void) {
+    this.stopPathPreview();
+    const timeline = pathTimeline(points, speed);
+    if (timeline) this.clip = { timeline, time: 0, onEnd };
+  }
+
+  stopPathPreview() {
+    const c = this.clip;
+    this.clip = null;
+    c?.onEnd();
+  }
+
+  /**
+   * 通り道を歩く動画を MP4（H.264）にする。1 フレームずつ描いてから書き出すので、描くのが遅くてもコマ落ちしない。
+   * 大きさはウィンドウと関係なく width × height。陰影（GTAO）とアンチエイリアスをつけて描く。止めたら null を返す
+   */
+  async exportVideo(
+    points: WalkPoint[],
+    speed: number,
+    size: { width: number; height: number; fps: number },
+    onProgress: (done: number, total: number) => void,
+    cancelled: () => boolean,
+  ): Promise<Blob | null> {
+    const timeline = pathTimeline(points, speed);
+    if (!timeline) return null;
+    const { Output, Mp4OutputFormat, BufferTarget, CanvasSource, canEncodeVideo } = await import('mediabunny');
+    const { width, height, fps } = size;
+    const bitrate = Math.round(width * height * fps * 0.25);
+    if (!(await canEncodeVideo('avc', { width, height, bitrate }))) throw new Error('このブラウザでは H.264 の動画を作れません');
+    this.stopPathPreview();
+    this.renderer.setAnimationLoop(null);
+    this.capturing = true;
+    const saved = {
+      pos: this.camera.position.clone(), yaw: this.yaw, pitch: this.pitch, eyeY: this.eyeY,
+      floor: this.walkFloor, ratio: this.renderer.getPixelRatio(), samples: this.composer.renderTarget1.samples,
+    };
+    const setSamples = (n: number) => {
+      for (const t of [this.composer.renderTarget1, this.composer.renderTarget2]) {
+        t.samples = n;
+        t.dispose();
+      }
+    };
+    try {
+      this.aoDivisor = 1;
+      this.gtao.updateGtaoMaterial({ samples: 16 });
+      this.gtao.updatePdMaterial({ samples: 16, rings: 2, radius: 4 });
+      this.renderer.setPixelRatio(1);
+      // CSS の大きさは変えない（画面のレイアウトを動かさない）
+      this.renderer.setSize(width, height, false);
+      this.composer.setPixelRatio(1);
+      this.composer.setSize(width, height);
+      setSamples(4);
+      this.camera.aspect = width / height;
+      this.camera.updateProjectionMatrix();
+
+      const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() });
+      const source = new CanvasSource(this.renderer.domElement, { codec: 'avc', bitrate });
+      output.addVideoTrack(source, { frameRate: fps });
+      await output.start();
+      const total = Math.ceil(timeline.duration * fps);
+      for (let i = 0; i < total; i++) {
+        if (cancelled()) {
+          await output.cancel();
+          return null;
+        }
+        this.applyPose(timeline.at(i / fps));
+        this.animateDoors(1 / fps);
+        if (i % 6 === 0) this.updateSensors(6 / fps);
+        if (!WEB) this.lightRegions.update(this.scene);
+        // 階が変わって照明のシェーダーを組み立てている間は待つ
+        while (this.compiling) await new Promise((r) => setTimeout(r, 30));
+        this.composer.render();
+        await source.add(i / fps, 1 / fps);
+        onProgress(i + 1, total);
+        // 画面の進み具合を出す間を作る
+        if (i % 10 === 0) await new Promise((r) => setTimeout(r));
+      }
+      await output.finalize();
+      return new Blob([(output.target as InstanceType<typeof BufferTarget>).buffer!], { type: 'video/mp4' });
+    } finally {
+      setSamples(saved.samples);
+      this.aoDivisor = 2;
+      this.gtao.updateGtaoMaterial({ samples: 8 });
+      this.gtao.updatePdMaterial({ samples: 8, rings: 2, radius: 4 });
+      this.renderer.setPixelRatio(saved.ratio);
+      this.capturing = false;
+      this.camera.position.copy(saved.pos);
+      this.yaw = saved.yaw;
+      this.pitch = saved.pitch;
+      this.eyeY = saved.eyeY;
+      if (this.walkFloor !== saved.floor) {
+        this.walkFloor = saved.floor;
+        this.applyVisibility();
+      }
+      this.resize();
+      this.lastActive = performance.now();
+      this.renderer.setAnimationLoop(() => this.tick());
+    }
+  }
+
   /**
    * 今のカメラの絵を、光の跳ね返りまで計算して描く（three-gpu-pathtracer）。samples 回重ねたら PNG の data URL を返す。
    * 部屋ごとの跳ね返りの光（roomLights）は本物の跳ね返りと二重になるので消し、空は上が青・下が地面の色のグラデーションにする。
@@ -1200,6 +1380,8 @@ export class Viewer {
   async pathTrace(samples: number, onProgress?: (done: number) => void): Promise<string> {
     const { WebGLPathTracer, GradientEquirectTexture, DenoiseMaterial } = await import('three-gpu-pathtracer');
     this.renderer.setAnimationLoop(null);
+    // 描いている間にウィンドウの大きさが変わると絵がつぶれるので、終わるまで合わせない
+    this.capturing = true;
     const scene = this.scene;
     const saved = {
       env: scene.environment, bg: scene.background, envI: scene.environmentIntensity,
@@ -1214,9 +1396,32 @@ export class Viewer {
         m.material = mirrorMat;
       }
     });
+    // ライブラリは「メッシュ 1 つに素材 1 つ」で素材の番号を振るので、素材が複数のメッシュが 1 つあるとそれ以降の素材がずれる。
+    // メッシュの並びは読み込みのたびに変わるので、ずれる範囲も毎回変わる。描く間だけグループごとのメッシュに分ける
+    const multi: THREE.Mesh[] = [];
+    scene.traverseVisible((o) => {
+      const m = o as THREE.Mesh;
+      if (m.isMesh && Array.isArray(m.material)) multi.push(m);
+    });
+    const parts: THREE.Mesh[] = [];
+    for (const m of multi) {
+      const mats = m.material as THREE.Material[];
+      const src = m.geometry;
+      const order = src.index ? Array.from(src.index.array) : Array.from({ length: src.attributes.position.count }, (_, i) => i);
+      for (const g of src.groups) {
+        const geo = src.clone();
+        geo.clearGroups();
+        geo.setIndex(order.slice(g.start, g.start + g.count));
+        const part = new THREE.Mesh(geo, mats[g.materialIndex ?? 0]);
+        part.applyMatrix4(m.matrix);
+        m.parent!.add(part);
+        parts.push(part);
+      }
+      m.visible = false;
+    }
     const sky = new GradientEquirectTexture(512);
     sky.topColor.set('#8fb6e3');
-    sky.bottomColor.set('#cfcabd');
+    sky.bottomColor.set('#d4d3d0');
     sky.update();
     scene.environment = sky;
     scene.background = sky;
@@ -1224,7 +1429,7 @@ export class Viewer {
     this.roomLights.visible = false;
     this.selection.visible = false;
     // 部屋の中は窓からの光だけなので、写真の露出のように明るく撮る
-    this.renderer.toneMappingExposure = this.effTime === 'day' ? 3 : 1.6;
+    this.renderer.toneMappingExposure = this.effTime === 'day' ? 4 : 1.6;
     const pt = new WebGLPathTracer(this.renderer);
     pt.minSamples = 0;
     pt.renderDelay = 0;
@@ -1259,12 +1464,19 @@ export class Viewer {
       sky.dispose();
       mirrorMat.dispose();
       for (const [m, mat] of mirrors) m.material = mat;
+      for (const part of parts) {
+        part.removeFromParent();
+        part.geometry.dispose();
+      }
+      for (const m of multi) m.visible = true;
       scene.environment = saved.env;
       scene.background = saved.bg;
       scene.environmentIntensity = saved.envI;
       this.roomLights.visible = saved.room;
       this.selection.visible = saved.sel;
       this.renderer.toneMappingExposure = saved.exposure;
+      this.capturing = false;
+      this.resize();
       this.renderer.setAnimationLoop(() => this.tick());
     }
   }

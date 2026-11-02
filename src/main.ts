@@ -59,6 +59,16 @@ const ui: Omit<PanelState, 'plan' | 'planName'> = {
   warnings: [],
 };
 
+let walkVideoEdit = false;
+function editWalkVideo(fn: (v: NonNullable<Plan['walkVideo']>) => void) {
+  walkVideoEdit = true;
+  store.edit((p) => {
+    p.walkVideo ??= { points: [], speed: 0.8 };
+    fn(p.walkVideo);
+  });
+  walkVideoEdit = false;
+}
+
 function findRoom(plan: Plan, id: string): { room: Room; floor: number } | undefined {
   for (const [i, f] of plan.floors.entries()) {
     const room = f.rooms.find((r) => r.id === id);
@@ -308,20 +318,73 @@ const panel = new Panel(document.getElementById('panel')!, {
   screenshot: () => viewer.screenshot(`${store.name}-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`),
   // 光の跳ね返りまで計算した静止画（パストレース）。描いている間は進み具合を画面の上に出す
   pathTraceShot: async () => {
-    const samples = 256;
+    const samples = 1024;
     const note = document.createElement('div');
     note.className = 'path-trace-note';
     note.textContent = '高画質で描いています…';
     document.body.appendChild(note);
+    const start = performance.now();
+    const elapsed = () => Math.round((performance.now() - start) / 1000);
     try {
-      const url = await viewer.pathTrace(samples, (n) => (note.textContent = `高画質で描いています… ${Math.round((n / samples) * 100)}%`));
+      const url = await viewer.pathTrace(samples, (n) => (note.textContent = `高画質で描いています… ${Math.round((n / samples) * 100)}%（${elapsed()} 秒）`));
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${store.name}-hq-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`;
+      // 調整のときに見比べられるよう、回数とかかった時間をファイル名に入れる
+      a.download = `${store.name}-hq-${samples}回-${elapsed()}秒-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.png`;
       a.click();
     } catch (e) {
       console.error(e);
       alert('高画質で描けませんでした');
+    } finally {
+      note.remove();
+    }
+  },
+  videoAddPoint: () => editWalkVideo((v) => v.points.push(viewer.getWalkPoint())),
+  videoRemoveLast: () => editWalkVideo((v) => v.points.pop()),
+  videoClear: () => editWalkVideo((v) => (v.points = [])),
+  setVideoSpeed: (speed) => editWalkVideo((v) => (v.speed = speed)),
+  setVideoPortrait: (on) => {
+    ui.videoPortrait = on;
+    render();
+  },
+  videoPreview: () => {
+    if (ui.videoPlaying) return viewer.stopPathPreview();
+    const v = store.plan.walkVideo;
+    if (!v) return;
+    ui.videoPlaying = true;
+    viewer.previewPath(v.points, v.speed, () => {
+      ui.videoPlaying = false;
+      render();
+    });
+    render();
+  },
+  videoExport: async () => {
+    const v = store.plan.walkVideo;
+    if (!v) return;
+    const size = ui.videoPortrait ? { width: 1080, height: 1920, fps: 30 } : { width: 1920, height: 1080, fps: 30 };
+    let stop = false;
+    const note = document.createElement('div');
+    note.className = 'path-trace-note video-note';
+    const text = document.createElement('span');
+    text.textContent = '動画を準備しています…';
+    const cancel = document.createElement('button');
+    cancel.textContent = '止める';
+    cancel.onclick = () => (stop = true);
+    note.append(text, cancel);
+    document.body.appendChild(note);
+    const start = performance.now();
+    const elapsed = () => Math.round((performance.now() - start) / 1000);
+    try {
+      const blob = await viewer.exportVideo(v.points, v.speed, size, (done, total) => (text.textContent = `動画を書き出しています… ${done} / ${total} コマ（${elapsed()} 秒）`), () => stop);
+      if (!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${store.name}-walk-${size.width}x${size.height}-${elapsed()}秒-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '')}.mp4`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+    } catch (e) {
+      console.error(e);
+      alert(`動画を書き出せませんでした: ${(e as Error).message}`);
     } finally {
       note.remove();
     }
@@ -465,7 +528,8 @@ store.subscribe((plan, cause) => {
   if (cause === 'load') ui.statusMessage = undefined;
   if (cause === 'load' && ui.floor >= plan.floors.length) ui.floor = 0;
   if (typeof ui.floorView === 'number' && ui.floorView >= plan.floors.length) ui.floorView = 0;
-  ui.warnings = viewer.setPlan(plan);
+  // 動画の通り道は 3D の形に関係しないので作り直さない
+  if (!walkVideoEdit) ui.warnings = viewer.setPlan(plan);
   // 消えた家具・部屋の選択は外す
   const sel = ui.selection;
   if (sel && !(sel.kind === 'furniture' ? findFurniture(plan, sel.id) : findRoom(plan, sel.id))) ui.selection = null;

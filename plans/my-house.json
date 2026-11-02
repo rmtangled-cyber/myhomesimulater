@@ -395,7 +395,7 @@
             ]
           ],
           "floor": "floor-ipf300-con2",
-          "wall": "exterior-lightgray",
+          "wall": "exterior-ekg103fk",
           "ceiling": "cross-light-gray",
           "level": -180,
           "ceilingHeight": 2620,
@@ -424,7 +424,7 @@
             ]
           ],
           "floor": "floor-ipf300-con2",
-          "wall": "exterior-lightgray",
+          "wall": "exterior-ekg103fk",
           "ceiling": "cross-light-gray",
           "level": -370,
           "ceilingHeight": 2810,
@@ -440,11 +440,11 @@
               0
             ],
             [
-              8190,
+              7962.5,
               0
             ],
             [
-              8190,
+              7962.5,
               1365
             ],
             [
@@ -459,6 +459,34 @@
             "west": "cross-sp2540",
             "south": "cross-sp2540"
           }
+        },
+        {
+          "id": "1f-ps-wic",
+          "name": "PS（WIC の東・2 階・3 階からの排気ダクト）",
+          "polygon": [
+            [
+              7962.5,
+              0
+            ],
+            [
+              8190,
+              0
+            ],
+            [
+              8190,
+              1365
+            ],
+            [
+              7962.5,
+              1365
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-sp2540",
+          "noBaseboard": true,
+          "noCross": true,
+          "noLabel": true
         },
         {
           "id": "1f-garage-cove",
@@ -482,7 +510,7 @@
             ]
           ],
           "floor": "floor-concrete",
-          "wall": "cross-light-gray",
+          "wall": "exterior-ekg103fk",
           "ceiling": "cross-black",
           "level": -560,
           "ceilingHeight": 3110,
@@ -512,7 +540,7 @@
             ]
           ],
           "floor": "floor-concrete",
-          "wall": "cross-light-gray",
+          "wall": "exterior-ekg103fk",
           "ceiling": "cross-black",
           "level": -560,
           "ceilingHeight": 2960,
@@ -561,7 +589,7 @@
           "id": "1f-hall-window",
           "type": "window",
           "at": [
-            4095,
+            4117.5,
             0
           ],
           "width": 690,
@@ -744,7 +772,8 @@
           ],
           "width": 500,
           "height": 2050,
-          "sill": 0
+          "sill": 0,
+          "blocksLight": true
         },
         {
           "id": "1f-cove-open",
@@ -784,6 +813,19 @@
           "z": -560
         },
         {
+          "id": "garage-bike",
+          "type": "e-bike",
+          "name": "電動アシスト自転車（ルイガノ ASCENT C 450mm MATTE LG BLACK 172174002・26 インチ。車庫の玄関側・西の壁沿い。運転席のドアの開く所より北。大きさは 26 インチの一般的な値で仮）",
+          "x": 4950,
+          "y": 3250,
+          "z": -560,
+          "w": 600,
+          "d": 1800,
+          "h": 1050,
+          "rotation": 0,
+          "color": "#1f2022"
+        },
+        {
           "id": "rods-1",
           "type": "rod-screen",
           "name": "ロッド手すり（1 階の階段・南側。棒は踏板の上から）",
@@ -815,12 +857,13 @@
           "h": 600,
           "rotation": 270,
           "color": "#111111",
-          "z": 1030
+          "z": 1030,
+          "loose": true
         },
         {
           "id": "mirror-1",
           "type": "mirror-sliding-door",
-          "name": "ミラー引き戸（フルハイトドア fit・片引きの引込み戸。シューズクロークの側の壁を 50 薄くした戸袋に入る。彫り込みの引手。シューズクロークの側の面に、WIC の戸と同じミラーシート）",
+          "name": "ミラー引き戸（フルハイトドア fit・片引きの引込み戸。シューズクロークの側の壁を 50 薄くした戸袋に入る。彫り込みの引手。シューズクロークの側の面に、WIC の戸と同じミラーシート（自分で後から貼る））",
           "x": 1785,
           "y": 5287.5,
           "w": 680,
@@ -837,16 +880,70 @@
         {
           "id": "shoe-shelf-back",
           "type": "resin-shelf",
-          "name": "樹脂棚板 D450（奥）",
+          "name": "樹脂棚板 D450（奥・南の壁。3 段・幅 850 の 2 分割。玄関側の棚と同じ高さ、棚板の上面 FL+1250・1545・1840。西半分の下にハンガーパイプ）",
           "x": 910,
           "y": 6540,
           "w": 1700,
           "d": 450,
-          "h": 2000,
+          "h": 885,
           "rotation": 180,
           "color": "#3d3e40",
-          "z": -150,
-          "count": 5
+          "z": 955,
+          "count": 3,
+          "boards": 2
+        },
+        {
+          "id": "sic-under-pipe",
+          "type": "under-shelf-pipe",
+          "name": "棚下のハンガーパイプ（南の棚の西半分・一番下の棚板の下に吊る。パイプの中心 FL+1140。南海プライウッド ランバーシリーズの上吊ハンガーパイプを参考にした形・品番は未定）",
+          "x": 490,
+          "y": 6540,
+          "z": 1128,
+          "w": 760,
+          "d": 30,
+          "h": 110,
+          "rotation": 0,
+          "color": "#c8cacc"
+        },
+        {
+          "id": "sic-umbrella-1",
+          "type": "umbrella",
+          "name": "傘 1（棚下のハンガーパイプに掛ける）",
+          "x": 420,
+          "y": 6512,
+          "z": 344,
+          "w": 70,
+          "d": 70,
+          "h": 830,
+          "rotation": 180,
+          "color": "#1d1e21"
+        },
+        {
+          "id": "sic-umbrella-2",
+          "type": "umbrella",
+          "name": "傘 2（棚下のハンガーパイプに掛ける）",
+          "x": 500,
+          "y": 6512,
+          "z": 344,
+          "w": 70,
+          "d": 70,
+          "h": 830,
+          "rotation": 180,
+          "color": "#2f3a4a"
+        },
+        {
+          "id": "sic-floor-mop",
+          "type": "mop",
+          "name": "フロアモップ（棚下のハンガーパイプに掛ける。商品は未定・大きさは仮）",
+          "x": 240,
+          "y": 6540,
+          "z": -62,
+          "w": 330,
+          "d": 110,
+          "h": 1200,
+          "rotation": 0,
+          "color": "#f2f2f0",
+          "variant": "hang"
         },
         {
           "id": "shoe-shelf-side",
@@ -888,6 +985,33 @@
           "rotation": 0,
           "color": "#3d3e40",
           "z": 1800
+        },
+        {
+          "id": "ac-1f-shoes",
+          "type": "aircon",
+          "name": "エアコン（シューズクローク。枕棚の上・西の壁。配管は本体の裏から外壁へ直接。機種は未定・大きさは仮）",
+          "x": 185,
+          "y": 4832.5,
+          "w": 798,
+          "d": 250,
+          "h": 295,
+          "rotation": 270,
+          "color": "#f4f4f2",
+          "z": 2050
+        },
+        {
+          "id": "sic-ac-outlet",
+          "type": "outlet",
+          "name": "コンセント エアコン用（シューズクローク・専用。エアコンの横の壁（北の壁）の、本体の上の端の高さ・中心 FL+2270）（追加）",
+          "x": 185,
+          "y": 4386.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 2210,
+          "count": 1
         },
         {
           "id": "shoe-hanging-wall",
@@ -960,11 +1084,11 @@
         {
           "id": "wash-faucet",
           "type": "wall-faucet",
-          "name": "壁付け水栓（黒・スマートサニタリーU の壁水栓タイプ。吐水口とレバーが別の座）",
+          "name": "壁付け水栓（カクダイ VARUNA 193-001-D マットブラック。スマートサニタリーU 壁水栓タイプの指定水栓。吐水口 205・吐水口とレバーの間 150・カウンターから 250 上）",
           "x": 3205,
-          "y": 298.5,
+          "y": 262.5,
           "w": 50,
-          "d": 277,
+          "d": 205,
           "h": 50,
           "rotation": 0,
           "color": "#1c1c1d",
@@ -973,7 +1097,7 @@
         {
           "id": "wash-mirror",
           "type": "pitta-mirror",
-          "name": "ピッタミラー（ミラタップ・LED なし・W1690×H800×厚み 40・壁と壁の間。フレームの色は仮にブラック）",
+          "name": "ピッタミラー（WH が用意して施工したい・確認中。ミラタップ・LED なし・W1690×H800×厚み 40・壁と壁の間。フレームの色は仮にブラック）",
           "x": 2730,
           "y": 140,
           "w": 1690,
@@ -987,9 +1111,9 @@
           "id": "wash-storage",
           "type": "laundry-shelf",
           "name": "造作棚（下に洗濯かご・FL+100〜600 は前開きの扉、600〜800 は扉なしの投入口、FL+800 から棚板 3 枚・天板なし・両側の板は天井まで・ダークブラウン木目）",
-          "x": 2395,
+          "x": 2355,
           "y": 2217.5,
-          "w": 1030,
+          "w": 950,
           "d": 450,
           "h": 2400,
           "rotation": 180,
@@ -1001,7 +1125,7 @@
           "id": "wash-diatom-mat-1",
           "type": "box",
           "name": "珪藻土マット（洗濯かごの下・JAPRUN 珪藻土バスマット 方形 濃い灰色 40×30cm 厚さ 0.9cm・仮）",
-          "x": 2652.5,
+          "x": 2580,
           "y": 2217.5,
           "w": 400,
           "d": 300,
@@ -1015,7 +1139,7 @@
           "id": "wash-diatom-mat-2",
           "type": "box",
           "name": "珪藻土マット（洗濯かごの下・JAPRUN 珪藻土バスマット 方形 濃い灰色 40×30cm 厚さ 0.9cm・仮）",
-          "x": 2137.5,
+          "x": 2130,
           "y": 2217.5,
           "w": 400,
           "d": 300,
@@ -1029,7 +1153,7 @@
           "id": "washer-1",
           "type": "washer",
           "name": "洗濯機（ドラム式）",
-          "x": 3220,
+          "x": 3205,
           "y": 2117.5,
           "w": 600,
           "d": 650,
@@ -1042,7 +1166,7 @@
           "id": "washer-base",
           "type": "caster-base",
           "name": "洗濯機のキャスター付きの台（DEWEL 洗濯機台 JS-JJL-0051N グレー・伸縮 45〜66.5cm・高さ 11〜12cm）",
-          "x": 3220,
+          "x": 3205,
           "y": 2117.5,
           "w": 620,
           "d": 660,
@@ -1070,6 +1194,18 @@
           ]
         },
         {
+          "id": "powder-robot-vacuum",
+          "type": "robot-vacuum-base",
+          "name": "水拭き機能付きのロボット掃除機の基地＋本体（ミニ洗面台の下・北の壁のコンセントの前。機種は未定・大きさは仮）",
+          "x": 455,
+          "y": 2757.5,
+          "w": 310,
+          "d": 390,
+          "h": 480,
+          "rotation": 0,
+          "color": "#1e1f20"
+        },
+        {
           "id": "powder-faucet",
           "type": "faucet",
           "name": "水栓（高さを抑えた）",
@@ -1081,20 +1217,6 @@
           "rotation": 0,
           "color": "#1c1c1d",
           "z": 850
-        },
-        {
-          "id": "powder-shelf",
-          "type": "box",
-          "name": "下の棚（AICA TJ-10237K）",
-          "x": 455,
-          "y": 2787.5,
-          "w": 790,
-          "d": 450,
-          "h": 30,
-          "rotation": 0,
-          "color": "#2f3032",
-          "z": 380,
-          "material": "aica-tj10237k"
         },
         {
           "id": "powder-mirror",
@@ -1166,7 +1288,7 @@
         {
           "id": "genkan-bench-light",
           "type": "line-light",
-          "name": "間接照明（フロートベンチの下）（ダウンライトの移動か追加かは確認中）",
+          "name": "テープライト（玄関のベンチの下・自分で後から付ける。人感センサーとベンチの下のコンセントで点ける。商品は未定）",
           "x": 4265,
           "y": 5050,
           "w": 1020,
@@ -1174,7 +1296,37 @@
           "h": 15,
           "rotation": 90,
           "color": "#f4f4f4",
-          "z": 135
+          "z": 135,
+          "loose": true,
+          "plugIn": true
+        },
+        {
+          "id": "step-light",
+          "type": "line-light",
+          "name": "テープライト（玄関の上がり框の下・自分で後から付ける。人感センサーとベンチの下のコンセントで点ける。商品は未定）",
+          "x": 3185,
+          "y": 4587.5,
+          "w": 2600,
+          "d": 30,
+          "h": 15,
+          "rotation": 0,
+          "color": "#f4f4f4",
+          "z": -55,
+          "loose": true,
+          "plugIn": true
+        },
+        {
+          "id": "genkan-bench-outlet",
+          "type": "outlet",
+          "name": "コンセント 2 口（玄関の造作ベンチの下・東の壁。框のすぐ上、中心 FL+75。ベンチの下と框の下のテープライト・人感センサー用）（追加）",
+          "x": 4486,
+          "y": 4850,
+          "z": 15,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5"
         },
         {
           "id": "shoe-shelf-east",
@@ -1226,9 +1378,9 @@
           "id": "wic-upper-shelf",
           "type": "box",
           "name": "枕棚",
-          "x": 6515,
+          "x": 6431.25,
           "y": 235,
-          "w": 3230,
+          "w": 2942.5,
           "d": 350,
           "h": 20,
           "rotation": 0,
@@ -1239,7 +1391,7 @@
           "id": "wic-upper-shelf-east",
           "type": "box",
           "name": "枕棚（東）",
-          "x": 7955,
+          "x": 7727.5,
           "y": 857,
           "w": 350,
           "d": 895,
@@ -1252,9 +1404,9 @@
           "id": "wic-pipe-upper",
           "type": "box",
           "name": "ハンガーパイプ（上・造作棚の仕切り板から東の壁まで）",
-          "x": 6543,
+          "x": 6429.25,
           "y": 300,
-          "w": 3166,
+          "w": 2938.5,
           "d": 25,
           "h": 25,
           "rotation": 0,
@@ -1265,7 +1417,7 @@
           "id": "wic-pipe-east",
           "type": "box",
           "name": "ハンガーパイプ（東・北の壁から南の壁まで。上のパイプと交わるので 50 下げる）",
-          "x": 7890,
+          "x": 7662.5,
           "y": 682.5,
           "w": 25,
           "d": 1237,
@@ -1278,9 +1430,9 @@
           "id": "wic-pipe-lower",
           "type": "box",
           "name": "ハンガーパイプ（下・東の壁まで）",
-          "x": 6515,
+          "x": 6431.25,
           "y": 300,
-          "w": 3230,
+          "w": 2942.5,
           "d": 25,
           "h": 25,
           "rotation": 0,
@@ -1364,7 +1516,8 @@
           "h": 26,
           "rotation": 270,
           "color": "#1c1c1d",
-          "z": 440
+          "z": 440,
+          "loose": true
         },
         {
           "id": "ac-outdoor-1",
@@ -1382,10 +1535,10 @@
         {
           "id": "wash-iron-bar",
           "type": "iron-bar",
-          "name": "タオル干し アイアンバー（L字）",
-          "x": 3220,
+          "name": "タオル干し アイアンバー（L字。西の端は造作棚の東の板に付く・東の端は天井から吊る）",
+          "x": 3170,
           "y": 2242.5,
-          "w": 600,
+          "w": 670,
           "d": 16,
           "h": 450,
           "rotation": 0,
@@ -1403,7 +1556,7 @@
           "h": 90,
           "rotation": 270,
           "color": "#d6d8da",
-          "z": 850
+          "z": 650
         },
         {
           "id": "bath-shower",
@@ -1499,7 +1652,7 @@
         {
           "id": "bath-door",
           "type": "framed-glass-door",
-          "name": "浴室ドア（黒枠・くもりガラス 開き戸・浴室側へ開く・吊元は南）",
+          "name": "浴室ドア（黒枠・くもりガラス 開き戸・浴室側へ開く・吊元は南・外側にタオルハンガー。大きさは仮）",
           "x": 1820,
           "y": 1520,
           "w": 750,
@@ -1507,7 +1660,8 @@
           "h": 2000,
           "rotation": 90,
           "color": "#1c1c1d",
-          "flip": true
+          "flip": true,
+          "towelBar": true
         },
         {
           "id": "genkan-float-step",
@@ -1558,7 +1712,7 @@
         {
           "id": "wic-door",
           "type": "mirror-sheet-door",
-          "name": "WICの引き戸（ハイドア＋ミラーシート）",
+          "name": "WICの引き戸（ハイドア。ミラーシートは自分で後から貼る）",
           "x": 4590,
           "y": 960,
           "w": 690,
@@ -1748,6 +1902,32 @@
           "material": "cross-sp2540"
         },
         {
+          "id": "hall-north-furring-baseboard",
+          "type": "box",
+          "name": "巾木（ホール北の西の壁のふかし壁の前）",
+          "x": 3749,
+          "y": 485,
+          "w": 8,
+          "d": 850,
+          "h": 60,
+          "material": "baseboard-black",
+          "rotation": 0,
+          "color": "#262625"
+        },
+        {
+          "id": "hall-north-furring-baseboard-end",
+          "type": "box",
+          "name": "巾木（ふかし壁の南の端・洗面脱衣室の入口の側）",
+          "x": 3726.5,
+          "y": 914,
+          "w": 53,
+          "d": 8,
+          "h": 60,
+          "material": "baseboard-black",
+          "rotation": 0,
+          "color": "#262625"
+        },
+        {
           "id": "porch-step-riser-1",
           "type": "box",
           "name": "ポーチの段の立ち上がり（車庫から・玄関タイル）",
@@ -1836,28 +2016,30 @@
           "rotation": 90,
           "color": "#f4f4f4",
           "z": 2440,
-          "lumen": 680
+          "lumen": 680,
+          "sensorLink": "std-1f-hall-dl-3"
         },
         {
           "id": "std-1f-hall-dl-3",
           "type": "downlight",
-          "name": "ダウンライト ホール（DAIKO DDL-6034ABG）（標準）",
-          "x": 3790,
-          "y": 3980,
+          "name": "ダウンライト 玄関ホール（人感センサー・DAIKO DDL-5704AB。標準の DDL-6034ABG から変更）（標準）→ ミニ洗面の前に立っても反応するよう、西のアートの壁寄りへ移動（ミニ洗面の前から水平 約 1.7m）。アートの上のブラケット・ミニ洗面の横の間接照明も連動してつく",
+          "x": 2000,
+          "y": 4100,
           "w": 100,
           "d": 100,
           "h": 20,
           "rotation": 0,
           "color": "#f4f4f4",
           "z": 2400,
-          "lumen": 780,
-          "beam": 60,
-          "kelvin": 3500
+          "lumen": 680,
+          "beam": 90,
+          "kelvin": 3500,
+          "sensor": true
         },
         {
           "id": "std-1f-shoes-dl",
           "type": "downlight",
-          "name": "ダウンライト シューズクローク（DAIKO DDL-6134AB）（標準）",
+          "name": "ダウンライト シューズクローク（人感センサー・DAIKO DDL-5704AB。標準の DDL-6134AB から変更）（標準）",
           "x": 910,
           "y": 5550,
           "w": 100,
@@ -1866,16 +2048,17 @@
           "rotation": 0,
           "color": "#f4f4f4",
           "z": 2400,
-          "lumen": 780,
+          "lumen": 680,
           "beam": 90,
-          "kelvin": 3500
+          "kelvin": 3500,
+          "sensor": true
         },
         {
           "id": "std-1f-porch-dl",
           "type": "downlight",
-          "name": "ダウンライト ポーチ（人感センサー・DAIKO DDL-5702YB）（標準）",
-          "x": 3300,
-          "y": 6250,
+          "name": "ダウンライト ポーチ（人感センサー・DAIKO DDL-5702YB）（標準）→ 南の外壁寄りへ移動（壁から 220・宅配ボックスの正面。ボックスの壁を照らす）",
+          "x": 3050,
+          "y": 6545,
           "w": 100,
           "d": 100,
           "h": 20,
@@ -1904,19 +2087,20 @@
         },
         {
           "id": "std-1f-stairs-bracket",
-          "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
-          "x": 1020,
+          "type": "sensor-bracket",
+          "name": "ブラケット 階段 1 階の上り始め（オーデリック OG254865LCR・人感センサー付き・検討中。標準の DBK-41132A の代わり。西の壁で、頭に当たらないよう下端 FL+2300 へ上げる）",
+          "x": 1019,
           "y": 2957.5,
-          "w": 100,
-          "d": 100,
-          "h": 100,
+          "w": 143,
+          "d": 98,
+          "h": 144,
           "rotation": 270,
           "color": "#1c1c1d",
-          "z": 2140,
-          "lumen": 250,
+          "z": 2300,
+          "lumen": 152,
           "beam": 90,
-          "kelvin": 3500
+          "kelvin": 2700,
+          "sensor": true
         },
         {
           "id": "std-1f-sw-bath",
@@ -1928,7 +2112,7 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#8f908e",
+          "color": "#2a2a2b",
           "z": 1140,
           "count": 2
         },
@@ -1942,7 +2126,7 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#8f908e",
+          "color": "#2a2a2b",
           "z": 1140
         },
         {
@@ -1972,29 +2156,29 @@
           "z": 1140
         },
         {
-          "id": "std-1f-sw-hall-a",
+          "id": "sic-sw-1",
+          "name": "スイッチ シューズクロークの北の壁・西側 1 つめ（上から: 玄関ホール／表札灯と車庫の間接照明／ポーチ）（標準のスイッチから移動）",
+          "x": 660,
+          "y": 4386.5,
           "type": "switch",
-          "name": "スイッチ ホール（上から: 外のスポット／廊下（WIC 前）／ホール）（標準）",
-          "x": 700,
-          "y": 4258.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 180,
+          "rotation": 0,
           "color": "#8f908e",
           "z": 1140,
           "count": 3
         },
         {
-          "id": "std-1f-sw-hall-b",
+          "id": "sic-sw-2",
+          "name": "スイッチ シューズクロークの北の壁・西側 2 つめ（上: シューズクローク／下: 1 階 北ホール）（標準のスイッチから移動）",
+          "x": 770,
+          "y": 4386.5,
           "type": "switch",
-          "name": "スイッチ（上: シューズクローク／下: ポーチ）（標準）",
-          "x": 860,
-          "y": 4258.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 180,
+          "rotation": 0,
           "color": "#8f908e",
           "z": 1140,
           "count": 2
@@ -2002,15 +2186,15 @@
         {
           "id": "std-1f-out-washer",
           "type": "outlet",
-          "name": "コンセント 洗濯機用 2 口・アース付（標準は北の壁 → 洗濯機の上へ移動）（標準）",
-          "x": 3220,
+          "name": "コンセント 洗濯機用 2 口・アース付（標準は北の壁 → 洗濯機の上へ移動。洗濯機＋台の上端 FL+1110 のやや上・中心 FL+1200、蛇口と横並び）（標準）",
+          "x": 3305,
           "y": 2438.5,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 180,
-          "color": "#f7f7f5",
-          "z": 1290
+          "color": "#2a2a2b",
+          "z": 1140
         },
         {
           "id": "std-1f-out-wash",
@@ -2022,14 +2206,14 @@
           "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 540
         },
         {
           "id": "std-1f-out-wic",
           "type": "outlet",
-          "name": "コンセント WIC 2 口（標準）",
-          "x": 8126,
+          "name": "コンセント WIC 2 口（標準）→ PS ができたので WIC の東の壁（x 7962.5）へ",
+          "x": 7898.5,
           "y": 1100,
           "w": 70,
           "d": 8,
@@ -2039,31 +2223,19 @@
           "z": 190
         },
         {
-          "id": "wic-roomba",
-          "type": "robot-vacuum-base",
-          "name": "ルンバの基地（クリーンベース＋本体・機種は未定。東の壁のコンセントの前）",
-          "x": 7935,
-          "y": 1100,
-          "w": 310,
-          "d": 390,
-          "h": 480,
-          "rotation": 90,
-          "color": "#1e1f20",
-          "z": 0
-        },
-        {
           "id": "std-1f-out-heatex",
           "type": "outlet",
-          "name": "コンセント 熱交換器用（標準）",
-          "x": 4900,
-          "y": 64,
+          "name": "コンセント 熱交換器用（WH の電灯図の位置・WIC の床下点検口の中。床下なので 3D には見えない。高さは仮）（標準）",
+          "x": 4836,
+          "y": 749,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 0,
           "color": "#f7f7f5",
-          "z": 2140,
-          "count": 1
+          "z": -300,
+          "count": 1,
+          "inWall": true
         },
         {
           "id": "std-1f-out-shoes",
@@ -2075,13 +2247,13 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 40
         },
         {
           "id": "std-1f-out-smartdoor",
           "type": "outlet",
-          "name": "コンセント スマートドア用（標準）",
+          "name": "コンセント スマートドア用（壁の中に埋め込み・3D には見えない。実際の納まりは WH に確認）（標準）",
           "x": 2600,
           "y": 5623.5,
           "w": 70,
@@ -2090,31 +2262,32 @@
           "rotation": 180,
           "color": "#f7f7f5",
           "z": 1940,
-          "count": 1
+          "count": 1,
+          "inWall": true
         },
         {
           "id": "std-1f-out-wp",
           "type": "outlet",
-          "name": "EV・PHEV 充電用コンセント（Panasonic WK4322S ホワイトシルバー・200V 20A・屋外用・露出／埋込両用。車庫の北西の隅・北の壁。標準の外の防水コンセント WK4602BK から変更・差額は要確認）（標準）",
+          "name": "EV・PHEV 充電用コンセント（Panasonic WK4322B ブラック・200V 20A・屋外用・露出／埋込両用。車庫の北西の隅・北の壁。標準の外の防水コンセント WK4602BK から変更・差額は要確認）（標準）",
           "x": 4800,
           "y": 1445,
           "w": 120,
           "d": 40,
           "h": 180,
           "rotation": 0,
-          "color": "#d6d8d8",
+          "color": "#1c1c1d",
           "z": 440
         },
         {
           "id": "std-1f-out-ecocute",
           "type": "outlet",
-          "name": "コンセント エコキュート用 200V（外）（標準）",
-          "x": -107,
-          "y": 2400,
+          "name": "コンセント エコキュート用 200V（標準の西の外 → 北の外のヒートポンプと貯湯タンクの間へ移動）（標準）",
+          "x": 900,
+          "y": -107,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
+          "rotation": 180,
           "color": "#f7f7f5",
           "z": -360,
           "count": 1
@@ -2148,7 +2321,7 @@
         {
           "id": "bracket-1",
           "type": "aj-wall-lamp",
-          "name": "ブラケットライト（beaubelle チボリ bbw-009 ブラック・アートの壁の上・傘の口を壁の側へ向けてアートを照らす）",
+          "name": "ブラケットライト（施主支給・WH が施工。beaubelle チボリ bbw-009 ブラック・アートの壁の上・傘の口を壁の側へ向けてアートを照らす）",
           "x": 1962.5,
           "y": 4695,
           "w": 258,
@@ -2157,7 +2330,8 @@
           "rotation": 270,
           "color": "#1c1c1d",
           "z": 1850,
-          "flip": true
+          "flip": true,
+          "sensorLink": "std-1f-hall-dl-3"
         },
         {
           "id": "ecocute-tank",
@@ -2213,22 +2387,24 @@
         },
         {
           "id": "porch-light-1",
-          "type": "down-bracket",
-          "name": "表札灯（KOIZUMI AU54604。標準の外のスポットライト DOL-4824YB の代わり）",
+          "type": "gate-light",
+          "name": "表札灯（Panasonic LGWJ50127K LE1・門柱灯・オフブラック・壁面横向き・明るさセンサ付・電球色 2700K・85lm・W375×H108×出 100。標準の外のスポットライト DOL-4824YB の代わり）",
           "x": 3170,
           "y": 6978,
-          "w": 100,
+          "w": 375,
           "d": 100,
-          "h": 100,
+          "h": 108,
           "rotation": 0,
           "color": "#1c1c1d",
-          "z": 1280
+          "z": 1280,
+          "lumen": 85,
+          "kelvin": 2700
         },
         {
           "id": "vb-1f-hall",
           "type": "vertical-blind",
           "name": "縦型ブラインド（窓枠の内側に付ける・1 階 ホールの北の縦長の窓・商品は未定）",
-          "x": 4095,
+          "x": 4117.5,
           "y": 30,
           "w": 680,
           "d": 55,
@@ -2296,8 +2472,8 @@
         {
           "id": "wic-clothes-dresses",
           "type": "hanging-clothes",
-          "name": "ワンピース 5 着（東のハンガーパイプ・ルンバの上）",
-          "x": 7890,
+          "name": "ワンピース 5 着（東のハンガーパイプ）",
+          "x": 7662.5,
           "y": 925,
           "w": 600,
           "d": 470,
@@ -2341,8 +2517,8 @@
           "id": "golf-bag-1",
           "type": "golf-bag",
           "name": "ゴルフバッグ（ブラック）",
-          "x": 1535,
-          "y": 5850,
+          "x": 1560,
+          "y": 6540,
           "w": 260,
           "d": 260,
           "h": 1250,
@@ -2354,8 +2530,8 @@
           "id": "golf-bag-2",
           "type": "golf-bag",
           "name": "ゴルフバッグ（レッド）",
-          "x": 1535,
-          "y": 6160,
+          "x": 1250,
+          "y": 6540,
           "w": 260,
           "d": 260,
           "h": 1250,
@@ -2682,98 +2858,58 @@
         {
           "id": "sic-backpack",
           "type": "bag",
-          "name": "大きなリュック（寝かせて・D450 の奥の棚の一番下の段）",
-          "x": 400,
+          "name": "大きなリュック 1（寝かせて・D450 の奥の棚の一番下の段）",
+          "x": 500,
           "y": 6540,
           "w": 350,
           "d": 550,
           "h": 230,
           "rotation": 90,
           "color": "#2b2d31",
-          "z": 250,
+          "z": 1250,
           "variant": "backpack-flat"
         },
         {
-          "id": "sic-tennis-bag-1",
-          "type": "racket-bag",
-          "name": "テニスのラケットバッグ 1（D450 の奥の棚の下から 2 段目）",
-          "x": 520,
-          "y": 6540,
-          "w": 760,
-          "d": 330,
-          "h": 130,
-          "rotation": 0,
-          "color": "#1e1e20",
-          "z": 650,
-          "variant": "tennis"
-        },
-        {
-          "id": "sic-badminton-bag-1",
-          "type": "racket-bag",
-          "name": "バドミントンのラケットバッグ 1（D450 の奥の棚の下から 3 段目）",
-          "x": 520,
-          "y": 6540,
-          "w": 700,
-          "d": 260,
-          "h": 90,
-          "rotation": 0,
-          "color": "#1f2a44",
-          "z": 1050,
-          "variant": "badminton"
-        },
-        {
-          "id": "sic-tennis-bag-2",
-          "type": "racket-bag",
-          "name": "テニスのラケットバッグ 2（D450 の奥の棚の下から 2 段目）",
+          "id": "sic-backpack-2",
+          "type": "bag",
+          "name": "大きなリュック 2（寝かせて・D450 の奥の棚の一番下の段）",
           "x": 1300,
           "y": 6540,
-          "w": 760,
-          "d": 330,
-          "h": 130,
-          "rotation": 0,
-          "color": "#2b2d33",
-          "z": 650,
-          "variant": "tennis"
+          "w": 350,
+          "d": 550,
+          "h": 230,
+          "rotation": 90,
+          "color": "#2b2d31",
+          "z": 1250,
+          "variant": "backpack-flat"
         },
         {
-          "id": "sic-badminton-bag-2",
-          "type": "racket-bag",
-          "name": "バドミントンのラケットバッグ 2（D450 の奥の棚の下から 3 段目）",
+          "id": "sic-backpack-3",
+          "type": "bag",
+          "name": "大きなリュック 3（寝かせて・D450 の奥の棚の下から 2 段目）",
+          "x": 500,
+          "y": 6540,
+          "w": 350,
+          "d": 550,
+          "h": 230,
+          "rotation": 90,
+          "color": "#2b2d31",
+          "z": 1545,
+          "variant": "backpack-flat"
+        },
+        {
+          "id": "sic-backpack-4",
+          "type": "bag",
+          "name": "大きなリュック 4（寝かせて・D450 の奥の棚の下から 2 段目）",
           "x": 1300,
           "y": 6540,
-          "w": 700,
-          "d": 260,
-          "h": 90,
-          "rotation": 0,
-          "color": "#3a3a3c",
-          "z": 1050,
-          "variant": "badminton"
-        },
-        {
-          "id": "sic-glove-1",
-          "type": "baseball-glove",
-          "name": "野球のグローブ 1（D450 の玄関側の棚の一番下の段）",
-          "x": 1535,
-          "y": 5850,
-          "w": 260,
-          "d": 300,
-          "h": 120,
+          "w": 350,
+          "d": 550,
+          "h": 230,
           "rotation": 90,
-          "color": "#8a5a2b",
-          "z": 1250
-        },
-        {
-          "id": "sic-glove-2",
-          "type": "baseball-glove",
-          "name": "野球のグローブ 2（D450 の玄関側の棚の一番下の段）",
-          "x": 1535,
-          "y": 6160,
-          "w": 260,
-          "d": 300,
-          "h": 120,
-          "rotation": 90,
-          "color": "#2a2320",
-          "z": 1250
+          "color": "#2b2d31",
+          "z": 1545,
+          "variant": "backpack-flat"
         },
         {
           "id": "sic-suitcase",
@@ -2858,28 +2994,32 @@
         {
           "id": "wic-tape-light",
           "type": "line-light",
-          "name": "テープライト（枕棚の下）（追加）",
-          "x": 6340,
+          "name": "テープライト（枕棚の下・自分で後から付ける。商品は未定）",
+          "x": 6370,
           "y": 390,
-          "w": 2880,
+          "w": 2820,
           "d": 20,
           "h": 10,
           "rotation": 0,
           "color": "#f4f4f4",
-          "z": 2045
+          "z": 2045,
+          "loose": true,
+          "plugIn": true
         },
         {
           "id": "wic-tape-light-east",
           "type": "line-light",
-          "name": "テープライト（東の枕棚の下）（追加）",
-          "x": 7800,
+          "name": "テープライト（東の枕棚の下・自分で後から付ける。商品は未定）",
+          "x": 7572.5,
           "y": 857,
           "w": 895,
           "d": 20,
           "h": 10,
           "rotation": 90,
           "color": "#f4f4f4",
-          "z": 2045
+          "z": 2045,
+          "loose": true,
+          "plugIn": true
         },
         {
           "id": "powder-towel-hook",
@@ -2895,45 +3035,6 @@
           "z": 1100
         },
         {
-          "id": "powder-wire-basket-1",
-          "type": "wire-basket",
-          "name": "ワイヤーボックス 1（ミニ洗面台の下の棚・商品は未定）",
-          "x": 185,
-          "y": 2800,
-          "w": 240,
-          "d": 360,
-          "h": 200,
-          "rotation": 0,
-          "color": "#2a2a2b",
-          "z": 410
-        },
-        {
-          "id": "powder-wire-basket-2",
-          "type": "wire-basket",
-          "name": "ワイヤーボックス 2（ミニ洗面台の下の棚・商品は未定）",
-          "x": 455,
-          "y": 2800,
-          "w": 240,
-          "d": 360,
-          "h": 200,
-          "rotation": 0,
-          "color": "#2a2a2b",
-          "z": 410
-        },
-        {
-          "id": "powder-wire-basket-3",
-          "type": "wire-basket",
-          "name": "ワイヤーボックス 3（ミニ洗面台の下の棚・商品は未定）",
-          "x": 725,
-          "y": 2800,
-          "w": 240,
-          "d": 360,
-          "h": 200,
-          "rotation": 0,
-          "color": "#2a2a2b",
-          "z": 410
-        },
-        {
           "id": "wash-storage-outlet",
           "type": "outlet",
           "name": "コンセント（洗面脱衣室の壁内収納の中・歯ブラシ除菌器の横）（追加）",
@@ -2943,14 +3044,14 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#f7f7f5",
+          "color": "#2a2a2b",
           "z": 1360
         },
         {
           "id": "wash-towels-1",
           "type": "towel-stack",
           "name": "たたんだタオル 5 枚（造作棚の下から 1 段目）",
-          "x": 2160,
+          "x": 2130,
           "y": 2230,
           "w": 340,
           "d": 250,
@@ -2964,7 +3065,7 @@
           "id": "wash-towels-2",
           "type": "towel-stack",
           "name": "たたんだタオル 5 枚（造作棚の下から 1 段目）",
-          "x": 2630,
+          "x": 2580,
           "y": 2230,
           "w": 340,
           "d": 250,
@@ -3065,58 +3166,14 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#f7f7f5"
-        },
-        {
-          "id": "hall-north-footlight-1",
-          "type": "foot-light",
-          "name": "フットライト 1（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。玄関〜WIC の廊下の東の壁（ホールの所）・床から 100 くらい。位置は仮）（追加）",
-          "x": 4486,
-          "y": 3000,
-          "z": 70,
-          "w": 162,
-          "d": 8,
-          "h": 60,
-          "rotation": 90,
-          "color": "#1c1c1d",
-          "lumen": 10,
-          "kelvin": 2700
-        },
-        {
-          "id": "hall-north-footlight-2",
-          "type": "foot-light",
-          "name": "フットライト 2（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。玄関〜WIC の廊下の東の壁（ホールの所）・床から 100 くらい。位置は仮）（追加）",
-          "x": 4486,
-          "y": 3650,
-          "z": 70,
-          "w": 162,
-          "d": 8,
-          "h": 60,
-          "rotation": 90,
-          "color": "#1c1c1d",
-          "lumen": 10,
-          "kelvin": 2700
-        },
-        {
-          "id": "sic-cardboard-stocker",
-          "type": "box",
-          "name": "段ボールストッカー（京童工房 euni-285・大きさは仮 300×230×450）",
-          "x": 700,
-          "y": 5160,
-          "z": -150,
-          "w": 300,
-          "d": 230,
-          "h": 450,
-          "rotation": 0,
-          "color": "#2a2a2b",
-          "loose": true
+          "color": "#8f908e"
         },
         {
           "id": "sic-mini-washer",
           "type": "trash-bin",
           "name": "小型洗濯機（Ainova XPB08 クリアブラック・バケツ型。大きさは仮 320×320×400）",
-          "x": 620,
-          "y": 6120,
+          "x": 955,
+          "y": 6560,
           "z": -150,
           "w": 320,
           "d": 320,
@@ -3127,15 +3184,304 @@
         {
           "id": "sic-tile-brush",
           "type": "mop",
-          "name": "玄関タイルブラシ（アズマ AZ297 ライトグレー・伸縮柄 68〜110cm。ヘッドの大きさは仮）",
-          "x": 1050,
-          "y": 6250,
-          "z": -150,
+          "name": "玄関タイルブラシ（アズマ AZ297 ライトグレー・伸縮柄 68〜110cm。棚下のハンガーパイプに掛ける。ヘッドの大きさは仮）",
+          "x": 660,
+          "y": 6540,
+          "z": 30,
           "w": 250,
           "d": 80,
           "h": 1100,
           "rotation": 180,
-          "color": "#c9cacb"
+          "color": "#c9cacb",
+          "variant": "hang"
+        },
+        {
+          "id": "sic-cardboard-bundle",
+          "type": "cardboard-bundle",
+          "name": "段ボールの束（段ボールストッカー 京童工房 euni-285 でまとめて壁に掛ける。黒いストッカーは 17×11cm、束の大きさは仮 600×450×厚み 80。玄関側の棚の下・東の壁）",
+          "x": 1720,
+          "y": 6007,
+          "z": 450,
+          "w": 600,
+          "d": 80,
+          "h": 450,
+          "rotation": 90,
+          "color": "#b08d62"
+        },
+        {
+          "id": "wic-out-upper-west",
+          "type": "outlet",
+          "name": "コンセント WIC 2 口（上のハンガーパイプのちょうど奥・西の端の北の壁・中心 FL+1980）（追加）",
+          "x": 5030,
+          "y": 64,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 1920
+        },
+        {
+          "id": "wic-step-stool",
+          "type": "step-stool",
+          "name": "踏み台（小さな脚立。商品は未定・大きさは仮）",
+          "x": 7727.5,
+          "y": 725,
+          "w": 400,
+          "d": 330,
+          "h": 600,
+          "rotation": 90,
+          "color": "#b9bcbf"
+        },
+        {
+          "id": "washer-faucet",
+          "type": "washer-faucet",
+          "name": "洗濯機用の蛇口（コンセントと横並び・中心 FL+1200。品番は未定）",
+          "x": 3105,
+          "y": 2420,
+          "w": 50,
+          "d": 45,
+          "h": 90,
+          "rotation": 180,
+          "color": "#c9ccd0",
+          "z": 1155
+        },
+        {
+          "id": "washer-hose",
+          "type": "washer-hose",
+          "name": "洗濯機の給水ホース（蛇口から真下へ垂らす）",
+          "x": 3105,
+          "y": 2407.5,
+          "w": 14,
+          "d": 14,
+          "h": 60,
+          "rotation": 0,
+          "color": "#e9e9e6",
+          "z": 1110
+        },
+        {
+          "id": "washer-drain",
+          "type": "floor-drain",
+          "name": "洗濯機の排水口（床。位置は仮で洗濯機の真ん中）",
+          "x": 3205,
+          "y": 2117.5,
+          "w": 150,
+          "d": 150,
+          "h": 4,
+          "rotation": 0,
+          "color": "#9a9c9e",
+          "z": 0
+        },
+        {
+          "id": "wash-shelf-outlet-east",
+          "type": "outlet",
+          "name": "コンセント 洗面脱衣室 2 口（スマートサニタリーU の下の棚の上・右奥）（追加）",
+          "x": 3510,
+          "y": 64,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#2a2a2b",
+          "z": 540
+        },
+        {
+          "id": "powder-roomba-outlet",
+          "type": "outlet",
+          "name": "コンセント ロボット掃除機用 2 口（ミニ洗面台の下・北の壁・基地の裏）（追加）",
+          "x": 455,
+          "y": 2566.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 190
+        },
+        {
+          "id": "ac-outdoor-1-shade",
+          "type": "outdoor-unit-shade",
+          "name": "室外機の日陰カバー（商品は未定・大きさは仮）",
+          "x": 8543,
+          "y": 6050,
+          "w": 900,
+          "d": 420,
+          "h": 70,
+          "rotation": 270,
+          "color": "#3a3b3d",
+          "z": 80
+        },
+        {
+          "id": "ac-outdoor-2-shade",
+          "type": "outdoor-unit-shade",
+          "name": "室外機の日陰カバー（商品は未定・大きさは仮）",
+          "x": 8543,
+          "y": 1395,
+          "w": 900,
+          "d": 420,
+          "h": 70,
+          "rotation": 270,
+          "color": "#3a3b3d",
+          "z": 80
+        },
+        {
+          "id": "ac-outdoor-bedroom-shade",
+          "type": "outdoor-unit-shade",
+          "name": "室外機の日陰カバー（商品は未定・大きさは仮）",
+          "x": -353,
+          "y": 460,
+          "w": 900,
+          "d": 420,
+          "h": 70,
+          "rotation": 90,
+          "color": "#3a3b3d",
+          "z": 80
+        },
+        {
+          "id": "ac-outdoor-shoes",
+          "type": "outdoor-unit",
+          "name": "エアコン室外機（シューズクローク・西の外。ソーラーライトの南）",
+          "x": -353,
+          "y": 5650,
+          "w": 800,
+          "d": 300,
+          "h": 640,
+          "rotation": 90,
+          "color": "#e9e8e3",
+          "z": -560
+        },
+        {
+          "id": "ac-outdoor-shoes-shade",
+          "type": "outdoor-unit-shade",
+          "name": "室外機の日陰カバー（商品は未定・大きさは仮）",
+          "x": -353,
+          "y": 5650,
+          "w": 900,
+          "d": 420,
+          "h": 70,
+          "rotation": 90,
+          "color": "#3a3b3d",
+          "z": 80
+        },
+        {
+          "id": "north-camera",
+          "type": "camera",
+          "name": "防犯カメラ（北の外壁・1 階の北の縦長窓を見る。WIC の外から西へ向ける。機種は未定）",
+          "x": 5000,
+          "y": -253,
+          "w": 80,
+          "d": 300,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f2f2f2",
+          "z": 2300,
+          "aim": 60
+        },
+        {
+          "id": "north-camera-outlet",
+          "type": "outlet",
+          "name": "コンセント（北の防犯カメラ用・カメラの東。隠せるか要確認）（追加）",
+          "x": 5180,
+          "y": -107,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "z": 2250
+        },
+        {
+          "id": "duct-ex-1",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ①（洗面脱衣室・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 2095,
+          "y": 1155,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-2",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ②（WIC・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 7145,
+          "y": 1175,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-3",
+          "type": "ceiling-vent",
+          "name": "室内排気口 ③（シューズクローク・天井付・100φ。天井裏の配管で洗面室の北の PS へ。形は仮に四角）",
+          "x": 290,
+          "y": 6135,
+          "w": 150,
+          "d": 150,
+          "h": 10,
+          "rotation": 0,
+          "color": "#eeeeec",
+          "z": 2400
+        },
+        {
+          "id": "duct-sa-hall-west",
+          "type": "ceiling-vent",
+          "name": "室内給気口（1 階 ホール（西）・床付・ダクト計画図の位置からおおよそ。寸法・色は別紙で確認・大きさは仮）",
+          "x": 250,
+          "y": 4005,
+          "w": 300,
+          "d": 100,
+          "h": 4,
+          "rotation": 90,
+          "color": "#3a3d3f",
+          "z": 0,
+          "flip": true
+        },
+        {
+          "id": "duct-sa-hall",
+          "type": "ceiling-vent",
+          "name": "室内給気口（ダブル）（1 階 ホール・東の壁際・床付・ダクト計画図の位置からおおよそ。寸法・色は別紙で確認・大きさは仮）",
+          "x": 4385,
+          "y": 4200,
+          "w": 300,
+          "d": 200,
+          "h": 4,
+          "rotation": 90,
+          "color": "#3a3d3f",
+          "z": 0,
+          "flip": true
+        },
+        {
+          "id": "duct-oa-intake",
+          "type": "intake-pipe",
+          "name": "屋外給気口（北の外・基礎から立ち上がる給気の管 VU150・高さ GL+872・特殊フィルターカバー付き。左右 300 以上・前に約 800 のメンテナンススペース。位置はダクト計画図からおおよそ）",
+          "x": 5980,
+          "y": -240,
+          "w": 230,
+          "d": 230,
+          "h": 872,
+          "rotation": 180,
+          "color": "#d9d8d4",
+          "z": -560
+        },
+        {
+          "id": "duct-ea-hood",
+          "type": "vent-hood",
+          "name": "屋外排気口（北の外・基礎を貫通する VU150 のフード。位置はダクト計画図からおおよそ・高さは仮）",
+          "x": 3195,
+          "y": -163,
+          "w": 200,
+          "d": 120,
+          "h": 200,
+          "rotation": 180,
+          "color": "#d9d8d4",
+          "z": -430
         }
       ],
       "jambs": {
@@ -3218,11 +3564,39 @@
           }
         },
         {
+          "id": "2f-ps",
+          "name": "PS（WIC とパントリーの間・3 階からの排気ダクト）",
+          "polygon": [
+            [
+              5232.5,
+              0
+            ],
+            [
+              5460,
+              0
+            ],
+            [
+              5460,
+              1592.5
+            ],
+            [
+              5232.5,
+              1592.5
+            ]
+          ],
+          "floor": "floor-cushion-white",
+          "wall": "cross-white",
+          "ceiling": "cross-sp2540",
+          "noBaseboard": true,
+          "noCross": true,
+          "noLabel": true
+        },
+        {
           "id": "2f-storage-n",
           "name": "パントリー（納戸）",
           "polygon": [
             [
-              5232.5,
+              5460,
               0
             ],
             [
@@ -3234,7 +3608,7 @@
               1592.5
             ],
             [
-              5232.5,
+              5460,
               1592.5
             ]
           ],
@@ -3311,11 +3685,11 @@
               2502.5
             ],
             [
-              4550,
+              4322.5,
               2502.5
             ],
             [
-              4550,
+              4322.5,
               3412.5
             ],
             [
@@ -3327,6 +3701,34 @@
           "wall": "cross-hf3122",
           "ceiling": "",
           "void": true
+        },
+        {
+          "id": "2f-stairs-top-floor",
+          "name": "階段の上り切り",
+          "polygon": [
+            [
+              4322.5,
+              2502.5
+            ],
+            [
+              4550,
+              2502.5
+            ],
+            [
+              4550,
+              3412.5
+            ],
+            [
+              4322.5,
+              3412.5
+            ]
+          ],
+          "floor": "floor-lassissa-greigeelm",
+          "wall": "cross-hf3122",
+          "ceiling": "",
+          "noLabel": true,
+          "noBaseboard": true,
+          "noCross": true
         },
         {
           "id": "2f-storage-sw",
@@ -3421,8 +3823,39 @@
                 6211
               ],
               "material": "aica-fj901zd"
+            },
+            {
+              "id": "ldk-toilet-door-n",
+              "name": "トイレのドアの右（北）の壁",
+              "edge": 5,
+              "start": [
+                910,
+                3350
+              ],
+              "end": [
+                910,
+                3510
+              ],
+              "material": "cross-hf3122"
+            },
+            {
+              "id": "ldk-toilet-door-s",
+              "name": "トイレのドアの左（南）の壁",
+              "edge": 5,
+              "start": [
+                910,
+                4230
+              ],
+              "end": [
+                910,
+                4385
+              ],
+              "material": "cross-sp2540"
             }
-          ]
+          ],
+          "edges": {
+            "5": "cross-hf3122"
+          }
         }
       ],
       "openings": [
@@ -3476,7 +3909,11 @@
           "height": 2400,
           "sill": 0,
           "slideRoom": "2f-toilet",
-          "slideTo": "north"
+          "slideTo": "north",
+          "jambFaces": {
+            "a|2f-ldk": "cross-hf3122",
+            "a|2f-toilet": "cross-hf3122"
+          }
         },
         {
           "id": "2f-storage-sw-door",
@@ -3499,8 +3936,12 @@
             2957.5
           ],
           "width": 910,
-          "height": 2390,
-          "sill": 0
+          "height": 2400,
+          "sill": 0,
+          "jambFaces": {
+            "h|2f-stairs-a": "cross-hf3122",
+            "h|2f-stairs-b": "cross-hf3122"
+          }
         },
         {
           "id": "2f-stairs-ldk",
@@ -3511,7 +3952,13 @@
           ],
           "width": 3640,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jambFaces": {
+            "h|2f-stairs-b": "cross-sp2540",
+            "h|2f-stairs-top-floor": "cross-sp2540",
+            "h|2f-stairs-a": "cross-sp2540"
+          },
+          "soffitBoth": true
         },
         {
           "id": "2f-stairs-landing",
@@ -3522,7 +3969,11 @@
           ],
           "width": 910,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jambFaces": {
+            "h|2f-stairs-top-floor": "cross-sp2540"
+          },
+          "soffitBoth": true
         },
         {
           "id": "2f-stairs-top",
@@ -3533,7 +3984,12 @@
           ],
           "width": 910,
           "height": 2400,
-          "sill": 0
+          "sill": 0,
+          "jambFaces": {
+            "h|2f-stairs-b": "cross-sp2540",
+            "h|2f-stairs-top-floor": "cross-sp2540"
+          },
+          "soffitBoth": true
         },
         {
           "id": "2f-bedroom-window",
@@ -3593,6 +4049,17 @@
           "height": 2000,
           "sill": 200,
           "sashColor": "#f2f1ee"
+        },
+        {
+          "id": "2f-stairs-top-floor-open",
+          "type": "opening",
+          "at": [
+            4322.5,
+            2957.5
+          ],
+          "width": 910,
+          "height": 3020,
+          "sill": 0
         }
       ],
       "furniture": [
@@ -3837,8 +4304,8 @@
           "id": "dining-table-1",
           "type": "ceramic-ext-table",
           "name": "ダイニングテーブル（家具のきむら のびーるセラミック・ブラック・幅 1400〜1800）",
-          "x": 6135,
-          "y": 5300,
+          "x": 6196,
+          "y": 5112,
           "w": 1400,
           "d": 805,
           "h": 720,
@@ -3849,8 +4316,8 @@
           "id": "chair-1",
           "type": "curve-back-chair",
           "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック）",
-          "x": 5522.5,
-          "y": 4950,
+          "x": 5583.5,
+          "y": 4762,
           "w": 520,
           "d": 660,
           "h": 720,
@@ -3861,8 +4328,8 @@
           "id": "chair-2",
           "type": "curve-back-chair",
           "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック）",
-          "x": 5522.5,
-          "y": 5650,
+          "x": 5583.5,
+          "y": 5462,
           "w": 520,
           "d": 660,
           "h": 720,
@@ -3873,8 +4340,8 @@
           "id": "chair-3",
           "type": "curve-back-chair",
           "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック。テーブルに引っ掛けた状態）",
-          "x": 6607,
-          "y": 4950,
+          "x": 6668,
+          "y": 4762,
           "w": 520,
           "d": 660,
           "h": 720,
@@ -3886,8 +4353,8 @@
           "id": "chair-4",
           "type": "curve-back-chair",
           "name": "ダイニングチェア（家具のきむら のびーるセラミック・ブラック。テーブルに引っ掛けた状態）",
-          "x": 6607,
-          "y": 5650,
+          "x": 6668,
+          "y": 5462,
           "w": 520,
           "d": 660,
           "h": 720,
@@ -3919,6 +4386,19 @@
           "h": 400,
           "rotation": 270,
           "color": "#5e4030"
+        },
+        {
+          "id": "tv-google-home",
+          "type": "smart-speaker",
+          "name": "Google Home（テレビ台の上・テレビに向かって右端）",
+          "x": 2090,
+          "y": 4800,
+          "w": 97,
+          "d": 97,
+          "h": 143,
+          "rotation": 270,
+          "color": "#e9e7e3",
+          "z": 400
         },
         {
           "id": "toilet2",
@@ -3970,20 +4450,6 @@
           "rotation": 90,
           "color": "#3a3b3d",
           "z": 201
-        },
-        {
-          "id": "stairs-1-top",
-          "type": "box",
-          "name": "1階からの階段の一番上の段（2階の床と同じ高さ・吹き抜けの東の端）",
-          "x": 4436.25,
-          "y": 2957.5,
-          "w": 227.5,
-          "d": 910,
-          "h": 40,
-          "rotation": 0,
-          "color": "#6f6d6a",
-          "z": -40,
-          "material": "floor-lassissa-mortar"
         },
         {
           "id": "rods-2",
@@ -4048,7 +4514,7 @@
           "id": "fridge-1",
           "type": "fridge",
           "name": "冷蔵庫（東芝 ベジータ GR-V450GT）",
-          "x": 5627,
+          "x": 5854.5,
           "y": 1222.5,
           "w": 600,
           "d": 649,
@@ -4183,7 +4649,7 @@
         {
           "id": "toilet2-vent",
           "type": "sumika-exhaust",
-          "name": "排気口（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・北西の隅（便器の左の奥）。色は仮にグレー）",
+          "name": "室内排気口 ④（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・北西の隅（便器の左の奥）。色は仮にグレー）",
           "x": 150,
           "y": 2850,
           "w": 135,
@@ -4198,26 +4664,28 @@
           "type": "aircon",
           "name": "エアコン（寝室）",
           "x": 185,
-          "y": 470,
+          "y": 559,
           "w": 798,
           "d": 250,
           "h": 295,
           "rotation": 270,
           "color": "#f4f4f2",
-          "z": 2050
+          "z": 2050,
+          "variant": "pipe-right"
         },
         {
           "id": "ac-2f-storage",
           "type": "aircon",
-          "name": "エアコン（納戸）",
-          "x": 6600,
+          "name": "エアコン（パントリー。北の壁の東の端・東の壁から 100 離す）",
+          "x": 7631,
           "y": 185,
           "w": 798,
           "d": 250,
           "h": 295,
           "rotation": 0,
           "color": "#f4f4f2",
-          "z": 2050
+          "z": 2050,
+          "variant": "pipe-right"
         },
         {
           "id": "bed-headboard",
@@ -4363,19 +4831,37 @@
         },
         {
           "id": "std-2f-stairs-bracket-1",
-          "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A・位置は以前のリストに合わせて移動）（標準）",
-          "x": 1020,
+          "type": "sensor-bracket",
+          "name": "ブラケット 階段 2 階の上り始め（オーデリック OG254865LCR・人感センサー付き・検討中。標準の DBK-41132A の代わり。西の壁で、下端 FL+2100）",
+          "x": 1019,
           "y": 2957.5,
-          "w": 100,
-          "d": 100,
-          "h": 100,
+          "w": 143,
+          "d": 98,
+          "h": 144,
           "rotation": 270,
           "color": "#1c1c1d",
-          "z": 2040,
-          "lumen": 250,
+          "z": 2100,
+          "lumen": 152,
           "beam": 90,
-          "kelvin": 3500
+          "kelvin": 2700,
+          "sensor": true
+        },
+        {
+          "type": "sensor-bracket",
+          "w": 143,
+          "d": 98,
+          "h": 144,
+          "color": "#1c1c1d",
+          "lumen": 152,
+          "beam": 90,
+          "kelvin": 2700,
+          "sensor": true,
+          "id": "stairs-bracket-2f-down",
+          "x": 3450,
+          "y": 2611.5,
+          "z": 1450,
+          "rotation": 0,
+          "name": "ブラケット 階段 2 階の下り始め（オーデリック OG254865LCR・人感センサー付き・検討中。北の側面の壁・2 階→3 階の階段の下・下端 FL+1450。1 階からの階段の上半分も照らす）（追加）"
         },
         {
           "id": "std-2f-sw-bed",
@@ -4400,13 +4886,13 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#f7f7f5",
+          "color": "#8f908e",
           "z": 1140
         },
         {
           "id": "std-2f-sw-kitchen",
           "type": "switch",
-          "name": "スイッチ（上から: キッチン壁際のダウンライト／ライティングレール キッチン側／ライティングレール ダイニング側／下がり天井の上の間接照明）（標準の位置）",
+          "name": "スイッチ（上から: 下がり天井の上の間接照明／キッチン壁際のダウンライト 3 つ／ライティングレール ダイニング側／ライティングレール アイランド側）（標準の位置）",
           "x": 6300,
           "y": 1656.5,
           "w": 70,
@@ -4434,7 +4920,7 @@
         {
           "id": "std-2f-sw-toilet",
           "type": "switch",
-          "name": "スイッチ トイレの横（上から: トイレ／階段 3 路（3 階と連動）／リビング 3 路）（標準）",
+          "name": "スイッチ トイレの外（上: 階段 3 路（3 階と連動）／下: リビング 3 路）（標準）",
           "x": 974,
           "y": 3455,
           "w": 70,
@@ -4443,7 +4929,20 @@
           "rotation": 270,
           "color": "#8f908e",
           "z": 1140,
-          "count": 3
+          "count": 2
+        },
+        {
+          "id": "2f-sw-toilet-in",
+          "type": "switch",
+          "name": "スイッチ トイレ（トイレの中・入って左の南の壁）（標準のスイッチから移動）",
+          "x": 780,
+          "y": 4258.5,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#8f908e",
+          "z": 1140
         },
         {
           "id": "std-2f-sw-storsw",
@@ -4455,27 +4954,27 @@
           "d": 8,
           "h": 120,
           "rotation": 90,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 1140
         },
         {
           "id": "std-2f-intercom",
           "type": "remote-panel",
-          "name": "インターホン 親機（Panasonic VL-SE26XL）（標準）→ パントリーの分電盤の下（西の壁）へ移動",
-          "x": 5305,
+          "name": "インターホン 室内親機（Nasta Interphone2 KS-ND02A・W142.5×H150.5×D30.9。標準の Panasonic VL-SE26XL から変更）→ パントリーの分電盤の下（西の壁）へ移動",
+          "x": 5535.5,
           "y": 330,
-          "w": 180,
-          "d": 25,
-          "h": 130,
+          "w": 143,
+          "d": 31,
+          "h": 151,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1335
+          "z": 1325
         },
         {
           "id": "std-2f-kyuto-remote",
           "type": "remote-panel",
           "name": "給湯器のリモコン（台所）（標準）→ パントリーの分電盤の下（西の壁）へ移動",
-          "x": 5296.5,
+          "x": 5524,
           "y": 520,
           "w": 70,
           "d": 8,
@@ -4488,7 +4987,7 @@
           "id": "std-2f-heatex-remote",
           "type": "remote-panel",
           "name": "熱交換器（換気）のリモコン（標準）→ パントリーの分電盤の下（西の壁）へ移動",
-          "x": 5296.5,
+          "x": 5524,
           "y": 640,
           "w": 90,
           "d": 8,
@@ -4498,42 +4997,29 @@
           "z": 1340
         },
         {
-          "id": "std-2f-out-kitchen-n",
-          "type": "outlet",
-          "name": "コンセント 2 口（標準）",
-          "x": 6150,
-          "y": 1656.5,
-          "w": 70,
-          "d": 8,
-          "h": 120,
-          "rotation": 0,
-          "color": "#f7f7f5",
-          "z": 190
-        },
-        {
           "id": "std-2f-out-fridge",
           "type": "outlet",
-          "name": "コンセント 冷蔵庫用 2 口・アース付（標準）",
-          "x": 5296.5,
+          "name": "コンセント 冷蔵庫用 2 口・アース付（冷蔵庫の上端 FL+1850 より上へ移動・下端 FL+1870）（標準）",
+          "x": 5524,
           "y": 1222,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "z": 1790
+          "z": 1870
         },
         {
           "id": "std-2f-out-stor-n",
           "type": "outlet",
-          "name": "コンセント 納戸 2 口（標準）",
-          "x": 7900,
-          "y": 64,
+          "name": "コンセント 納戸 2 口（標準）→ 東の壁のルンバの裏（キッチン側）へ移動",
+          "x": 8126,
+          "y": 1340,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 0,
-          "color": "#8f908e",
+          "rotation": 90,
+          "color": "#f7f7f5",
           "z": 190
         },
         {
@@ -4546,7 +5032,7 @@
           "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 190
         },
         {
@@ -4559,7 +5045,7 @@
           "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 190
         },
         {
@@ -4571,8 +5057,8 @@
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
-          "color": "#f7f7f5",
+          "rotation": 270,
+          "color": "#2a2a2b",
           "z": 780
         },
         {
@@ -4584,22 +5070,23 @@
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
-          "color": "#f7f7f5",
-          "z": 780
+          "rotation": 270,
+          "color": "#2a2a2b",
+          "z": 780,
+          "tv": true
         },
         {
           "id": "std-2f-out-bed-ac",
           "type": "outlet",
-          "name": "コンセント エアコン用（寝室・専用）（標準）",
-          "x": 64,
-          "y": 950,
+          "name": "コンセント エアコン用（寝室・専用）（標準）→ エアコンの横の壁（北の壁）の、本体の上の端の高さへ移動（中心 FL+2270）",
+          "x": 120,
+          "y": 64,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
-          "color": "#2a2a2b",
-          "z": 1840,
+          "rotation": 0,
+          "color": "#f7f7f5",
+          "z": 2210,
           "count": 1
         },
         {
@@ -4619,8 +5106,8 @@
           "id": "std-2f-out-kitchen-ne",
           "type": "floor-outlet",
           "name": "コンセント 2 口（標準）→ ダイニングテーブルの下の床へ移動（シンク寄り）。Panasonic DUM7001MH 住宅用フロアコンラウンド・アース付 1 口・グレーメタリック（プレートの大きさは仮 φ110）",
-          "x": 6135,
-          "y": 4800,
+          "x": 6196,
+          "y": 4612,
           "w": 110,
           "d": 110,
           "h": 4,
@@ -4656,33 +5143,21 @@
           "sideways": true
         },
         {
-          "id": "std-2f-out-tv",
-          "type": "outlet",
-          "name": "コンセント テレビ端子付き（リビング）（標準）",
-          "x": 1884,
-          "y": 5292,
-          "w": 70,
-          "d": 8,
-          "h": 120,
-          "rotation": 270,
-          "color": "#f7f7f5",
-          "z": 190
-        },
-        {
           "id": "std-2f-out-lan",
           "type": "outlet",
-          "name": "コンセント LAN（空配管）付き（リビング）（標準）",
+          "name": "コンセント 2 口・テレビ端子・LAN（空配管）を 1 か所にまとめる（2 連のプレート。リビング・テレビ台の裏。テレビ端子の側から移動）（標準）",
           "x": 1884,
           "y": 5636,
-          "w": 70,
+          "w": 130,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
           "z": 190,
           "lan": true,
-          "lanPort": 4,
-          "lanLabel": "テレビ用"
+          "lanPort": 5,
+          "lanLabel": "テレビ用",
+          "tv": true
         },
         {
           "id": "std-2f-out-storsw",
@@ -4694,7 +5169,7 @@
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 190
         },
         {
@@ -4735,7 +5210,7 @@
           "rotation": 0,
           "color": "#6f6d6a",
           "z": -20,
-          "material": "floor-lassissa-mortar"
+          "material": "floor-lassissa-greigeelm"
         },
         {
           "id": "2f-stairs-edge-fill-face",
@@ -4763,7 +5238,7 @@
           "rotation": 0,
           "color": "#6f6d6a",
           "z": -20,
-          "material": "floor-lassissa-mortar"
+          "material": "floor-lassissa-greigeelm"
         },
         {
           "id": "2f-stairs-south-fill-face",
@@ -5020,7 +5495,7 @@
           "id": "pantry-breaker",
           "type": "breaker-panel",
           "name": "分電盤（冷蔵庫の右・西の壁。標準の洗面脱衣室の位置から移動）",
-          "x": 5342.5,
+          "x": 5570,
           "y": 480,
           "w": 450,
           "d": 100,
@@ -5030,38 +5505,51 @@
           "z": 1600
         },
         {
-          "id": "pantry-router-shelf",
+          "id": "pantry-shelf-n",
           "type": "box",
-          "name": "造作棚（ONU・ルーター置き。分電盤とリモコンの下・FL+900）",
-          "x": 5417.5,
-          "y": 480,
-          "w": 250,
+          "name": "造作の板（北の壁・端から端まで。奥行 450・上面 FL+1000。ONU・ルーターも載せる。厚みは仮に 20）",
+          "x": 6825,
+          "y": 285,
+          "w": 2610,
           "d": 450,
           "h": 20,
           "rotation": 0,
           "color": "#e9e7e2",
-          "z": 880
+          "z": 980
+        },
+        {
+          "id": "pantry-shelf-e",
+          "type": "box",
+          "name": "造作の板（東の壁・北の壁の板から南の壁まで。奥行 450・上面 FL+1000。厚みは仮に 20）",
+          "x": 7905,
+          "y": 1021.25,
+          "w": 450,
+          "d": 1022.5,
+          "h": 20,
+          "rotation": 0,
+          "color": "#e9e7e2",
+          "z": 980
         },
         {
           "id": "pantry-router",
           "type": "wifi-router",
-          "name": "Wi-Fi ルーター（ソフトバンク。LAN ポート ①〜④ から壁内の Cat6A で各部屋の LAN 端子へ）",
-          "x": 5430,
+          "name": "SoftBank ホームゲートウェイ（S）（port1 10G → 10G ハブ、port2〜4 1G → LAN ③〜⑤）",
+          "x": 5657.5,
           "y": 400,
           "w": 60,
           "d": 180,
           "h": 200,
           "rotation": 270,
           "color": "#f2f2f0",
-          "z": 900
+          "z": 1000
         },
         {
           "id": "pantry-onu",
           "type": "onu",
           "name": "NTT ONU（光回線終端装置。光コンセントから光コード、ルーターへ LAN ケーブル）",
-          "x": 5440,
-          "y": 590,
-          "z": 900,
+          "x": 5667.5,
+          "y": 480,
+          "z": 1000,
           "w": 45,
           "d": 160,
           "h": 190,
@@ -5069,12 +5557,25 @@
           "color": "#f4f4f2"
         },
         {
+          "id": "pantry-hub",
+          "type": "network-hub",
+          "name": "10G 対応スイッチングハブ（電源 1 口・RJ45 の 10G ポートが最低 3 口: 上流 1＋書斎用 2。機種は未定・大きさは仮）",
+          "x": 5667.5,
+          "y": 620,
+          "z": 1000,
+          "w": 200,
+          "d": 150,
+          "h": 40,
+          "rotation": 270,
+          "color": "#2a2b2d"
+        },
+        {
           "id": "pantry-fiber-outlet",
           "type": "fiber-outlet",
           "name": "光コンセント（1 か所。屋外から空配管 1 ルートで光ファイバーを通す）（追加）",
-          "x": 5400,
+          "x": 5627.5,
           "y": 70,
-          "z": 960,
+          "z": 1010,
           "w": 70,
           "d": 12,
           "h": 120,
@@ -5084,29 +5585,42 @@
         {
           "id": "pantry-out-network",
           "type": "outlet",
-          "name": "コンセント 2 口（ONU・ルーター用。造作棚の上・西の壁。標準の LDK の南の壁（ダイニング）の 2 口から移動）",
-          "x": 5296.5,
+          "name": "コンセント 2 口（ONU・ホームゲートウェイ・ハブ用の 1 つめ。北の壁の板の上・西の壁。標準の LDK の南の壁（ダイニング）の 2 口から移動）",
+          "x": 5524,
           "y": 760,
-          "z": 960,
+          "z": 1010,
           "w": 70,
           "d": 8,
           "h": 120,
           "rotation": 270,
-          "color": "#8f908e"
+          "color": "#f7f7f5"
+        },
+        {
+          "id": "pantry-out-network-2",
+          "type": "outlet",
+          "name": "コンセント 2 口（通信機器用の 2 つめ。必要 3 口・推奨 4 口以上なので 2 口 × 2。北の壁の板の上・西の壁）（追加）",
+          "x": 5524,
+          "y": 840,
+          "z": 1010,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 270,
+          "color": "#f7f7f5"
         },
         {
           "id": "pantry-lan-outlet",
           "type": "lan-outlet",
-          "name": "LAN 端子 4 口（①〜④。ルーターの LAN ポートから短い LAN ケーブルでつなぎ、壁内の Cat6A で各部屋の LAN 端子へ。造作棚の上・西の壁）（追加）",
-          "x": 5296.5,
+          "name": "LAN 端子 5 口・Cat6A（①〜⑤。ハブとホームゲートウェイから短い Cat6A でつなぎ、壁内の Cat6A で各部屋の LAN 端子へ。北の壁の板の上・西の壁）（追加）",
+          "x": 5524,
           "y": 240,
-          "z": 960,
-          "w": 140,
+          "z": 1010,
+          "w": 170,
           "d": 8,
           "h": 120,
           "rotation": 270,
           "color": "#f7f7f5",
-          "count": 4
+          "count": 5
         },
         {
           "id": "wic2-clothes-women",
@@ -5255,7 +5769,8 @@
           "color": "#1c1c1d",
           "z": 2400,
           "lumen": 4000,
-          "kelvin": 3500
+          "kelvin": 3500,
+          "loose": true
         },
         {
           "id": "2f-sw-pantry",
@@ -5267,19 +5782,19 @@
           "d": 8,
           "h": 120,
           "rotation": 180,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 1140
         },
         {
           "id": "pantry-roomba",
           "type": "robot-vacuum-base",
-          "name": "ルンバの基地（クリーンベース＋本体・パントリーの北の壁のコンセントの前・機種は未定。2 階の納戸から移動）",
-          "x": 7800,
-          "y": 259,
+          "name": "ルンバの基地（クリーンベース＋本体・パントリーの東の壁のコンセントの前、キッチン側（南）に寄せる・機種は未定）",
+          "x": 7935,
+          "y": 1340,
           "w": 310,
           "d": 390,
           "h": 480,
-          "rotation": 0,
+          "rotation": 90,
           "color": "#1e1f20"
         },
         {
@@ -5304,25 +5819,142 @@
           "kelvin": 2700,
           "z": 70,
           "id": "bedroom-footlight-1",
-          "name": "フットライト 寝室 1（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。東の壁・WIC の入口と寝室の入口の間、スイッチの下。床から 100 くらい）（追加）",
+          "name": "フットライト 寝室（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。東の壁・WIC の入口と寝室の入口の間の壁の真ん中、スイッチの下。床から 100 くらい。スイッチ 寝室と連動）（追加）",
           "x": 3576,
-          "y": 1350,
+          "y": 1416,
           "rotation": 90
         },
         {
-          "type": "foot-light",
-          "w": 162,
+          "id": "bed-sw-headboard",
+          "type": "switch",
+          "name": "スイッチ 寝室（枕元・ベッド 2 台の間・ヘッドボードの棚のすぐ上。横向き。入口のスイッチと 3 路で、枕元の間接照明と入口のフットライトをつけ消しする）（追加）",
+          "x": 64,
+          "y": 1251.25,
+          "w": 70,
           "d": 8,
-          "h": 60,
-          "color": "#1c1c1d",
-          "lumen": 10,
-          "kelvin": 2700,
-          "z": 70,
-          "id": "bedroom-footlight-2",
-          "name": "フットライト 寝室 2（Panasonic SLBJ71002 ブラック・明るさセンサー付き・壁埋込。北の壁・ベッドの足元と WIC の入口の間。床から 100 くらい）（追加）",
-          "x": 2750,
-          "y": 64,
-          "rotation": 0
+          "h": 120,
+          "rotation": 270,
+          "color": "#2a2a2b",
+          "z": 970,
+          "sideways": true
+        },
+        {
+          "id": "storsw-nclick-w1",
+          "type": "color-box",
+          "name": "Nクリック ディープ ワイド 3 段（ニトリ ミドルブラウン・幅 59.1×奥行 39.4×高さ 88.1cm）",
+          "x": 257,
+          "y": 4698,
+          "w": 591,
+          "d": 394,
+          "h": 881,
+          "rotation": 270,
+          "color": "#6e4f36",
+          "count": 3
+        },
+        {
+          "id": "storsw-nclick-w2",
+          "type": "color-box",
+          "name": "Nクリック ディープ ワイド 3 段（ニトリ ミドルブラウン・幅 59.1×奥行 39.4×高さ 88.1cm）",
+          "x": 257,
+          "y": 5291,
+          "w": 591,
+          "d": 394,
+          "h": 881,
+          "rotation": 270,
+          "color": "#6e4f36",
+          "count": 3
+        },
+        {
+          "id": "storsw-nclick-r",
+          "type": "color-box",
+          "name": "Nクリック ディープ レギュラー 3 段（ニトリ ミドルブラウン・幅 30.3×奥行 39.4×高さ 88.1cm）",
+          "x": 257,
+          "y": 5740,
+          "w": 303,
+          "d": 394,
+          "h": 881,
+          "rotation": 270,
+          "color": "#6e4f36",
+          "count": 3
+        },
+        {
+          "id": "storsw-bookshelf",
+          "type": "color-box",
+          "name": "本棚（2 階 納戸の東の壁。商品は未定・大きさは仮 900×300×1800）",
+          "x": 1610,
+          "y": 5500,
+          "w": 900,
+          "d": 300,
+          "h": 1800,
+          "rotation": 90,
+          "color": "#4a4b4d",
+          "count": 6
+        },
+        {
+          "id": "pantry-ac-outlet",
+          "type": "outlet",
+          "name": "コンセント エアコン用（パントリー・専用。エアコンの横の壁（東の壁）の、本体の上の端の高さ・中心 FL+2270）（追加）",
+          "x": 8126,
+          "y": 120,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 90,
+          "color": "#f7f7f5",
+          "z": 2210,
+          "count": 1
+        },
+        {
+          "id": "duct-ex-5",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑤（WIC・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 5015,
+          "y": 615,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-6",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑥（パントリー・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 7785,
+          "y": 425,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-7",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑦（LDK の南東の隅・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 7935,
+          "y": 7025,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-8",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑧（納戸（西）・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 220,
+          "y": 6190,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
         }
       ]
     },
@@ -5449,7 +6081,7 @@
           ],
           "floor": "floor-lassissa-sandblack",
           "wall": "cross-sp2540",
-          "ceiling": "cross-hf3122",
+          "ceiling": "cross-sp2541",
           "edges": {
             "0": "cross-sp2541",
             "1": "cross-sp2541",
@@ -5794,6 +6426,19 @@
             "a": "cross-sp2541",
             "b": "cross-sp2541"
           }
+        },
+        {
+          "id": "3f-wifi-niche",
+          "type": "opening",
+          "at": [
+            4095,
+            2502.5
+          ],
+          "width": 400,
+          "height": 350,
+          "sill": 1200,
+          "jamb": "cross-sp2540",
+          "blocksLight": true
         }
       ],
       "furniture": [
@@ -5824,15 +6469,15 @@
         },
         {
           "id": "toilet3-remote",
-          "type": "stick-remote",
-          "name": "スティックリモコン（TOTO・シルバー）",
+          "type": "toilet-remote",
+          "name": "トイレのリモコン（TOTO 通常タイプ。品番は問い合わせ中・大きさは仮）",
           "x": 2500,
-          "y": 1663.5,
-          "w": 360,
-          "d": 24,
-          "h": 34,
+          "y": 1662.5,
+          "w": 170,
+          "d": 20,
+          "h": 65,
           "rotation": 0,
-          "color": "#c5c8cb",
+          "color": "#f4f4f2",
           "z": 850
         },
         {
@@ -5903,21 +6548,21 @@
         {
           "id": "toilet3-paper",
           "type": "holdin-paper-holder",
-          "name": "トイレットペーパーホルダー（エア・リゾーム HOLDIN air-to-14・収納付き・シングル・ブラック。タイプと色は仮）",
+          "name": "トイレットペーパーホルダー（エア・リゾーム HOLDIN air-to-14・収納付き・ダブル W463（2 巻）・ブラック。色は仮）",
           "x": 2560,
           "y": 1714,
-          "w": 325,
+          "w": 463,
           "d": 115,
           "h": 145,
           "rotation": 0,
           "color": "#1d1d1f",
           "z": 650,
-          "count": 1
+          "count": 2
         },
         {
           "id": "toilet3-vent",
           "type": "sumika-exhaust",
-          "name": "排気口（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・奥の隅。色は仮にグレー）",
+          "name": "室内排気口 ⑨（sumika 床用 室内排気口 KGR-SHW-0008・丸形 直径 135・床・奥の隅。色は仮にグレー）",
           "x": 1990,
           "y": 2380,
           "w": 135,
@@ -5930,41 +6575,44 @@
         {
           "id": "ac-3f-room2",
           "type": "aircon",
-          "name": "エアコン（北東の書斎・ダイキン S226ATRS-W RX シリーズ 6 畳。室内機 F226ATRS-W 幅 798・高さ 295・奥行 370）",
+          "name": "エアコン（書斎（北東）・ダイキン S226ATRS-W に自分でリメイクシートを貼って黒くする。設置はお義父さん）",
           "x": 7941,
-          "y": 2062.5,
+          "y": 2151.5,
           "w": 798,
           "d": 370,
           "h": 295,
           "rotation": 90,
-          "color": "#f4f4f2",
-          "z": 2050
+          "color": "#1c1c1d",
+          "z": 2050,
+          "variant": "pipe-left"
         },
         {
           "id": "ac-3f-room3",
           "type": "aircon",
           "name": "エアコン（子供部屋）",
           "x": 8005,
-          "y": 5020,
+          "y": 5109,
           "w": 798,
           "d": 250,
           "h": 295,
           "rotation": 90,
           "color": "#f4f4f2",
-          "z": 2050
+          "z": 2050,
+          "variant": "pipe-left"
         },
         {
           "id": "ac-3f-room1",
           "type": "aircon",
           "name": "エアコン（南西の書斎）",
           "x": 2005,
-          "y": 3882.5,
+          "y": 3971.5,
           "w": 798,
           "d": 250,
           "h": 295,
           "rotation": 270,
           "color": "#f4f4f2",
-          "z": 2050
+          "z": 2050,
+          "variant": "pipe-right"
         },
         {
           "id": "std-3f-toilet-dl",
@@ -6000,6 +6648,63 @@
           "sensor": true
         },
         {
+          "id": "3f-wifi-niche-back",
+          "type": "box",
+          "name": "Wi-Fi ニッチの奥の面（トイレ前のホール側。奥行 100。壁の厚さ 120 の中に作る）",
+          "x": 4095,
+          "y": 2547.75,
+          "w": 400,
+          "d": 10.5,
+          "h": 350,
+          "rotation": 0,
+          "color": "#c9c9c6",
+          "z": 1200,
+          "material": "cross-sp2540"
+        },
+        {
+          "id": "3f-wifi-niche-stair",
+          "type": "box",
+          "name": "Wi-Fi ニッチの裏（階段側の壁の面・HF3122）",
+          "x": 4095,
+          "y": 2558.25,
+          "w": 402,
+          "d": 10.5,
+          "h": 352,
+          "rotation": 0,
+          "color": "#6f6d6a",
+          "z": 1199,
+          "material": "cross-hf3122"
+        },
+        {
+          "id": "3f-wifi-ap",
+          "type": "wifi-ap",
+          "name": "Wi-Fi 機器（AP モード・3 階 トイレ前のニッチ。機種は未定・大きさは仮）",
+          "x": 3990,
+          "y": 2505,
+          "z": 1200,
+          "w": 180,
+          "d": 60,
+          "h": 190,
+          "rotation": 180,
+          "color": "#f2f2f0"
+        },
+        {
+          "id": "3f-wifi-outlet",
+          "type": "outlet",
+          "name": "コンセント 2 口・LAN 端子（Wi-Fi 機器用・3 階 トイレ前のニッチの奥）（追加）",
+          "x": 4190,
+          "y": 2538.5,
+          "z": 1300,
+          "w": 70,
+          "d": 8,
+          "h": 120,
+          "rotation": 180,
+          "color": "#f7f7f5",
+          "lan": true,
+          "lanPort": 4,
+          "lanLabel": "Wi-Fi 機器用"
+        },
+        {
           "id": "std-3f-room1-cl",
           "type": "ceiling-light",
           "name": "シーリングライト 書斎（南西）（DAIKO DCL-42121）（標準）",
@@ -6031,30 +6736,31 @@
         },
         {
           "id": "std-3f-stairs-bracket",
-          "type": "wall-light",
-          "name": "ブラケット 階段（DAIKO DBK-41132A・1・2 階のブラケットと同じ西の壁側。3 階は壁が 1 マス内側）（標準）",
-          "x": 1930,
-          "y": 2957.5,
-          "w": 100,
-          "d": 100,
-          "h": 100,
-          "rotation": 270,
+          "type": "sensor-bracket",
+          "name": "ブラケット 階段 3 階の下り始め（オーデリック OG254865LCR・人感センサー付き・検討中。標準の DBK-41132A の代わり。南の側面の壁へ移動・下端 FL+1200。2 階からの階段の上半分も照らす）",
+          "x": 3800,
+          "y": 3303.5,
+          "w": 143,
+          "d": 98,
+          "h": 144,
+          "rotation": 180,
           "color": "#1c1c1d",
-          "z": 2040,
-          "lumen": 250,
+          "z": 1200,
+          "lumen": 152,
           "beam": 90,
-          "kelvin": 3500
+          "kelvin": 2700,
+          "sensor": true
         },
         {
           "id": "std-3f-sw-toilet",
           "type": "switch",
-          "name": "スイッチ トイレ（標準）",
-          "x": 3704,
-          "y": 2400,
+          "name": "スイッチ トイレ（トイレの中・入って左の南の壁）（標準のスイッチから移動）",
+          "x": 3450,
+          "y": 2438.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 180,
           "color": "#8f908e",
           "z": 1140
         },
@@ -6114,9 +6820,9 @@
         {
           "id": "std-3f-out-toilet",
           "type": "outlet",
-          "name": "コンセント トイレ 2 口・アース付（標準）",
+          "name": "コンセント トイレ 2 口・アース付（標準）→ 便器の左奥（西の壁の南の端）へ移動",
           "x": 1884,
-          "y": 1750,
+          "y": 2350,
           "w": 70,
           "d": 8,
           "h": 120,
@@ -6137,21 +6843,22 @@
           "color": "#2a2a2b",
           "z": 190,
           "lan": true,
-          "lanPort": 1,
-          "lanLabel": "妻書斎用"
+          "lanPort": 2,
+          "lanLabel": "妻書斎用",
+          "lan10g": true
         },
         {
           "id": "std-3f-out-room2-ac",
           "type": "outlet",
-          "name": "コンセント エアコン用（書斎（北東）・専用）（標準）",
-          "x": 8126,
-          "y": 2550,
+          "name": "コンセント エアコン用（書斎（北東）・専用）（標準）→ エアコンの横の壁（北の壁）の、本体の上の端の高さへ移動（中心 FL+2270）",
+          "x": 8070,
+          "y": 1656.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
+          "rotation": 0,
           "color": "#2a2a2b",
-          "z": 1840,
+          "z": 2210,
           "count": 1
         },
         {
@@ -6180,8 +6887,9 @@
           "color": "#2a2a2b",
           "z": 190,
           "lan": true,
-          "lanPort": 2,
-          "lanLabel": "夫書斎用"
+          "lanPort": 1,
+          "lanLabel": "夫書斎用",
+          "lan10g": true
         },
         {
           "id": "3f-out-room2-s",
@@ -6212,15 +6920,15 @@
         {
           "id": "std-3f-out-room1-ac",
           "type": "outlet",
-          "name": "コンセント エアコン用（書斎（南西）・専用）（標準）→ 西の窓とかぶらないよう上へ移動（FL+2120）",
-          "x": 1884,
-          "y": 4400,
+          "name": "コンセント エアコン用（書斎（南西）・専用）（標準）→ エアコンの横の壁（北の壁）の、本体の上の端の高さへ移動（中心 FL+2270）",
+          "x": 1940,
+          "y": 3476.5,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 270,
+          "rotation": 0,
           "color": "#2a2a2b",
-          "z": 2060,
+          "z": 2210,
           "count": 1
         },
         {
@@ -6255,15 +6963,15 @@
         {
           "id": "std-3f-out-room3-ac",
           "type": "outlet",
-          "name": "コンセント エアコン用（洋室3・専用）（標準）",
-          "x": 8126,
-          "y": 4700,
+          "name": "コンセント エアコン用（洋室3・専用）（標準）→ エアコンの横の壁（北の壁）の、本体の上の端の高さへ移動（中心 FL+2270）",
+          "x": 8070,
+          "y": 4614,
           "w": 70,
           "d": 8,
           "h": 120,
-          "rotation": 90,
+          "rotation": 0,
           "color": "#f7f7f5",
-          "z": 1840,
+          "z": 2210,
           "count": 1
         },
         {
@@ -6282,14 +6990,14 @@
         {
           "id": "3f-closet-upper-shelf",
           "type": "box",
-          "name": "枕棚（子供部屋の収納・西の壁。一般的な高さ FL+1800）",
+          "name": "枕棚（子供部屋の収納・西の壁。標準の白。一般的な高さ FL+1800）",
           "x": 4785,
           "y": 6370,
           "w": 1700,
           "d": 350,
           "h": 20,
           "rotation": 90,
-          "color": "#4a4b4d",
+          "color": "#f2f1ee",
           "z": 1800
         },
         {
@@ -6584,7 +7292,7 @@
           "d": 55,
           "h": 1990,
           "rotation": 180,
-          "color": "#b8babb",
+          "color": "#f2f2f0",
           "z": 5,
           "screen": "frost"
         },
@@ -6774,6 +7482,97 @@
           "h": 700,
           "rotation": 90,
           "color": "#1a1a1b"
+        },
+        {
+          "id": "room1-walk-sheet",
+          "type": "box",
+          "name": "フローリングシート（チンチラのお散歩コーナーの下だけ。商品は未定）",
+          "x": 2740,
+          "y": 4086.25,
+          "w": 1720,
+          "d": 1227.5,
+          "h": 3,
+          "rotation": 0,
+          "color": "#8a7a66",
+          "z": 0,
+          "material": "floor-gray-oak",
+          "loose": true
+        },
+        {
+          "id": "room1-fence-e",
+          "type": "pet-fence",
+          "name": "脱走防止フェンス（お散歩コーナーの東・開き戸に当たらない位置。商品は未定・高さは仮）",
+          "x": 3600,
+          "y": 4086.25,
+          "w": 1227.5,
+          "d": 20,
+          "h": 1000,
+          "rotation": 90,
+          "color": "#2a2a2b"
+        },
+        {
+          "id": "room1-fence-s",
+          "type": "pet-fence",
+          "name": "脱走防止フェンス（お散歩コーナーの南。商品は未定・高さは仮）",
+          "x": 2740,
+          "y": 4700,
+          "w": 1720,
+          "d": 20,
+          "h": 1000,
+          "rotation": 0,
+          "color": "#2a2a2b"
+        },
+        {
+          "id": "room1-nclick-feed",
+          "type": "color-box",
+          "name": "Nクリック ディープ ワイド 2 段（ニトリ ミドルブラウン・幅 59.1×奥行 39.4×高さ 59.3cm。西の壁沿い・お散歩コーナーのフェンスのすぐ外。チンチラのエサなど）",
+          "x": 2077,
+          "y": 5016,
+          "w": 591,
+          "d": 394,
+          "h": 593,
+          "rotation": 270,
+          "color": "#6e4f36",
+          "count": 2
+        },
+        {
+          "id": "duct-ex-10",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑩（書斎（北東）の南東の隅・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 7940,
+          "y": 4380,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-11",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑪（子供部屋のクローゼット・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 5235,
+          "y": 7090,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
+        },
+        {
+          "id": "duct-ex-12",
+          "type": "sumika-exhaust",
+          "name": "室内排気口 ⑫（書斎（南西）・床付・ダクト計画図 2026.10.30 の番号の位置から読んだおおよその位置。商品の寸法・色は別紙で確認）",
+          "x": 2100,
+          "y": 6235,
+          "w": 135,
+          "d": 135,
+          "h": 6,
+          "rotation": 0,
+          "color": "#3a3d3f",
+          "z": 0
         }
       ],
       "jambs": {
@@ -6824,9 +7623,7 @@
       "id": "c-1f-wic",
       "name": "WIC の照明",
       "lights": [
-        "std-1f-wic-dl-1",
-        "wic-tape-light",
-        "wic-tape-light-east"
+        "std-1f-wic-dl-1"
       ],
       "switches": [
         {
@@ -6839,7 +7636,8 @@
       "id": "c-stairs-1f-2f",
       "name": "階段の照明（1 階〜2 階）",
       "lights": [
-        "std-1f-stairs-bracket"
+        "std-1f-stairs-bracket",
+        "stairs-bracket-2f-down"
       ],
       "switches": [
         {
@@ -6854,55 +7652,55 @@
     },
     {
       "id": "c-1f-spot",
-      "name": "外のスポットライト",
+      "name": "表札灯と車庫の間接照明（明るさセンサーで連動）",
       "lights": [
-        "porch-light-1"
+        "porch-light-1",
+        "garage-cove-light"
       ],
       "switches": [
         {
-          "id": "std-1f-sw-hall-a",
-          "button": 0
+          "id": "sic-sw-1",
+          "button": 1
         }
       ]
     },
     {
       "id": "c-1f-hallnorth",
-      "name": "廊下（WIC 前）の照明（人感センサー）",
+      "name": "1 階 北ホールの照明（人感センサー）",
       "lights": [
         "std-1f-hallnorth-dl"
       ],
       "switches": [
         {
-          "id": "std-1f-sw-hall-a",
+          "id": "sic-sw-2",
           "button": 1
         }
       ]
     },
     {
       "id": "c-1f-hall",
-      "name": "ホールと玄関（アートの壁）の照明",
+      "name": "玄関ホールとアートの壁・ミニ洗面の横の間接照明（人感センサーで連動）",
       "lights": [
         "std-1f-hall-dl-3",
         "bracket-1",
-        "hall-west-cove",
-        "genkan-bench-light"
+        "hall-west-cove"
       ],
       "switches": [
         {
-          "id": "std-1f-sw-hall-a",
-          "button": 2
+          "id": "sic-sw-1",
+          "button": 0
         }
       ]
     },
     {
       "id": "c-1f-shoes",
-      "name": "シューズクロークの照明",
+      "name": "シューズクロークの照明（人感センサー）",
       "lights": [
         "std-1f-shoes-dl"
       ],
       "switches": [
         {
-          "id": "std-1f-sw-hall-b",
+          "id": "sic-sw-2",
           "button": 0
         }
       ]
@@ -6915,8 +7713,8 @@
       ],
       "switches": [
         {
-          "id": "std-1f-sw-hall-b",
-          "button": 1
+          "id": "sic-sw-1",
+          "button": 2
         }
       ]
     },
@@ -6924,11 +7722,16 @@
       "id": "c-2f-bed",
       "name": "寝室の照明",
       "lights": [
-        "bed-headboard-light"
+        "bed-headboard-light",
+        "bedroom-footlight-1"
       ],
       "switches": [
         {
           "id": "std-2f-sw-bed",
+          "button": 0
+        },
+        {
+          "id": "bed-sw-headboard",
           "button": 0
         }
       ]
@@ -6957,7 +7760,7 @@
       "switches": [
         {
           "id": "std-2f-sw-kitchen",
-          "button": 0
+          "button": 1
         }
       ]
     },
@@ -6972,7 +7775,7 @@
       "switches": [
         {
           "id": "std-2f-sw-kitchen",
-          "button": 3
+          "button": 0
         }
       ]
     },
@@ -6985,7 +7788,7 @@
       ],
       "switches": [
         {
-          "id": "std-2f-sw-toilet",
+          "id": "2f-sw-toilet-in",
           "button": 0
         }
       ]
@@ -7000,7 +7803,7 @@
       "switches": [
         {
           "id": "std-2f-sw-toilet",
-          "button": 1
+          "button": 0
         },
         {
           "id": "std-3f-sw-hall",
@@ -7017,7 +7820,7 @@
       "switches": [
         {
           "id": "std-2f-sw-toilet",
-          "button": 2
+          "button": 1
         },
         {
           "id": "std-2f-sw-stairs-top",
@@ -7113,7 +7916,7 @@
       "switches": [
         {
           "id": "std-2f-sw-kitchen",
-          "button": 1
+          "button": 3
         }
       ]
     },
@@ -7390,6 +8193,68 @@
         "1|2f-ldk|c|cross-sp2540",
         "1|2f-toilet|c|cross-sp2540",
         "1|2f-storage-sw|c|cross-sp2540"
+      ],
+      [
+        "1|2f-stairs-a|c|cross-hf3122",
+        "2|3f-hall|c|cross-hf3122",
+        "2|3f-stairs|c|cross-hf3122"
+      ],
+      [
+        "1|2f-toilet|w0||cross-th34082",
+        "1|2f-toilet|w1||cross-th34082",
+        "1|2f-toilet|w2||cross-th34082"
+      ],
+      [
+        "2|3f-closet|w0||cross-sp2539",
+        "2|3f-closet|w1||cross-sp2539",
+        "2|3f-closet|w2||cross-sp2539",
+        "2|3f-closet|w3||cross-sp2539"
+      ],
+      [
+        "2|3f-room3|w4||cross-sp2539",
+        "2|3f-room3|w3||cross-sp2539"
+      ],
+      [
+        "2|3f-hall|w4||cross-sp2541",
+        "2|3f-hall|w3||cross-sp2541"
+      ],
+      [
+        "2|3f-toilet|w0||cross-sp2541",
+        "2|3f-toilet|w2||cross-sp2541",
+        "2|3f-toilet-low|w0||cross-sp2541",
+        "2|3f-toilet-low|w1||cross-sp2541",
+        "2|3f-toilet|w1||cross-sp2541"
+      ],
+      [
+        "1|2f-wic|w0||cross-sp2541",
+        "1|2f-wic|w1||cross-sp2541",
+        "1|2f-wic|w2||cross-sp2541"
+      ],
+      [
+        "1|f|toilet2-niche-front",
+        "1|2f-toilet|w3||cross-th34191"
+      ],
+      [
+        "1|2f-ldk|w4||cross-sp2540",
+        "1|2f-ldk|w5|ldk-toilet-door-s|cross-sp2540"
+      ],
+      [
+        "0|1f-wic|w2||cross-sp2540",
+        "0|1f-wic|w3||cross-sp2540"
+      ],
+      [
+        "0|1f-cove|w0||cross-sp2540",
+        "0|1f-cove|w2||cross-sp2540",
+        "0|1f-cove|w3||cross-sp2540",
+        "0|1f-powder|w0||cross-sp2540",
+        "0|1f-hall-west|w1|hall-west-e-sic-jamb|cross-sp2563",
+        "0|1f-hall-west|w2||cross-sp2540"
+      ],
+      [
+        "0|1f-hall-north|w0||cross-sp2540",
+        "0|1f-hall-north|w3||cross-sp2540",
+        "0|f|hall-north-furring-1",
+        "0|f|hall-north-furring-0"
       ]
     ]
   }

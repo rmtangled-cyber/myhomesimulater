@@ -512,6 +512,13 @@ label.num.stature input {
 }
 
 /* 高画質で撮る（パストレース）の進み具合 */
+.path-trace-note.video-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
 .path-trace-note {
   position: fixed;
   top: 12px;

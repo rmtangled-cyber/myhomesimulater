@@ -15,18 +15,20 @@ import type { Furniture } from './types';
 import { WEB } from './env';
 
 /**
- * 置き家具（買って置く・持ち込む物）の種類。「家具を表示」のチェックを外すと、これだけ消える
- * （造作の棚・カウンター・キッチン・建具・照明・スイッチ・コンセント・設備は消さない）。box などは家具の loose: true で置き家具にできる
+ * 施主支給の物（買って置く・持ち込む物）の種類。「家具を表示」のチェックを外すと、これだけ消える
+ * （ワンダーハウスが作る造作の棚・カウンター・キッチン・建具・照明・スイッチ・コンセント・設備は消さない）。box などは家具の loose: true で施主支給にできる
  */
 export const LOOSE_FURNITURE_TYPES = new Set([
   'sofa', 'sofa-l', 'dining-table', 'dining-table-frame', 'ceramic-ext-table', 'low-table', 'chair', 'dining-chair', 'curve-back-chair', 'stool',
   'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'cpu-stand-l',
   'rug', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
-  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'xmas-tree', 'exercise-bike',
+  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
   'hat-box', 'cap-case', 'magnet-dispenser', 'racket-bag', 'baseball-glove', 'suitcase',
   'mop', 'hand-ironing-board', 'towel-hook', 'wire-basket', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'trash-bin', 'solar-ground-light', 'exhaust-cover',
+  'camera', 'e-bike', 'umbrella', 'cardboard-bundle', 'drawstring-bag', 'holdin-paper-holder', 'star-pendant', 'roll-screen', 'vertical-blind',
+  'washer-hose', 'step-stool', 'color-box', 'outdoor-unit-shade', 'pet-fence',
 ]);
 
 /**
@@ -35,7 +37,8 @@ export const LOOSE_FURNITURE_TYPES = new Set([
 export const SMALL_ITEM_TYPES = new Set([
   'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'hat-box', 'cap-case', 'racket-bag', 'baseball-glove', 'suitcase',
   'magnet-dispenser', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'wire-basket', 'towel-hook', 'mop', 'hand-ironing-board', 'trash-bin',
-  'exhaust-cover', 'solar-ground-light', 'xmas-tree', 'shower-hook',
+  'exhaust-cover', 'solar-ground-light', 'xmas-tree', 'shower-hook', 'cardboard-bundle', 'drawstring-bag', 'umbrella', 'under-shelf-pipe', 'toilet-remote',
+  'washer-hose', 'step-stool', 'washer-faucet', 'floor-drain', 'pet-fence', 'wifi-ap', 'network-hub', 'smart-speaker',
 ]);
 
 /** クリックで自分の照明をつけ消しする家具（時間帯や回路に関係なく、クリックしたときだけつく） */
@@ -705,7 +708,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '開き戸（黒枠・くもりガラス）',
     hint: '開口部の中心に置く（閉めた状態）。正面が開く側。吊元は正面から見て左（−x）、flip で右',
     defaults: { w: 750, d: 40, h: 2000, color: '#1c1c1d' },
-    build: ({ w, d, h, swing, flip }, mat) => {
+    build: ({ w, d, h, swing, flip, towelBar }, mat) => {
       const hs = flip ? -1 : 1;
       const fr = 45;
       const frost = new THREE.MeshStandardMaterial({ color: '#e7ebed', roughness: 0.95, transparent: true, opacity: 0.88 });
@@ -714,9 +717,16 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         box(fr, h, d, w / 2 - fr / 2, 0, 0, mat),
         box(w, fr, d, 0, h - fr, 0, mat),
         box(w, fr, d, 0, 0, 0, mat),
-        box(w - fr * 2, h - fr * 2, 6, 0, fr, 0, frost),
+        // 厚さ 10。両面を壁芯から 5 離す（lightRegions の部屋の箱の境（壁芯 ± 3）に面があると、点ごとに光が入れ替わって横縞にちらつく）
+        box(w - fr * 2, h - fr * 2, 10, 0, fr, 0, frost),
         box(20, 300, 30, hs * (w / 2 - 90), 900, d / 2 + 15, mat), // 取手（吊元の反対の側）
       ];
+      // 開く側と反対の面（浴室の外）のタオルハンガー。枠の間いっぱいの横棒と両端の受け（大きさは仮）
+      if (towelBar) {
+        const barW = w - fr * 2;
+        parts.push(box(barW, 16, 16, 0, 1100, -(d / 2 + 42), mat));
+        for (const k of [1, -1]) parts.push(box(16, 16, 50, k * (barW / 2 - 8), 1100, -(d / 2 + 25), mat));
+      }
       return [swingLeaf(parts, -hs * (w / 2), -hs * (swing ?? 1) * (Math.PI / 2))];
     },
   },
@@ -1308,6 +1318,10 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       mat.roughness = 0.85;
       mat.side = THREE.DoubleSide;
       const rail = new THREE.MeshStandardMaterial({ color: mat.color.clone().multiplyScalar(0.9), roughness: 0.5 });
+      const over = mat.clone();
+      over.polygonOffset = true;
+      over.polygonOffsetFactor = -1;
+      over.polygonOffsetUnits = -1;
       const out: THREE.Object3D[] = [box(w, 40, d, 0, h - 40, 0, rail)];
       // 羽根は幅 89、80 間隔で少し重なる。閉じた状態（窓と平行）から、クリックで 75° 回る
       const n = Math.max(2, Math.round((w - 20) / 80));
@@ -1315,7 +1329,11 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         const x = -w / 2 + 10 + ((w - 20) * (i + 0.5)) / n;
         const g = new THREE.Group();
         g.position.set(x, 0, 0);
-        g.add(box(89, h - 50, 2, 0, 0, 0, mat));
+        // 厚みのない板にして、重なる所は 1 枚おきに描く順を変える（同じ面だとちらつき、前後にずらすと継ぎ目の線がちらつく）
+        const slat = new THREE.Mesh(new THREE.PlaneGeometry(89, h - 50), i % 2 ? over : mat);
+        slat.position.y = (h - 50) / 2;
+        slat.castShadow = true;
+        g.add(slat);
         g.userData.door = { type: 'swing', angle: THREE.MathUtils.degToRad(75), t: 0 };
         out.push(g);
       }
@@ -1722,6 +1740,24 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'sensor-bracket',
+    label: '人感センサー付きブラケット（縦リブの角形）',
+    hint: '壁付け。背面を壁に付ける。「床からの高さ」は器具の下端。縦のリブの黒い本体で、上下へ光り、下の真ん中にセンサー（オーデリック OG254865LCR は W143×H144×出 98）',
+    defaults: { w: 143, d: 98, h: 144, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => {
+      const ribs = Array.from({ length: 11 }, (_, i) => box(w / 22, h, 3, (i - 5) * (w / 11), 0, d / 2 + 1.5, mat));
+      const sensor = new THREE.Mesh(new THREE.SphereGeometry(13, 10, 6), new THREE.MeshStandardMaterial({ color: '#d8d8d4', roughness: 0.5 }));
+      sensor.position.set(0, -2, d * 0.15);
+      return [box(w, h, d, 0, 0, 0, mat), ...ribs, box(w * 0.86, 3, d * 0.8, 0, h, 0, glow()), box(w * 0.86, 3, d * 0.8, 0, -3, 0, glow()), sensor];
+    },
+    lights: ({ h, lumen, beam, kelvin }) => {
+      const b = beam ?? 90;
+      const cd = candela((lumen ?? 152) / 2, b);
+      const col = kelvinColor(kelvin);
+      return [...spot(0, h + 10, 20, [0, 1, 0.12], cd, b, false, 8, col), ...spot(0, -10, 20, [0, -1, 0.12], cd, b, false, 8, col)];
+    },
+  },
+  {
     type: 'downlight',
     label: 'ダウンライト',
     hint: '天井付け。「床からの高さ」を天井高（2400 など）にする',
@@ -1749,6 +1785,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         const x = -w / 2 + (w * (i + 0.5)) / n;
         if (fixture === 'pendant') {
           // ペンダントライト: アダプターから 650 のコード、下に黒いドームの笠（直径 300）
+          const first = out.length;
           out.push(box(30, 20, 30, x, -40, 0, mat), box(4, 650, 4, x, -690, 0, mat));
           mat.side = THREE.DoubleSide;
           const dome = new THREE.Mesh(new THREE.SphereGeometry(150, 32, 12, 0, Math.PI * 2, 0, Math.PI / 2.2), mat);
@@ -1757,6 +1794,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           const bulb = new THREE.Mesh(new THREE.SphereGeometry(35, 16, 10), glow(WARM, 3));
           bulb.position.set(x, -800, 0);
           out.push(dome, bulb);
+          // レールはワンダーハウス、器具は施主支給
+          for (const o of out.slice(first)) o.userData.looseItem = true;
           continue;
         }
         if (fixture === 'e26') {
@@ -1773,7 +1812,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           const bulb = new THREE.Mesh(new THREE.SphereGeometry(32, 16, 10), glow(WARM, 3));
           bulb.position.y = -200;
           g.add(tube, cap, bulb);
-          out.push(box(30, 20, 30, x, -40, 0, mat), box(10, 30, 10, x, -60, 0, mat), g);
+          const parts = [box(30, 20, 30, x, -40, 0, mat), box(10, 30, 10, x, -60, 0, mat), g];
+          for (const o of parts) o.userData.looseItem = true;
+          out.push(...parts);
           continue;
         }
         // アダプター・アーム・筒
@@ -1836,18 +1877,35 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: 'コンセント',
     hint: '壁付け。背面を壁に付け、「床からの高さ」でプレートの下端を決める（中心が FL+250 なら 190）。施工会社の標準のプレートはコスモワイド スクエア。名前に種類（2 口・アース付・専用・エアコン用・テレビなど）を書く',
     defaults: { w: 70, d: 8, h: 120, color: '#f7f7f5' },
-    build: ({ w, d, h, count, lan, sideways }, mat) => {
+    build: ({ w, d, h, count, lan, sideways, tv, inWall }, mat) => {
+      if (inWall) return [];
       const slot = new THREE.MeshStandardMaterial({ color: '#4b4b4b', roughness: 0.6 });
       const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
+      // テレビ端子は丸い口。2 連（幅 120 以上）は右の列に LAN とテレビ端子、左の列にコンセント
+      const wide = w >= 120;
+      const sx = wide ? -w / 4 : 0;
+      const coax = (x: number, y: number) => {
+        const c = new THREE.Mesh(new THREE.CylinderGeometry(7, 7, 3, 12), new THREE.MeshStandardMaterial({ color: '#c9ccd0', metalness: 0.6, roughness: 0.4 }));
+        c.rotation.x = Math.PI / 2;
+        c.position.set(x, y, d / 2 + 1);
+        return c;
+      };
       // 差し込み口（count 個、上下に並べる）。LAN 付きは上に詰めて、下に LAN のポート（四角い口）
       const n = count ?? 2;
-      const pitch = lan ? 26 : 34;
-      const top = lan ? h - 30 : h / 2 + ((n - 1) / 2) * 34 - 9;
+      const low = (lan || tv) && !wide;
+      const pitch = low ? 26 : 34;
+      const top = low ? h - 30 : h / 2 + ((n - 1) / 2) * 34 - 9;
       for (let i = 0; i < n; i++) {
         const y = top - i * pitch;
-        out.push(box(4, 12, 2, -7, y, d / 2 + 1, slot), box(4, 12, 2, 7, y, d / 2 + 1, slot));
+        out.push(box(4, 12, 2, sx - 7, y, d / 2 + 1, slot), box(4, 12, 2, sx + 7, y, d / 2 + 1, slot));
       }
-      if (lan) out.push(box(18, 16, 2, 0, 14, d / 2 + 1, slot));
+      if (wide) {
+        if (lan) out.push(box(18, 16, 2, w / 4, h * 0.62, d / 2 + 1, slot));
+        if (tv) out.push(coax(w / 4, h * 0.3));
+      } else {
+        if (lan) out.push(box(18, 16, 2, 0, 14, d / 2 + 1, slot));
+        if (tv) out.push(coax(0, 22));
+      }
       if (!sideways) return out;
       // 横向き: プレートの真ん中を中心に 90° 回す（差し込み口が左右に並ぶ）
       const inner = new THREE.Group();
@@ -1881,7 +1939,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: 'スイッチ',
     hint: '壁付け。背面を壁に付け、「床からの高さ」でプレートの下端を決める（中心が FL+1200 なら 1140）。count はスイッチの数。施工会社の標準はコスモワイド スクエア（ネームなし・ホタルあり）',
     defaults: { w: 70, d: 8, h: 120, color: '#f7f7f5' },
-    build: ({ w, d, h, count }, mat) => {
+    build: ({ w, d, h, count, sideways }, mat) => {
       const n = Math.max(1, count ?? 1);
       const out: THREE.Object3D[] = [box(w, h, d, 0, 0, 0, mat)];
       const kh = (h - 24) / n;
@@ -1893,7 +1951,16 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         key.userData.button = i;
         out.push(key, box(6, 3, 2, w / 2 - 18, y + kh / 2, d / 2 + 4, hotaru));
       }
-      return out;
+      if (!sideways) return out;
+      // 横向き: プレートの真ん中を中心に 90° 回す
+      const inner = new THREE.Group();
+      inner.add(...out);
+      inner.position.y = -h / 2;
+      const turn = new THREE.Group();
+      turn.add(inner);
+      turn.position.y = h / 2;
+      turn.rotation.z = Math.PI / 2;
+      return [turn];
     },
   },
   {
@@ -2417,6 +2484,32 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'cardboard-bundle',
+    label: '段ボールの束（段ボールストッカーでまとめて壁に掛ける）',
+    hint: '壁に掛ける。w・h は束の大きさ、d は厚み。上の真ん中に黒いストッカー（持ち手付き）と、壁のフック',
+    defaults: { w: 600, d: 80, h: 450, color: '#b08d62' },
+    build: ({ w, d, h }, mat) => {
+      const tool = new THREE.MeshStandardMaterial({ color: '#1a1a1c', roughness: 0.6 });
+      // 段ボールの束、黒いストッカー（170×110）、壁のフック
+      return [box(w, h, d, 0, 0, 0, mat), box(170, 110, d + 8, 0, h - 90, 4, tool), box(30, 40, d / 2, 0, h + 20, -d / 4, tool)];
+    },
+  },
+  {
+    type: 'drawstring-bag',
+    label: 'きんちゃく袋',
+    hint: '棚などに置く。ふくらんだ袋と、口をしぼった所',
+    defaults: { w: 300, d: 260, h: 230, color: '#1a1a1c' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.85;
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 8), mat);
+      body.scale.set(w, h * 0.78, d);
+      body.position.y = h * 0.39;
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.16, w * 0.09, h * 0.28, 10), mat);
+      neck.position.y = h * 0.86;
+      return [body, neck];
+    },
+  },
+  {
     type: 'wifi-router',
     label: 'Wi-Fi ルーター',
     hint: '棚の上に置く。縦置きの本体（w が幅、d が奥行き、h が高さ）と、後ろに立つアンテナ',
@@ -2431,6 +2524,33 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       for (let i = 0; i < 3; i++) out.push(box(4, 4, 2, w / 2 - 12, h * 0.8 - i * 12, d / 2 + 1, led));
       for (const s of [-1, 1]) out.push(box(10, 150, 10, s * 15, h - 20, -d / 2 + 15, mat));
       return out;
+    },
+  },
+  {
+    type: 'wifi-ap',
+    label: 'Wi-Fi 機器（AP）',
+    hint: 'ニッチや棚の上に置く。w が幅、d が奥行き、h が高さの箱とランプ',
+    defaults: { w: 180, d: 60, h: 190, color: '#f2f2f0' },
+    build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(30, 4, 2, 0, h * 0.8, d / 2 + 1, glow('#7fd17f', 1.2))],
+  },
+  {
+    type: 'network-hub',
+    label: 'スイッチングハブ',
+    hint: '棚の上に置く薄い箱。正面に LAN の口のランプ',
+    defaults: { w: 200, d: 150, h: 40, color: '#2a2b2d' },
+    build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.6, 4, 2, 0, h * 0.6, d / 2 + 1, glow('#7fd17f', 1.2))],
+  },
+  {
+    type: 'smart-speaker',
+    label: 'スマートスピーカー（Google Home）',
+    hint: '台の上に置く。下が布張りの円柱、上が白い本体（w が直径、h が高さ）',
+    defaults: { w: 97, d: 97, h: 143, color: '#e9e7e3' },
+    build: ({ w, h }, mat) => {
+      const fabric = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h * 0.55, 16), new THREE.MeshStandardMaterial({ color: '#8d8f90', roughness: 0.95 }));
+      fabric.position.y = h * 0.275;
+      const top = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h * 0.45, 16), mat);
+      top.position.y = h * 0.775;
+      return [fabric, top];
     },
   },
   {
@@ -2991,9 +3111,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
   {
     type: 'mop',
     label: 'フロアモップ（立てて置く）',
-    hint: '床に立てて置く。平たいヘッド（w が幅、d が奥行き）と、上へのびる柄（h が全体の高さ）。柄は少し後ろ（壁の側）へ傾ける',
+    hint: '床に立てて置く。平たいヘッド（w が幅、d が奥行き）と、上へのびる柄（h が全体の高さ）。柄は少し後ろ（壁の側）へ傾ける。variant: hang はパイプに掛けた姿（柄がまっすぐで、上の端にひもの輪）',
     defaults: { w: 330, d: 110, h: 1200, color: '#f2f2f0' },
-    build: ({ w, d, h }, mat) => {
+    build: ({ w, d, h, variant }, mat) => {
       mat.roughness = 0.5;
       const pad = new THREE.MeshStandardMaterial({ color: '#d7dde3', roughness: 0.95 });
       const grey = new THREE.MeshStandardMaterial({ color: '#8d9298', roughness: 0.4 });
@@ -3003,7 +3123,14 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       head.position.y = 13 + 8;
       out.push(box(w - 6, 8, d - 6, 0, 0, 0, pad), head, box(40, 50, 40, 0, 34, 0, grey));
       // 柄（後ろへ少し傾ける）とグリップ
-      const tilt = 0.08;
+      const hang = variant === 'hang';
+      const tilt = hang ? 0 : 0.08;
+      if (hang) {
+        const loop = new THREE.Mesh(new THREE.TorusGeometry(24, 3, 6, 16), new THREE.MeshStandardMaterial({ color: '#2a2a2b', roughness: 0.8 }));
+        loop.rotation.y = Math.PI / 2;
+        loop.position.y = h;
+        out.push(loop);
+      }
       const len = h - 80;
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, len, 12), mat);
       pole.rotation.x = -tilt;
@@ -3013,6 +3140,141 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       grip.position.set(0, 80 + (len - 90) * Math.cos(tilt), -(len - 90) * Math.sin(tilt));
       pole.castShadow = true;
       out.push(pole, grip);
+      return out;
+    },
+  },
+  {
+    type: 'under-shelf-pipe',
+    label: '棚下のハンガーパイプ（上吊り）',
+    hint: '棚板の下に吊るパイプ。「床からの高さ」はパイプの下の端で、h が棚板の下面までの長さ、w がパイプの長さ。両端に黒い吊り金具',
+    defaults: { w: 760, d: 30, h: 110, color: '#c8cacc' },
+    build: ({ w, h }, mat) => {
+      mat.roughness = 0.3;
+      mat.metalness = 0.8;
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(12.5, 12.5, w, 12), mat);
+      pipe.rotation.z = Math.PI / 2;
+      pipe.position.y = 12.5;
+      const out: THREE.Object3D[] = [pipe];
+      for (const s of [-1, 1]) out.push(box(16, h, 4, s * (w / 2 - 40), 0, 0, black), box(16, 4, 60, s * (w / 2 - 40), h - 4, 0, black));
+      return out;
+    },
+  },
+  {
+    type: 'umbrella',
+    label: '傘（畳んでパイプに掛けた姿）',
+    hint: 'パイプに掛ける。h が全体の長さで、上の端の曲がった持ち手の中心は上の端から 34 下・背面の側へ 28。「床からの高さ」は石突きの先',
+    defaults: { w: 70, d: 70, h: 830, color: '#1d1e21' },
+    build: ({ h }, mat) => {
+      mat.roughness = 0.7;
+      const steel = new THREE.MeshStandardMaterial({ color: '#8d9298', roughness: 0.35, metalness: 0.7 });
+      const handle = new THREE.MeshStandardMaterial({ color: '#2a2320', roughness: 0.5 });
+      const canopyH = h - 200;
+      const canopy = new THREE.Mesh(new THREE.CylinderGeometry(14, 32, canopyH, 8), mat);
+      canopy.rotation.x = Math.PI;
+      canopy.position.y = 40 + canopyH / 2;
+      const tip = new THREE.Mesh(new THREE.CylinderGeometry(5, 4, 40, 6), steel);
+      tip.position.y = 20;
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 160, 6), handle);
+      shaft.position.y = h - 34 - 80;
+      const crook = new THREE.Mesh(new THREE.TorusGeometry(28, 6, 6, 10, Math.PI), handle);
+      crook.rotation.y = Math.PI / 2;
+      crook.position.set(0, h - 34, -28);
+      return [canopy, tip, shaft, crook];
+    },
+  },
+  {
+    type: 'toilet-remote',
+    label: 'トイレのリモコン（通常タイプ）',
+    hint: '壁付け。背面を壁に付け、「床からの高さ」で下端の高さを決める。横長の白い四角いリモコン（真ん中に大きなボタン、右に小さなボタン）',
+    defaults: { w: 170, d: 20, h: 65, color: '#f4f4f2' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.4;
+      const key = new THREE.MeshStandardMaterial({ color: '#c6c8ca', roughness: 0.5 });
+      const body = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 2, 5), mat);
+      body.position.y = h / 2;
+      const out: THREE.Object3D[] = [body, box(w * 0.32, h * 0.5, 2, -w * 0.22, h * 0.25, d / 2 + 1, key)];
+      for (let i = 0; i < 3; i++) out.push(box(w * 0.1, h * 0.2, 2, w * (0.06 + i * 0.13), h * 0.4, d / 2 + 1, key));
+      return out;
+    },
+  },
+  {
+    type: 'e-bike',
+    label: '電動アシスト自転車',
+    hint: '床に置く。正面（+z）が前輪の側。w はハンドルの幅、d は前後の長さ、h はハンドルの高さ',
+    defaults: { w: 600, d: 1800, h: 1050, color: '#1f2022' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.65;
+      mat.metalness = 0.3;
+      const tire = new THREE.MeshStandardMaterial({ color: '#141414', roughness: 0.9 });
+      const steel = new THREE.MeshStandardMaterial({ color: '#8d9298', roughness: 0.35, metalness: 0.7 });
+      const seatMat = new THREE.MeshStandardMaterial({ color: '#2a2320', roughness: 0.6 });
+      const R = 330; // 26 インチの外径の半分
+      const axle = d / 2 - R;
+      // 2 点 (y, z) の間をつなぐ管
+      const strut = (y0: number, z0: number, y1: number, z1: number, r = 20, m: THREE.Material = mat) => {
+        const t = new THREE.Mesh(new THREE.CylinderGeometry(r, r, Math.hypot(y1 - y0, z1 - z0), 8), m);
+        t.position.set(0, (y0 + y1) / 2, (z0 + z1) / 2);
+        t.rotation.x = Math.atan2(z1 - z0, y1 - y0);
+        t.castShadow = true;
+        return t;
+      };
+      const out: THREE.Object3D[] = [];
+      for (const s of [-1, 1]) {
+        const wheel = new THREE.Mesh(new THREE.TorusGeometry(R - 20, 20, 6, 24), tire);
+        wheel.rotation.y = Math.PI / 2;
+        wheel.position.set(0, R, s * axle);
+        wheel.castShadow = true;
+        const rim = new THREE.Mesh(new THREE.TorusGeometry(R - 45, 5, 4, 24), steel);
+        rim.rotation.y = Math.PI / 2;
+        rim.position.copy(wheel.position);
+        const hub = new THREE.Mesh(new THREE.CylinderGeometry(s > 0 ? 25 : 55, s > 0 ? 25 : 55, 40, 12), mat);
+        hub.rotation.z = Math.PI / 2;
+        hub.position.copy(wheel.position);
+        // スポークの代わりの細い十字
+        out.push(wheel, rim, hub, strut(R - 280, s * axle, R + 280, s * axle, 2, steel), strut(R, s * axle - 280, R, s * axle + 280, 2, steel));
+        // 泥よけ（タイヤの上半分）
+        const fender = new THREE.Mesh(new THREE.TorusGeometry(R + 5, 14, 4, 12, Math.PI * 0.7), mat);
+        fender.rotation.y = Math.PI / 2;
+        fender.rotation.z = Math.PI * 0.15;
+        fender.position.copy(wheel.position);
+        out.push(fender);
+      }
+      const bb = -60; // ペダルの軸の前後の位置
+      const headZ = axle - 170;
+      const seatZ = -axle + 310;
+      out.push(
+        strut(R, -axle, 300, bb, 12), // チェーンステー
+        strut(R, -axle, 800, seatZ, 10), // シートステー
+        strut(300, bb, 800, seatZ, 22), // シートチューブ
+        strut(300, bb, 760, headZ, 26), // ダウンチューブ
+        strut(690, seatZ, 830, headZ, 20), // トップチューブ
+        strut(R, axle, h - 60, headZ - 40, 14), // フォーク
+        strut(800, seatZ, 950, seatZ - 40, 14, steel), // シートポスト
+      );
+      // バッテリー（ダウンチューブに沿わせた太い箱）
+      const battery = strut(400, bb + 70, 680, headZ - 90, 45, mat);
+      out.push(battery);
+      const seat = new THREE.Mesh(new RoundedBoxGeometry(170, 60, 270, 2, 20), seatMat);
+      seat.position.set(0, 970, seatZ - 50);
+      seat.castShadow = true;
+      out.push(seat);
+      // ハンドル・グリップ
+      const bar = new THREE.Mesh(new THREE.CylinderGeometry(11, 11, w, 8), mat);
+      bar.rotation.z = Math.PI / 2;
+      bar.position.set(0, h - 15, headZ - 40);
+      out.push(bar);
+      for (const s of [-1, 1]) {
+        const grip = new THREE.Mesh(new THREE.CylinderGeometry(16, 16, 120, 8), seatMat);
+        grip.rotation.z = Math.PI / 2;
+        grip.position.set(s * (w / 2 - 60), h - 15, headZ - 40);
+        out.push(grip);
+      }
+      // クランクとペダル
+      const crank = new THREE.Mesh(new THREE.CylinderGeometry(85, 85, 8, 16), steel);
+      crank.rotation.z = Math.PI / 2;
+      crank.position.set(35, 300, bb);
+      out.push(crank);
+      for (const s of [-1, 1]) out.push(box(100, 15, 60, s * 110, 300 + s * 150, bb + s * 40, tire));
       return out;
     },
   },
@@ -3166,7 +3428,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
   {
     type: 'wall-faucet',
     label: '壁付け水栓（丸い座・曲がった吐水口・別のレバー）',
-    hint: '背面を壁（水栓のふかし）に付ける。「床からの高さ」は吐水口の座の中心。d が吐水口の出、w は座の直径。右に 140 離して丸い座のレバー（flip で左）',
+    hint: '背面を壁（水栓のふかし）に付ける。「床からの高さ」は吐水口の座の中心。d が吐水口の出、w は座の直径。右に 150 離して丸い座のレバー（flip で左。カクダイ 193-001 の 75＋75）',
     defaults: { w: 50, d: 200, h: 50, color: '#1c1c1d' },
     build: ({ w, d, flip }, mat) => {
       mat.roughness = 0.45;
@@ -3191,7 +3453,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       tip.position.set(0, -45, -d / 2 + 8 + reach + 30);
       out.push(plate(0), straight, bend, tip);
       // レバー（別の丸い座から前へ短い軸、下へ細い棒）
-      const lx = (flip ? -1 : 1) * 140;
+      const lx = (flip ? -1 : 1) * 150;
       const shaft = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 40, 20), mat);
       shaft.rotation.x = Math.PI / 2;
       shaft.position.set(lx, 0, -d / 2 + 28);
@@ -3362,11 +3624,24 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     lights: () => spot(0, -10, 10, [0, -1, 0.1], 30, 70, false),
   },
   {
+    type: 'gate-light',
+    label: '門柱灯（横長・壁付け）',
+    hint: '壁付け。背面を壁に付ける。本体の箱・枠・光るカバー・前の飾りの板が順に重なる横長の器具（Panasonic LGWJ50127K は W375×H108×出 100）',
+    defaults: { w: 375, d: 100, h: 108, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => [
+      box(w * 0.725, h * 0.78, d * 0.5, 0, h * 0.11, -d * 0.25, mat),
+      box(w, h, d * 0.06, 0, 0, d * 0.03, mat),
+      box(w - 40, h - 36, d * 0.26, 0, 18, d * 0.19, glow(WARM, 1.8)),
+      box(w, h, d * 0.12, 0, 0, d * 0.44, mat),
+    ],
+    lights: ({ h, d, lumen, kelvin }) => spot(0, h / 2, d / 2, [0, -1, 0.15], candela(lumen ?? 85, 120), 120, false, 4, kelvinColor(kelvin)),
+  },
+  {
     type: 'camera',
     label: '防犯カメラ（バレット型・壁付け）',
     hint: '背面を壁に付ける。壁の丸いベースから短いアームが出て、筒形の本体が正面へ少し下向きに付く。「床からの高さ」はベースの中心の高さ',
     defaults: { w: 80, d: 300, h: 120, color: '#f2f2f2' },
-    build: ({ w, d }, mat) => {
+    build: ({ w, d, aim }, mat) => {
       const cyl = (r: number, len: number, m: THREE.Material) => {
         const c = new THREE.Mesh(new THREE.CylinderGeometry(r, r, len, 28), m);
         c.rotation.x = Math.PI / 2; // 軸を前後（z）に向ける
@@ -3390,7 +3665,15 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       head.add(body, hood, ring, lens);
       head.position.set(0, -10, -d / 2 + 110 + bodyLen / 2);
       head.rotation.x = 0.44;
-      return [base, arm, head];
+      if (!aim) return [base, arm, head];
+      // 本体を横へ振る（壁に沿って見るとき）。ベースは壁に付いたまま、ベースの所を軸に回す
+      const swing = new THREE.Group();
+      swing.position.z = -d / 2 + 20;
+      arm.position.z -= swing.position.z;
+      head.position.z -= swing.position.z;
+      swing.add(arm, head);
+      swing.rotation.y = THREE.MathUtils.degToRad(aim);
+      return [base, swing];
     },
   },
   {
@@ -3514,6 +3797,103 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'washer-faucet',
+    label: '洗濯機用の蛇口',
+    hint: '壁付け。背面を壁に付ける。座金・本体・上のレバー・下向きの吐水口。w は座金の幅、d は出幅、h は高さ',
+    defaults: { w: 50, d: 45, h: 90, color: '#c9ccd0' },
+    build: ({ d, h, w }, mat) => {
+      mat.metalness = 0.8;
+      mat.roughness = 0.3;
+      const seat = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, 4, 16), mat);
+      seat.rotation.x = Math.PI / 2;
+      seat.position.set(0, h / 2, -d / 2 + 2);
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, d - 4, 12), mat);
+      body.rotation.x = Math.PI / 2;
+      body.position.set(0, h / 2, 2);
+      const spout = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, 22, 12), mat);
+      spout.position.set(0, h / 2 - 20, d / 2 - 10);
+      return [seat, body, spout, box(10, 14, 10, 0, h / 2 + 10, d / 2 - 10, mat), box(10, 6, 34, 0, h / 2 + 24, d / 2 - 22, mat)];
+    },
+  },
+  {
+    type: 'washer-hose',
+    label: '洗濯機の給水ホース',
+    hint: '蛇口の吐水口から真下へ垂らす。z は下端、h は長さ',
+    defaults: { w: 14, d: 14, h: 60, color: '#e9e9e6' },
+    build: ({ w, h }, mat) => {
+      const tube = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h, 8), mat);
+      tube.position.y = h / 2;
+      return [tube];
+    },
+  },
+  {
+    type: 'floor-drain',
+    label: '排水口（床）',
+    hint: '床に付ける丸い排水口とふた。w が直径',
+    defaults: { w: 150, d: 150, h: 4, color: '#9a9c9e' },
+    build: ({ w, h }, mat) => {
+      mat.metalness = 0.6;
+      mat.roughness = 0.4;
+      const plate = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, h, 24), mat);
+      plate.position.y = h / 2;
+      const slot = new THREE.MeshStandardMaterial({ color: '#2a2a2b', roughness: 0.7 });
+      return [plate, ...[-1, 0, 1].map((k) => box(w * 0.5, 1, 6, 0, h, k * 18, slot))];
+    },
+  },
+  {
+    type: 'step-stool',
+    label: '踏み台（小さな脚立）',
+    hint: '床に置く 2 段の踏み台。アルミの脚と踏み板',
+    defaults: { w: 400, d: 330, h: 600, color: '#b9bcbf' },
+    build: ({ w, d, h }, mat) => {
+      mat.metalness = 0.5;
+      mat.roughness = 0.45;
+      const tread = new THREE.MeshStandardMaterial({ color: '#2c2d2f', roughness: 0.8 });
+      const leg = (sx: number, z: number) => box(24, h - 20, 16, sx * (w / 2 - 12), 0, z, mat);
+      return [
+        box(w - 20, 20, d * 0.5, 0, h - 20, -d * 0.2, tread),
+        box(w - 20, 20, d * 0.4, 0, h * 0.5, d * 0.25, tread),
+        ...[-1, 1].flatMap((sx) => [leg(sx, -d / 2 + 8), leg(sx, -d * 0.05), box(24, h * 0.5, 16, sx * (w / 2 - 12), 0, d / 2 - 8, mat)]),
+      ];
+    },
+  },
+  {
+    type: 'color-box',
+    label: '収納棚（側板・背板・棚板の箱。Nクリック、本棚など）',
+    hint: '背面を壁に付ける。「数」が段数（棚板は等分）',
+    defaults: { w: 591, d: 394, h: 881, color: '#6e4f36' },
+    build: ({ w, d, h, count }, mat) => {
+      const n = Math.max(1, count ?? 3);
+      const t = 18;
+      const out: THREE.Object3D[] = [box(t, h, d, -w / 2 + t / 2, 0, 0, mat), box(t, h, d, w / 2 - t / 2, 0, 0, mat), box(w - 2 * t, h, 4, 0, 0, -d / 2 + 2, mat)];
+      for (let i = 0; i <= n; i++) out.push(box(w - 2 * t, t, d - 4, 0, ((h - t) * i) / n, 2, mat));
+      return out;
+    },
+  },
+  {
+    type: 'outdoor-unit-shade',
+    label: '室外機の日陰カバー',
+    hint: '室外機の上に載せる日よけの板。z は室外機の上端。w・d は板の大きさ、h は板の高さ（脚を含む）',
+    defaults: { w: 900, d: 420, h: 70, color: '#3a3b3d' },
+    build: ({ w, d, h }, mat) => {
+      const top = box(w, 12, d, 0, h - 12, 0, mat);
+      top.rotation.x = 0.05;
+      return [top, ...[-1, 1].flatMap((sx) => [-1, 1].map((sz) => box(16, h - 12, 16, sx * (w / 2 - 60), 0, sz * (d / 2 - 70), mat)))];
+    },
+  },
+  {
+    type: 'pet-fence',
+    label: 'ペットの脱走防止フェンス',
+    hint: '床に立てる柵。w が長さ、h が高さ。細い縦の棒と上下の横の棒',
+    defaults: { w: 1200, d: 20, h: 1000, color: '#2a2a2b' },
+    build: ({ w, h }, mat) => {
+      const out: THREE.Object3D[] = [box(w, 16, 16, 0, 0, 0, mat), box(w, 16, 16, 0, h - 16, 0, mat)];
+      const n = Math.max(2, Math.round(w / 60));
+      for (let i = 0; i <= n; i++) out.push(box(6, h, 6, -w / 2 + 3 + ((w - 6) * i) / n, 0, 0, mat));
+      return out;
+    },
+  },
+  {
     type: 'paper-holder',
     label: 'トイレットペーパーホルダー',
     hint: '壁付け。背面を壁に付け、「床からの高さ」で下端の高さを決める',
@@ -3575,6 +3955,34 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     },
   },
   {
+    type: 'intake-pipe',
+    label: '屋外給気口（基礎から立ち上がる管）',
+    hint: '外の地面に立てる。基礎を貫通した VU150 の管をエルボで上へ立ち上げ、上に特殊フィルターカバー（マーベックス SS の屋外給気口。h は地面からの高さ）',
+    defaults: { w: 230, d: 230, h: 872, color: '#d9d8d4' },
+    build: ({ w, h }, mat) => {
+      const pipe = new THREE.Mesh(new THREE.CylinderGeometry(82, 82, h - 290, 20), mat);
+      pipe.position.y = (h - 290) / 2;
+      const cover = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, 290, 20), mat);
+      cover.position.y = h - 145;
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(w / 2 + 8, w / 2 + 8, 12, 20), mat);
+      cap.position.y = h + 6;
+      return [pipe, cover, cap];
+    },
+  },
+  {
+    type: 'vent-hood',
+    label: '屋外排気口（壁・基礎のフード）',
+    hint: '壁付け。背面を壁（基礎）に付ける。四角い台と、下が開いた丸いフード',
+    defaults: { w: 200, d: 120, h: 200, color: '#d9d8d4' },
+    build: ({ w, d, h }, mat) => {
+      const hood = new THREE.Mesh(new THREE.CylinderGeometry(w * 0.42, w * 0.42, d - 15, 20, 1, false, 0, Math.PI), mat);
+      hood.rotation.x = Math.PI / 2;
+      hood.rotation.z = -Math.PI / 2;
+      hood.position.set(0, h * 0.45, (d - 15) / 2 - d / 2 + 15);
+      return [box(w, h, 15, 0, 0, -d / 2 + 7.5, mat), hood];
+    },
+  },
+  {
     type: 'sumika-exhaust',
     label: '床の排気口（sumika 室内排気口・丸形）',
     hint: '床に置く。マーベックス sumika の床用 室内排気口 KGR-SHW-0008（直径 135・床から出る縁 6、同心円の格子と十字の桟）。色は 7 色（ウォークスルーでクリックして選べる）',
@@ -3612,16 +4020,23 @@ export const FURNITURE_TYPES: FurnitureType[] = [
   {
     type: 'aircon',
     label: 'エアコン（壁掛け）',
-    hint: '背面を壁に付け、「床からの高さ」で下端の高さを決める（上端は天井から 50〜100 下）',
+    hint: '背面を壁に付け、「床からの高さ」で下端の高さを決める（上端は天井から 50〜100 下）。variant: pipe-left / pipe-right で、その側の下に横の壁へ向かう配管カバー（100）と、上にコンセントへのコード',
     defaults: { w: 798, d: 250, h: 295, color: '#f4f4f2' },
-    build: ({ w, d, h }, mat) => {
+    build: ({ w, d, h, variant }, mat) => {
       mat.roughness = 0.35;
       const body = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 4, 45), mat);
       body.position.y = h / 2;
       body.castShadow = body.receiveShadow = true;
       const dark = new THREE.MeshStandardMaterial({ color: '#2b2c2e', roughness: 0.6 });
       // 下の吹出口とルーバー、運転ランプ
-      return [body, box(w - 90, 46, 30, 0, 18, d / 2 - 40, dark), box(w - 100, 8, 40, 0, 40, d / 2 - 25, mat), box(40, 6, 2, w / 2 - 90, h * 0.45, d / 2 + 1, glow('#9fe0ff', 1))];
+      const out: THREE.Object3D[] = [body, box(w - 90, 46, 30, 0, 18, d / 2 - 40, dark), box(w - 100, 8, 40, 0, 40, d / 2 - 25, mat), box(40, 6, 2, w / 2 - 90, h * 0.45, d / 2 + 1, glow('#9fe0ff', 1))];
+      if (variant === 'pipe-left' || variant === 'pipe-right') {
+        // 本体の下の端から横の壁へ入る配管カバーと、本体の上の端からコンセントへ行くコード
+        const s = variant === 'pipe-left' ? -1 : 1;
+        const cover = new THREE.MeshStandardMaterial({ color: '#efeeea', roughness: 0.5 });
+        out.push(box(120, 75, 70, s * (w / 2 + 40), 10, -d / 2 + 35, cover), box(50, 6, 6, s * (w / 2 + 25), h - 45, -d / 2 + 10, cover));
+      }
+      return out;
     },
   },
   {
@@ -4099,12 +4514,18 @@ function hungDoor({ w, d, h, flip, pocket, handle, travel, backMirror }: Furnitu
   } else {
     for (const z of [1, -1]) leaf.add(pocket ? box(18, 300, 1, s * (w / 2 - 50), 850, z * (d / 2 + 0.5), handleMat(handle)) : box(20, 500, 8, s * (w / 2 - 60), 850, z * (d / 2 + 4), handleMat(handle)));
     // 貼り付けのミラーシート（全身鏡くらい）
-    if (mirror === 'sheet') leaf.add(...reflector(Math.min(450, w - 120), 1600, -s * 40, 350 + 800, d / 2 + 1));
+    if (mirror === 'sheet') {
+      // 自分で貼る物（「家具を表示」で消える）
+      const sheet = reflector(Math.min(450, w - 120), 1600, -s * 40, 350 + 800, d / 2 + 1);
+      for (const o of sheet) o.userData.looseItem = true;
+      leaf.add(...sheet);
+    }
   }
-  // 裏の面（背面）にも、ミラーシート（全身鏡くらい）を貼る
+  // 裏の面（背面）にも、ミラーシート（全身鏡くらい）を貼る。自分で貼る物（「家具を表示」で消える）
   if (backMirror) {
     const [m] = reflector(Math.min(450, w - 120), 1600, -s * 40, 350 + 800, -(d / 2 + 1));
     m.rotation.y = Math.PI;
+    m.userData.looseItem = true;
     leaf.add(m);
   }
   return out;

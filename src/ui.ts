@@ -1,6 +1,7 @@
 // 右側の操作パネル。状態から HTML を作り直し、操作は data-action で受け取る。
 
 import { WEB } from './env';
+import { pathTimeline } from './walkPath';
 import { FURNITURE_TYPES, STOPPER_COLORS, getFurnitureType } from './furniture';
 import { pointInPolygon } from './geometry';
 import { CALM_COLORS, CALM_HEX, CANDIDATE_FLOORS, CANDIDATE_WALLPAPERS, WALLPAPER_CATEGORIES, RAFFIS_COLORS, getMaterialDef, materialsFor, swatchUrl, type MaterialCategory } from './materials';
@@ -22,7 +23,7 @@ const SUMIKA_EXHAUST_COLORS: [string, string][] = [
 
 /** スイッチ・コンセントのプレートの色（施工会社の標準はコスモワイド スクエアのホワイト。ほかは一般的な色） */
 const PLATE_COLORS: [string, string][] = [
-  ['#f7f7f5', 'ホワイト'],
+  ['#f7f7f5', '標準仕様（コスモワイド スクエア ホワイト）'],
   ['#e7e1d3', 'ベージュ'],
   ['#8f908e', 'グレー'],
   ['#2a2a2b', 'ブラック'],
@@ -74,6 +75,10 @@ export interface PanelState {
   passWalls?: boolean;
   /** ウォークスルーの目の高さを決める身長（cm） */
   stature: number;
+  /** 動画を縦長（1080×1920）で書き出す */
+  videoPortrait?: boolean;
+  /** 通り道の下見の最中 */
+  videoPlaying?: boolean;
   /** ウォークスルーで立っている部屋 */
   walkRoomId: string | null;
   /** ウォークスルーでクリックした壁・天井（クロスを試す対象） */
@@ -115,6 +120,13 @@ export interface PanelActions {
   removeFurniture(id: string): void;
   screenshot(): void;
   pathTraceShot(): void;
+  videoAddPoint(): void;
+  videoRemoveLast(): void;
+  videoClear(): void;
+  videoPreview(): void;
+  videoExport(): void;
+  setVideoSpeed(speed: number): void;
+  setVideoPortrait(on: boolean): void;
   exportPlan(): void;
   exportElectrical(): void;
   exportCrossSchedule(): void;
@@ -260,7 +272,7 @@ export class Panel {
         </div>`}
         <div class="row">
           ${WEB || s.mode !== 'walk' ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
-          <label title="ソファ・ベッド・テーブル・いすなどの置き家具を出す・消す（造作の棚・カウンター・照明・スイッチ・コンセントは消えません）"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示</label>
+          <label title="施主支給の物（自分で買う・持ち込む家具・家電・防犯カメラ・外のマルチフックなど）を出す・消す。ワンダーハウスが作る造作の棚・カウンター・標準の照明・スイッチ・コンセントは消えません"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示（施主支給）</label>
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
           ${s.mode === 'walk' ? `<label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>` : ''}
         </div>
@@ -372,7 +384,33 @@ export class Panel {
 
   private walkSection(): string {
     // Web 版の「部屋へ移動」はなくした（2026-10-25 ユーザー指定）
-    return (WEB ? '' : this.switchSection()) + this.walkRoom();
+    return (WEB ? '' : this.videoSection() + this.switchSection()) + this.walkRoom();
+  }
+
+  /** 動画の通り道: 立った位置と向きを順に足し、その間をなめらかに歩く動画を書き出す */
+  private videoSection(): string {
+    const s = this.state;
+    const v = s.plan.walkVideo;
+    const n = v?.points.length ?? 0;
+    const sec = v ? pathTimeline(v.points, v.speed)?.duration : undefined;
+    return `
+      <section class="video">
+        <h2>🎬 動画の通り道</h2>
+        <p class="hint">通る所に立って、見たい向きにして「点を足す」を順に押します。扉は開けておいてください。点 ${n} 個${sec ? `・約 ${Math.round(sec)} 秒` : ''}</p>
+        <div class="row">
+          <button data-action="video-add">＋ 点を足す</button>
+          <button data-action="video-remove" ${n ? '' : 'disabled'}>最後の点を消す</button>
+          <button data-action="video-clear" ${n ? '' : 'disabled'}>全部消す</button>
+        </div>
+        <div class="row">
+          <label class="num" title="歩く速さ（ふつうの歩行は 1.0 くらい）">速さ <input type="number" min="0.2" max="3" step="0.1" data-change="video-speed" value="${v?.speed ?? 0.8}"> m/秒</label>
+          <label title="外すと横長（1920×1080）、チェックすると縦長（1080×1920。リール用）"><input type="checkbox" data-change="video-portrait" ${s.videoPortrait ? 'checked' : ''}> 縦長</label>
+        </div>
+        <div class="row">
+          <button data-action="video-preview" ${n >= 2 ? '' : 'disabled'}>${s.videoPlaying ? '■ 下見を止める' : '▶ 下見'}</button>
+          <button data-action="video-export" ${n >= 2 ? '' : 'disabled'} title="30fps の MP4 で保存します">🎬 動画を書き出す</button>
+        </div>
+      </section>`;
   }
 
   /** ウォークスルーで立っている階（部屋が分からなければ 1 階） */
@@ -597,7 +635,7 @@ export class Panel {
         <h2>操作</h2>
         <dl>
           <dt>俯瞰</dt><dd>左ドラッグ: 回転 / 右ドラッグ: 平行移動 / ホイール: ズーム / 床をダブルクリック: その部屋に入る</dd>
-          <dt>ウォークスルー</dt><dd>W A S D: 前・左・後ろ・右へ移動（Shift で速く） / 矢印キー ←→: 向きを変える・↑↓: 見上げる・見下ろす / スペース: 画面の真ん中（＋）をクリックしたのと同じ / ドラッグ: 見回す（向きは「見回す向きを逆にする」で変えられます） / Esc: 俯瞰に戻る</dd>
+          <dt>ウォークスルー</dt><dd>W A S D: 前・左・後ろ・右へ移動（Shift で速く） / Ctrl: しゃがむ・立つ（1 回押すごとに切り替え） / 矢印キー ←→: 向きを変える・↑↓: 見上げる・見下ろす / スペース: 画面の真ん中（＋）をクリックしたのと同じ / ドラッグ: 見回す（向きは「見回す向きを逆にする」で変えられます） / Esc: 俯瞰に戻る</dd>
         </dl>
       </section>`;
   }
@@ -619,6 +657,11 @@ export class Panel {
       case 'redo': return a.redo();
       case 'screenshot': return a.screenshot();
       case 'path-trace': return a.pathTraceShot();
+      case 'video-add': return a.videoAddPoint();
+      case 'video-remove': return a.videoRemoveLast();
+      case 'video-clear': return a.videoClear();
+      case 'video-preview': return a.videoPreview();
+      case 'video-export': return a.videoExport();
       case 'export-plan': return a.exportPlan();
       case 'export-electrical': return a.exportElectrical();
       case 'export-cross': return a.exportCrossSchedule();
@@ -699,6 +742,12 @@ export class Panel {
     if (d.change === 'furniture') return a.setFurnitureVisible((t as HTMLInputElement).checked);
     if (d.change === 'lights') return a.setLightsOn((t as HTMLInputElement).checked);
     if (d.change === 'hq') return a.setHighQuality((t as HTMLInputElement).checked);
+    if (d.change === 'video-portrait') return a.setVideoPortrait((t as HTMLInputElement).checked);
+    if (d.change === 'video-speed') {
+      const speed = Number((t as HTMLInputElement).value);
+      if (speed > 0) a.setVideoSpeed(speed);
+      return;
+    }
     if (d.change === 'colorcheck') return a.setColorCheck((t as HTMLInputElement).checked);
     if (d.change === 'invert') return a.setInvertLook((t as HTMLInputElement).checked);
     if (d.change === 'passwalls') return a.setPassWalls((t as HTMLInputElement).checked);

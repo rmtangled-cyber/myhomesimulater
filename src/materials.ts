@@ -321,17 +321,19 @@ function planks(base: string, tileMm: [number, number], opts: { angle?: number; 
  * コテ塗りのスタッコ（Naturescape Shades of Air など）。コテでなでた扇形・三日月形の塗り跡（8〜15cm）が重なり、
  * 塗り跡の縁が少し明るく（パール）、中は少し暗い。細かい砂粒のざらつき。ムラは控えめ
  */
-function trowel(base: string, tileMm: [number, number], opts: { contrast?: number; pearl?: number } = {}) {
+function trowel(base: string, tileMm: [number, number], opts: { contrast?: number; pearl?: number; size?: number; mottle?: number } = {}) {
   const c = rgb(base);
   const contrast = opts.contrast ?? 0.14;
   const pearl = opts.pearl ?? 0.12;
+  const size = opts.size ?? 1;
+  const mottle = opts.mottle ?? 0.24;
   return (w: number, h: number, rand: Rand): Generated => {
     const val = new Float32Array(w * h);
     const hgt = new Float32Array(w * h);
     const sx = w / tileMm[0];
-    const n = Math.round((tileMm[0] * tileMm[1]) / 2200);
+    const n = Math.round((tileMm[0] * tileMm[1]) / (2200 * size * size));
     for (let k = 0; k < n; k++) {
-      const R = (35 + rand() * 60) * sx;
+      const R = (35 + rand() * 60) * size * sx;
       const cx = rand() * w;
       const cy = rand() * h;
       const a0 = rand() * Math.PI * 2;
@@ -356,7 +358,7 @@ function trowel(base: string, tileMm: [number, number], opts: { contrast?: numbe
     }
     const f = fbm(w, h, rand, { cellsX: cellsFor(tileMm[0], 2), octaves: 2 });
     const color = new ImageData(w, h);
-    for (let i = 0; i < w * h; i++) put(color.data, i, c, 1 + val[i] + (f[i] - 0.5) * 0.24);
+    for (let i = 0; i < w * h; i++) put(color.data, i, c, 1 + val[i] + (f[i] - 0.5) * mottle);
     return { color, height: hgt };
   };
 }
@@ -683,7 +685,44 @@ function grain(base: string, tileMm: [number, number], opts: { spacing?: number;
 }
 
 /**
- * 流れる筋の石（AICA TJ-10235K の斜めのマーブル、FJ-901ZD のうねる御影石）。
+ * うねる石（AICA FJ-901ZD パラディソ）。ゆがめた座標で縦長の雲と筋を重ね、ところどころに明るい細い脈と細かい粒を足す
+ */
+function swirlStone(base: string, light: string, tileMm: [number, number], opts: { warp?: number; vein?: number; speckle?: number } = {}) {
+  const c = rgb(base);
+  const lc = rgb(light);
+  const warp = opts.warp ?? 0.1;
+  const vein = opts.vein ?? 0.3;
+  const speckle = opts.speckle ?? 0.14;
+  return (w: number, h: number, rand: Rand): Generated => {
+    const seed = Math.floor(rand() * 1e6);
+    const color = new ImageData(w, h);
+    const hgt = new Float32Array(w * h);
+    const P = (mm: number, axis: 0 | 1) => Math.max(1, Math.round(tileMm[axis] / mm));
+    const noise = (u: number, v: number, mx: number, my: number, s: number) => {
+      const px = P(mx, 0), py = P(my, 1);
+      return pnoise(u * px, v * py, px, py, seed + s);
+    };
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const u = x / w;
+        const v = y / h;
+        const uu = u + (noise(u, v, 600, 800, 1) - 0.5) * warp * 2 + (noise(u, v, 200, 260, 2) - 0.5) * warp * 0.5;
+        const vv = v + (noise(u, v, 600, 800, 3) - 0.5) * warp * 0.8;
+        const s = noise(uu, vv, 420, 900, 4) * 0.24 + noise(uu, vv, 170, 420, 5) * 0.24 + noise(uu, vv, 70, 190, 6) * 0.22 + noise(uu, vv, 28, 70, 7) * 0.18 + noise(uu, vv, 12, 22, 10) * 0.12;
+        const patch = noise(u, v, 300, 500, 8);
+        const vn = Math.max(0, ridge(noise(uu, vv, 50, 170, 9)) - 0.9) * 10 * vein * Math.max(0, patch - 0.5) * 2;
+        const t = Math.min(1, Math.max(0, (s - 0.5) * 3.2 + 0.5));
+        const i = y * w + x;
+        put(color.data, i, mix(c, lc, t), 1 + vn + (rand() - 0.5) * speckle);
+        hgt[i] = s + (rand() - 0.5) * 0.08;
+      }
+    }
+    return { color, height: hgt };
+  };
+}
+
+/**
+ * 流れる筋の石（AICA TJ-10235K の斜めのマーブル）。
  * 筋の向きは tile の中で a 本・b 本で一周する方向（継ぎ目なく繰り返す）。warp で筋をうねらせ、白い細い脈（veins）と粒（speckle）を足す
  */
 function flowStone(base: string, tileMm: [number, number], opts: { a?: number; b?: number; warp?: number; band?: number; light?: string; vein?: number; speckle?: number } = {}) {
@@ -1361,7 +1400,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   wall('cross-th34466', 'TH34466 フィルム汚れ防止 バリアタイプ（塗り壁調・ダークブラウングレー）', cloud('#6b615b', [925, 321], { cloud: 0.06, cloudMm: 120, grain: 0.07, crinkle: 0.2 }), [925, 321], 0.7, 0.8),
   wall('cross-th34468', 'TH34468 フィルム汚れ防止 バリアタイプ（タイルのエンボス・ライトグレー）', stepTiles('#c2bfb9', [308, 314], [[0, 125, 200], [125, 308, 95]], { mottle: 0.04, seam: 0.9 }), [308, 314], 0.7, 1.0),
   wall('cross-th34523', 'TH34523 フィルム汚れ防止 バリアタイプ（塗り壁調・ブラック）', sand('#303136', [462, 310], { grain: 0.18, mottle: 0.04, mottleMm: 100, size: 2.5 }), [462, 310], 0.7, 1.0),
-  wall('cross-th34082', 'TH34082 塗り壁調ライトグレー', trowel('#b9b8b4', [925, 641]), [925, 641], 0.9, 1.0),
+  wall('cross-th34082', 'TH34082 塗り壁調ライトグレー', trowel('#b9b8b4', [925, 641], { contrast: 0.05, pearl: 0.04, size: 2.2, mottle: 0.08 }), [925, 641], 0.9, 1.0),
   wall('cross-th34083', 'TH34083 塗り壁調グレー', trowel('#8e8d8a', [925, 641]), [925, 641], 0.9, 1.0),
   // TH34084（25-28 フェイス・Naturescape Shades of Air、TH34082・TH34083 と同じスタッコ柄のダークグレー。プリントとパールの濃淡）。リピート タテ 64.1・ヨコ 92.5cm、色は公式の柄画像・見本（#6b6767・#6f6a67）から
   wall('cross-th34084', 'TH34084 塗り壁調ダークグレー', trowel('#6c6868', [925, 641]), [925, 641], 0.9, 1.0),
@@ -1383,7 +1422,7 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   // AICA の化粧板（2026-10-19 アイカ公式の柄画像（4×8 版の全体）と見比べて作り直した。tile は版の大きさ）
   { id: 'aica-tj10235k', name: 'AICA TJ-10235K セルサス アールグレイマーブル／グレー（版の長手をカウンターの長さの方向に）', categories: [], tile: [2450, 1230], roughness: 0.75, bump: 0.1, draw: flowStone('#77746f', [2450, 1230], { a: 1, b: 1, warp: 0.05, band: 0.3, light: '#a7a49e', vein: 0.9, speckle: 0.16 }) },
   { id: 'aica-tj10240k', name: 'AICA TJ-10240K セルサス アンジェロプレーン／ダーク', categories: [], tile: [1230, 2450], roughness: 0.8, bump: 0.3, draw: cloud('#444545', [1230, 2450], { cloud: 0.85, cloudMm: 380, grain: 0.04 }) },
-  { id: 'aica-fj901zd', name: 'AICA セラール FJGA901ZD（FJ-901ZD）パラディソ／ダーク ソフトマット 935×2455', categories: [], tile: [935, 2455], roughness: 0.55, bump: 0.4, draw: sand('#56534f', [935, 2455], { grain: 0.3, size: 6, mottle: 0.22, mottleMm: 200 }) },
+  { id: 'aica-fj901zd', name: 'AICA セラール FJGA901ZD（FJ-901ZD）パラディソ／ダーク ソフトマット 935×2455', categories: [], tile: [935, 2455], roughness: 0.55, bump: 0.4, draw: swirlStone('#4b4a49', '#6c6a68', [935, 2455]) },
   { id: 'aica-ji10346k', name: 'AICA JI-10346K アイカラビアン プレインセメント／ディープグレー', categories: [], tile: [1230, 2450], roughness: 0.7, bump: 0.2, draw: cloud('#9a9693', [1230, 2450], { cloud: 0.14, cloudMm: 260, grain: 0.03 }) },
   { id: 'aica-tj10237k', name: 'AICA TJ-10237K セルサス メタルオキシサビ／ダーク', categories: [], tile: [1230, 2450], roughness: 0.8, bump: 0.3, draw: cloud('#3a3c3b', [1230, 2450], { cloud: 0.38, cloudMm: 180, grain: 0.05, scratch: 0.6 }) },
   // トクラス コラージア（見積もりで選んだ色）
