@@ -852,6 +852,8 @@ function buildFloor(
     const top = level + (room.ceilingHeight ?? floor.ceilingHeight);
     // 天井のない部屋（階段の吹き抜けなど）は、壁の仕上げを上の階の床まで張る
     const finishTop = room.ceiling ? top : wallTop;
+    // 壁のクロスの柄の高さの原点（UV の v = 0）。ふだんは階の FL、patternFromCeiling なら天井の線
+    const pv = room.patternFromCeiling ? top : 0;
     const inner = insetPolygon(room.polygon, t / 2);
 
     // 床。吹き抜けでも、クリックで選べるよう見えない床を置く
@@ -965,7 +967,13 @@ function buildFloor(
     if (room.ceiling) {
       // 天井も壁芯まで張る。壁のない所（開口部）で隣の部屋の天井と隙間なくつながる
       const ceilShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, y)));
-      const ceiling = new THREE.Mesh(new THREE.ShapeGeometry(ceilShape), getMaterial(room.ceiling));
+      const ceilGeo = new THREE.ShapeGeometry(ceilShape);
+      if (room.ceilingPatternOrigin) {
+        const [ox, oy] = room.ceilingPatternOrigin;
+        const uv = ceilGeo.getAttribute('uv');
+        for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) - ox, uv.getY(i) - oy);
+      }
+      const ceiling = new THREE.Mesh(ceilGeo, getMaterial(room.ceiling));
       ceiling.rotation.x = Math.PI / 2;
       ceiling.position.y = top;
       ceiling.receiveShadow = true;
@@ -1039,6 +1047,8 @@ function buildFloor(
       const matId = room.edges?.[String(edge)] ?? room.accent?.[side] ?? room.wall;
       const mb = new MeshBuilder();
       const f = new Frame(a, [b[0] - a[0], b[1] - a[1]]);
+      // patternFromCeiling の部屋は、壁の柄の横の位置も平面図の座標（天井の柄と同じ）にそろえる（縦の目地が壁・天井・下がり壁で一直線になる）
+      const pu = room.patternFromCeiling ? a[0] * f.D.x + a[1] * f.D.z : 0;
       // 開口部が辺の端の角（部屋の外形の頂点）まで達しているときは、角で延ばした分（出隅では壁の厚みの半分はみ出す分も）一緒に抜く（仕上げの切れ端が柱のように残らない）。
       // 頂点の手前で終わる開口部は、その先に構造の壁の切れ端が残るので仕上げも残す（抜くと外壁の面が見える）
       const v0 = e0 > 0 ? 0 : t / 2 + 1;
@@ -1138,13 +1148,13 @@ function buildFloor(
               next.push([s0, s1]);
               continue;
             }
-            zd.mb.quad(f.at(o0, r.v0, 0), f.D.clone().multiplyScalar(o1 - o0), Y.clone().multiplyScalar(r.v1 - r.v0), [o0, r.v0], [o1 - o0, r.v1 - r.v0]);
+            zd.mb.quad(f.at(o0, r.v0, 0), f.D.clone().multiplyScalar(o1 - o0), Y.clone().multiplyScalar(r.v1 - r.v0), [o0 + pu, r.v0 - pv], [o1 - o0, r.v1 - r.v0]);
             if (o0 - s0 > 1) next.push([s0, o0]);
             if (s1 - o1 > 1) next.push([o1, s1]);
           }
           segs = next;
         }
-        for (const [s0, s1] of segs) mb.quad(f.at(s0, r.v0, 0), f.D.clone().multiplyScalar(s1 - s0), Y.clone().multiplyScalar(r.v1 - r.v0), [s0, r.v0], [s1 - s0, r.v1 - r.v0]);
+        for (const [s0, s1] of segs) mb.quad(f.at(s0, r.v0, 0), f.D.clone().multiplyScalar(s1 - s0), Y.clone().multiplyScalar(r.v1 - r.v0), [s0 + pu, r.v0 - pv], [s1 - s0, r.v1 - r.v0]);
         // 巾木（床に接する所だけ。高さ 60・出 8）
         if (!room.noBaseboard && !room.void && Math.abs(r.v0 - level) < 1) {
           const bbId = room.baseboard ?? 'baseboard-black';
@@ -1271,8 +1281,11 @@ function addWallBox(mb: MeshBuilder, side: (u: number, s: 1 | -1, openingId?: st
       const span = D.clone().multiplyScalar(u1 - u0);
       const a = need(m, -1);
       const b = need(m, 1);
-      if (a) side(m, -1, o).quad(f.at(u0, r.v0 - drop(a), -h), span, nHalf, [u0, 0], [u1 - u0, h]);
-      if (b) side(m, 1, o).quad(f.at(u0, r.v0 - drop(b), 0), span, nHalf, [u0, h], [u1 - u0, h]);
+      // 柄の位置は平面図の座標（天井の柄とそろう）
+      const wu = f.origin[0] * D.x + f.origin[1] * D.z;
+      const wv = f.origin[0] * N.x + f.origin[1] * N.z;
+      if (a) side(m, -1, o).quad(f.at(u0, r.v0 - drop(a), -h), span, nHalf, [u0 + wu, wv - h], [u1 - u0, h]);
+      if (b) side(m, 1, o).quad(f.at(u0, r.v0 - drop(b), 0), span, nHalf, [u0 + wu, wv], [u1 - u0, h]);
     }
   }
   // 端面（開口部の側面・壁の切れ目）。隣の壁の位置（端から 30 内側）で両側の仕上げを調べる

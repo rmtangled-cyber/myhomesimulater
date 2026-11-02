@@ -443,6 +443,7 @@ function symbols(plan: Plan, floorIndex: number): string[] {
         out.push(circle(x + side[0] * k, y + side[1] * k, 0.7, RED, RED, 0.1));
       }
       if (three.has(f.id)) out.push(text(x + fx * 1.9 + side[0] * (n * 0.75 + 0.9), y + fy * 1.9 + side[1] * (n * 0.75 + 0.9), '3', 1.8, RED));
+      if (f.sensor) out.push(text(x - side[0] * (n * 0.75 + 3.2), y - side[1] * (n * 0.75 + 3.2), 'センサー', 1.6, RED));
       const center = Math.round((f.z ?? 0) + f.h / 2);
       if (Math.abs(center - 1200) > 40) out.push(text(x + fx * 3.2, y + fy * 3.2, `FL+${center}`, 1.6, '#444'));
     } else if (PANELS.has(f.type)) {

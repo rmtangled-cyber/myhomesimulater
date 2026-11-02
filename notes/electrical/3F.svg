@@ -102,8 +102,10 @@
 <text x="84.53" y="145.94" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" transform="rotate(-90 84.53 145.94)">5,688</text>
 <line x1="218.50" y1="98.54" x2="218.50" y2="193.33" stroke="#444" stroke-width="0.15" />
 <line x1="217.70" y1="99.34" x2="219.30" y2="97.74" stroke="#444" stroke-width="0.2" />
+<line x1="217.70" y1="106.92" x2="219.30" y2="105.33" stroke="#444" stroke-width="0.2" />
+<text x="216.70" y="102.33" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" transform="rotate(-90 216.70 102.33)">455</text>
 <line x1="217.70" y1="148.63" x2="219.30" y2="147.03" stroke="#444" stroke-width="0.2" />
-<text x="216.70" y="123.19" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" transform="rotate(-90 216.70 123.19)">2,958</text>
+<text x="216.70" y="126.98" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" transform="rotate(-90 216.70 126.98)">2,503</text>
 <line x1="217.70" y1="194.13" x2="219.30" y2="192.53" stroke="#444" stroke-width="0.2" />
 <text x="216.70" y="170.58" font-size="2.3" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" transform="rotate(-90 216.70 170.58)">2,730</text>
 <line x1="225.50" y1="98.54" x2="225.50" y2="193.33" stroke="#444" stroke-width="0.15" />
@@ -114,7 +116,8 @@
 <polygon points="102.33,106.13 132.67,106.13 132.67,113.71 102.33,113.71" fill="#ffffff" stroke="none"/>
 <polygon points="132.67,98.54 163.00,98.54 163.00,147.83 147.83,147.83 147.83,113.71 132.67,113.71" fill="#ffffff" stroke="none"/>
 <polygon points="102.33,128.88 147.83,128.88 147.83,193.33 102.33,193.33" fill="#ffffff" stroke="none"/>
-<polygon points="163.00,98.54 208.50,98.54 208.50,147.83 163.00,147.83" fill="#ffffff" stroke="none"/>
+<polygon points="163.00,106.13 208.50,106.13 208.50,147.83 163.00,147.83" fill="#ffffff" stroke="none"/>
+<polygon points="163.00,98.54 208.50,98.54 208.50,106.13 163.00,106.13" fill="#ffffff" stroke="none"/>
 <polygon points="147.83,147.83 208.50,147.83 208.50,193.33 163.00,193.33 163.00,163.00 147.83,163.00" fill="#ffffff" stroke="none"/>
 <polygon points="147.83,163.00 163.00,163.00 163.00,193.33 147.83,193.33" fill="#ffffff" stroke="none"/>
 <polygon points="102.33,97.55 134.50,97.55 134.50,99.55 102.33,99.55" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
@@ -163,18 +166,18 @@
 <polygon points="209.50,184.92 209.50,193.33 207.50,193.33 207.50,184.92" fill="#d6d6d6" stroke="#222" stroke-width="0.18"/>
 <text x="147.83" y="125.03" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ホール</text>
 <text x="125.08" y="166.10" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >書斎（南西）</text>
-<text x="185.75" y="128.19" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >書斎（北東）</text>
+<text x="185.75" y="131.98" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >書斎（北東）</text>
 <text x="173.11" y="173.06" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >子供部屋（洋室3）</text>
 <text x="155.42" y="183.17" font-size="2.1" fill="#a0a0a0" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >クローゼット</text>
-<polygon points="164.00,123.34 164.00,100.38 170.83,100.38 170.83,123.34" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="207.50,100.38 207.50,123.34 200.67,123.34 200.67,100.38" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="103.33,109.46 103.33,102.79 115.00,102.79 115.00,109.46" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="207.50,150.67 207.50,165.67 200.00,165.67 200.00,150.67" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="190.13,162.75 190.13,153.58 199.88,153.58 199.88,162.75" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="181.33,103.71 201.33,103.71 201.33,113.71 181.33,113.71" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="207.50,101.97 207.50,113.71 201.50,113.71 201.50,101.97" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="197.17,125.88 185.50,125.88 185.50,114.21 197.17,114.21" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="181.33,99.54 201.33,99.54 201.33,103.71 181.33,103.71" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="170.72,107.28 170.72,116.44 165.22,116.44 165.22,107.28" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="169.00,126.00 169.00,106.00 179.00,106.00 179.00,126.00" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="167.27,99.83 179.00,99.83 179.00,105.83 167.27,105.83" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="191.17,110.17 191.17,121.83 179.50,121.83 179.50,110.17" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="164.83,126.00 164.83,106.00 169.00,106.00 169.00,126.00" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="200.78,116.44 200.78,107.28 206.28,107.28 206.28,116.44" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="108.67,130.04 122.00,130.04 122.00,138.38 108.67,138.38" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="196.17,170.67 204.50,170.67 204.50,187.33 196.17,187.33" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="146.77,165.77 146.77,185.77 142.60,185.77 142.60,165.77" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
@@ -184,21 +187,21 @@
 <polygon points="103.33,129.88 132.00,129.88 132.00,150.33 103.33,150.33" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="103.33,160.53 103.33,150.68 109.90,150.68 109.90,160.53" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <defs><marker id="arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#d4242b"/></marker></defs>
-<line x1="145.33" y1="125.61" x2="135.33" y2="124.86" stroke="#d4242b" stroke-width="0.3" />
-<path d="M 145.33 125.61 l -5 3" stroke="#d4242b" stroke-width="0.3" fill="none" marker-end="url(#arrow)"/>
-<text x="138.83" y="130.21" font-size="2.1" fill="#d4242b" text-anchor="end" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2Fへ</text>
+<line x1="143.83" y1="125.61" x2="105.78" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
+<path d="M 143.83 125.61 l -5 3" stroke="#d4242b" stroke-width="0.3" fill="none" marker-end="url(#arrow)"/>
+<text x="137.33" y="130.21" font-size="2.1" fill="#d4242b" text-anchor="end" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2Fへ</text>
 <line x1="129.50" y1="110.44" x2="117.57" y2="109.77" stroke="#d4242b" stroke-width="0.3" />
-<line x1="145.33" y1="125.61" x2="155.43" y2="124.87" stroke="#d4242b" stroke-width="0.3" />
-<line x1="166.27" y1="127.00" x2="185.75" y2="131.40" stroke="#d4242b" stroke-width="0.3" />
-<line x1="185.75" y1="131.40" x2="185.75" y2="114.97" stroke="#d4242b" stroke-width="0.3" />
+<line x1="140.62" y1="112.11" x2="155.43" y2="124.87" stroke="#d4242b" stroke-width="0.3" />
+<line x1="166.27" y1="127.00" x2="185.75" y2="133.93" stroke="#d4242b" stroke-width="0.3" />
+<line x1="185.75" y1="133.93" x2="185.75" y2="120.03" stroke="#d4242b" stroke-width="0.3" />
 <line x1="144.57" y1="145.33" x2="125.08" y2="161.10" stroke="#d4242b" stroke-width="0.3" />
 <line x1="164.50" y1="151.10" x2="178.17" y2="170.58" stroke="#d4242b" stroke-width="0.3" />
-<rect x="161.57" y="73.50" width="5" height="5" fill="none" stroke="#1f5fbf" stroke-width="0.25" stroke-dasharray="0.8 0.6"/>
-<text x="167.57" y="76.00" font-size="1.9" fill="#1f5fbf" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ルーター（2F パントリー）の真上・真下</text>
-<polyline points="164.07,76.00 164.07,112.11 141.83,112.11" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="164.07,76.00 164.07,101.81 206.33,101.81" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="164.07,76.00 164.07,190.07 144.27,190.07" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="164.07,76.00 164.07,165.72 205.23,165.72" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<rect x="166.00" y="70.57" width="5" height="5" fill="none" stroke="#1f5fbf" stroke-width="0.25" stroke-dasharray="0.8 0.6"/>
+<text x="172.00" y="73.07" font-size="1.9" fill="#1f5fbf" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ルーター（2F パントリー）の真上・真下</text>
+<polyline points="168.50,73.07 168.50,112.11 141.83,112.11" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.50,73.07 168.50,100.67 166.27,100.67" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.50,73.07 168.50,190.07 144.27,190.07" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.50,73.07 168.50,165.72 205.23,165.72" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
 <circle cx="117.57" cy="109.77" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="117.57" cy="109.77" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
 <circle cx="155.43" cy="124.87" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
@@ -215,32 +218,33 @@
 <text x="125.08" y="161.10" font-size="1.9" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >CL</text>
 <circle cx="178.17" cy="170.58" r="2.20" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <text x="178.17" y="170.58" font-size="1.9" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >CL</text>
-<circle cx="135.33" cy="124.86" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
-<line x1="137.13" y1="126.66" x2="133.53" y2="126.66" stroke="#222" stroke-width="0.3" />
-<text x="135.33" y="121.26" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
+<circle cx="105.78" cy="121.29" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
+<line x1="103.98" y1="123.09" x2="103.98" y2="119.49" stroke="#222" stroke-width="0.3" />
 <circle cx="129.50" cy="110.44" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="166.27" cy="127.00" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="144.58" cy="125.61" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<circle cx="146.08" cy="125.61" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
-<text x="147.73" y="123.71" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3</text>
+<circle cx="140.62" cy="112.11" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<text x="140.62" y="108.91" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+1360</text>
+<circle cx="143.83" cy="125.61" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
+<text x="145.48" y="123.71" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3</text>
+<text x="139.88" y="125.61" font-size="1.6" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="144.57" cy="145.33" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="164.50" cy="151.10" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="105.60" cy="111.17" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="104.40" y1="110.67" x2="106.80" y2="110.67" stroke="#222" stroke-width="0.25" />
 <line x1="104.40" y1="111.67" x2="106.80" y2="111.67" stroke="#222" stroke-width="0.25" />
 <text x="109.60" y="111.17" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2E</text>
-<circle cx="206.33" cy="101.81" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="206.83" y1="100.61" x2="206.83" y2="103.01" stroke="#222" stroke-width="0.25" />
-<line x1="205.83" y1="100.61" x2="205.83" y2="103.01" stroke="#222" stroke-width="0.25" />
-<rect x="200.13" y="100.21" width="5.60" height="3.20" fill="#fff" stroke="#1f5fbf" stroke-width="0.3"/>
-<text x="202.93" y="101.81" font-size="1.6" fill="#1f5fbf" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >LAN②</text>
-<text x="202.93" y="104.81" font-size="1.6" fill="#1f5fbf" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >妻書斎用</text>
-<circle cx="206.50" cy="101.81" r="1.90" fill="#f28aa6" stroke="#222" stroke-width="0.2"/>
-<line x1="206.50" y1="100.61" x2="206.50" y2="103.01" stroke="#222" stroke-width="0.25" />
-<text x="206.50" y="105.81" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >AC/E</text>
-<circle cx="166.27" cy="111.86" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="165.07" y1="111.36" x2="167.47" y2="111.36" stroke="#222" stroke-width="0.25" />
-<line x1="165.07" y1="112.36" x2="167.47" y2="112.36" stroke="#222" stroke-width="0.25" />
+<circle cx="166.27" cy="100.67" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="165.07" y1="100.17" x2="167.47" y2="100.17" stroke="#222" stroke-width="0.25" />
+<line x1="165.07" y1="101.17" x2="167.47" y2="101.17" stroke="#222" stroke-width="0.25" />
+<rect x="163.47" y="102.47" width="5.60" height="3.20" fill="#fff" stroke="#1f5fbf" stroke-width="0.3"/>
+<text x="166.27" y="104.07" font-size="1.6" fill="#1f5fbf" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >LAN②</text>
+<text x="169.27" y="104.07" font-size="1.6" fill="#1f5fbf" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >妻書斎用</text>
+<circle cx="205.23" cy="121.53" r="1.90" fill="#f28aa6" stroke="#222" stroke-width="0.2"/>
+<line x1="206.43" y1="121.53" x2="204.03" y2="121.53" stroke="#222" stroke-width="0.25" />
+<text x="201.23" y="121.53" font-size="1.9" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >AC/E</text>
+<circle cx="205.23" cy="111.86" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="206.43" y1="112.36" x2="204.03" y2="112.36" stroke="#222" stroke-width="0.25" />
+<line x1="206.43" y1="111.36" x2="204.03" y2="111.36" stroke="#222" stroke-width="0.25" />
 <circle cx="144.27" cy="190.07" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="143.77" y1="191.27" x2="143.77" y2="188.87" stroke="#222" stroke-width="0.25" />
 <line x1="144.77" y1="191.27" x2="144.77" y2="188.87" stroke="#222" stroke-width="0.25" />
@@ -271,16 +275,16 @@
 <circle cx="190.33" cy="190.07" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="189.83" y1="191.27" x2="189.83" y2="188.87" stroke="#222" stroke-width="0.25" />
 <line x1="190.83" y1="191.27" x2="190.83" y2="188.87" stroke="#222" stroke-width="0.25" />
-<line x1="174.88" y1="114.97" x2="196.63" y2="114.97" stroke="#222" stroke-width="0.8" />
-<circle cx="180.31" cy="114.97" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
-<text x="180.31" y="114.97" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
-<circle cx="191.19" cy="114.97" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
-<text x="191.19" y="114.97" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
-<line x1="174.88" y1="131.40" x2="196.63" y2="131.40" stroke="#222" stroke-width="0.8" />
-<circle cx="180.31" cy="131.40" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
-<text x="180.31" y="131.40" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
-<circle cx="191.19" cy="131.40" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
-<text x="191.19" y="131.40" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
+<line x1="174.88" y1="120.03" x2="196.63" y2="120.03" stroke="#222" stroke-width="0.8" />
+<circle cx="180.31" cy="120.03" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
+<text x="180.31" y="120.03" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
+<circle cx="191.19" cy="120.03" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
+<text x="191.19" y="120.03" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
+<line x1="174.88" y1="133.93" x2="196.63" y2="133.93" stroke="#222" stroke-width="0.8" />
+<circle cx="180.31" cy="133.93" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
+<text x="180.31" y="133.93" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
+<circle cx="191.19" cy="133.93" r="1.30" fill="#7fd0e6" stroke="#222" stroke-width="0.15"/>
+<text x="191.19" y="133.93" font-size="1.5" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >S</text>
 <defs><pattern id="hatch2" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>
 <text x="262.00" y="66.00" font-size="2.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電気設備凡例</text>
 <rect x="262.00" y="68.50" width="140.00" height="50.00" fill="none" stroke="#444" stroke-width="0.2"/>

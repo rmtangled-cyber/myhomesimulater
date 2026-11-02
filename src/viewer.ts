@@ -220,7 +220,7 @@ export class Viewer {
   /** 人感センサー付きの照明と、あと何秒ついているか（ウォークスルーで近づくとつき、離れて SENSOR_HOLD 秒で消える） */
   private sensors = new Map<string, THREE.Vector3>();
   private sensorTimer = new Map<string, number>();
-  private sensorLinks = new Map<string, string>();
+  private sensorLinks = new Map<string, string[]>();
   /** 家具がどの階にあるか（ウォークスルーでは今いる階の照明だけを計算して軽くする） */
   private furnitureFloor = new Map<string, number>();
   /** 照明ごとの光が届いてよい範囲（部屋） */
@@ -384,7 +384,7 @@ export class Viewer {
     for (const f of plan.floors)
       for (const x of f.furniture) {
         if (x.sensor && !WEB) this.sensors.set(x.id, new THREE.Vector3(x.x * MM, (f.elevation + (x.z ?? 0)) * MM, x.y * MM));
-        if (x.sensorLink && !WEB) this.sensorLinks.set(x.id, x.sensorLink);
+        if (x.sensorLink && !WEB) this.sensorLinks.set(x.id, [x.sensorLink].flat());
       }
     this.world.add(this.built.root);
     this.looseIds = new Set(plan.floors.flatMap((f) => f.furniture.filter((x) => x.loose || LOOSE_FURNITURE_TYPES.has(x.type)).map((x) => x.id)));
@@ -693,8 +693,8 @@ export class Viewer {
     if (this.clickLights.has(id)) return this.clickOn.has(id);
     const c = this.lightCircuit.get(id);
     const on = c ? this.circuitOn(c) : this.lit;
-    const sensorId = this.sensorLinks.get(id) ?? id;
-    if (on && this.mode === 'walk' && this.sensors.has(sensorId)) return (this.sensorTimer.get(sensorId) ?? 0) > 0;
+    const sensorIds = (this.sensorLinks.get(id) ?? [id]).filter((s) => this.sensors.has(s));
+    if (on && this.mode === 'walk' && sensorIds.length) return sensorIds.some((s) => (this.sensorTimer.get(s) ?? 0) > 0);
     return on;
   }
 

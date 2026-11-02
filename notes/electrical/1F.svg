@@ -215,7 +215,7 @@
 <line x1="129.40" y1="85.50" x2="117.50" y2="92.83" stroke="#d4242b" stroke-width="0.3" />
 <line x1="117.50" y1="92.83" x2="117.50" y2="74.33" stroke="#d4242b" stroke-width="0.3" />
 <line x1="152.00" y1="91.48" x2="178.17" y2="83.67" stroke="#d4242b" stroke-width="0.3" />
-<line x1="90.43" y1="127.00" x2="91.18" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
+<line x1="90.43" y1="127.00" x2="90.62" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
 <path d="M 90.43 127.00 l -5 3" stroke="#d4242b" stroke-width="0.3" fill="none" marker-end="url(#arrow)"/>
 <text x="83.93" y="131.60" font-size="2.1" fill="#d4242b" text-anchor="end" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2Fへ</text>
 <line x1="83.00" y1="147.31" x2="124.83" y2="190.50" stroke="#d4242b" stroke-width="0.3" />
@@ -257,15 +257,15 @@
 <text x="122.83" y="177.88" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="87.17" cy="93.67" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="87.17" cy="93.67" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
-<circle cx="91.18" cy="121.29" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
-<line x1="89.38" y1="123.09" x2="89.38" y2="119.49" stroke="#222" stroke-width="0.3" />
-<text x="94.78" y="121.29" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
+<circle cx="90.62" cy="121.29" r="1.80" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
+<line x1="88.82" y1="123.09" x2="88.82" y2="119.49" stroke="#222" stroke-width="0.3" />
 <circle cx="105.60" cy="87.92" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="105.60" cy="89.42" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="129.40" cy="85.50" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="152.00" cy="91.48" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="90.43" cy="127.00" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <text x="92.33" y="128.65" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3</text>
+<text x="90.43" y="123.05" font-size="1.6" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
 <circle cx="84.50" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="83.00" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="81.50" cy="147.31" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
