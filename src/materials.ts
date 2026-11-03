@@ -1267,6 +1267,8 @@ export const BUILTIN_MATERIALS: MaterialDef[] = [
   floor('floor-oak', 'オーク（ナチュラル）', flooring(['#c79f6c', '#bd935f', '#d0ab79', '#b88c5a'], 150, FLOOR_TILE), FLOOR_TILE, 0.5, 1.5),
   floor('floor-walnut', 'ウォールナット', flooring(['#5e4030', '#6b4a36', '#4f3527', '#74503a'], 150, FLOOR_TILE, { grainContrast: 0.28 }), FLOOR_TILE, 0.45, 1.5),
   floor('floor-white-ash', 'ホワイトアッシュ', flooring(['#e3d6c2', '#dccdb6', '#e8dccb'], 150, FLOOR_TILE, { grainContrast: 0.12 }), FLOOR_TILE, 0.55, 1.5),
+  // QD-SGMP フリーカットシート グレー01（グレーの大理石調・白い筋・大きな長方形の目地。商品写真から。目地は 500×1000 くらいと見た）
+  floor('floor-qd-sgmp-gray01', 'QD-SGMP フリーカットシート グレー01（大理石調）', boards('#8d8c8a', 500, 1000, 2, { mottle: 0.1, variation: 0.05, vein: '#d9d8d5' }), [1000, 1000], 0.45, 0.6),
   floor('floor-gray-oak', 'グレージュオーク', flooring(['#a59a8c', '#9b9083', '#b0a596', '#8f8578'], 150, FLOOR_TILE, { grainContrast: 0.18 }), FLOOR_TILE, 0.55, 1.5),
   floor('floor-cherry', 'チェリー', flooring(['#a5603c', '#9a5634', '#b06a45'], 150, FLOOR_TILE), FLOOR_TILE, 0.45, 1.5),
   floor('floor-tile-white', 'タイル（ホワイト 300角）', tiles('#e9e6e0', '#c9c4bb', 4, 4, [1200, 1200], { mottle: 0.04 }), [1200, 1200], 0.3, 2),

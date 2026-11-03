@@ -186,8 +186,8 @@
 <polygon points="142.60,165.77 142.60,185.77 132.60,185.77 132.60,165.77" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="120.43,181.60 120.43,169.93 132.10,169.93 132.10,181.60" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="146.77,185.77 146.77,192.27 133.10,192.27 133.10,185.77" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="103.33,129.88 132.00,129.88 132.00,150.33 103.33,150.33" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="103.33,160.53 103.33,150.68 109.90,150.68 109.90,160.53" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="103.33,129.88 132.00,129.88 132.00,165.43 103.33,165.43" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
+<polygon points="103.33,150.85 103.33,141.00 109.90,141.00 109.90,150.85" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <defs><marker id="arrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#d4242b"/></marker></defs>
 <line x1="143.83" y1="125.61" x2="105.78" y2="121.29" stroke="#d4242b" stroke-width="0.3" />
 <path d="M 143.83 125.61 l -5 3" stroke="#d4242b" stroke-width="0.3" fill="none" marker-end="url(#arrow)"/>

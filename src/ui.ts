@@ -281,7 +281,7 @@ export class Panel {
         <div class="row">
           ${WEB || s.mode !== 'walk' ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
           <label title="施主支給の物（自分で買う・持ち込む家具・家電・防犯カメラ・外のマルチフックなど）を出す・消す。ワンダーハウスが作る造作の棚・カウンター・標準の照明・スイッチ・コンセントは消えません"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示</label>
-          <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
+          ${WEB ? '' : `<label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>`}
           ${s.mode === 'walk' ? `<label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>` : ''}
         </div>
         <div class="row">

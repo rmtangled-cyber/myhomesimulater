@@ -23,7 +23,7 @@ export const LOOSE_FURNITURE_TYPES = new Set([
   'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'iron-fence-rods', 'cpu-stand-l',
   'rug', 'clear-mat', 'rail-fan', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
-  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'indoor-camera', 'xmas-tree', 'exercise-bike',
+  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'indoor-camera', 'desk-monitor', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
   'hat-box', 'cap-case', 'magnet-dispenser', 'racket-bag', 'baseball-glove', 'suitcase',
   'mop', 'hand-ironing-board', 'towel-hook', 'wire-basket', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'trash-bin', 'solar-ground-light', 'exhaust-cover',
@@ -1092,6 +1092,22 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         // 右の側面の通風口（縦のスリット）
         box(6, h * 0.6, d * 0.7, w / 2 + 1, h * 0.25, 0, grille),
       ];
+    },
+  },
+  {
+    type: 'desk-monitor',
+    label: 'ディスプレイ（スタンド付き・机に置く）',
+    hint: '机の上に置き、「床からの高さ」を天板の高さに。w・h は画面の幅・高さ、d はスタンドの台の奥行き。正面（+z）が画面',
+    defaults: { w: 715, d: 220, h: 420, color: '#1c1c1d' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.4;
+      const screen = new THREE.MeshStandardMaterial({ color: '#0d0e10', roughness: 0.2, metalness: 0.1 });
+      // 台・首・画面（下端は天板から 100）。画面は台の後ろ寄り
+      const bottom = 100;
+      const out = [box(Math.min(260, w * 0.4), 15, d, 0, 0, 0, mat), box(50, bottom + h / 2, 25, 0, 0, -d / 2 + 40, mat)];
+      out.push(box(w, h, 20, 0, bottom, -d / 2 + 62, mat), box(w - 16, h - 16, 1, 0, bottom + 8, -d / 2 + 72.5, screen));
+      for (const m of out) m.castShadow = true;
+      return out;
     },
   },
   {
