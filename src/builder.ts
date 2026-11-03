@@ -859,7 +859,13 @@ function buildFloor(
     // 床。吹き抜けでも、クリックで選べるよう見えない床を置く
     // 床は壁芯まで張る。壁のない所（開口部）で隣の部屋の床と隙間なくつながる
     const floorShape = new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, -y)));
-    const floorMesh: THREE.Mesh = new THREE.Mesh(new THREE.ShapeGeometry(floorShape), getMaterial(room.floor));
+    const floorGeo = new THREE.ShapeGeometry(floorShape);
+    // 板の向きを南北にする階は、床の UV の u と v を入れ替える
+    if (floor.floorGrain === 'y') {
+      const uv = floorGeo.getAttribute('uv') as THREE.BufferAttribute;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getY(i), uv.getX(i));
+    }
+    const floorMesh: THREE.Mesh = new THREE.Mesh(floorGeo, getMaterial(room.floor));
     floorMesh.rotation.x = -Math.PI / 2;
     floorMesh.position.y = level;
     floorMesh.receiveShadow = true;

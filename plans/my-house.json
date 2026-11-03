@@ -3672,6 +3672,7 @@
       "height": 3020,
       "ceilingHeight": 2400,
       "exterior": "exterior-charmrock",
+      "floorGrain": "y",
       "rooms": [
         {
           "id": "2f-bedroom",
@@ -5092,7 +5093,7 @@
           "d": 8,
           "h": 120,
           "rotation": 0,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 1140,
           "count": 1
         },
@@ -5120,7 +5121,7 @@
           "d": 8,
           "h": 120,
           "rotation": 180,
-          "color": "#8f908e",
+          "color": "#f7f7f5",
           "z": 1140,
           "count": 1
         },
@@ -6120,13 +6121,13 @@
         {
           "id": "storsw-bookshelf",
           "type": "color-box",
-          "name": "本棚（2 階 納戸の東の壁。商品は未定・大きさは仮 900×300×1800）",
-          "x": 1610,
-          "y": 5500,
+          "name": "本棚（2 階 納戸の南の壁を背に・東の端。商品は未定・大きさは仮 900×300×1800）",
+          "x": 1310,
+          "y": 6615,
           "w": 900,
           "d": 300,
           "h": 1800,
-          "rotation": 90,
+          "rotation": 180,
           "color": "#4a4b4d",
           "count": 6
         },
@@ -6276,6 +6277,7 @@
       "height": 2730,
       "ceilingHeight": 2400,
       "exterior": "exterior-charmrock",
+      "floorGrain": "y",
       "rooms": [
         {
           "id": "3f-toilet-low",

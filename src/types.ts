@@ -232,6 +232,8 @@ export interface Floor {
   ceilingHeight: number;
   /** この階の外壁の素材ID（省略時は plan.exterior） */
   exterior?: string;
+  /** 床材の板の向き。'y' なら南北（平面図の y の方向）。省略時は東西（x の方向） */
+  floorGrain?: 'y';
   rooms: Room[];
   openings: Opening[];
   furniture: Furniture[];
