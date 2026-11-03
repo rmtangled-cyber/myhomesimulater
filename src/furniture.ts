@@ -21,7 +21,7 @@ import { WEB } from './env';
 export const LOOSE_FURNITURE_TYPES = new Set([
   'sofa', 'sofa-l', 'dining-table', 'dining-table-frame', 'ceramic-ext-table', 'low-table', 'chair', 'dining-chair', 'curve-back-chair', 'stool',
   'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'iron-fence-rods', 'cpu-stand-l',
-  'rug', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
+  'rug', 'clear-mat', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
   'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
@@ -968,7 +968,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '開き戸（扉）',
     hint: '開口部（ドア）の中心に置く（閉めた状態）。取手の側は「左右反転」で変える',
     defaults: { w: 720, d: 36, h: 2000, color: '#efeeea' },
-    build: ({ w, d, h, flip, swing, handle, doorSeries, doorDesign, lock, stopper, stopperColor, openAngle }, mat) => {
+    build: ({ w, d, h, flip, swing, handle, doorSeries, doorDesign, lock, stopper, stopperColor, foldStopper, openAngle }, mat) => {
       const s = flip ? -1 : 1;
       const open = THREE.MathUtils.degToRad(openAngle ?? 90);
       const parts: THREE.Object3D[] = raffisPanel(w, h - 10, d, 0, mat, s, doorDesign);
@@ -985,6 +985,15 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         disc.position.set(-s * (w / 2) + dx * Math.cos(a) - hz * Math.sin(a), 2, hz - dx * Math.sin(a) - hz * Math.cos(a));
         extra.push(disc);
         if (stopper === 'cylinder') parts.push(box(36, 40, 35, s * (w / 2 - 60), 0, Math.sign(swing ?? 1) * (d / 2 + 17.5), sm));
+      }
+      if (foldStopper) {
+        // 折りたたみのドアストッパー（扉の下の端に貼る座と、床へ倒した脚）。扉といっしょに動く。自分で貼る物
+        const fm = new THREE.MeshStandardMaterial({ color: foldStopper, roughness: 0.35, metalness: 0.6 });
+        const zs = Math.sign(swing ?? 1);
+        const plate = box(40, 80, 6, s * (w / 2 - 90), 20, zs * (d / 2 + 3), fm);
+        const leg = box(30, 6, 70, s * (w / 2 - 90), 3, zs * (d / 2 + 30), fm);
+        for (const o of [plate, leg]) o.userData.looseItem = true;
+        parts.push(plate, leg);
       }
       if (doorSeries === 'calm') {
         // CALM 専用のグレモン錠（ステンレスの角い座に L 字のレバー、下に鍵。ほかのハンドルは選べない）
@@ -1185,7 +1194,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: 'ペットのケージ（金網・多段・キャスター付き）',
     hint: '背面を壁に付ける。チンチラなどの背の高いケージ。中に棚板（count 枚）、下は引出しのトレー、キャスター付き',
     defaults: { w: 800, d: 500, h: 1200, color: '#1d1d1f' },
-    build: ({ w, d, h, count, coverSides }, mat) => {
+    build: ({ w, d, h, count, coverSides, coverColor }, mat) => {
       mat.metalness = 0.4;
       mat.roughness = 0.5;
       const tray = new THREE.MeshStandardMaterial({ color: '#2a2a2b', roughness: 0.6 });
@@ -1219,7 +1228,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       out.push(box(w * 0.5, 8, 6, 0, base + 60 + hh * 0.7, d / 2, mat), box(w * 0.5, 8, 6, 0, base + 120, d / 2, mat));
       // 上から掛けた布（天井と、垂らした面。下は床から少し上まで、ゆるいひだ付き）
       if (coverSides?.length) {
-        const cloth = new THREE.MeshStandardMaterial({ color: '#b9b3a8', roughness: 0.95, side: THREE.DoubleSide });
+        const cloth = new THREE.MeshStandardMaterial({ color: coverColor ?? '#b9b3a8', roughness: 0.95, side: THREE.DoubleSide });
         const o = 15;
         const drop = top - 60;
         out.push(box(w + 2 * o, 4, d + 2 * o, 0, top + 2, 0, cloth));
@@ -1237,6 +1246,13 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       }
       return out;
     },
+  },
+  {
+    type: 'clear-mat',
+    label: '透明の床のシート（傷防止のチェアマットなど）',
+    hint: '床に敷く透明のシート。w・d が大きさ、h が厚み',
+    defaults: { w: 1200, d: 900, h: 1.5, color: '#e9eef1' },
+    build: ({ w, d, h, color }) => [box(w, Math.max(h, 1), d, 0, 0, 0, new THREE.MeshStandardMaterial({ color, roughness: 0.05, transparent: true, opacity: 0.22, depthWrite: false }))],
   },
   {
     type: 'chinchilla',
@@ -4608,6 +4624,8 @@ function hungDoor({ w, d, h, flip, pocket, handle, travel, backMirror, doorDesig
   // 開けたときに動く長さ。戸袋が短いときは travel で止める
   leaf.userData.door = { type: 'slide', dx: -s * (travel ?? w - 60), t: 0, x0: 0 };
   const out: THREE.Object3D[] = [leaf];
+  // 引込み戸は開けると戸袋に入り、戸の先が枠と同じ面になってクリックできない。枠の際の開口に見えない当たりの板を置く
+  if (pocket) out.push(box(150, h - 200, d + 40, s * (w / 2 - (travel ?? w - 60) + 75), 100, 0, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false })));
   // 引込み戸（壁の中に引き込む）はレールもガイドも壁の中で見えない
   if (!pocket) {
     // 天井のレール（閉めた位置から戸袋の側へ、戸の幅の 2 倍。戸袋は取手と反対の側）

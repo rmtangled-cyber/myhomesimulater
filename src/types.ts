@@ -152,6 +152,8 @@ export interface Furniture {
   stopper?: 'secret' | 'cylinder';
   /** ドアストッパーの色（商品コードの頭 2 文字: YY・AC・AD・MM・DD・RA・BD・BE） */
   stopperColor?: string;
+  /** 開き戸の下の端に貼る折りたたみのドアストッパー（施主支給・開く側の面の取手の側。足で脚を倒して床で止める）。値は色 */
+  foldStopper?: string;
   /** 開き戸の開く角度（度・省略時 90）。吊元が壁の隅に近く、90° 開くと扉やドアストッパーが壁にめり込むときに小さくする */
   openAngle?: number;
   /** 片引き戸（壁を削った戸袋に引き込む）。レールや床のガイドは枠・戸袋の中で見えない */
@@ -197,6 +199,8 @@ export interface Furniture {
   variant?: string;
   /** ケージなどに上から掛ける布の面（家具の向きで: top・back（背面）・left（正面から見て右手…ではなく家具の −x 側）・right） */
   coverSides?: ('top' | 'back' | 'left' | 'right')[];
+  /** 掛けた布の色（省略時は生成り） */
+  coverColor?: string;
   /** 照明の明るさ（全光束 lm）。製品の定格光束。省略時は器具の種類ごとの目安 */
   lumen?: number;
   /** 照明の光の広がり（度）。省略時は器具の種類ごとの目安 */
