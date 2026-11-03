@@ -23,7 +23,7 @@ export const LOOSE_FURNITURE_TYPES = new Set([
   'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'iron-fence-rods', 'cpu-stand-l',
   'rug', 'clear-mat', 'rail-fan', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
-  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'xmas-tree', 'exercise-bike',
+  'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'indoor-camera', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
   'hat-box', 'cap-case', 'magnet-dispenser', 'racket-bag', 'baseball-glove', 'suitcase',
   'mop', 'hand-ironing-board', 'towel-hook', 'wire-basket', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'trash-bin', 'solar-ground-light', 'exhaust-cover',
@@ -38,7 +38,7 @@ export const SMALL_ITEM_TYPES = new Set([
   'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'hat-box', 'cap-case', 'racket-bag', 'baseball-glove', 'suitcase',
   'magnet-dispenser', 'towel-stack', 'cosmetic-tub', 'pump-bottle', 'wire-basket', 'towel-hook', 'mop', 'hand-ironing-board', 'trash-bin',
   'exhaust-cover', 'solar-ground-light', 'xmas-tree', 'shower-hook', 'cardboard-bundle', 'drawstring-bag', 'umbrella', 'under-shelf-pipe', 'toilet-remote',
-  'washer-hose', 'step-stool', 'washer-faucet', 'floor-drain', 'pet-fence', 'wifi-ap', 'network-hub', 'smart-speaker',
+  'washer-hose', 'step-stool', 'washer-faucet', 'floor-drain', 'pet-fence', 'wifi-ap', 'network-hub', 'smart-speaker', 'indoor-camera',
 ]);
 
 /** クリックで自分の照明をつけ消しする家具（時間帯や回路に関係なく、クリックしたときだけつく） */
@@ -987,11 +987,11 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         if (stopper === 'cylinder') parts.push(box(36, 40, 35, s * (w / 2 - 60), 0, Math.sign(swing ?? 1) * (d / 2 + 17.5), sm));
       }
       if (foldStopper) {
-        // 折りたたみのドアストッパー（扉の下の端に貼る座と、床へ倒した脚）。扉といっしょに動く。自分で貼る物
+        // 折りたたみのドアストッパー（扉の下の端・開く側と反対の面に貼る座と、たたんで立てた脚）。扉といっしょに動く。自分で貼る物
         const fm = new THREE.MeshStandardMaterial({ color: foldStopper, roughness: 0.35, metalness: 0.6 });
-        const zs = Math.sign(swing ?? 1);
+        const zs = -Math.sign(swing ?? 1);
         const plate = box(40, 80, 6, s * (w / 2 - 90), 20, zs * (d / 2 + 3), fm);
-        const leg = box(30, 6, 70, s * (w / 2 - 90), 3, zs * (d / 2 + 30), fm);
+        const leg = box(30, 70, 6, s * (w / 2 - 90), 25, zs * (d / 2 + 9), fm);
         for (const o of [plate, leg]) o.userData.looseItem = true;
         parts.push(plate, leg);
       }
@@ -2649,6 +2649,23 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     hint: '棚の上に置く薄い箱。正面に LAN の口のランプ',
     defaults: { w: 200, d: 150, h: 40, color: '#2a2b2d' },
     build: ({ w, d, h }, mat) => [box(w, h, d, 0, 0, 0, mat), box(w * 0.6, 4, 2, 0, h * 0.6, d / 2 + 1, glow('#7fd17f', 1.2))],
+  },
+  {
+    type: 'indoor-camera',
+    label: '見守りカメラ（置き型・屋内）',
+    hint: '台や窓枠の上に置く。正面（+z）がレンズ。丸い台と、首で少し上を向いた四角い本体',
+    defaults: { w: 60, d: 60, h: 110, color: '#f2f2f0' },
+    build: ({ w, d, h }, mat) => {
+      mat.roughness = 0.4;
+      const lens = new THREE.MeshStandardMaterial({ color: '#0c0d0f', roughness: 0.1, metalness: 0.3 });
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(w / 2, w / 2, 12, 16), mat);
+      base.position.y = 6;
+      const head = new THREE.Group();
+      head.add(box(w, h - 40, d * 0.8, 0, 0, 0, mat), box(w * 0.45, w * 0.45, 3, 0, (h - 40) / 2 - w * 0.22, d * 0.4 + 1, lens));
+      head.position.y = 30;
+      head.rotation.x = -0.08;
+      return [base, box(14, 20, 14, 0, 12, 0, mat), head];
+    },
   },
   {
     type: 'smart-speaker',

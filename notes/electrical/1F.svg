@@ -235,6 +235,9 @@
 <line x1="145.77" y1="153.33" x2="143.37" y2="153.33" stroke="#222" stroke-width="0.25" />
 <line x1="145.77" y1="152.33" x2="143.37" y2="152.33" stroke="#222" stroke-width="0.25" />
 <text x="144.57" y="159.03" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+75</text>
+<circle cx="136.68" cy="74.25" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
+<line x1="135.48" y1="73.75" x2="137.88" y2="73.75" stroke="#222" stroke-width="0.25" />
+<line x1="135.48" y1="74.75" x2="137.88" y2="74.75" stroke="#222" stroke-width="0.25" />
 <circle cx="127.75" cy="189.92" r="1.60" fill="#fff" stroke="#d4242b" stroke-width="0.3"/>
 <text x="127.75" y="189.92" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >t</text>
 <circle cx="178.17" cy="83.67" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
@@ -340,10 +343,6 @@
 <circle cx="79.58" cy="116.98" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="80.08" y1="115.78" x2="80.08" y2="118.18" stroke="#222" stroke-width="0.25" />
 <line x1="79.08" y1="115.78" x2="79.08" y2="118.18" stroke="#222" stroke-width="0.25" />
-<circle cx="158.33" cy="68.02" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="157.83" y1="69.22" x2="157.83" y2="66.82" stroke="#222" stroke-width="0.25" />
-<line x1="158.83" y1="69.22" x2="158.83" y2="66.82" stroke="#222" stroke-width="0.25" />
-<text x="154.73" y="70.62" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2310</text>
 <defs><pattern id="hatch2" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>
 <text x="262.00" y="66.00" font-size="2.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電気設備凡例</text>
 <rect x="262.00" y="68.50" width="140.00" height="50.00" fill="none" stroke="#444" stroke-width="0.2"/>
