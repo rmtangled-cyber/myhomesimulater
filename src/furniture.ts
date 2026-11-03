@@ -21,7 +21,7 @@ import { WEB } from './env';
 export const LOOSE_FURNITURE_TYPES = new Set([
   'sofa', 'sofa-l', 'dining-table', 'dining-table-frame', 'ceramic-ext-table', 'low-table', 'chair', 'dining-chair', 'curve-back-chair', 'stool',
   'bed', 'bed-wood', 'tv-board', 'desk', 'gaming-desk', 'extension-desk', 'gaming-chair', 'office-chair-mesh', 'pc-desk-lexia', 'side-rack', 'iron-fence-rods', 'cpu-stand-l',
-  'rug', 'clear-mat', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
+  'rug', 'clear-mat', 'rail-fan', 'plant', 'silk-jasmine', 'umbellata', 'digital-piano', 'piano-bench', 'pet-cage', 'chinchilla', 'wall-bass', 'wall-guitar',
   'monitor-arm', 'mic-arm', 'robot-vacuum-base', 'fridge', 'washer', 'caster-base', 'car', 'window-mirror', 'storage',
   'hanging-clothes', 'shoe-row', 'hat', 'bag', 'perfume-tray', 'golf-bag', 'wifi-router', 'wifi-ap', 'network-hub', 'smart-speaker', 'xmas-tree', 'exercise-bike',
   'toothbrush-sterilizer', 'microwave', 'rice-cooker', 'electric-kettle',
@@ -1243,6 +1243,34 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         if (coverSides.includes('back')) pleats(w + 2 * o, 'x', -d / 2 - o);
         if (coverSides.includes('left')) pleats(d + 2 * o, 'z', -w / 2 - o);
         if (coverSides.includes('right')) pleats(d + 2 * o, 'z', w / 2 + o);
+      }
+      return out;
+    },
+  },
+  {
+    type: 'rail-fan',
+    label: 'ダクトレールに付けるファン（シーリングファン）',
+    hint: 'ライティングレールの下に吊るす。「床からの高さ」はファンの下端（天井 − h）。w が羽根の直径、h がレールからの全体の高さ',
+    defaults: { w: 500, d: 500, h: 175, color: '#1c1c1d' },
+    build: ({ w, h }, mat) => {
+      mat.roughness = 0.45;
+      mat.metalness = 0.2;
+      // 上からレールに差すプラグ、細いパイプ、モーターの丸い本体、4 枚の羽根
+      const out: THREE.Object3D[] = [box(36, 30, 70, 0, h - 30, 0, mat)];
+      const rod = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, h - 80, 10), mat);
+      rod.position.y = 50 + (h - 80) / 2;
+      const motor = new THREE.Mesh(new THREE.CylinderGeometry(60, 70, 50, 20), mat);
+      motor.position.y = 25;
+      out.push(rod, motor);
+      const r = w / 2;
+      for (let i = 0; i < 4; i++) {
+        const blade = new THREE.Group();
+        const b = box(r - 55, 3, 80, 55 + (r - 55) / 2, 0, 0, mat);
+        b.rotation.x = 0.18;
+        blade.add(b);
+        blade.position.y = 20;
+        blade.rotation.y = (i * Math.PI) / 2 + Math.PI / 4;
+        out.push(blade);
       }
       return out;
     },
@@ -3948,11 +3976,11 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     label: '収納棚（側板・背板・棚板の箱。Nクリック、本棚など）',
     hint: '背面を壁に付ける。「数」が段数（棚板は等分）',
     defaults: { w: 591, d: 394, h: 881, color: '#6e4f36' },
-    build: ({ w, d, h, count }, mat) => {
+    build: ({ w, d, h, count, openBottom }, mat) => {
       const n = Math.max(1, count ?? 3);
       const t = 18;
       const out: THREE.Object3D[] = [box(t, h, d, -w / 2 + t / 2, 0, 0, mat), box(t, h, d, w / 2 - t / 2, 0, 0, mat), box(w - 2 * t, h, 4, 0, 0, -d / 2 + 2, mat)];
-      for (let i = 0; i <= n; i++) out.push(box(w - 2 * t, t, d - 4, 0, ((h - t) * i) / n, 2, mat));
+      for (let i = openBottom ? 1 : 0; i <= n; i++) out.push(box(w - 2 * t, t, d - 4, 0, ((h - t) * i) / n, 2, mat));
       return out;
     },
   },

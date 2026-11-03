@@ -201,6 +201,8 @@ export interface Furniture {
   coverSides?: ('top' | 'back' | 'left' | 'right')[];
   /** 掛けた布の色（省略時は生成り） */
   coverColor?: string;
+  /** color-box の底の板をなくす（脚のような側板だけで立つ台） */
+  openBottom?: boolean;
   /** 照明の明るさ（全光束 lm）。製品の定格光束。省略時は器具の種類ごとの目安 */
   lumen?: number;
   /** 照明の光の広がり（度）。省略時は器具の種類ごとの目安 */
