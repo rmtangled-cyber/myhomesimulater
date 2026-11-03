@@ -381,6 +381,28 @@ ul.chips i {
   font-variant-numeric: tabular-nums;
 }
 
+.walk-room-details > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.walk-room-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.walk-room-details > summary h2 {
+  display: inline;
+}
+
+.walk-room-details > summary::before {
+  content: '▸ ';
+  color: var(--muted);
+}
+
+.walk-room-details[open] > summary::before {
+  content: '▾ ';
+}
+
 .walk-room .finish {
   display: grid;
   grid-template-columns: auto 1fr;

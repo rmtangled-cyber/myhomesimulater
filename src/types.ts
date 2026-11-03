@@ -145,7 +145,7 @@ export interface Furniture {
    */
   fronts?: number[][];
   /** lighting-rail に吊るす器具: spot（スポットライト・省略時）・pendant（ペンダントライト） */
-  fixture?: 'spot' | 'pendant' | 'e26';
+  fixture?: 'spot' | 'pendant' | 'e26' | 'bar' | 'mini';
   /** fire-roll-screen（三協アルミ FIRECUT-RS）のスクリーン色。省略時は frost */
   screen?: 'shut' | 'mesh' | 'frost';
   /** 開き戸のドアストッパー（LIXIL ラフィス）。secret = シークレットドアストッパー（扉の下に内蔵・床に丸い部品）、cylinder = シリンダー式外付ドアストッパー（扉の下に小さな箱） */

@@ -224,7 +224,15 @@ export class Panel {
   ) {
     el.addEventListener('click', (e) => this.onClick(e));
     el.addEventListener('change', (e) => this.onChange(e));
+    // 「今いる場所」の開け閉めを覚えておく（描き直しても戻らないように）
+    el.addEventListener('toggle', (e) => {
+      const d = e.target as HTMLDetailsElement;
+      if (d.classList?.contains('walk-room-details')) this.walkRoomOpen = d.open;
+    }, true);
   }
+
+  /** 「今いる場所」の中身を開いているか（最初は閉じる） */
+  private walkRoomOpen = false;
 
   render(state: PanelState) {
     this.state = state;
@@ -272,7 +280,7 @@ export class Panel {
         </div>`}
         <div class="row">
           ${WEB || s.mode !== 'walk' ? '' : `<label title="夕方・夜は自動で点きます"><input type="checkbox" data-change="lights" ${s.lightsOn ? 'checked' : ''}> 昼も照明をつける</label>`}
-          <label title="施主支給の物（自分で買う・持ち込む家具・家電・防犯カメラ・外のマルチフックなど）を出す・消す。ワンダーハウスが作る造作の棚・カウンター・標準の照明・スイッチ・コンセントは消えません"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示（施主支給）</label>
+          <label title="施主支給の物（自分で買う・持ち込む家具・家電・防犯カメラ・外のマルチフックなど）を出す・消す。ワンダーハウスが作る造作の棚・カウンター・標準の照明・スイッチ・コンセントは消えません"><input type="checkbox" data-change="furniture" ${s.showFurniture !== false ? 'checked' : ''}> 家具を表示</label>
           <label title="ウォークスルーで壁際や家具まわりの陰影を描きます（重い場合は外してください）"><input type="checkbox" data-change="hq" ${s.highQuality ? 'checked' : ''}> 高画質</label>
           ${s.mode === 'walk' ? `<label title="照明や時間帯に関係なく、白い光で全体を明るくします（クロスの色味を確かめる用）"><input type="checkbox" data-change="colorcheck" ${s.colorCheck ? 'checked' : ''}> 色の確認（全体を明るく）</label>` : ''}
         </div>
@@ -466,11 +474,12 @@ export class Panel {
       .join('');
     return `
       <section class="walk-room">
-        <h2>今いる場所 <small>${esc(floor.name)}</small></h2>
-        <h3>${esc(r.name)}</h3>
+        <details class="walk-room-details"${this.walkRoomOpen ? ' open' : ''}>
+        <summary><h2>今いる場所 <small>${esc(floor.name)}・${esc(r.name)}</small></h2></summary>
         <dl class="finish">${row('床', r.floor)}${row('壁', r.wall)}${accents}${row('天井', r.ceiling)}</dl>
         ${items ? `<h3>家具・設備</h3><ul class="walk-items">${items}</ul>` : ''}
         <p class="hint">画面の中央に見えている物の名前と品番は、画面の下に出ます。</p>
+        </details>
       </section>`;
   }
 
@@ -538,7 +547,7 @@ export class Panel {
       <h3>${p.kind === 'floor' ? '床を試す' : 'クロスを試す'} <small>${esc(title)}</small></h3>
       ${filters}
       <div class="mat-row">${swatch}<select data-walk-finish="1"><option value="">（選ぶ）</option>${options}</select></div>
-      ${p.kind === 'floor' ? '' : '<p class="hint">［ ］は機能（公式の機能のマーク。抗菌・防かびはほぼ全部にあるので省略）、★ は家のどこかで使っている品番。SP で始まる品番は何面でも無料、それ以外は 8 面まで無料・9 面目から 1 面 3,000 円。</p>'}
+      ${p.kind === 'floor' ? '' : '<p class="hint">［ ］は機能（公式の機能のマーク。抗菌・防かびはほぼ全部にあるので省略）、★ は家のどこかで使っている品番。</p>'}
       <p class="hint">クリックした面だけ張り替わります（ファイルにも保存）。前に戻すときは「↶ 元に戻す」。</p>`;
   }
 
@@ -556,7 +565,6 @@ export class Panel {
       const roll = f.type === 'roll-screen';
       return `
       <h3>${roll ? 'ロールスクリーン' : '縦型ブラインド'}を試す <small>${esc(f.name ?? '')}</small></h3>
-      <p class="hint">${roll ? 'クリックで下ろす・巻き上げる。' : 'クリックで羽根が回って開く・閉じる。'}商品は未定なので、色は一般的な色から選べます（商品が決まったら、その商品の色に変えます）。選ぶとこの${roll ? 'スクリーン' : 'ブラインド'}だけ変わります（ファイルにも保存）。</p>
       <h3>色</h3><ul class="chips">${colors}</ul>
       <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;
     }
@@ -585,7 +593,6 @@ export class Panel {
       const screens = ([['shut', 'シャットホワイト（遮光率 99.9%）'], ['mesh', 'メッシュホワイト（遮光率 80.3%）'], ['frost', 'フロストホワイト（遮光率 69%）']] as const).map(([v, l]) => chip('fc-screen', v, l, scr === v)).join('');
       return `
       <h3>防火ロールスクリーンを試す <small>${esc(f.name ?? '')}</small></h3>
-      <p class="hint">三協アルミ FIRECUT-RS（ファイアーカット-RS）。図面の「ファイヤーカット【込】」。窓の室内側に付ける防火設備のロールスクリーンです（商品は要確認）。クリックで下ろす・巻き上げる。選ぶとこのスクリーンだけ変わります（ファイルにも保存）。</p>
       <h3>枠の色</h3><ul class="chips">${frames}</ul>
       <h3>スクリーンの色</h3><ul class="chips">${screens}</ul>
       <p class="hint">画面の色は実物と違います。最後は実物のサンプルで確かめてください。</p>`;

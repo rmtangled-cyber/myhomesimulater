@@ -1836,6 +1836,24 @@ export const FURNITURE_TYPES: FurnitureType[] = [
           for (const o of out.slice(first)) o.userData.looseItem = true;
           continue;
         }
+        if (fixture === 'bar') {
+          // 横長のバーライト（EDISON SMART LINE LIGHT 800: 806×33×48.5）。レールの下にアダプターで吊り、下面が光る
+          const parts = [box(30, 20, 30, x, -40, 0, mat), box(806, 48.5, 33, x, -100, 0, mat), box(790, 2, 24, x, -101, 0, glow(WARM, 2))];
+          for (const o of parts) o.userData.looseItem = true;
+          out.push(...parts);
+          continue;
+        }
+        if (fixture === 'mini') {
+          // 小さなスポットライト（EDISON SMART TREO ミニ: 直径 45・高さ 約 97）
+          const can = new THREE.Mesh(new THREE.CylinderGeometry(22.5, 22.5, 75, 16), mat);
+          can.position.set(x, -100, 0);
+          const lens = new THREE.Mesh(new THREE.CylinderGeometry(18, 18, 3, 16), glow(WARM, 3));
+          lens.position.set(x, -139, 0);
+          const parts = [box(30, 20, 30, x, -40, 0, mat), box(8, 25, 8, x, -62, 0, mat), can, lens];
+          for (const o of parts) o.userData.looseItem = true;
+          out.push(...parts);
+          continue;
+        }
         if (fixture === 'e26') {
           // E26 電球の入る大きめの筒（直径 92・長さ 235。SenMeiGuang のダクトレール用スポットライト）。少し斜め下を向く
           const g = new THREE.Group();
@@ -1873,6 +1891,8 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       for (let i = 0; i < n; i++) {
         const x = -w / 2 + (w * (i + 0.5)) / n;
         if (fixture === 'pendant') out.push(...spot(x, -830, 0, [0, -1, 0], candela(lumen ?? 500, beam ?? 100), beam ?? 100, false, 8, kelvinColor(kelvin)));
+        else if (fixture === 'bar') out.push(...spot(x, -105, 0, [0, -1, 0], candela(lumen ?? 2200, beam ?? 120), beam ?? 120, false, 8, kelvinColor(kelvin)));
+        else if (fixture === 'mini') out.push(...spot(x, -142, 0, [0, -1, 0], candela(lumen ?? 480, beam ?? 40), beam ?? 40, false, 8, kelvinColor(kelvin)));
         else if (fixture === 'e26') out.push(...spot(x, -250, 70, [0, -1, 0.36], candela(lumen ?? 1080, Math.min(beam ?? 150, 120)), Math.min(beam ?? 150, 120), false, 8, kelvinColor(kelvin)));
         else out.push(...spot(x, -215, 0, [0, -1, 0], candela(lumen ?? 600, beam ?? 35), beam ?? 35, false, 8, kelvinColor(kelvin)));
       }
@@ -2811,7 +2831,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
       for (let i = 0; i < 2; i++) {
         const g = new THREE.Group();
         g.add(...capShape(185, 105, new THREE.MeshStandardMaterial({ color: CAP_COLORS[(seed + i * 3) % CAP_COLORS.length], roughness: 0.9 })));
-        g.position.set((i - 0.5) * 200, 25, -10);
+        // キャップは箱の右（+x）を正面に向け、前後に重ねる（1 階 WIC では箱の正面が西、キャップの正面が南）
+        g.rotation.y = Math.PI / 2;
+        g.position.set(-90 + i * 50, 25 + i * 10, 0);
         out.push(g);
       }
       return out;
@@ -2847,7 +2869,9 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         for (let i = 0; i < 2; i++) {
           const g = new THREE.Group();
           g.add(...capShape(185, Math.min(110, h - 50), new THREE.MeshStandardMaterial({ color: CAP_COLORS[(seed + k * 2 + i) % CAP_COLORS.length], roughness: 0.9 })));
-          g.position.set(0, y0 + 4 + i * 10, -40 - i * 40);
+          // 箱の右（+x）を正面に向け、前後に重ねる（1 階 WIC では箱の正面が西、キャップの正面が南）
+          g.rotation.y = Math.PI / 2;
+          g.position.set(-60 + i * 30, y0 + 4 + i * 10, 0);
           out.push(g);
         }
       }
