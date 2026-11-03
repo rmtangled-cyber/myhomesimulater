@@ -229,6 +229,7 @@
 <circle cx="143.83" cy="125.61" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <text x="145.48" y="123.71" font-size="1.8" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3</text>
 <text x="139.88" y="125.61" font-size="1.6" fill="#d4242b" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >センサー</text>
+<text x="143.83" y="122.41" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+900</text>
 <circle cx="144.57" cy="145.33" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="164.50" cy="151.10" r="0.70" fill="#d4242b" stroke="#d4242b" stroke-width="0.1"/>
 <circle cx="105.60" cy="111.17" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
