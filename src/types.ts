@@ -87,6 +87,8 @@ export interface Opening {
   frameColor?: string;
   /** 窓のサッシ（室内から見える枠）の色。省略時はダークグレー */
   sashColor?: string;
+  /** 窓のガラスをくもりガラス（型板ガラス）にする */
+  frosted?: boolean;
   /** 片引き戸の戸袋。戸がある部屋（slideRoom）の側の壁を、戸を引く向き（slideTo）に開口部の幅だけ slideDepth（既定 40）削る */
   slideRoom?: string;
   slideTo?: Side;

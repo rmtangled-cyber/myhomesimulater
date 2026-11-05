@@ -198,12 +198,12 @@
 <line x1="185.75" y1="133.93" x2="185.75" y2="120.03" stroke="#d4242b" stroke-width="0.3" />
 <line x1="144.57" y1="145.33" x2="125.08" y2="161.10" stroke="#d4242b" stroke-width="0.3" />
 <line x1="164.50" y1="151.10" x2="178.17" y2="170.58" stroke="#d4242b" stroke-width="0.3" />
-<rect x="166.00" y="70.57" width="5" height="5" fill="none" stroke="#1f5fbf" stroke-width="0.25" stroke-dasharray="0.8 0.6"/>
-<text x="172.00" y="73.07" font-size="1.9" fill="#1f5fbf" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ルーター（2F パントリー）の真上・真下</text>
-<polyline points="168.50,73.07 168.50,112.11 141.83,112.11" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="168.50,73.07 168.50,100.67 166.27,100.67" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="168.50,73.07 168.50,190.07 144.27,190.07" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
-<polyline points="168.50,73.07 168.50,165.72 205.23,165.72" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<rect x="165.50" y="70.57" width="5" height="5" fill="none" stroke="#1f5fbf" stroke-width="0.25" stroke-dasharray="0.8 0.6"/>
+<text x="171.50" y="73.07" font-size="1.9" fill="#1f5fbf" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >ルーター（2F パントリー）の真上・真下</text>
+<polyline points="168.00,73.07 168.00,112.11 141.83,112.11" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.00,73.07 168.00,100.67 166.27,100.67" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.00,73.07 168.00,190.07 144.27,190.07" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
+<polyline points="168.00,73.07 168.00,165.72 205.23,165.72" fill="none" stroke="#1f5fbf" stroke-width="0.3" stroke-dasharray="1.2 0.8"/>
 <circle cx="117.57" cy="109.77" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
 <circle cx="117.57" cy="109.77" r="1.10" fill="none" stroke="#222" stroke-width="0.15"/>
 <circle cx="155.43" cy="124.87" r="1.90" fill="#7fd0e6" stroke="#222" stroke-width="0.2"/>
@@ -390,7 +390,7 @@
 <text x="136.00" y="268.50" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >要望の位置と LAN の配管を書き込んだ要望図</text>
 <text x="136.00" y="273.00" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（マイホームシミュレーターの間取りから作成）</text>
 <text x="253.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >日付</text>
-<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-11-04</text>
+<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-11-06</text>
 <text x="333.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >図面名</text>
 <text x="372.00" y="264.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >3階　電灯コンセント図</text>
 <text x="372.00" y="271.00" font-size="2.4" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（要望・変更案）　S：1/60</text>

@@ -187,7 +187,6 @@
 <polygon points="164.04,110.38 192.29,110.38 192.29,176.96 164.04,176.96" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="149.50,111.17 159.50,111.17 159.50,141.17 149.50,141.17" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.00,177.25 73.00,161.71 78.00,161.71 78.00,177.25" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
-<polygon points="119.17,112.71 103.33,112.71 103.33,105.21 119.17,105.21" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="130.42,112.71 120.42,112.71 120.42,101.88 130.42,101.88" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="130.58,112.79 120.25,112.79 120.25,101.79 130.58,101.79" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
 <polygon points="73.83,73.00 100.50,73.00 100.50,85.50 73.83,85.50" fill="none" stroke="#bdbdbd" stroke-width="0.12"/>
@@ -319,14 +318,6 @@
 <line x1="128.67" y1="115.78" x2="128.67" y2="118.18" stroke="#222" stroke-width="0.25" />
 <line x1="149.00" y1="96.42" x2="207.33" y2="96.42" stroke="#7fd0e6" stroke-width="0.9" />
 <line x1="149.00" y1="96.42" x2="207.33" y2="96.42" stroke="#222" stroke-width="0.12" />
-<circle cx="201.67" cy="98.02" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="202.17" y1="96.82" x2="202.17" y2="99.22" stroke="#222" stroke-width="0.25" />
-<line x1="201.17" y1="96.82" x2="201.17" y2="99.22" stroke="#222" stroke-width="0.25" />
-<text x="205.27" y="100.62" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2210</text>
-<circle cx="105.60" cy="173.63" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="104.40" y1="173.13" x2="106.80" y2="173.13" stroke="#222" stroke-width="0.25" />
-<line x1="104.40" y1="174.13" x2="106.80" y2="174.13" stroke="#222" stroke-width="0.25" />
-<text x="105.60" y="172.63" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+2210</text>
 <circle cx="131.93" cy="76.83" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
 <line x1="133.13" y1="77.33" x2="130.73" y2="77.33" stroke="#222" stroke-width="0.25" />
 <line x1="133.13" y1="76.33" x2="130.73" y2="76.33" stroke="#222" stroke-width="0.25" />
@@ -341,9 +332,6 @@
 <line x1="131.00" y1="74.07" x2="131.00" y2="76.47" stroke="#222" stroke-width="0.25" />
 <line x1="130.00" y1="74.07" x2="130.00" y2="76.47" stroke="#222" stroke-width="0.25" />
 <text x="134.10" y="77.87" font-size="1.6" fill="#444" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >FL+600</text>
-<circle cx="79.58" cy="116.98" r="1.90" fill="#33b34a" stroke="#222" stroke-width="0.2"/>
-<line x1="80.08" y1="115.78" x2="80.08" y2="118.18" stroke="#222" stroke-width="0.25" />
-<line x1="79.08" y1="115.78" x2="79.08" y2="118.18" stroke="#222" stroke-width="0.25" />
 <defs><pattern id="hatch2" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="1" stroke="#666" stroke-width="0.2"/></pattern></defs>
 <text x="262.00" y="66.00" font-size="2.6" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >電気設備凡例</text>
 <rect x="262.00" y="68.50" width="140.00" height="50.00" fill="none" stroke="#444" stroke-width="0.2"/>
@@ -448,7 +436,7 @@
 <text x="136.00" y="268.50" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >要望の位置と LAN の配管を書き込んだ要望図</text>
 <text x="136.00" y="273.00" font-size="2.2" fill="#333" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（マイホームシミュレーターの間取りから作成）</text>
 <text x="253.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >日付</text>
-<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-11-04</text>
+<text x="290.00" y="266.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >2026-11-06</text>
 <text x="333.00" y="256.00" font-size="2.2" fill="#222" text-anchor="start" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >図面名</text>
 <text x="372.00" y="264.00" font-size="3" fill="#222" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >1階　電灯コンセント図</text>
 <text x="372.00" y="271.00" font-size="2.4" fill="#333" text-anchor="middle" dominant-baseline="central" font-family="'Yu Gothic','Meiryo','Hiragino Sans','Noto Sans JP',sans-serif" >（要望・変更案）　S：1/60</text>

@@ -1333,6 +1333,9 @@ const glassMat = new THREE.MeshPhysicalMaterial({
   side: THREE.DoubleSide,
 });
 
+// くもりガラス（型板ガラス）。外が透けず、光はぼんやり通す
+const frostMat = new THREE.MeshPhysicalMaterial({ color: '#e9eef0', roughness: 0.9, transparent: true, opacity: 0.86, depthWrite: false, side: THREE.DoubleSide });
+
 function buildOpening(o: Floor['openings'][number], wall: WallSegment, t: number, clip: THREE.Plane[]): THREE.Group {
   const g = new THREE.Group();
   const dx = wall.to[0] - wall.from[0];
@@ -1352,7 +1355,7 @@ function buildOpening(o: Floor['openings'][number], wall: WallSegment, t: number
   const add = (w: number, h: number, d: number, x: number, y: number, mat: THREE.Material) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), clipped(mat));
     m.position.set(x, y, 0);
-    m.castShadow = mat !== glassMat;
+    m.castShadow = mat !== glassMat && mat !== frostMat;
     g.add(m);
   };
   const { width: W, height: Hh } = o;
@@ -1394,7 +1397,7 @@ function buildOpening(o: Floor['openings'][number], wall: WallSegment, t: number
     } else if (W > 1200) {
       add(fw, Hh, depth, 0, Hh / 2, sashMat); // 引き違いの召し合わせ
     }
-    add(W - fw * 2, Hh - fw * 2, 6, 0, Hh / 2, glassMat);
+    add(W - fw * 2, Hh - fw * 2, 6, 0, Hh / 2, o.frosted ? frostMat : glassMat);
   }
   return g;
 }
