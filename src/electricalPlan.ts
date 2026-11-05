@@ -6,6 +6,7 @@
 // 施主の名前・住所や施工会社のロゴは入れない。DOM を使わない（Node のスクリプトからも呼べる）
 
 import { deriveWalls, dist, openingsOnSegment, signedArea, centroid, pointInPolygon } from './geometry';
+import { SWITCH_SHOTS } from './switchShots';
 import type { Floor, Furniture, Plan, Point } from './types';
 
 /** 図面の縮尺（1/60）。紙の上の長さは mm */
@@ -228,8 +229,11 @@ function spot(f: Furniture): Point {
   return [x, y];
 }
 
-/** LAN の口があるコンセント */
-const hasLan = (f: Furniture) => f.type === 'outlet' && (!!f.lan || /LAN/.test(f.name));
+/** LAN の口があるコンセントと、LAN 1 本で給電する PoE の防犯カメラ */
+const hasLan = (f: Furniture) => (f.type === 'outlet' || f.type === 'camera') && (!!f.lan || /LAN/.test(f.name));
+const PORT_NO = '①②③④⑤⑥⑦⑧';
+/** 壁の LAN 端子の口の範囲（①〜⑦ など） */
+const portRange = (n: number) => `①〜${PORT_NO[n - 1] ?? n}`;
 
 /** 3 路スイッチ（2 か所以上から操作する回路のスイッチ） */
 function threeWay(plan: Plan): Set<string> {
@@ -341,15 +345,15 @@ function equipmentCallout(plan: Plan, floorIndex: number): string[] {
       f.type === 'fiber-outlet' ? '光コンセント（屋外から空配管）' :
       f.type === 'onu' ? 'NTT ONU' :
       f.type === 'wifi-router' ? 'ホームゲートウェイ（ルーター）' :
-      f.type === 'network-hub' ? '10G スイッチングハブ' :
+      f.type === 'network-hub' ? (/PoE/.test(f.name) ? 'PoE スイッチングハブ（テレビ・カメラ 2 台）' : '10G スイッチングハブ') :
       f.type === 'remote-panel' ? f.name.replace(/（.*$/, '') :
-      `LAN 端子 ${f.count ?? 5} 口（①〜⑤ へ Cat6A）`;
+      `LAN 端子 ${f.count ?? 5} 口（${portRange(f.count ?? 5)} へ Cat6A）`;
     const sym =
       f.type === 'breaker-panel' ? rect(sx - 2.5, y - 1.2, 5, 2.4, 'url(#hatch3)', '#222', 0.25) :
       f.type === 'fiber-outlet' ? rect(sx - 2.2, y - 1.3, 4.4, 2.6, '#fff', BLUE, 0.3) + text(sx, y, '光', 1.4, BLUE) :
       f.type === 'onu' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'ONU', 1.3, BLUE) :
       f.type === 'wifi-router' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'GW', 1.3, BLUE) :
-      f.type === 'network-hub' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'HUB', 1.3, BLUE) :
+      f.type === 'network-hub' ? rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, /PoE/.test(f.name) ? 'PoE' : 'HUB', 1.3, BLUE) :
       f.type === 'remote-panel' ? (/インターホン/.test(f.name) ? circle(sx, y, 1.3, '#fff', RED, 0.3) + text(sx, y, 't', 1.5, RED) : rect(sx - 1.3, y - 1.3, 2.6, 2.6, '#fff', RED, 0.3) + text(sx, y, /給湯/.test(f.name) ? 'R' : '交', 1.4, RED)) :
       rect(sx - 2.5, y - 1.3, 5, 2.6, '#fff', BLUE, 0.3) + text(sx, y, 'LAN', 1.3, BLUE);
     out.push(sym, text(sx + 4, y, label, 1.9, f.type === 'breaker-panel' ? '#222' : f.type === 'remote-panel' ? RED : BLUE, 'start'));
@@ -365,6 +369,14 @@ function symbols(plan: Plan, floorIndex: number): string[] {
   const three = threeWay(plan);
   const inCallout = new Set(calloutItems(floor).map((f) => f.id));
   for (const f of floor.furniture) {
+    // PoE の防犯カメラ: 電気の記号はなく、LAN 端子（カメラのボックスの中）だけ
+    if (f.type === 'camera' && hasLan(f)) {
+      const [x, y] = spot(f);
+      const [fx, fy] = front(f);
+      out.push(rect(x - 2.8, y - 1.6, 5.6, 3.2, '#fff', BLUE, 0.3), text(x, y, `LAN${PORT_NO[(f.lanPort ?? 1) - 1] ?? ''}`, 1.6, BLUE));
+      out.push(text(x + fx * 4.2, y + fy * 4.2, 'PoE カメラ（LAN で給電）', 1.6, BLUE));
+      continue;
+    }
     if (!ELECTRIC.has(f.type) || inCallout.has(f.id) || f.plugIn) continue;
     const [x, y] = spot(f);
     const [fx, fy] = front(f);
@@ -427,7 +439,7 @@ function symbols(plan: Plan, floorIndex: number): string[] {
         k += 4;
       }
       if (hasLan(f)) {
-        const label = f.lanPort ? `LAN${'①②③④⑤⑥⑦⑧'[f.lanPort - 1] ?? f.lanPort}` : 'LAN';
+        const label = f.lanPort ? `LAN${PORT_NO[f.lanPort - 1] ?? f.lanPort}` : 'LAN';
         out.push(rect(x + side[0] * k - 2.8, y + side[1] * k - 1.6, 5.6, 3.2, '#fff', BLUE, 0.3), text(x + side[0] * k, y + side[1] * k, label, 1.6, BLUE));
         if (f.lanLabel) out.push(text(x + side[0] * k + fx * 3, y + side[1] * k + fy * 3, f.lanLabel, 1.6, BLUE));
       }
@@ -449,7 +461,7 @@ function symbols(plan: Plan, floorIndex: number): string[] {
     } else if (PANELS.has(f.type)) {
       if (f.type === 'lan-outlet') {
         out.push(rect(x - 3.6, y - 1.6, 7.2, 3.2, '#fff', BLUE, 0.3), text(x, y, `LAN×${f.count ?? 4}`, 1.6, BLUE));
-        out.push(text(x + fx * 3.6, y + fy * 3.6, 'LAN 端子①〜⑤', 1.7, BLUE));
+        out.push(text(x + fx * 3.6, y + fy * 3.6, `LAN 端子${portRange(f.count ?? 4)}`, 1.7, BLUE));
         continue;
       }
       if (f.type === 'onu' || f.type === 'fiber-outlet') {
@@ -562,10 +574,55 @@ function titleBlock(plan: Plan, floor: Floor, opts: ElectricalOptions, kind: 'el
 }
 
 /** 全部の階の電灯コンセント図を、A3 横で 1 階ずつ印刷できる HTML にする（ブラウザの「印刷 → PDF に保存」で PDF にできる） */
+/** スイッチの一覧のページ: スクショと、ボタンごとにつけ消しする照明（画像は電気図の HTML と同じ所の switch-images/） */
+function switchPage(plan: Plan): string {
+  const all = plan.floors.flatMap((fl) => fl.furniture);
+  const byId = new Map(all.map((f) => [f.id, f]));
+  const short = (id: string) => (byId.get(id)?.name ?? id).replace(/（.*$/, '').replace(/\s*\(.*$/, '');
+  // 同じ名前の照明はまとめて「×3」
+  const lightList = (ids: string[]) => {
+    const n = new Map<string, number>();
+    for (const id of ids) n.set(short(id), (n.get(short(id)) ?? 0) + 1);
+    return [...n].map(([s, k]) => (k > 1 ? `${s} ×${k}` : s)).join('・');
+  };
+  // ほかのスイッチの場所（階と部屋）
+  const placeOf = (id: string) => {
+    for (const [i, fl] of plan.floors.entries()) {
+      const f = fl.furniture.find((x) => x.id === id);
+      if (!f) continue;
+      const [fx, fy] = front(f);
+      const room = fl.rooms.find((r) => pointInPolygon([f.x + fx * 100, f.y + fy * 100], r.polygon));
+      return `${i + 1} 階 ${room?.name ?? ''}`;
+    }
+    return id;
+  };
+  const pos = (i: number, n: number) => (n === 1 ? '—' : n === 2 ? ['上', '下'][i] : n === 3 ? ['上', '中', '下'][i] : `上から ${i + 1}`);
+  const cards = SWITCH_SHOTS.map((g) => {
+    const rows = g.switches
+      .flatMap(([mark, id]) => {
+        const sw = byId.get(id);
+        const n = Math.max(1, sw?.count ?? 1);
+        return Array.from({ length: n }, (_, b) => {
+          const c = (plan.circuits ?? []).find((c) => c.switches.some((w) => w.id === id && w.button === b));
+          const others = c ? [...new Set(c.switches.filter((w) => w.id !== id).map((w) => placeOf(w.id)))] : [];
+          const kind = sw?.sensor ? '（かってにスイッチ）' : '';
+          return `<tr><td class="c">${b === 0 ? `<b>${mark}</b>` : ''}</td><td class="c">${pos(b, n)}</td><td>${esc(c?.name ?? '—')}${kind}</td><td>${esc(c ? lightList(c.lights) : '')}</td><td>${esc(others.length ? `3 路: ${others.join('・')}` : '')}</td></tr>`;
+        });
+      })
+      .join('');
+    return `<div class="card"><img src="switch-images/${g.img}" alt="${esc(g.where)}"><div class="cap"><b>${esc(g.floor)}　${esc(g.where)}</b></div><table><thead><tr><th>記号</th><th>ボタン</th><th>回路</th><th>つけ消しする照明</th><th>ほかのスイッチ</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }).join('');
+  return `<section class="sw"><div class="swp"><h2>スイッチの一覧（ボタンが複数ある所・スイッチが並んでいる所）</h2><p>3D シミュレーターの画面。記号（A・B…）は表の記号。ボタンは上から。位置は各階の電灯コンセント図。</p><div class="swg">${cards}</div></div></section>`;
+}
+
 export function electricalHtml(plan: Plan, opts: ElectricalOptions): string {
-  const pages = [...plan.floors.map((_, i) => electricalSvg(plan, i, opts)), networkSvg(plan, opts)].map((svg) => `<section>${svg}</section>`).join('\n');
+  const pages = [...plan.floors.map((_, i) => electricalSvg(plan, i, opts)), networkSvg(plan, opts)].map((svg) => `<section>${svg}</section>`);
+  pages.splice(plan.floors.length, 0, switchPage(plan));
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>${esc(plan.name)} 電灯コンセント図</title>
 <style>@page{size:A3 landscape;margin:0}html,body{margin:0;background:#888}section{width:420mm;height:297mm;margin:8mm auto;background:#fff;page-break-after:always;break-after:page}section svg{display:block;width:420mm;height:297mm}
+section.sw{height:auto;min-height:297mm;font-family:'Yu Gothic','Meiryo',sans-serif;color:#222}.swp{padding:12mm}.swp h2{font-size:18px;margin:0 0 4px}.swp p{font-size:12px;color:#555;margin:0 0 10px}
+.swg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150mm),1fr));gap:8mm}.card{border:1px solid #ccc;border-radius:4px;overflow:hidden;break-inside:avoid}.card img{display:block;width:100%;height:auto}.cap{padding:6px 8px;font-size:13px}
+.card table{border-collapse:collapse;width:100%;font-size:11.5px}.card th,.card td{border-top:1px solid #ddd;padding:4px 6px;text-align:left;vertical-align:top}.card th{background:#f2f2f2}.card td.c{text-align:center;white-space:nowrap}
 @media print{html,body{background:#fff}section{margin:0}}</style></head><body>${pages}</body></html>`;
 }
 
@@ -608,13 +665,13 @@ export function networkSvg(plan: Plan, opts: ElectricalOptions): string {
   };
   const arrow = (x: number, y0: number, y1: number) => lineS([x, y0], [x, y1], '#9fb7cc', 0.3, 'marker-end="url(#narrow)"');
   out.push(`<defs><marker id="narrow" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="4" markerHeight="4" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#9fb7cc"/></marker></defs>`);
-  out.push(text(24, 22, 'LAN 接続図（光回線 → ONU → ホームゲートウェイ → ハブ → 各部屋の LAN 端子）', 4.2, '#222', 'start', 'font-weight="bold"'));
+  out.push(text(24, 22, 'LAN 接続図（光回線 → ONU → ホームゲートウェイ → ハブ → 各部屋の LAN 端子・PoE 防犯カメラ）', 4.2, '#222', 'start', 'font-weight="bold"'));
   const X0 = 60;
   // 屋外の光回線と、引き込みの空配管
   out.push(node(X0, 36, 52, 10, '屋外：光回線 1 本'), arrow(X0, 41, 64), tag(X0, 51, '空配管 1 ルートに光ファイバーを通す'));
   // ルーターの部屋の枠
   const n = Math.max(1, ports.length);
-  const colW = Math.min(88, (PAPER_W - 40) / n);
+  const colW = Math.min(88, (PAPER_W - 30) / n);
   const left = (PAPER_W - colW * n) / 2;
   const colX = (i: number) => left + colW * (i + 0.5);
   const boxTop = 62;
@@ -624,30 +681,49 @@ export function networkSvg(plan: Plan, opts: ElectricalOptions): string {
   out.push(node(X0, 80, 56, 11, fiber ? '光コンセント：1 か所' : '光コンセント（未配置）'), arrow(X0, 85.5, 102), tag(X0, 93, '光コード'));
   out.push(node(X0, 108, 40, 11, onu ? 'NTT ONU' : 'NTT ONU（未配置）'), arrow(X0, 113.5, 130), tag(X0, 121, 'LAN ケーブル'));
   out.push(node(X0, 136, 58, 11, router ? 'SoftBank ホームゲートウェイ（S）' : 'ルーター（未配置）', 2.9));
+  // 10G ハブ（夫婦の書斎）と PoE ハブ（テレビ・防犯カメラ。ホームゲートウェイの最後の port から）
   const HUB = X0 + 84;
+  const POE = HUB + 62;
+  const poeHub = all.find((f) => f.type === 'network-hub' && /PoE/.test(f.name));
+  const viaPoe = (f: Furniture) => !!poeHub && (f.type === 'camera' || /テレビ/.test(f.lanLabel ?? ''));
+  const gwPorts = ports.filter((f) => !f.lan10g && !viaPoe(f)).length;
   out.push(lineS([X0 + 29, 136], [HUB - 22, 136], '#2f7fc1', 0.5, 'marker-end="url(#narrow)"'), tag(X0 + 46, 130, 'port1 10G'), node(HUB, 136, 44, 11, hub ? '10G ハブ' : '10G ハブ（未配置）'));
+  if (poeHub) {
+    // 10G ハブの上を回って PoE ハブへ
+    out.push(`<polyline points="${n2(X0 + 22)},130.5 ${n2(X0 + 22)},124 ${n2(POE)},124 ${n2(POE)},130.5" fill="none" stroke="#c77c1e" stroke-width="0.4" marker-end="url(#narrow)"/>`);
+    out.push(tag(POE - 24, 124, `port${gwPorts + 2} 1G`), node(POE, 136, 44, 11, 'PoE ハブ'));
+  }
   let gwPort = 1;
+  let tenNo = 0;
+  let poeNo = 0;
   ports.forEach((f, i) => {
     const x = colX(i);
-    const no = '①②③④⑤⑥⑦⑧'[(f.lanPort ?? 1) - 1] ?? String(f.lanPort);
+    const no = PORT_NO[(f.lanPort ?? 1) - 1] ?? String(f.lanPort);
     const w = where(f.id);
-    // 10G はハブから、1G はホームゲートウェイの port2〜 から
+    // 10G は 10G ハブから、テレビとカメラは PoE ハブから、ほかの 1G はホームゲートウェイの port2〜 から
     const ten = !!f.lan10g;
-    const sx = ten ? HUB - 10 + i * 20 : X0 - 20 + (gwPort - 1) * 12;
-    const speed = ten ? 'ハブ 10G' : `port${++gwPort} 1G`;
-    out.push(`<polyline points="${n2(sx)},141.5 ${n2(sx)},${n2(146 + i * 2)} ${n2(x)},${n2(146 + i * 2)} ${n2(x)},158" fill="none" stroke="${ten ? '#2f7fc1' : '#2e9e7c'}" stroke-width="0.4" marker-end="url(#narrow)"/>`);
-    out.push(tag(x, 154, speed), node(x, 168, colW - 10, 11, `LAN 端子${no}：${f.lanLabel ?? ''}`, 3.2));
-    out.push(arrow(x, 173.5, 210), tag(x, 192, '壁内：Cat6A 1 本'));
+    const cam = f.type === 'camera';
+    const poe = viaPoe(f);
+    const sx = ten ? HUB - 10 + tenNo++ * 20 : poe ? POE - 14 + poeNo * 14 : X0 - 24 + (gwPort - 1) * 10;
+    // PoE で給電するのはカメラだけ。テレビは PoE ハブの口を通信だけに使う
+    const speed = ten ? 'ハブ 10G' : poe ? (cam ? `PoE 給電（port${++poeNo}）` : `ハブ port${++poeNo}（給電なし）`) : `port${++gwPort} 1G`;
+    const color = ten ? '#2f7fc1' : poe ? '#c77c1e' : '#2e9e7c';
+    out.push(`<polyline points="${n2(sx)},141.5 ${n2(sx)},${n2(148 + i * 1.6)} ${n2(x)},${n2(148 + i * 1.6)} ${n2(x)},158" fill="none" stroke="${color}" stroke-width="0.4" marker-end="url(#narrow)"/>`);
+    const label = `LAN 端子${no}：${f.lanLabel ?? ''}`;
+    out.push(tag(x, 154, speed), node(x, 168, colW - 6, 11, label, label.length > 11 ? 2.5 : 3.1));
+    out.push(arrow(x, 173.5, 210), tag(x, 192, cam ? 'Cat6A 1 本（給電も）' : '壁内：Cat6A 1 本'));
     // 行き先の部屋
     const tv = /テレビ/.test(f.lanLabel ?? '');
     const ap = /Wi-Fi/.test(f.lanLabel ?? '');
-    const h = tv || ap ? 62 : 36;
-    out.push(rect(x - colW / 2 + 3, 204, colW - 6, h, '#f7f7f7', '#e2e2e2', 0.3).replace('<rect', '<rect rx="4"'));
-    out.push(text(x, 210, w ? `${w.floor + 1}F ${w.room}` : '', 2.8, '#333'));
-    out.push(node(x, 224, colW - 14, 11, tv ? 'テレビ用コンセント位置に LAN 端子：1 口' : ap ? 'LAN 端子：1 口＋電源' : '壁の LAN 端子：1 口', tv ? 2.7 : 3.2));
+    const h = tv || ap || cam ? 62 : 36;
+    out.push(rect(x - colW / 2 + 2, 204, colW - 4, h, '#f7f7f7', '#e2e2e2', 0.3).replace('<rect', '<rect rx="4"'));
+    out.push(text(x, 210, w ? `${w.floor + 1}F ${cam ? (/車庫/.test(f.lanLabel ?? '') ? '車庫' : '玄関ポーチ') : w.room}` : '', 2.8, '#333'));
+    out.push(node(x, 224, colW - 10, 11, tv ? 'テレビの所に LAN 端子：1 口' : ap ? 'LAN 端子：1 口＋電源' : cam ? 'ボックス内 LAN 端子：1 口' : '壁の LAN 端子：1 口', 2.6));
     if (tv) out.push(arrow(x, 229.5, 249), tag(x, 238, 'LAN ケーブル'), node(x, 256, 32, 10, 'テレビ'));
-    if (ap) out.push(arrow(x, 229.5, 249), tag(x, 238, 'LAN ケーブル'), node(x, 256, colW - 14, 10, 'Wi-Fi 機器（AP モード）・ニッチ内', 2.7));
+    if (ap) out.push(arrow(x, 229.5, 249), tag(x, 238, 'LAN ケーブル'), node(x, 256, colW - 10, 10, 'Wi-Fi 機器（AP）', 2.6));
+    if (cam) out.push(arrow(x, 229.5, 249), tag(x, 238, '短い LAN ケーブル'), node(x, 256, colW - 10, 10, 'PoE 防犯カメラ', 2.6));
   });
+  out.push(text(24, PAPER_H - 22, '※ PoE の防犯カメラは LAN ケーブル 1 本で電源も送るので、100V のコンセントは要らない。テレビへの PoE ハブの口は給電なし（通信だけ）。', 2.2, '#666', 'start'));
   out.push(text(24, PAPER_H - 16, `※ 間取りの LAN 端子（lanPort）・ONU・ルーターの置き場所から作成。${opts.date}`, 2.2, '#666', 'start'));
   out.push('</svg>');
   return out.join('\n');

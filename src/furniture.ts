@@ -4531,7 +4531,7 @@ export const FURNITURE_TYPES: FurnitureType[] = [
     type: 'box',
     label: 'その他（箱）',
     defaults: { w: 600, d: 600, h: 600, color: '#b5b0a8' },
-    build: ({ w, d, h, flap, rise }, mat) => {
+    build: ({ w, d, h, flap, rise, doorAngles }, mat) => {
       if (rise) {
         // 斜めの板: 長さ = 水平 d と高さ rise の斜辺。正面（+z）の端の下面が z、背面の端が rise 上がる
         const tilt = new THREE.Group();
@@ -4541,11 +4541,11 @@ export const FURNITURE_TYPES: FurnitureType[] = [
         return [tilt];
       }
       if (flap !== 'up') return [box(w, h, d, 0, 0, 0, mat)];
-      // 上の辺を軸に、下の端が正面（+z）へ上がるように開く（クリックで開け閉め）
+      // 上の辺を軸に、下の端が正面（+z）へ上がるように開く（クリックで開け閉め）。開く角度は doorAngles[0]（省略時 100°）
       const leaf = new THREE.Group();
       leaf.position.y = h;
       leaf.add(box(w, h, d, 0, -h, 0, mat));
-      leaf.userData.door = { type: 'flap', angle: -THREE.MathUtils.degToRad(100), t: 0 };
+      leaf.userData.door = { type: 'flap', angle: -THREE.MathUtils.degToRad(doorAngles?.[0] ?? 100), t: 0 };
       return [leaf];
     },
   },

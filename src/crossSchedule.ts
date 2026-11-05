@@ -5,6 +5,7 @@
 
 import * as THREE from 'three';
 import type { BuiltPlan } from './builder';
+import { CROSS_SPLITS } from './crossSplits';
 import { getMaterialDef } from './materials';
 import { centroid, pointInPolygon } from './geometry';
 import type { Plan, Point, Side } from './types';
@@ -164,6 +165,11 @@ function collect(plan: Plan, built: BuiltPlan): Face[] {
   return [...faces.values()].filter((f) => f.area >= 0.05);
 }
 
+/** クロスを貼る面の一覧（施工会社に渡す資料のスクショで、写っている面に品番を書くのに使う） */
+export function crossFaces(plan: Plan, built: BuiltPlan) {
+  return collect(plan, built).map((f) => ({ ...f, name: matName(f.material) }));
+}
+
 /** 通り芯の名前（910 ごと。い〜・1〜）。通り芯の上でなければ「い＋455」のように */
 function tsuuri(plan: Plan, v: number, axis: 'x' | 'y', maxY: number): string {
   const g = plan.grid;
@@ -272,6 +278,10 @@ export function crossScheduleHtml(plan: Plan, built: BuiltPlan, date: string): s
       return { f, p, width, height, boards, cost: boards * p.price };
     });
   const panelCost = panelRows.reduce((s, r) => s + r.cost, 0);
+  // 貼り分けている所（スクショは notes/cross-images/。表の HTML と同じ所から cross-images/ で読む）
+  const splitHtml = [...new Set(CROSS_SPLITS.map((x) => x.floor))]
+    .map((fl) => `<h3>${fl}</h3><div class="grid">${CROSS_SPLITS.filter((x) => x.floor === fl).map((x) => `<figure><img src="cross-images/${x.img}" alt="${esc(x.title)}" loading="lazy"><figcaption><b>${esc(x.title)}</b><br>${esc(x.text)}</figcaption></figure>`).join('')}</div>`)
+    .join('');
 
   const tag = (id: string) => {
     const c = category(id);
@@ -327,6 +337,7 @@ td.n,th.n{text-align:right;white-space:nowrap}td.rg{font-size:12px;color:#444}.s
 .t{font-size:11px;padding:1px 6px;border-radius:8px;white-space:nowrap}.t.sp{background:#e3f4e1;color:#2c6b27}.t.cr{background:#fde8d4;color:#9a4a00}.t.ot{background:#e6eef8;color:#1f4f86}
 .paid{color:#c0392b}.sum{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.card{border:1px solid #ddd;border-radius:8px;padding:10px 14px;min-width:180px}.card b{display:block;font-size:20px;margin-top:2px}
 .note{color:#666;font-size:12px}svg.plan{width:100%;max-width:1000px;height:auto;display:block;margin:4px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}figure{margin:0;border:1px solid #ddd;border-radius:6px;overflow:hidden;background:#fafafa;min-width:0;break-inside:avoid}figure img{display:block;width:100%;height:auto}figcaption{padding:8px 10px;font-size:12.5px}
 @media print{body{margin:10mm}h2{break-before:page}}
 </style></head><body>
 <h1>${esc(plan.name)}　クロス貼り分け表</h1>
@@ -340,6 +351,10 @@ ${panelRows.length ? `<div class="card">クロス以外の板（設計価格）<
 <p class="note">表の左の番号は、図の丸い番号と同じ面。同じ壁を品番で貼り分けている所は、線と番号を並べて描いた。<b class="paid">赤い番号・「有料の対象」</b>は、SP 以外のクロスの面を数えて 9 面目から（1 面 3,000 円）。どの面から有料になるかは数える順番で変わるので、目安。</p>
 <p class="note">浴室（TOTO のセット見積もり）・PS（クロスなし）・ポーチ（外装）・車庫は入れていない。</p>
 <p class="note">面の数え方: 部屋の壁 1 面（部屋の角から角まで・同じ品番）と天井 1 面をそれぞれ 1 面とし、ひと続きの壁（階段の吹き抜けの壁など）は 1 面にまとめた。${MIN_FACE} m² 未満の小さな面は数えていない。</p>
+<h2>クロスを貼り分けている所</h2>
+<p class="note">3D シミュレーターの画面。ラベルは、その面に貼るクロスの品番（3D の面から自動で書いたもの）。赤い枠のラベルは補足。画面の色は実物と違う。</p>
+${splitHtml}
+<h2>品番ごとの合計と面ごとの表</h2>
 <h3>品番ごとの合計</h3><table><thead><tr><th>品番</th><th>区分</th><th class="n">面数</th><th class="n">面積 m²</th></tr></thead><tbody>${totals}</tbody></table>
 ${panelHtml}
 ${floorsHtml}
